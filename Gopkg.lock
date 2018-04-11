@@ -3,13 +3,13 @@
 
 [[projects]]
   name = "github.com/Azure/azure-sdk-for-go"
-  packages = ["profiles/2017-03-09/compute/mgmt/compute","profiles/2017-03-09/network/mgmt/network","profiles/2017-03-09/storage/mgmt/storage","services/appinsights/mgmt/2015-05-01/insights","services/authorization/mgmt/2015-07-01/authorization","services/automation/mgmt/2015-10-31/automation","services/cdn/mgmt/2017-04-02/cdn","services/compute/mgmt/2016-03-30/compute","services/compute/mgmt/2017-12-01/compute","services/containerinstance/mgmt/2018-02-01-preview/containerinstance","services/containerregistry/mgmt/2017-10-01/containerregistry","services/containerservice/mgmt/2017-09-30/containerservice","services/cosmos-db/mgmt/2015-04-08/documentdb","services/dns/mgmt/2016-04-01/dns","services/eventgrid/mgmt/2017-09-15-preview/eventgrid","services/eventhub/mgmt/2017-04-01/eventhub","services/graphrbac/1.6/graphrbac","services/iothub/mgmt/2017-07-01/devices","services/keyvault/2016-10-01/keyvault","services/keyvault/mgmt/2016-10-01/keyvault","services/monitor/mgmt/2017-05-01-preview/insights","services/mysql/mgmt/2017-04-30-preview/mysql","services/network/mgmt/2015-06-15/network","services/network/mgmt/2017-09-01/network","services/operationalinsights/mgmt/2015-11-01-preview/operationalinsights","services/operationsmanagement/mgmt/2015-11-01-preview/operationsmanagement","services/postgresql/mgmt/2017-04-30-preview/postgresql","services/redis/mgmt/2016-04-01/redis","services/resources/mgmt/2016-06-01/subscriptions","services/resources/mgmt/2016-09-01/locks","services/resources/mgmt/2016-12-01/policy","services/resources/mgmt/2017-05-10/resources","services/scheduler/mgmt/2016-03-01/scheduler","services/search/mgmt/2015-08-19/search","services/servicebus/mgmt/2017-04-01/servicebus","services/sql/mgmt/2015-05-01-preview/sql","services/storage/mgmt/2016-01-01/storage","services/storage/mgmt/2017-10-01/storage","services/trafficmanager/mgmt/2017-05-01/trafficmanager","services/web/mgmt/2016-09-01/web","storage","version"]
+  packages = ["profiles/2017-03-09/compute/mgmt/compute","profiles/2017-03-09/network/mgmt/network","profiles/2017-03-09/storage/mgmt/storage","services/compute/mgmt/2016-03-30/compute","services/network/mgmt/2015-06-15/network","services/storage/mgmt/2016-01-01/storage","version"]
   revision = "51228ee60b238eaa5a9d53adc82ebd8b321bca4f"
   version = "v15.1.1"
 
 [[projects]]
   name = "github.com/Azure/go-autorest"
-  packages = ["autorest","autorest/adal","autorest/azure","autorest/azure/cli","autorest/date","autorest/to","autorest/validation"]
+  packages = ["autorest","autorest/adal","autorest/azure","autorest/date","autorest/to","autorest/validation"]
   revision = "9ad9326b278af8fa5cc67c30c0ce9a58cc0862b2"
   version = "v10.6.0"
 
@@ -62,22 +62,10 @@
   version = "v3.5.1"
 
 [[projects]]
-  name = "github.com/davecgh/go-spew"
-  packages = ["spew"]
-  revision = "346938d642f2ec3594ed81d874461961cd0faa76"
-  version = "v1.1.0"
-
-[[projects]]
   name = "github.com/dgrijalva/jwt-go"
   packages = ["."]
   revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
   version = "v3.2.0"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/dimchansky/utfbom"
-  packages = ["."]
-  revision = "6c6132ff69f0f6c088739067407b5d32c52e1d0f"
 
 [[projects]]
   name = "github.com/fatih/color"
@@ -170,14 +158,8 @@
   revision = "fa9f258a92500514cc8e9c67020487709df92432"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/hashicorp/logutils"
-  packages = ["."]
-  revision = "0dc08b1671f34c4250ce212759ebd880f743d883"
-
-[[projects]]
   name = "github.com/hashicorp/terraform"
-  packages = ["config","config/configschema","config/hcl2shim","config/module","dag","flatmap","helper/config","helper/hashcode","helper/hilmapstructure","helper/logging","helper/mutexkv","helper/resource","helper/schema","helper/structure","helper/validation","httpclient","moduledeps","plugin","plugin/discovery","registry","registry/regsrc","registry/response","svchost","svchost/auth","svchost/disco","terraform","tfdiags","version"]
+  packages = ["config","config/configschema","config/hcl2shim","config/module","dag","flatmap","helper/hashcode","helper/hilmapstructure","helper/schema","httpclient","moduledeps","plugin","plugin/discovery","registry","registry/regsrc","registry/response","svchost","svchost/auth","svchost/disco","terraform","tfdiags","version"]
   revision = "41e50bd32a8825a84535e353c3674af8ce799161"
   version = "v0.11.7"
 
@@ -191,12 +173,6 @@
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
   revision = "0b12d6b5"
-
-[[projects]]
-  name = "github.com/marstr/guid"
-  packages = ["."]
-  revision = "8bd9a64bf37eb297b492a4101fb28e80ac0b290f"
-  version = "v1.1.0"
 
 [[projects]]
   name = "github.com/mattn/go-colorable"
@@ -271,24 +247,6 @@
   version = "v1.1.1"
 
 [[projects]]
-  name = "github.com/satori/go.uuid"
-  packages = ["."]
-  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
-  version = "v1.2.0"
-
-[[projects]]
-  name = "github.com/satori/uuid"
-  packages = ["."]
-  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
-  version = "v1.2.0"
-
-[[projects]]
-  name = "github.com/terraform-providers/terraform-provider-azurerm"
-  packages = ["azurerm","azurerm/helpers/authentication","azurerm/helpers/response","azurerm/helpers/subscription","azurerm/utils"]
-  revision = "19cc0e8d02487ce7612943e63aac47e52dbbf2eb"
-  version = "v1.3.2"
-
-[[projects]]
   name = "github.com/ulikunitz/xz"
   packages = [".","internal/hash","internal/xlog","lzma"]
   revision = "0c6b41e72360850ca4f98dc341fd999726ea007f"
@@ -339,6 +297,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b9da7105c1b8744e817c827ef1c0c6533f6d1e1ed9e304118f5a7a6a047a4677"
+  inputs-digest = "1e5e600f275a06f723677e3702354a62db8d9d6fc4aad1df7934cb3dccc1cede"
   solver-name = "gps-cdcl"
   solver-version = 1

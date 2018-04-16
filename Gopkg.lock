@@ -9,7 +9,7 @@
 
 [[projects]]
   name = "github.com/Azure/go-autorest"
-  packages = ["autorest","autorest/adal","autorest/azure","autorest/date","autorest/to","autorest/validation"]
+  packages = ["autorest","autorest/adal","autorest/azure","autorest/azure/cli","autorest/date","autorest/to","autorest/validation"]
   revision = "9ad9326b278af8fa5cc67c30c0ce9a58cc0862b2"
   version = "v10.6.0"
 
@@ -66,6 +66,12 @@
   packages = ["."]
   revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
   version = "v3.2.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/dimchansky/utfbom"
+  packages = ["."]
+  revision = "6c6132ff69f0f6c088739067407b5d32c52e1d0f"
 
 [[projects]]
   name = "github.com/fatih/color"
@@ -297,6 +303,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1e5e600f275a06f723677e3702354a62db8d9d6fc4aad1df7934cb3dccc1cede"
+  inputs-digest = "bc902e0feec1d333020474b0393079d02ee0fa4105d39cd28d0082dc3b7ceab9"
   solver-name = "gps-cdcl"
   solver-version = 1

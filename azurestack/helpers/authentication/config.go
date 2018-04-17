@@ -11,7 +11,6 @@ type Config struct {
 	SubscriptionID string
 	TenantID       string
 	ARMEndpoint    string
-	Location       string
 	Environment    string
 
 	// Service Principal Auth

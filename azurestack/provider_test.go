@@ -1,6 +1,7 @@
 package azurestack
 
 import (
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -11,13 +12,11 @@ var testAccProviders map[string]terraform.ResourceProvider
 
 var testAccProvider *schema.Provider
 
-var oapi bool
-
 func init() {
 	testAccProvider = Provider().(*schema.Provider)
 
 	testAccProviders = map[string]terraform.ResourceProvider{
-		"azure_stack": testAccProvider,
+		"azurestack": testAccProvider,
 	}
 
 }
@@ -33,4 +32,23 @@ func TestProvider_impl(t *testing.T) {
 }
 
 func testAccPreCheck(t *testing.T) {
+	variables := []string{
+		"AZURE_SUBSCRIPTION_ID",
+		"AZURE_TENANT_ID",
+		"AZURE_CLIENT_ID",
+		"AZURE_CLIENT_SECRET",
+		"AZURE_ARM_ENDPOINT",
+		"ARM_TEST_LOCATION",
+	}
+
+	for _, variable := range variables {
+		value := os.Getenv(variable)
+		if value == "" {
+			t.Fatalf("`%s` must be set for acceptance tests!", variable)
+		}
+	}
+}
+
+func testLocation() string {
+	return os.Getenv("AZURE_TEST_LOCATION")
 }

@@ -1,6 +1,7 @@
 package azurestack
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,12 +11,13 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/compute/mgmt/compute"
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
+	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/storage/mgmt/storage"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-azurestack/helpers/authentication"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/authentication"
 )
 
 // ArmClient contains the handles to all the specific Azure Resource Manager
@@ -36,6 +38,10 @@ type ArmClient struct {
 	publicIPClient network.PublicIPAddressesClient
 	subnetClient   network.SubnetsClient
 	nicClient      network.InterfacesClient
+
+	resourceGroupsClient resources.GroupsClient
+
+	StopContext context.Context
 }
 
 // getArmClient is a helper method which returns a fully instantiated
@@ -57,6 +63,7 @@ func getArmClient(c *authentication.Config) (*ArmClient, error) {
 		clientId:       c.ClientID,
 		tenantId:       c.TenantID,
 		subscriptionId: c.SubscriptionID,
+		armEndpoint:    c.ARMEndpoint,
 		environment:    env,
 	}
 
@@ -70,7 +77,7 @@ func getArmClient(c *authentication.Config) (*ArmClient, error) {
 		return nil, fmt.Errorf("Unable to configure OAuthConfig for tenant %s", c.TenantID)
 	}
 
-	endpoint := env.ManagementPortalURL
+	endpoint := env.ResourceManagerEndpoint
 
 	sender := autorest.CreateSender(withRequestLogging())
 
@@ -80,6 +87,11 @@ func getArmClient(c *authentication.Config) (*ArmClient, error) {
 	}
 
 	client.registerComputeClient(endpoint, c.SubscriptionID, auth, sender)
+	client.registerStorageClient(endpoint, c.SubscriptionID, auth, sender)
+	client.registerNetworks(endpoint, c.SubscriptionID, auth, sender)
+	client.registerGroupsClient(endpoint, c.SubscriptionID, auth, sender)
+
+	client.StopContext = context.Background()
 
 	return &client, nil
 }
@@ -106,7 +118,7 @@ func (c *ArmClient) registerStorageClient(endpoint, subscriptionId string, auth 
 	c.storageClient = storageAccountsClient
 }
 
-func (c *ArmClient) registerStorageNetworks(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {
+func (c *ArmClient) registerNetworks(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {
 	vnetClient := network.NewVirtualNetworksClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&vnetClient.Client, auth)
 	c.vnetClient = vnetClient
@@ -133,6 +145,12 @@ func (c *ArmClient) configureClient(client *autorest.Client, auth autorest.Autho
 	client.Authorizer = auth
 	client.Sender = autorest.CreateSender(withRequestLogging())
 	client.PollingDuration = 60 * time.Minute
+}
+
+func (c *ArmClient) registerGroupsClient(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {
+	groupsClient := resources.NewGroupsClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&groupsClient.Client, auth)
+	c.resourceGroupsClient = groupsClient
 }
 
 func withRequestLogging() autorest.SendDecorator {

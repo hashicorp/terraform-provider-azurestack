@@ -43,7 +43,8 @@ func Provider() terraform.ResourceProvider {
 
 		DataSourcesMap: map[string]*schema.Resource{},
 		ResourcesMap: map[string]*schema.Resource{
-			"azurestack_resource_group": resourceAzureStackResourceGroup(),
+			"azurestack_resource_group":  resourceAzureStackResourceGroup(),
+			"azurestack_storage_account": resourceAzureStackStorageAccount(),
 		},
 		ConfigureFunc: providerConfigureClient,
 	}

@@ -30,8 +30,8 @@ type ArmClient struct {
 	armEndpoint    string
 	environment    azure.Environment
 
-	vmClient      compute.VirtualMachinesClient
-	storageClient storage.AccountsClient
+	vmClient             compute.VirtualMachinesClient
+	storageServiceClient storage.AccountsClient
 
 	vnetClient     network.VirtualNetworksClient
 	secGroupClient network.SecurityGroupsClient
@@ -115,7 +115,7 @@ func (c *ArmClient) registerComputeClient(endpoint, subscriptionId string, auth 
 func (c *ArmClient) registerStorageClient(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {
 	storageAccountsClient := storage.NewAccountsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&storageAccountsClient.Client, auth)
-	c.storageClient = storageAccountsClient
+	c.storageServiceClient = storageAccountsClient
 }
 
 func (c *ArmClient) registerNetworks(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {

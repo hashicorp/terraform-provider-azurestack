@@ -38,7 +38,7 @@ func testAccPreCheck(t *testing.T) {
 		"AZURE_CLIENT_ID",
 		"AZURE_CLIENT_SECRET",
 		"AZURE_ARM_ENDPOINT",
-		"ARM_TEST_LOCATION",
+		"AZURE_TEST_LOCATION",
 	}
 
 	for _, variable := range variables {

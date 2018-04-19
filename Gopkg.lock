@@ -3,13 +3,13 @@
 
 [[projects]]
   name = "github.com/Azure/azure-sdk-for-go"
-  packages = ["profiles/2017-03-09/compute/mgmt/compute","profiles/2017-03-09/network/mgmt/network","profiles/2017-03-09/storage/mgmt/storage","services/compute/mgmt/2016-03-30/compute","services/network/mgmt/2015-06-15/network","services/storage/mgmt/2016-01-01/storage","version"]
+  packages = ["profiles/2017-03-09/compute/mgmt/compute","profiles/2017-03-09/network/mgmt/network","profiles/2017-03-09/resources/mgmt/resources","profiles/2017-03-09/storage/mgmt/storage","services/compute/mgmt/2016-03-30/compute","services/network/mgmt/2015-06-15/network","services/resources/mgmt/2016-02-01/resources","services/storage/mgmt/2016-01-01/storage","version"]
   revision = "51228ee60b238eaa5a9d53adc82ebd8b321bca4f"
   version = "v15.1.1"
 
 [[projects]]
   name = "github.com/Azure/go-autorest"
-  packages = ["autorest","autorest/adal","autorest/azure","autorest/azure/cli","autorest/date","autorest/to","autorest/validation"]
+  packages = ["autorest","autorest/adal","autorest/azure","autorest/date","autorest/to","autorest/validation"]
   revision = "9ad9326b278af8fa5cc67c30c0ce9a58cc0862b2"
   version = "v10.6.0"
 
@@ -62,16 +62,16 @@
   version = "v3.5.1"
 
 [[projects]]
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  revision = "346938d642f2ec3594ed81d874461961cd0faa76"
+  version = "v1.1.0"
+
+[[projects]]
   name = "github.com/dgrijalva/jwt-go"
   packages = ["."]
   revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
   version = "v3.2.0"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/dimchansky/utfbom"
-  packages = ["."]
-  revision = "6c6132ff69f0f6c088739067407b5d32c52e1d0f"
 
 [[projects]]
   name = "github.com/fatih/color"
@@ -164,8 +164,14 @@
   revision = "fa9f258a92500514cc8e9c67020487709df92432"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/hashicorp/logutils"
+  packages = ["."]
+  revision = "0dc08b1671f34c4250ce212759ebd880f743d883"
+
+[[projects]]
   name = "github.com/hashicorp/terraform"
-  packages = ["config","config/configschema","config/hcl2shim","config/module","dag","flatmap","helper/hashcode","helper/hilmapstructure","helper/schema","httpclient","moduledeps","plugin","plugin/discovery","registry","registry/regsrc","registry/response","svchost","svchost/auth","svchost/disco","terraform","tfdiags","version"]
+  packages = ["config","config/configschema","config/hcl2shim","config/module","dag","flatmap","helper/acctest","helper/config","helper/hashcode","helper/hilmapstructure","helper/logging","helper/resource","helper/schema","helper/structure","helper/validation","httpclient","moduledeps","plugin","plugin/discovery","registry","registry/regsrc","registry/response","svchost","svchost/auth","svchost/disco","terraform","tfdiags","version"]
   revision = "41e50bd32a8825a84535e353c3674af8ce799161"
   version = "v0.11.7"
 
@@ -267,7 +273,7 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
-  packages = ["bcrypt","blowfish","cast5","openpgp","openpgp/armor","openpgp/elgamal","openpgp/errors","openpgp/packet","openpgp/s2k"]
+  packages = ["bcrypt","blowfish","cast5","curve25519","ed25519","ed25519/internal/edwards25519","internal/chacha20","openpgp","openpgp/armor","openpgp/elgamal","openpgp/errors","openpgp/packet","openpgp/s2k","poly1305","ssh"]
   revision = "d6449816ce06963d9d136eee5a56fca5b0616e7e"
 
 [[projects]]
@@ -303,6 +309,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "bc902e0feec1d333020474b0393079d02ee0fa4105d39cd28d0082dc3b7ceab9"
+  inputs-digest = "4992c7323810dcfe7839b4d1eb91b828b4940088a6adc18f4b9ffc274740b881"
   solver-name = "gps-cdcl"
   solver-version = 1

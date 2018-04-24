@@ -308,7 +308,8 @@ func getArmClient(c *authentication.Config) (*ArmClient, error) {
 	// Resource Manager endpoints
 	endpoint := env.ResourceManagerEndpoint
 
-	auth, err := getAuthorizationToken(c, oauthConfig, endpoint)
+	// Instead of the same enpoint use token audience to get the correct token.
+	auth, err := getAuthorizationToken(c, oauthConfig, env.TokenAudience)
 	if err != nil {
 		return nil, err
 	}

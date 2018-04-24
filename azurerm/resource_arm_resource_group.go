@@ -10,7 +10,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
-func dataSourceArmResourceGroup() *schema.Resource {
+func resourceArmResourceGroup() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceArmResourceGroupCreateUpdate,
 		Read:   resourceArmResourceGroupRead,

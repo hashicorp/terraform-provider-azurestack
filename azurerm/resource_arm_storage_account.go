@@ -14,7 +14,7 @@ import (
 
 const blobStorageAccountDefaultAccessTier = "Hot"
 
-func dataSourceArmStorageAccount() *schema.Resource {
+func resourceArmStorageAccount() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceArmStorageAccountCreate,
 		Read:   resourceArmStorageAccountRead,

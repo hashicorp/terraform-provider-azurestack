@@ -1,4 +1,4 @@
-package azurestack
+package azurerm
 
 import (
 	"fmt"
@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func init() {
-	resource.AddTestSweepers("azurestack_resource_group", &resource.Sweeper{
-		Name: "azurestack_resource_group",
+	resource.AddTestSweepers("azurerm_resource_group", &resource.Sweeper{
+		Name: "azurerm_resource_group",
 		F:    testSweepResourceGroups,
 	})
 }
@@ -67,7 +67,7 @@ func TestAccAzureRMResourceGroup_basic(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMResourceGroupExists("azurestack_resource_group.test"),
+					testCheckAzureRMResourceGroupExists("azurerm_resource_group.test"),
 				),
 			},
 		},
@@ -75,7 +75,7 @@ func TestAccAzureRMResourceGroup_basic(t *testing.T) {
 }
 
 func TestAccAzureRMResourceGroup_disappears(t *testing.T) {
-	resourceName := "azurestack_resource_group.test"
+	resourceName := "azurerm_resource_group.test"
 	ri := acctest.RandInt()
 	config := testAccAzureRMResourceGroup_basic(ri, testLocation())
 
@@ -97,7 +97,7 @@ func TestAccAzureRMResourceGroup_disappears(t *testing.T) {
 }
 
 func TestAccAzureRMResourceGroup_withTags(t *testing.T) {
-	resourceName := "azurestack_resource_group.test"
+	resourceName := "azurerm_resource_group.test"
 	ri := acctest.RandInt()
 	location := testLocation()
 	preConfig := testAccAzureRMResourceGroup_withTags(ri, location)
@@ -189,7 +189,7 @@ func testCheckAzureRMResourceGroupDestroy(s *terraform.State) error {
 	ctx := testAccProvider.Meta().(*ArmClient).StopContext
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "azurestack_resource_group" {
+		if rs.Type != "azurerm_resource_group" {
 			continue
 		}
 
@@ -210,7 +210,7 @@ func testCheckAzureRMResourceGroupDestroy(s *terraform.State) error {
 
 func testAccAzureRMResourceGroup_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
+resource "azurerm_resource_group" "test" {
     name = "acctestRG-%d"
     location = "%s"
 }
@@ -219,7 +219,7 @@ resource "azurestack_resource_group" "test" {
 
 func testAccAzureRMResourceGroup_withTags(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
+resource "azurerm_resource_group" "test" {
     name = "acctestRG-%d"
     location = "%s"
 
@@ -233,7 +233,7 @@ resource "azurestack_resource_group" "test" {
 
 func testAccAzureRMResourceGroup_withTagsUpdated(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
+resource "azurerm_resource_group" "test" {
     name = "acctestRG-%d"
     location = "%s"
 

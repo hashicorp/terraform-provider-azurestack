@@ -1,4 +1,4 @@
-package azurestack
+package azurerm
 
 import (
 	"strings"

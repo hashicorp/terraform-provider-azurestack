@@ -222,6 +222,8 @@ func resourceArmStorageAccountCreate(d *schema.ResourceData, meta interface{}) e
 	accountTier := d.Get("account_tier").(string)
 	replicationType := d.Get("account_replication_type").(string)
 	storageType := fmt.Sprintf("%s_%s", accountTier, replicationType)
+
+	// Not supported by the profile
 	// storageAccountEncryptionSource := d.Get("account_encryption_source").(string)
 	// enableBlobEncryption := d.Get("enable_blob_encryption").(bool)
 
@@ -232,6 +234,8 @@ func resourceArmStorageAccountCreate(d *schema.ResourceData, meta interface{}) e
 		},
 		Tags: *expandTags(tags),
 		Kind: storage.Kind(accountKind),
+
+		// If any paramers are specified withouth the right values this will fail
 		AccountPropertiesCreateParameters: &storage.AccountPropertiesCreateParameters{},
 	}
 
@@ -255,6 +259,7 @@ func resourceArmStorageAccountCreate(d *schema.ResourceData, meta interface{}) e
 		enableBlobEncryption := d.Get("enable_blob_encryption").(bool)
 
 		if enableBlobEncryption {
+			// if the encryption is enabled, then set the arguments
 			storageAccountEncryptionSource := d.Get("account_encryption_source").(string)
 			parameters.AccountPropertiesCreateParameters.Encryption =
 				&storage.Encryption{

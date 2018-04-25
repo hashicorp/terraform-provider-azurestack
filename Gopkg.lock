@@ -9,7 +9,7 @@
 
 [[projects]]
   name = "github.com/Azure/go-autorest"
-  packages = ["autorest","autorest/adal","autorest/azure","autorest/date","autorest/to","autorest/validation"]
+  packages = ["autorest","autorest/adal","autorest/azure","autorest/azure/cli","autorest/date","autorest/to","autorest/validation"]
   revision = "9ad9326b278af8fa5cc67c30c0ce9a58cc0862b2"
   version = "v10.6.0"
 
@@ -72,6 +72,12 @@
   packages = ["."]
   revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
   version = "v3.2.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/dimchansky/utfbom"
+  packages = ["."]
+  revision = "6c6132ff69f0f6c088739067407b5d32c52e1d0f"
 
 [[projects]]
   name = "github.com/fatih/color"
@@ -171,7 +177,7 @@
 
 [[projects]]
   name = "github.com/hashicorp/terraform"
-  packages = ["config","config/configschema","config/hcl2shim","config/module","dag","flatmap","helper/acctest","helper/config","helper/hashcode","helper/hilmapstructure","helper/logging","helper/resource","helper/schema","helper/structure","helper/validation","httpclient","moduledeps","plugin","plugin/discovery","registry","registry/regsrc","registry/response","svchost","svchost/auth","svchost/disco","terraform","tfdiags","version"]
+  packages = ["config","config/configschema","config/hcl2shim","config/module","dag","flatmap","helper/acctest","helper/config","helper/hashcode","helper/hilmapstructure","helper/logging","helper/mutexkv","helper/resource","helper/schema","helper/structure","helper/validation","httpclient","moduledeps","plugin","plugin/discovery","registry","registry/regsrc","registry/response","svchost","svchost/auth","svchost/disco","terraform","tfdiags","version"]
   revision = "41e50bd32a8825a84535e353c3674af8ce799161"
   version = "v0.11.7"
 
@@ -309,6 +315,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4992c7323810dcfe7839b4d1eb91b828b4940088a6adc18f4b9ffc274740b881"
+  inputs-digest = "b6a52072a4b3c172a4870c152446a2e0febc090f510c5ca3c85cc7158079052d"
   solver-name = "gps-cdcl"
   solver-version = 1

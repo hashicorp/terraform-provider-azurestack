@@ -1,4 +1,4 @@
-package azurestack
+package azurerm
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/authentication"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/authentication"
 )
 
 func TestMain(m *testing.M) {
@@ -16,20 +16,27 @@ func TestMain(m *testing.M) {
 }
 
 func buildConfigForSweepers() (*ArmClient, error) {
-	subscriptionID := os.Getenv("AZURE_SUBSCRIPTION_ID")
-	clientID := os.Getenv("AZURE_CLIENT_ID")
-	clientSecret := os.Getenv("AZURE_CLIENT_SECRET")
-	tenantID := os.Getenv("AZURE_TENANT_ID")
+	subscriptionID := os.Getenv("ARM_SUBSCRIPTION_ID")
+	clientID := os.Getenv("ARM_CLIENT_ID")
+	clientSecret := os.Getenv("ARM_CLIENT_SECRET")
+	tenantID := os.Getenv("ARM_TENANT_ID")
+	environment := os.Getenv("ARM_ENVIRONMENT")
+
+	if environment == "" {
+		environment = "public"
+	}
 
 	if subscriptionID == "" || clientID == "" || clientSecret == "" || tenantID == "" {
-		return nil, fmt.Errorf("AZURE_SUBSCRIPTION_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID and AZURE_LOCATION must be set for acceptance tests")
+		return nil, fmt.Errorf("ARM_SUBSCRIPTION_ID, ARM_CLIENT_ID, ARM_CLIENT_SECRET and ARM_TENANT_ID must be set for acceptance tests")
 	}
 
 	config := &authentication.Config{
-		SubscriptionID: subscriptionID,
-		ClientID:       clientID,
-		ClientSecret:   clientSecret,
-		TenantID:       tenantID,
+		SubscriptionID:           subscriptionID,
+		ClientID:                 clientID,
+		ClientSecret:             clientSecret,
+		TenantID:                 tenantID,
+		Environment:              environment,
+		SkipProviderRegistration: false,
 	}
 
 	return getArmClient(config)

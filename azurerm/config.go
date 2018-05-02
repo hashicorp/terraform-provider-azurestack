@@ -14,6 +14,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/storage/mgmt/storage"
+	mainStorage "github.com/Azure/azure-sdk-for-go/storage"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest/azure"
@@ -130,7 +131,7 @@ type ArmClient struct {
 	// managementLocksClient locks.ManagementLocksClient
 	// deploymentsClient     resources.DeploymentsClient
 	providersClient resources.ProvidersClient
-	// resourcesClient       resources.Client
+	resourcesClient resources.Client
 	// resourceGroupsClient  resources.GroupsClient
 	// subscriptionsClient   subscriptions.Client
 
@@ -761,9 +762,9 @@ func (c *ArmClient) registerResourcesClients(endpoint, subscriptionId string, au
 	// c.configureClient(&deploymentsClient.Client, auth)
 	// c.deploymentsClient = deploymentsClient
 
-	// resourcesClient := resources.NewClientWithBaseURI(endpoint, subscriptionId)
-	// c.configureClient(&resourcesClient.Client, auth)
-	// c.resourcesClient = resourcesClient
+	resourcesClient := resources.NewClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&resourcesClient.Client, auth)
+	c.resourcesClient = resourcesClient
 
 	resourceGroupsClient := resources.NewGroupsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&resourceGroupsClient.Client, auth)
@@ -882,24 +883,24 @@ func (armClient *ArmClient) getKeyForStorageAccount(resourceGroupName, storageAc
 	return key, true, nil
 }
 
-// func (armClient *ArmClient) getBlobStorageClientForStorageAccount(resourceGroupName, storageAccountName string) (*mainStorage.BlobStorageClient, bool, error) {
-// 	key, accountExists, err := armClient.getKeyForStorageAccount(resourceGroupName, storageAccountName)
-// 	if err != nil {
-// 		return nil, accountExists, err
-// 	}
-// 	if accountExists == false {
-// 		return nil, false, nil
-// 	}
-//
-// 	storageClient, err := mainStorage.NewClient(storageAccountName, key, armClient.environment.StorageEndpointSuffix,
-// 		mainStorage.DefaultAPIVersion, true)
-// 	if err != nil {
-// 		return nil, true, fmt.Errorf("Error creating storage client for storage account %q: %s", storageAccountName, err)
-// 	}
-//
-// 	blobClient := storageClient.GetBlobService()
-// 	return &blobClient, true, nil
-// }
+func (armClient *ArmClient) getBlobStorageClientForStorageAccount(resourceGroupName, storageAccountName string) (*mainStorage.BlobStorageClient, bool, error) {
+	key, accountExists, err := armClient.getKeyForStorageAccount(resourceGroupName, storageAccountName)
+	if err != nil {
+		return nil, accountExists, err
+	}
+	if accountExists == false {
+		return nil, false, nil
+	}
+
+	storageClient, err := mainStorage.NewClient(storageAccountName, key, armClient.environment.StorageEndpointSuffix,
+		mainStorage.DefaultAPIVersion, true)
+	if err != nil {
+		return nil, true, fmt.Errorf("Error creating storage client for storage account %q: %s", storageAccountName, err)
+	}
+
+	blobClient := storageClient.GetBlobService()
+	return &blobClient, true, nil
+}
 
 // func (armClient *ArmClient) getFileServiceClientForStorageAccount(resourceGroupName, storageAccountName string) (*mainStorage.FileServiceClient, bool, error) {
 // 	key, accountExists, err := armClient.getKeyForStorageAccount(resourceGroupName, storageAccountName)

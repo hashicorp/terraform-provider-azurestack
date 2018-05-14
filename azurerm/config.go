@@ -111,7 +111,7 @@ type ArmClient struct {
 	// applicationGatewayClient        network.ApplicationGatewaysClient
 	// applicationSecurityGroupsClient network.ApplicationSecurityGroupsClient
 	// expressRouteCircuitClient       network.ExpressRouteCircuitsClient
-	// ifaceClient                     network.InterfacesClient
+	ifaceClient network.InterfacesClient
 	// loadBalancerClient              network.LoadBalancersClient
 	// localNetConnClient              network.LocalNetworkGatewaysClient
 	// publicIPClient                  network.PublicIPAddressesClient
@@ -676,10 +676,10 @@ func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, a
 	// c.configureClient(&expressRouteCircuitsClient.Client, auth)
 	// c.expressRouteCircuitClient = expressRouteCircuitsClient
 
-	// interfacesClient := network.NewInterfacesClientWithBaseURI(endpoint, subscriptionId)
-	// c.configureClient(&interfacesClient.Client, auth)
-	// c.ifaceClient = interfacesClient
-	//
+	interfacesClient := network.NewInterfacesClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&interfacesClient.Client, auth)
+	c.ifaceClient = interfacesClient
+
 	// loadBalancersClient := network.NewLoadBalancersClientWithBaseURI(endpoint, subscriptionId)
 	// c.configureClient(&loadBalancersClient.Client, auth)
 	// c.loadBalancerClient = loadBalancersClient
@@ -838,7 +838,7 @@ var (
 	storageKeyCache   = make(map[string]string)
 )
 
-func (armClient *ArmClient) getKeyForStorageAccount(resourceGroupName, storageAccountName string) (string, bool, error) {
+func (armClient *ArmClient) getKeyForStorageAccount(ctx context.Context, resourceGroupName, storageAccountName string) (string, bool, error) {
 	cacheIndex := resourceGroupName + "/" + storageAccountName
 	storageKeyCacheMu.RLock()
 	key, ok := storageKeyCache[cacheIndex]
@@ -852,7 +852,7 @@ func (armClient *ArmClient) getKeyForStorageAccount(resourceGroupName, storageAc
 	defer storageKeyCacheMu.Unlock()
 	key, ok = storageKeyCache[cacheIndex]
 	if !ok {
-		accountKeys, err := armClient.storageServiceClient.ListKeys(armClient.StopContext, resourceGroupName, storageAccountName)
+		accountKeys, err := armClient.storageServiceClient.ListKeys(ctx, resourceGroupName, storageAccountName)
 		if utils.ResponseWasNotFound(accountKeys.Response) {
 			return "", false, nil
 		}
@@ -883,8 +883,8 @@ func (armClient *ArmClient) getKeyForStorageAccount(resourceGroupName, storageAc
 	return key, true, nil
 }
 
-func (armClient *ArmClient) getBlobStorageClientForStorageAccount(resourceGroupName, storageAccountName string) (*mainStorage.BlobStorageClient, bool, error) {
-	key, accountExists, err := armClient.getKeyForStorageAccount(resourceGroupName, storageAccountName)
+func (armClient *ArmClient) getBlobStorageClientForStorageAccount(ctx context.Context, resourceGroupName, storageAccountName string) (*mainStorage.BlobStorageClient, bool, error) {
+	key, accountExists, err := armClient.getKeyForStorageAccount(ctx, resourceGroupName, storageAccountName)
 	if err != nil {
 		return nil, accountExists, err
 	}

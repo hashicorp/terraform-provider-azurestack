@@ -87,8 +87,12 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"azurerm_resource_group":  resourceArmResourceGroup(),
-			"azurerm_storage_account": resourceArmStorageAccount(),
+			"azurerm_resource_group":         resourceArmResourceGroup(),
+			"azurerm_storage_account":        resourceArmStorageAccount(),
+			"azurerm_virtual_network":        resourceArmVirtualNetwork(),
+			"azurerm_network_interface":      resourceArmNetworkInterface(),
+			"azurerm_subnet":                 resourceArmSubnet(),
+			"azurerm_network_security_group": resourceArmNetworkSecurityGroup(),
 		},
 	}
 

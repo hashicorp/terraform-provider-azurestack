@@ -110,7 +110,7 @@ type ArmClient struct {
 	// applicationGatewayClient        network.ApplicationGatewaysClient
 	// applicationSecurityGroupsClient network.ApplicationSecurityGroupsClient
 	// expressRouteCircuitClient       network.ExpressRouteCircuitsClient
-	// ifaceClient                     network.InterfacesClient
+	ifaceClient network.InterfacesClient
 	// loadBalancerClient              network.LoadBalancersClient
 	// localNetConnClient              network.LocalNetworkGatewaysClient
 	// publicIPClient                  network.PublicIPAddressesClient
@@ -675,10 +675,10 @@ func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, a
 	// c.configureClient(&expressRouteCircuitsClient.Client, auth)
 	// c.expressRouteCircuitClient = expressRouteCircuitsClient
 
-	// interfacesClient := network.NewInterfacesClientWithBaseURI(endpoint, subscriptionId)
-	// c.configureClient(&interfacesClient.Client, auth)
-	// c.ifaceClient = interfacesClient
-	//
+	interfacesClient := network.NewInterfacesClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&interfacesClient.Client, auth)
+	c.ifaceClient = interfacesClient
+
 	// loadBalancersClient := network.NewLoadBalancersClientWithBaseURI(endpoint, subscriptionId)
 	// c.configureClient(&loadBalancersClient.Client, auth)
 	// c.loadBalancerClient = loadBalancersClient

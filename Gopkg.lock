@@ -4,8 +4,8 @@
 [[projects]]
   name = "github.com/Azure/azure-sdk-for-go"
   packages = ["profiles/2017-03-09/compute/mgmt/compute","profiles/2017-03-09/network/mgmt/network","profiles/2017-03-09/resources/mgmt/resources","profiles/2017-03-09/storage/mgmt/storage","services/compute/mgmt/2016-03-30/compute","services/network/mgmt/2015-06-15/network","services/resources/mgmt/2016-02-01/resources","services/storage/mgmt/2016-01-01/storage","version"]
-  revision = "51228ee60b238eaa5a9d53adc82ebd8b321bca4f"
-  version = "v15.1.1"
+  revision = "fad8443a79b0e755c18c3bec29a8d2bedab0b421"
+  version = "v15.3.0"
 
 [[projects]]
   name = "github.com/Azure/go-autorest"
@@ -315,6 +315,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b6a52072a4b3c172a4870c152446a2e0febc090f510c5ca3c85cc7158079052d"
+  inputs-digest = "955cc20d79a484ae5f8ec33986e49ede492cc18c5c6ae68545dc65ab457cdfa8"
   solver-name = "gps-cdcl"
   solver-version = 1

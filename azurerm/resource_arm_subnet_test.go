@@ -131,7 +131,11 @@ func TestAccAzureRMSubnet_removeNetworkSecurityGroup(t *testing.T) {
 	})
 }
 
+// Route table not supported yet
 func TestAccAzureRMSubnet_bug7986(t *testing.T) {
+
+	t.Skip()
+
 	ri := acctest.RandInt()
 	initConfig := testAccAzureRMSubnet_bug7986(ri, testLocation())
 

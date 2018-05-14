@@ -271,7 +271,6 @@ func TestAccAzureRMNetworkInterface_enableAcceleratedNetworking(t *testing.T) {
 				Config: testAccAzureRMNetworkInterface_acceleratedNetworking(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureRMNetworkInterfaceExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "enable_accelerated_networking", "true"),
 				),
 			},
 		},

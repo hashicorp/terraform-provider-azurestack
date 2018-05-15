@@ -825,6 +825,8 @@ func resourceArmVirtualMachineDelete(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceArmVirtualMachineDeleteVhd(uri string, meta interface{}) error {
+	ctx := meta.(*ArmClient).StopContext
+
 	vhdURL, err := url.Parse(uri)
 	if err != nil {
 		return fmt.Errorf("Cannot parse Disk VHD URI: %s", err)
@@ -844,7 +846,7 @@ func resourceArmVirtualMachineDeleteVhd(uri string, meta interface{}) error {
 	armClient := meta.(*ArmClient)
 
 	// For some reason the storage account does not need the context
-	blobClient, saExists, err := armClient.getBlobStorageClientForStorageAccount(storageAccountResourceGroupName, storageAccountName)
+	blobClient, saExists, err := armClient.getBlobStorageClientForStorageAccount(ctx, storageAccountResourceGroupName, storageAccountName)
 	if err != nil {
 		return fmt.Errorf("Error creating blob store client for VHD deletion: %+v", err)
 	}

@@ -98,6 +98,7 @@ func Provider() terraform.ResourceProvider {
 			"azurerm_storage_container":      resourceArmStorageContainer(),
 			"azurerm_subnet":                 resourceArmSubnet(),
 			"azurerm_virtual_network":        resourceArmVirtualNetwork(),
+			"azurerm_virtual_machine":        resourceArmVirtualMachine(),
 		},
 	}
 

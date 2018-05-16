@@ -376,7 +376,11 @@ func TestAccAzureRMVirtualMachine_ChangeComputerName(t *testing.T) {
 	})
 }
 
+// AvailabilitySet not yet supported
 func TestAccAzureRMVirtualMachine_ChangeAvailabilitySet(t *testing.T) {
+
+	t.Skip()
+
 	var afterCreate, afterUpdate compute.VirtualMachine
 
 	ri := acctest.RandInt()
@@ -2486,8 +2490,8 @@ resource "azurerm_virtual_machine" "test" {
     storage_image_reference {
 		publisher = "kemptech"
 		offer = "vlm-azure"
-		sku = "freeloadmaster"
-		version = "latest"
+		sku = "basic-byol"
+		version = "7.2.390115589"
     }
 
     storage_os_disk {
@@ -2509,7 +2513,7 @@ resource "azurerm_virtual_machine" "test" {
     }
 
     plan {
-        name = "freeloadmaster"
+        name = "basic-byol"
         publisher = "kemptech"
         product = "vlm-azure"
     }

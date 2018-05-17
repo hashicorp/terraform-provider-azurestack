@@ -36,7 +36,8 @@ func resourceArmVirtualMachine() *schema.Resource {
 
 			"resource_group_name": resourceGroupNameSchema(),
 
-			"zones": singleZonesSchema(),
+			// Zones is not in the SDK, so we remove it
+			// "zones": singleZonesSchema(),
 
 			"plan": {
 				Type:     schema.TypeList,

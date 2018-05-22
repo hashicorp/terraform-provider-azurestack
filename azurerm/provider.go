@@ -90,14 +90,19 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"azurerm_network_interface":      resourceArmNetworkInterface(),
-			"azurerm_network_security_group": resourceArmNetworkSecurityGroup(),
-			"azurerm_resource_group":         resourceArmResourceGroup(),
-			"azurerm_storage_account":        resourceArmStorageAccount(),
-			"azurerm_storage_blob":           resourceArmStorageBlob(),
-			"azurerm_storage_container":      resourceArmStorageContainer(),
-			"azurerm_subnet":                 resourceArmSubnet(),
-			"azurerm_virtual_network":        resourceArmVirtualNetwork(),
+			"azurerm_availability_set":          resourceArmAvailabilitySet(),
+			"azurerm_network_interface":         resourceArmNetworkInterface(),
+			"azurerm_network_security_group":    resourceArmNetworkSecurityGroup(),
+			"azurerm_network_security_rule":     resourceArmNetworkSecurityRule(),
+			"azurerm_public_ip":                 resourceArmPublicIp(),
+			"azurerm_resource_group":            resourceArmResourceGroup(),
+			"azurerm_storage_account":           resourceArmStorageAccount(),
+			"azurerm_storage_blob":              resourceArmStorageBlob(),
+			"azurerm_storage_container":         resourceArmStorageContainer(),
+			"azurerm_subnet":                    resourceArmSubnet(),
+			"azurerm_virtual_network":           resourceArmVirtualNetwork(),
+			"azurerm_virtual_machine":           resourceArmVirtualMachine(),
+			"azurerm_virtual_machine_extension": resourceArmVirtualMachineExtensions(),
 		},
 	}
 

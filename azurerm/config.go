@@ -14,6 +14,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/storage/mgmt/storage"
+	"github.com/Azure/azure-sdk-for-go/services/dns/mgmt/2017-09-01/dns"
 	mainStorage "github.com/Azure/azure-sdk-for-go/storage"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
@@ -43,7 +44,7 @@ type ArmClient struct {
 	// automationCredentialClient automation.CredentialClient
 	// automationScheduleClient   automation.ScheduleClient
 	//
-	// dnsClient   dns.RecordSetsClient
+	dnsClient dns.RecordSetsClient
 	// zonesClient dns.ZonesClient
 
 	// containerRegistryClient  containerregistry.RegistriesClient
@@ -75,13 +76,13 @@ type ArmClient struct {
 	// cdnEndpointsClient cdn.EndpointsClient
 
 	// Compute
-	// availSetClient         compute.AvailabilitySetsClient
+	availSetClient compute.AvailabilitySetsClient
 	// diskClient             compute.DisksClient
 	// imageClient            compute.ImagesClient
 	// snapshotsClient        compute.SnapshotsClient
 	// usageOpsClient         compute.UsageClient
 	// vmExtensionImageClient compute.VirtualMachineExtensionImagesClient
-	// vmExtensionClient      compute.VirtualMachineExtensionsClient
+	vmExtensionClient compute.VirtualMachineExtensionsClient
 	// vmScaleSetClient       compute.VirtualMachineScaleSetsClient
 	// vmImageClient          compute.VirtualMachineImagesClient
 
@@ -118,7 +119,7 @@ type ArmClient struct {
 	// routesClient                    network.RoutesClient
 	// routeTablesClient               network.RouteTablesClient
 	// secGroupClient                  network.SecurityGroupsClient
-	// secRuleClient                   network.SecurityRulesClient
+	secRuleClient network.SecurityRulesClient
 	// subnetClient                    network.SubnetsClient
 	// netUsageClient                  network.UsagesClient
 	// vnetGatewayConnectionsClient    network.VirtualNetworkGatewayConnectionsClient
@@ -341,7 +342,7 @@ func getArmClient(c *authentication.Config) (*ArmClient, error) {
 	// client.registerContainerServicesClients(endpoint, c.SubscriptionID, auth)
 	// client.registerCosmosDBClients(endpoint, c.SubscriptionID, auth, sender)
 	// client.registerDatabases(endpoint, c.SubscriptionID, auth, sender)
-	// client.registerDNSClients(endpoint, c.SubscriptionID, auth, sender)
+	client.registerDNSClients(endpoint, c.SubscriptionID, auth, sender)
 	// client.registerEventGridClients(endpoint, c.SubscriptionID, auth, sender)
 	// client.registerEventHubClients(endpoint, c.SubscriptionID, auth, sender)
 	// client.registerKeyVaultClients(endpoint, c.SubscriptionID, auth, keyVaultAuth, sender)
@@ -448,9 +449,9 @@ func getArmClient(c *authentication.Config) (*ArmClient, error) {
 // }
 
 func (c *ArmClient) registerComputeClients(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {
-	// availabilitySetsClient := compute.NewAvailabilitySetsClientWithBaseURI(endpoint, subscriptionId)
-	// c.configureClient(&availabilitySetsClient.Client, auth)
-	// c.availSetClient = availabilitySetsClient
+	availabilitySetsClient := compute.NewAvailabilitySetsClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&availabilitySetsClient.Client, auth)
+	c.availSetClient = availabilitySetsClient
 
 	// diskClient := compute.NewDisksClientWithBaseURI(endpoint, subscriptionId)
 	// c.configureClient(&diskClient.Client, auth)
@@ -472,9 +473,9 @@ func (c *ArmClient) registerComputeClients(endpoint, subscriptionId string, auth
 	// c.configureClient(&extensionImagesClient.Client, auth)
 	// c.vmExtensionImageClient = extensionImagesClient
 
-	// extensionsClient := compute.NewVirtualMachineExtensionsClientWithBaseURI(endpoint, subscriptionId)
-	// c.configureClient(&extensionsClient.Client, auth)
-	// c.vmExtensionClient = extensionsClient
+	extensionsClient := compute.NewVirtualMachineExtensionsClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&extensionsClient.Client, auth)
+	c.vmExtensionClient = extensionsClient
 
 	// virtualMachineImagesClient := compute.NewVirtualMachineImagesClientWithBaseURI(endpoint, subscriptionId)
 	// c.configureClient(&virtualMachineImagesClient.Client, auth)
@@ -597,15 +598,15 @@ func (c *ArmClient) registerComputeClients(endpoint, subscriptionId string, auth
 // 	c.sqlServerAzureADAdministratorsClient = sqlADClient
 // }
 
-// func (c *ArmClient) registerDNSClients(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {
-// 	dn := dns.NewRecordSetsClientWithBaseURI(endpoint, subscriptionId)
-// 	c.configureClient(&dn.Client, auth)
-// 	c.dnsClient = dn
-//
-// 	zo := dns.NewZonesClientWithBaseURI(endpoint, subscriptionId)
-// 	c.configureClient(&zo.Client, auth)
-// 	c.zonesClient = zo
-// }
+func (c *ArmClient) registerDNSClients(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {
+	dn := dns.NewRecordSetsClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&dn.Client, auth)
+	c.dnsClient = dn
+
+	// zo := dns.NewZonesClientWithBaseURI(endpoint, subscriptionId)
+	// c.configureClient(&zo.Client, auth)
+	// c.zonesClient = zo
+}
 
 // func (c *ArmClient) registerEventGridClients(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {
 // 	egtc := eventgrid.NewTopicsClientWithBaseURI(endpoint, subscriptionId)
@@ -720,9 +721,9 @@ func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, a
 	c.configureClient(&securityGroupsClient.Client, auth)
 	c.secGroupClient = securityGroupsClient
 
-	// securityRulesClient := network.NewSecurityRulesClientWithBaseURI(endpoint, subscriptionId)
-	// c.configureClient(&securityRulesClient.Client, auth)
-	// c.secRuleClient = securityRulesClient
+	securityRulesClient := network.NewSecurityRulesClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&securityRulesClient.Client, auth)
+	c.secRuleClient = securityRulesClient
 
 	subnetsClient := network.NewSubnetsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&subnetsClient.Client, auth)

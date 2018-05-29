@@ -14,7 +14,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/storage/mgmt/storage"
-	"github.com/Azure/azure-sdk-for-go/services/dns/mgmt/2017-09-01/dns"
+	"github.com/Azure/azure-sdk-for-go/services/dns/mgmt/2016-04-01/dns"
 	mainStorage "github.com/Azure/azure-sdk-for-go/storage"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
@@ -44,8 +44,8 @@ type ArmClient struct {
 	// automationCredentialClient automation.CredentialClient
 	// automationScheduleClient   automation.ScheduleClient
 	//
-	dnsClient dns.RecordSetsClient
-	// zonesClient dns.ZonesClient
+	dnsClient   dns.RecordSetsClient
+	zonesClient dns.ZonesClient
 
 	// containerRegistryClient  containerregistry.RegistriesClient
 	// containerServicesClient  containerservice.ContainerServicesClient
@@ -603,9 +603,9 @@ func (c *ArmClient) registerDNSClients(endpoint, subscriptionId string, auth aut
 	c.configureClient(&dn.Client, auth)
 	c.dnsClient = dn
 
-	// zo := dns.NewZonesClientWithBaseURI(endpoint, subscriptionId)
-	// c.configureClient(&zo.Client, auth)
-	// c.zonesClient = zo
+	zo := dns.NewZonesClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&zo.Client, auth)
+	c.zonesClient = zo
 }
 
 // func (c *ArmClient) registerEventGridClients(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {

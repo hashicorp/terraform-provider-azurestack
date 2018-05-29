@@ -91,6 +91,8 @@ func Provider() terraform.ResourceProvider {
 
 		ResourcesMap: map[string]*schema.Resource{
 			"azurerm_availability_set":          resourceArmAvailabilitySet(),
+			"azurerm_dns_zone":                  resourceArmDnsZone(),
+			"azurerm_dns_a_record":              resourceArmDnsARecord(),
 			"azurerm_network_interface":         resourceArmNetworkInterface(),
 			"azurerm_network_security_group":    resourceArmNetworkSecurityGroup(),
 			"azurerm_network_security_rule":     resourceArmNetworkSecurityRule(),

@@ -57,50 +57,57 @@ func dataSourceArmNetworkSecurityGroup() *schema.Resource {
 							Computed: true,
 						},
 
-						"destination_port_ranges": {
-							Type:     schema.TypeSet,
-							Computed: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
-						},
+						// The Following attributes are not included in the profile  2017-03-09
+						// destination_port_ranges
+						// source_address_prefixes
+						// source_application_security_group_ids
+						// destination_address_prefixes
+						// destination_application_security_group_ids
+
+						// "destination_port_ranges": {
+						// 	Type:     schema.TypeSet,
+						// 	Computed: true,
+						// 	Elem:     &schema.Schema{Type: schema.TypeString},
+						// 	Set:      schema.HashString,
+						// },
 
 						"source_address_prefix": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 
-						"source_address_prefixes": {
-							Type:     schema.TypeSet,
-							Computed: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
-						},
+						// "source_address_prefixes": {
+						// 	Type:     schema.TypeSet,
+						// 	Computed: true,
+						// 	Elem:     &schema.Schema{Type: schema.TypeString},
+						// 	Set:      schema.HashString,
+						// },
 
-						"source_application_security_group_ids": {
-							Type:     schema.TypeSet,
-							Optional: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
-						},
+						// "source_application_security_group_ids": {
+						// 	Type:     schema.TypeSet,
+						// 	Optional: true,
+						// 	Elem:     &schema.Schema{Type: schema.TypeString},
+						// 	Set:      schema.HashString,
+						// },
 
 						"destination_address_prefix": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
 
-						"destination_address_prefixes": {
-							Type:     schema.TypeSet,
-							Computed: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
-						},
+						// "destination_address_prefixes": {
+						// 	Type:     schema.TypeSet,
+						// 	Computed: true,
+						// 	Elem:     &schema.Schema{Type: schema.TypeString},
+						// 	Set:      schema.HashString,
+						// },
 
-						"destination_application_security_group_ids": {
-							Type:     schema.TypeSet,
-							Optional: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
-						},
+						// "destination_application_security_group_ids": {
+						// 	Type:     schema.TypeSet,
+						// 	Optional: true,
+						// 	Elem:     &schema.Schema{Type: schema.TypeString},
+						// 	Set:      schema.HashString,
+						// },
 
 						"access": {
 							Type:     schema.TypeString,

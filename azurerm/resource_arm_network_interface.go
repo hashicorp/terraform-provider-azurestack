@@ -166,11 +166,13 @@ func resourceArmNetworkInterface() *schema.Resource {
 			 * Refer to: https://docs.microsoft.com/en-us/azure/virtual-network/create-vm-accelerated-networking-cli
 			 * For details, VM configuration and caveats.
 			 */
-			"enable_accelerated_networking": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  false,
-			},
+
+			// enable_accelerated_networking is not in the profile for Azure Stack
+			// "enable_accelerated_networking": {
+			// 	Type:     schema.TypeBool,
+			// 	Optional: true,
+			// 	Default:  false,
+			// },
 
 			"enable_ip_forwarding": {
 				Type:     schema.TypeBool,

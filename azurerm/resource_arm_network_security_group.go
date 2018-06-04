@@ -65,63 +65,72 @@ func resourceArmNetworkSecurityGroup() *schema.Resource {
 							Optional: true,
 						},
 
-						"source_port_ranges": {
-							Type:     schema.TypeString,
-							Optional: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
-						},
+						// The Following attributes are not included in the profile for
+						// Azure Stack
+						// destination_port_ranges
+						// source_address_prefixes
+						// source_application_security_group_ids
+						// destination_address_prefixes
+						// destination_application_security_group_ids
+
+						// "source_port_ranges": {
+						// 	Type:     schema.TypeString,
+						// 	Optional: true,
+						// 	Elem:     &schema.Schema{Type: schema.TypeString},
+						// 	Set:      schema.HashString,
+						// },
 
 						"destination_port_range": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
 
-						"destination_port_ranges": {
-							Type:     schema.TypeSet,
-							Optional: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
-						},
+						// "destination_port_ranges": {
+						// 	Type:     schema.TypeSet,
+						// 	Optional: true,
+						// 	Elem:     &schema.Schema{Type: schema.TypeString},
+						// 	Set:      schema.HashString,
+						// },
 
 						"source_address_prefix": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
 
-						"source_address_prefixes": {
-							Type:     schema.TypeSet,
-							Optional: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
-						},
+						// "source_address_prefixes": {
+						// 	Type:     schema.TypeSet,
+						// 	Optional: true,
+						// 	Elem:     &schema.Schema{Type: schema.TypeString},
+						// 	Set:      schema.HashString,
+						// },
 
 						"destination_address_prefix": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
 
-						"destination_address_prefixes": {
-							Type:     schema.TypeSet,
-							Optional: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
-						},
+						// "destination_address_prefixes": {
+						// 	Type:     schema.TypeSet,
+						// 	Optional: true,
+						// 	Elem:     &schema.Schema{Type: schema.TypeString},
+						// 	Set:      schema.HashString,
+						// },
 
-						"destination_application_security_group_ids": {
-							Type:     schema.TypeSet,
-							Optional: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
-						},
+						// "destination_application_security_group_ids": {
+						// 	Type:     schema.TypeSet,
+						// 	Optional: true,
+						// 	Elem:     &schema.Schema{Type: schema.TypeString},
+						// 	Set:      schema.HashString,
+						// },
+						//
+						// "source_application_security_group_ids": {
+						// 	Type:     schema.TypeSet,
+						// 	Optional: true,
+						// 	Elem:     &schema.Schema{Type: schema.TypeString},
+						// 	Set:      schema.HashString,
+						// },
 
-						"source_application_security_group_ids": {
-							Type:     schema.TypeSet,
-							Optional: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
-						},
-
+						// Constants not defined in the profile 2017-03-09
 						"access": {
 							Type:     schema.TypeString,
 							Required: true,
@@ -138,6 +147,7 @@ func resourceArmNetworkSecurityGroup() *schema.Resource {
 							ValidateFunc: validation.IntBetween(100, 4096),
 						},
 
+						// Constants not defined in the profile 2017-03-09
 						"direction": {
 							Type:     schema.TypeString,
 							Required: true,

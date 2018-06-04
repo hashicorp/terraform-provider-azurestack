@@ -47,6 +47,7 @@ func resourceArmAvailabilitySet() *schema.Resource {
 				ValidateFunc: validation.IntBetween(1, 3),
 			},
 
+			// Not supported for 2017-03-09 profile
 			// "managed": {
 			// 	Type:     schema.TypeBool,
 			// 	Optional: true,
@@ -70,7 +71,10 @@ func resourceArmAvailabilitySetCreate(d *schema.ResourceData, meta interface{}) 
 	resGroup := d.Get("resource_group_name").(string)
 	updateDomainCount := d.Get("platform_update_domain_count").(int)
 	faultDomainCount := d.Get("platform_fault_domain_count").(int)
+
+	// Not supported for 2017-03-09 profile
 	// managed := d.Get("managed").(bool)
+
 	tags := d.Get("tags").(map[string]interface{})
 
 	availSet := compute.AvailabilitySet{
@@ -83,6 +87,7 @@ func resourceArmAvailabilitySetCreate(d *schema.ResourceData, meta interface{}) 
 		Tags: *expandTags(tags),
 	}
 
+	// Not supported for 2017-03-09 profile
 	// if managed == true {
 	// 	n := "Aligned"
 	// 	availSet.Sku = &compute.Sku{
@@ -129,6 +134,7 @@ func resourceArmAvailabilitySetRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("platform_update_domain_count", availSet.PlatformUpdateDomainCount)
 	d.Set("platform_fault_domain_count", availSet.PlatformFaultDomainCount)
 
+	// Not supported for 2017-03-09 profile
 	// if resp.Sku != nil && resp.Sku.Name != nil {
 	// 	d.Set("managed", strings.EqualFold(*resp.Sku.Name, "Aligned"))
 	// }

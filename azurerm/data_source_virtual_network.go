@@ -46,10 +46,11 @@ func dataSourceArmVirtualNetwork() *schema.Resource {
 				},
 			},
 
-			"vnet_peerings": {
-				Type:     schema.TypeMap,
-				Computed: true,
-			},
+			// Not supported for 2017-03-09 profile
+			// "vnet_peerings": {
+			// 	Type:     schema.TypeMap,
+			// 	Computed: true,
+			// },
 		},
 	}
 }
@@ -89,6 +90,7 @@ func dataSourceArmVnetRead(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 
+		// Not supported for 2017-03-09 profile
 		// vnetPeerings := flattenVnetPeerings(props.VirtualNetworkPeerings)
 		// if err := d.Set("vnet_peerings", vnetPeerings); err != nil {
 		// 	return err
@@ -119,6 +121,7 @@ func flattenVnetSubnetsNames(input *[]network.Subnet) []interface{} {
 	return subnets
 }
 
+// Not supported for 2017-03-09 profile
 // func flattenVnetPeerings(input *[]network.VirtualNetworkPeering) map[string]interface{} {
 // 	output := make(map[string]interface{}, 0)
 //

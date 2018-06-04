@@ -56,6 +56,7 @@ func resourceArmStorageAccount() *schema.Resource {
 				DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
 			},
 
+			// Constants not in the 2017-03-09 profile
 			"account_tier": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -67,6 +68,7 @@ func resourceArmStorageAccount() *schema.Resource {
 				DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
 			},
 
+			// Constants not in 2017-03-09 profile
 			"account_replication_type": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -90,6 +92,7 @@ func resourceArmStorageAccount() *schema.Resource {
 				}, true),
 			},
 
+			// Constants not in 2017-03-09 profile
 			"account_encryption_source": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -223,7 +226,9 @@ func resourceArmStorageAccountCreate(d *schema.ResourceData, meta interface{}) e
 	replicationType := d.Get("account_replication_type").(string)
 	storageType := fmt.Sprintf("%s_%s", accountTier, replicationType)
 
-	// Not supported by the profile
+	// Not supported by the profile in the same struct as the original, both of the
+	// following commented lines will be read and set later on the correct
+	// structs
 	// storageAccountEncryptionSource := d.Get("account_encryption_source").(string)
 	// enableBlobEncryption := d.Get("enable_blob_encryption").(bool)
 

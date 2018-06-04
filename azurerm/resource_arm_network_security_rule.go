@@ -40,6 +40,7 @@ func resourceArmNetworkSecurityRule() *schema.Resource {
 				ValidateFunc: validation.StringLenBetween(0, 140),
 			},
 
+			// Constants not defined in the profile 2017-03-09
 			"protocol": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -52,60 +53,76 @@ func resourceArmNetworkSecurityRule() *schema.Resource {
 			},
 
 			"source_port_range": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"source_port_ranges"},
+				Type:     schema.TypeString,
+				Optional: true,
+
+				// Since this is not supported it will not conflict
+				// ConflictsWith: []string{"source_port_ranges"},
 			},
 
-			"source_port_ranges": {
-				Type:          schema.TypeSet,
-				Optional:      true,
-				Elem:          &schema.Schema{Type: schema.TypeString},
-				Set:           schema.HashString,
-				ConflictsWith: []string{"source_port_range"},
-			},
+			// The following fields are not supported by the profile 2017-03-09
+			// source_port_ranges
+			// destination_port_ranges
+			// source_address_prefixes
+			// destination_address_prefixes
+			// source_application_security_group_ids
+			// destination_application_security_group_ids
+
+			// "source_port_ranges": {
+			// 	Type:          schema.TypeSet,
+			// 	Optional:      true,
+			// 	Elem:          &schema.Schema{Type: schema.TypeString},
+			// 	Set:           schema.HashString,
+			// 	ConflictsWith: []string{"source_port_range"},
+			// },
 
 			"destination_port_range": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"destination_port_ranges"},
+				Type:     schema.TypeString,
+				Optional: true,
+
+				// Since this is not supported it will not conflict
+				// ConflictsWith: []string{"destination_port_ranges"},
 			},
 
-			"destination_port_ranges": {
-				Type:          schema.TypeSet,
-				Optional:      true,
-				Elem:          &schema.Schema{Type: schema.TypeString},
-				Set:           schema.HashString,
-				ConflictsWith: []string{"destination_port_range"},
-			},
+			// "destination_port_ranges": {
+			// 	Type:          schema.TypeSet,
+			// 	Optional:      true,
+			// 	Elem:          &schema.Schema{Type: schema.TypeString},
+			// 	Set:           schema.HashString,
+			// 	ConflictsWith: []string{"destination_port_range"},
+			// },
 
 			"source_address_prefix": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"source_address_prefixes"},
+				Type:     schema.TypeString,
+				Optional: true,
+
+				// Since this is not supported it will not conflict
+				// ConflictsWith: []string{"source_address_prefixes"},
 			},
 
-			"source_address_prefixes": {
-				Type:          schema.TypeSet,
-				Optional:      true,
-				Elem:          &schema.Schema{Type: schema.TypeString},
-				Set:           schema.HashString,
-				ConflictsWith: []string{"source_address_prefix"},
-			},
+			// "source_address_prefixes": {
+			// 	Type:          schema.TypeSet,
+			// 	Optional:      true,
+			// 	Elem:          &schema.Schema{Type: schema.TypeString},
+			// 	Set:           schema.HashString,
+			// 	ConflictsWith: []string{"source_address_prefix"},
+			// },
 
 			"destination_address_prefix": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"destination_address_prefixes"},
+				Type:     schema.TypeString,
+				Optional: true,
+
+				// Since this is not supported it will not conflict
+				// ConflictsWith: []string{"destination_address_prefixes"},
 			},
 
-			"destination_address_prefixes": {
-				Type:          schema.TypeSet,
-				Optional:      true,
-				Elem:          &schema.Schema{Type: schema.TypeString},
-				Set:           schema.HashString,
-				ConflictsWith: []string{"destination_address_prefix"},
-			},
+			// "destination_address_prefixes": {
+			// 	Type:          schema.TypeSet,
+			// 	Optional:      true,
+			// 	Elem:          &schema.Schema{Type: schema.TypeString},
+			// 	Set:           schema.HashString,
+			// 	ConflictsWith: []string{"destination_address_prefix"},
+			// },
 
 			"source_application_security_group_ids": {
 				Type:     schema.TypeSet,
@@ -114,13 +131,14 @@ func resourceArmNetworkSecurityRule() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"destination_application_security_group_ids": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      schema.HashString,
-			},
+			// "destination_application_security_group_ids": {
+			// 	Type:     schema.TypeSet,
+			// 	Optional: true,
+			// 	Elem:     &schema.Schema{Type: schema.TypeString},
+			// 	Set:      schema.HashString,
+			// },
 
+			// Constants not in 2017-03-09 profile
 			"access": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -137,6 +155,7 @@ func resourceArmNetworkSecurityRule() *schema.Resource {
 				ValidateFunc: validation.IntBetween(100, 4096),
 			},
 
+			// Constants not defined in the profile 2017-03-09
 			"direction": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -188,6 +207,14 @@ func resourceArmNetworkSecurityRuleCreate(d *schema.ResourceData, meta interface
 		description := v.(string)
 		rule.SecurityRulePropertiesFormat.Description = &description
 	}
+
+	// The following fields are not supported by the profile 2017-03-09
+	// source_port_ranges
+	// destination_port_ranges
+	// source_address_prefixes
+	// destination_address_prefixes
+	// source_application_security_group_ids
+	// destination_application_security_group_ids
 
 	// if r, ok := d.GetOk("source_port_ranges"); ok {
 	// 	var sourcePortRanges []string
@@ -303,16 +330,18 @@ func resourceArmNetworkSecurityRuleRead(d *schema.ResourceData, meta interface{}
 		d.Set("description", props.Description)
 		d.Set("protocol", string(props.Protocol))
 		d.Set("destination_address_prefix", props.DestinationAddressPrefix)
-		// d.Set("destination_address_prefixes", props.DestinationAddressPrefixes)
 		d.Set("destination_port_range", props.DestinationPortRange)
-		// d.Set("destination_port_ranges", props.DestinationPortRanges)
 		d.Set("source_address_prefix", props.SourceAddressPrefix)
-		// d.Set("source_address_prefixes", props.SourceAddressPrefixes)
 		d.Set("source_port_range", props.SourcePortRange)
-		// d.Set("source_port_ranges", props.SourcePortRanges)
 		d.Set("access", string(props.Access))
 		d.Set("priority", int(*props.Priority))
 		d.Set("direction", string(props.Direction))
+
+		// The following fields are not supported by the profile 2017-03-09
+		// d.Set("destination_port_ranges", props.DestinationPortRanges)
+		// d.Set("destination_address_prefixes", props.DestinationAddressPrefixes)
+		// d.Set("source_address_prefixes", props.SourceAddressPrefixes)
+		// d.Set("source_port_ranges", props.SourcePortRanges)
 	}
 
 	return nil

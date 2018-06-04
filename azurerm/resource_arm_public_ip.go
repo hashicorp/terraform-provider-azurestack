@@ -42,7 +42,7 @@ func resourceArmPublicIp() *schema.Resource {
 
 			"resource_group_name": resourceGroupNameSchema(),
 
-			// Zones not supportied in profile
+			// Not supported for 2017-03-09 profile
 			// "zones": singleZonesSchema(),
 
 			"public_ip_address_allocation": {
@@ -87,7 +87,7 @@ func resourceArmPublicIp() *schema.Resource {
 				Computed: true,
 			},
 
-			// Sku not supported in the profile
+			// Not supported for 2017-03-09 profile
 			// "sku": {
 			// 	Type:     schema.TypeString,
 			// 	Optional: true,
@@ -114,14 +114,18 @@ func resourceArmPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
 	name := d.Get("name").(string)
 	location := azureRMNormalizeLocation(d.Get("location").(string))
 	resGroup := d.Get("resource_group_name").(string)
+	// Not supported for 2017-03-09 profile
 	// sku := network.PublicIPAddressSku{
 	// 	Name: network.PublicIPAddressSkuName(d.Get("sku").(string)),
 	// }
 	tags := d.Get("tags").(map[string]interface{})
+
+	// Not supported for 2017-03-09 profile
 	// zones := expandZones(d.Get("zones").([]interface{}))
 
 	ipAllocationMethod := network.IPAllocationMethod(d.Get("public_ip_address_allocation").(string))
 
+	// Not supported for 2017-03-09 profile
 	// if strings.ToLower(string(sku.Name)) == "standard" {
 	// 	if strings.ToLower(string(ipAllocationMethod)) != "static" {
 	// 		return fmt.Errorf("Static IP allocation must be used when creating Standard SKU public IP addresses.")
@@ -157,11 +161,12 @@ func resourceArmPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	publicIp := network.PublicIPAddress{
-		Name:     &name,
-		Location: &location,
-		// Sku:      &sku,
+		Name:                            &name,
+		Location:                        &location,
 		PublicIPAddressPropertiesFormat: &properties,
 		Tags: *expandTags(tags),
+		// Not supported for 2017-03-09 profile
+		// Sku:      &sku,
 		// Zones: zones,
 	}
 
@@ -211,7 +216,6 @@ func resourceArmPublicIpRead(d *schema.ResourceData, meta interface{}) error {
 
 	d.Set("name", resp.Name)
 	d.Set("resource_group_name", resGroup)
-	// d.Set("zones", resp.Zones)
 	if location := resp.Location; location != nil {
 		d.Set("location", azureRMNormalizeLocation(*location))
 	}
@@ -221,6 +225,7 @@ func resourceArmPublicIpRead(d *schema.ResourceData, meta interface{}) error {
 	// if sku := resp.Sku; sku != nil {
 	// 	d.Set("sku", string(sku.Name))
 	// }
+	// d.Set("zones", resp.Zones)
 
 	if props := resp.PublicIPAddressPropertiesFormat; props != nil {
 		d.Set("public_ip_address_allocation", strings.ToLower(string(props.PublicIPAllocationMethod)))

@@ -60,11 +60,12 @@ func resourceArmSubnet() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"service_endpoints": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-			},
+			// Not supported for 2017-03-09 profile
+			// "service_endpoints": {
+			// 	Type:     schema.TypeList,
+			// 	Optional: true,
+			// 	Elem:     &schema.Schema{Type: schema.TypeString},
+			// },
 		},
 	}
 }
@@ -117,6 +118,7 @@ func resourceArmSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 		defer azureRMUnlockByName(routeTableName, routeTableResourceName)
 	}
 
+	// Not supported for 2017-03-09 profile
 	// serviceEndpoints, serviceEndpointsErr := expandAzureRmServiceEndpoints(d)
 	// if serviceEndpointsErr != nil {
 	// 	return fmt.Errorf("Error Building list of Service Endpoints: %+v", serviceEndpointsErr)
@@ -194,6 +196,7 @@ func resourceArmSubnetRead(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 
+		// Not supported for 2017-03-09 profile
 		// serviceEndpoints := flattenSubnetServiceEndpoints(props.ServiceEndpoints)
 		// if err := d.Set("service_endpoints", serviceEndpoints); err != nil {
 		// 	return err
@@ -255,6 +258,9 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 
 	return nil
 }
+
+// Since ServiceEndpointPropertiesFormat is not on the 2017-03-09 profile
+// This will not compile
 
 // func expandAzureRmServiceEndpoints(d *schema.ResourceData) ([]network.ServiceEndpointPropertiesFormat, error) {
 // 	serviceEndpoints := d.Get("service_endpoints").([]interface{})

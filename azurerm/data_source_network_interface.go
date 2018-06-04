@@ -133,10 +133,12 @@ func dataSourceArmNetworkInterface() *schema.Resource {
 			 * Refer to: https://docs.microsoft.com/en-us/azure/virtual-network/create-vm-accelerated-networking-cli
 			 * For details, VM configuration and caveats.
 			 */
-			"enable_accelerated_networking": {
-				Type:     schema.TypeBool,
-				Computed: true,
-			},
+
+			// enable_accelerated_networking is not supported in the profile 2017-03-09
+			// "enable_accelerated_networking": {
+			// 	Type:     schema.TypeBool,
+			// 	Computed: true,
+			// },
 
 			"enable_ip_forwarding": {
 				Type:     schema.TypeBool,
@@ -250,6 +252,9 @@ func dataSourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{})
 	d.Set("applied_dns_servers", appliedDNSServers)
 	d.Set("dns_servers", dnsServers)
 	d.Set("enable_ip_forwarding", resp.EnableIPForwarding)
+
+	// enable_accelerated_networking is not supported in the profile used for
+	// AzureStack
 	// d.Set("enable_accelerated_networking", resp.EnableAcceleratedNetworking)
 
 	flattenAndSetTags(d, &resp.Tags)

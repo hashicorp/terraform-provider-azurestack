@@ -66,15 +66,17 @@ func dataSourceArmStorageAccount() *schema.Resource {
 				Computed: true,
 			},
 
-			"enable_file_encryption": {
-				Type:     schema.TypeBool,
-				Computed: true,
-			},
+			// Not supported for 2017-03-09 profile
+			// "enable_file_encryption": {
+			// 	Type:     schema.TypeBool,
+			// 	Computed: true,
+			// },
 
-			"enable_https_traffic_only": {
-				Type:     schema.TypeBool,
-				Computed: true,
-			},
+			// Not supported for 2017-03-09 profile
+			// "enable_https_traffic_only": {
+			// 	Type:     schema.TypeBool,
+			// 	Computed: true,
+			// },
 
 			"primary_location": {
 				Type:     schema.TypeString,

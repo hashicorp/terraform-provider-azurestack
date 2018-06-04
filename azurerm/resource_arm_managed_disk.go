@@ -2,6 +2,9 @@ package azurerm
 
 import "fmt"
 
+// Managed disk is not supported on 2017-03-09, but some functions defined here
+// are needed in another resources
+
 // func resourceArmManagedDisk() *schema.Resource {
 // 	return &schema.Resource{
 // 		Create: resourceArmManagedDiskCreate,

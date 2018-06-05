@@ -43,9 +43,6 @@ output "storage_account_tier" {
 
 * `access_tier` - Defines the access tier for `BlobStorage` accounts.
 
-* `enable_blob_encryption` - Are Encryption Services are enabled for Blob storage? See [here](https://azure.microsoft.com/en-us/documentation/articles/storage-service-encryption/)
-    for more information.
-
 * `account_encryption_source` - The Encryption Source for this Storage Account.
 
 * `custom_domain` - A `custom_domain` block as documented below.

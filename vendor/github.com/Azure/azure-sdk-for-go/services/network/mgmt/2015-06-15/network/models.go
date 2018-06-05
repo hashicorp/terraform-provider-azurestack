@@ -19,11 +19,10 @@ package network
 
 import (
 	"encoding/json"
-	"net/http"
-
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/Azure/go-autorest/autorest/to"
+	"net/http"
 )
 
 // ApplicationGatewayCookieBasedAffinity enumerates the values for application gateway cookie based affinity.
@@ -4257,7 +4256,6 @@ type InterfaceIPConfigurationPropertiesFormat struct {
 	// LoadBalancerInboundNatRules - A list of references of LoadBalancerInboundNatRules.
 	LoadBalancerInboundNatRules *[]InboundNatRule `json:"loadBalancerInboundNatRules,omitempty"`
 	PrivateIPAddress            *string           `json:"privateIPAddress,omitempty"`
-	Primary                     *bool             `json:"primary,omitempty"`
 	// PrivateIPAllocationMethod - Defines how a private IP address is assigned. Possible values are: 'Static' and 'Dynamic'. Possible values include: 'Static', 'Dynamic'
 	PrivateIPAllocationMethod IPAllocationMethod `json:"privateIPAllocationMethod,omitempty"`
 	Subnet                    *Subnet            `json:"subnet,omitempty"`

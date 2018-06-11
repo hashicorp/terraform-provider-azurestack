@@ -40,41 +40,42 @@ func NewClientWithBaseURI(baseURI string, subscriptionID string) Client {
 	return Client{NewWithBaseURI(baseURI, subscriptionID)}
 }
 
-// CheckAvailability checks the availability of the given notificationHub in a namespace.
-//
-// resourceGroupName is the name of the resource group. namespaceName is the namespace name. parameters is the
-// notificationHub name.
-func (client Client) CheckAvailability(ctx context.Context, resourceGroupName string, namespaceName string, parameters CheckAvailabilityParameters) (result CheckAvailabilityResult, err error) {
+// CheckNotificationHubAvailability checks the availability of the given notificationHub in a namespace.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// namespaceName - the namespace name.
+// parameters - the notificationHub name.
+func (client Client) CheckNotificationHubAvailability(ctx context.Context, resourceGroupName string, namespaceName string, parameters CheckAvailabilityParameters) (result CheckAvailabilityResult, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: parameters,
 			Constraints: []validation.Constraint{{Target: "parameters.Name", Name: validation.Null, Rule: true, Chain: nil},
 				{Target: "parameters.Location", Name: validation.Null, Rule: true, Chain: nil}}}}); err != nil {
-		return result, validation.NewError("notificationhubs.Client", "CheckAvailability", err.Error())
+		return result, validation.NewError("notificationhubs.Client", "CheckNotificationHubAvailability", err.Error())
 	}
 
-	req, err := client.CheckAvailabilityPreparer(ctx, resourceGroupName, namespaceName, parameters)
+	req, err := client.CheckNotificationHubAvailabilityPreparer(ctx, resourceGroupName, namespaceName, parameters)
 	if err != nil {
-		err = autorest.NewErrorWithError(err, "notificationhubs.Client", "CheckAvailability", nil, "Failure preparing request")
+		err = autorest.NewErrorWithError(err, "notificationhubs.Client", "CheckNotificationHubAvailability", nil, "Failure preparing request")
 		return
 	}
 
-	resp, err := client.CheckAvailabilitySender(req)
+	resp, err := client.CheckNotificationHubAvailabilitySender(req)
 	if err != nil {
 		result.Response = autorest.Response{Response: resp}
-		err = autorest.NewErrorWithError(err, "notificationhubs.Client", "CheckAvailability", resp, "Failure sending request")
+		err = autorest.NewErrorWithError(err, "notificationhubs.Client", "CheckNotificationHubAvailability", resp, "Failure sending request")
 		return
 	}
 
-	result, err = client.CheckAvailabilityResponder(resp)
+	result, err = client.CheckNotificationHubAvailabilityResponder(resp)
 	if err != nil {
-		err = autorest.NewErrorWithError(err, "notificationhubs.Client", "CheckAvailability", resp, "Failure responding to request")
+		err = autorest.NewErrorWithError(err, "notificationhubs.Client", "CheckNotificationHubAvailability", resp, "Failure responding to request")
 	}
 
 	return
 }
 
-// CheckAvailabilityPreparer prepares the CheckAvailability request.
-func (client Client) CheckAvailabilityPreparer(ctx context.Context, resourceGroupName string, namespaceName string, parameters CheckAvailabilityParameters) (*http.Request, error) {
+// CheckNotificationHubAvailabilityPreparer prepares the CheckNotificationHubAvailability request.
+func (client Client) CheckNotificationHubAvailabilityPreparer(ctx context.Context, resourceGroupName string, namespaceName string, parameters CheckAvailabilityParameters) (*http.Request, error) {
 	pathParameters := map[string]interface{}{
 		"namespaceName":     autorest.Encode("path", namespaceName),
 		"resourceGroupName": autorest.Encode("path", resourceGroupName),
@@ -96,16 +97,16 @@ func (client Client) CheckAvailabilityPreparer(ctx context.Context, resourceGrou
 	return preparer.Prepare((&http.Request{}).WithContext(ctx))
 }
 
-// CheckAvailabilitySender sends the CheckAvailability request. The method will close the
+// CheckNotificationHubAvailabilitySender sends the CheckNotificationHubAvailability request. The method will close the
 // http.Response Body if it receives an error.
-func (client Client) CheckAvailabilitySender(req *http.Request) (*http.Response, error) {
+func (client Client) CheckNotificationHubAvailabilitySender(req *http.Request) (*http.Response, error) {
 	return autorest.SendWithSender(client, req,
 		azure.DoRetryWithRegistration(client.Client))
 }
 
-// CheckAvailabilityResponder handles the response to the CheckAvailability request. The method always
+// CheckNotificationHubAvailabilityResponder handles the response to the CheckNotificationHubAvailability request. The method always
 // closes the http.Response Body.
-func (client Client) CheckAvailabilityResponder(resp *http.Response) (result CheckAvailabilityResult, err error) {
+func (client Client) CheckNotificationHubAvailabilityResponder(resp *http.Response) (result CheckAvailabilityResult, err error) {
 	err = autorest.Respond(
 		resp,
 		client.ByInspecting(),
@@ -117,9 +118,11 @@ func (client Client) CheckAvailabilityResponder(resp *http.Response) (result Che
 }
 
 // CreateOrUpdate creates/Update a NotificationHub in a namespace.
-//
-// resourceGroupName is the name of the resource group. namespaceName is the namespace name. notificationHubName is
-// the notification hub name. parameters is parameters supplied to the create/update a NotificationHub Resource.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// namespaceName - the namespace name.
+// notificationHubName - the notification hub name.
+// parameters - parameters supplied to the create/update a NotificationHub Resource.
 func (client Client) CreateOrUpdate(ctx context.Context, resourceGroupName string, namespaceName string, notificationHubName string, parameters CreateOrUpdateParameters) (result ResourceType, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: parameters,
@@ -193,10 +196,12 @@ func (client Client) CreateOrUpdateResponder(resp *http.Response) (result Resour
 }
 
 // CreateOrUpdateAuthorizationRule creates/Updates an authorization rule for a NotificationHub
-//
-// resourceGroupName is the name of the resource group. namespaceName is the namespace name. notificationHubName is
-// the notification hub name. authorizationRuleName is authorization Rule Name. parameters is the shared access
-// authorization rule.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// namespaceName - the namespace name.
+// notificationHubName - the notification hub name.
+// authorizationRuleName - authorization Rule Name.
+// parameters - the shared access authorization rule.
 func (client Client) CreateOrUpdateAuthorizationRule(ctx context.Context, resourceGroupName string, namespaceName string, notificationHubName string, authorizationRuleName string, parameters SharedAccessAuthorizationRuleCreateOrUpdateParameters) (result SharedAccessAuthorizationRuleResource, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: parameters,
@@ -271,9 +276,10 @@ func (client Client) CreateOrUpdateAuthorizationRuleResponder(resp *http.Respons
 }
 
 // Delete deletes a notification hub associated with a namespace.
-//
-// resourceGroupName is the name of the resource group. namespaceName is the namespace name. notificationHubName is
-// the notification hub name.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// namespaceName - the namespace name.
+// notificationHubName - the notification hub name.
 func (client Client) Delete(ctx context.Context, resourceGroupName string, namespaceName string, notificationHubName string) (result autorest.Response, err error) {
 	req, err := client.DeletePreparer(ctx, resourceGroupName, namespaceName, notificationHubName)
 	if err != nil {
@@ -338,9 +344,11 @@ func (client Client) DeleteResponder(resp *http.Response) (result autorest.Respo
 }
 
 // DeleteAuthorizationRule deletes a notificationHub authorization rule
-//
-// resourceGroupName is the name of the resource group. namespaceName is the namespace name. notificationHubName is
-// the notification hub name. authorizationRuleName is authorization Rule Name.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// namespaceName - the namespace name.
+// notificationHubName - the notification hub name.
+// authorizationRuleName - authorization Rule Name.
 func (client Client) DeleteAuthorizationRule(ctx context.Context, resourceGroupName string, namespaceName string, notificationHubName string, authorizationRuleName string) (result autorest.Response, err error) {
 	req, err := client.DeleteAuthorizationRulePreparer(ctx, resourceGroupName, namespaceName, notificationHubName, authorizationRuleName)
 	if err != nil {
@@ -406,9 +414,10 @@ func (client Client) DeleteAuthorizationRuleResponder(resp *http.Response) (resu
 }
 
 // Get lists the notification hubs associated with a namespace.
-//
-// resourceGroupName is the name of the resource group. namespaceName is the namespace name. notificationHubName is
-// the notification hub name.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// namespaceName - the namespace name.
+// notificationHubName - the notification hub name.
 func (client Client) Get(ctx context.Context, resourceGroupName string, namespaceName string, notificationHubName string) (result ResourceType, err error) {
 	req, err := client.GetPreparer(ctx, resourceGroupName, namespaceName, notificationHubName)
 	if err != nil {
@@ -474,9 +483,11 @@ func (client Client) GetResponder(resp *http.Response) (result ResourceType, err
 }
 
 // GetAuthorizationRule gets an authorization rule for a NotificationHub by name.
-//
-// resourceGroupName is the name of the resource group. namespaceName is the namespace name notificationHubName is
-// the notification hub name. authorizationRuleName is authorization rule name.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// namespaceName - the namespace name
+// notificationHubName - the notification hub name.
+// authorizationRuleName - authorization rule name.
 func (client Client) GetAuthorizationRule(ctx context.Context, resourceGroupName string, namespaceName string, notificationHubName string, authorizationRuleName string) (result SharedAccessAuthorizationRuleResource, err error) {
 	req, err := client.GetAuthorizationRulePreparer(ctx, resourceGroupName, namespaceName, notificationHubName, authorizationRuleName)
 	if err != nil {
@@ -543,9 +554,10 @@ func (client Client) GetAuthorizationRuleResponder(resp *http.Response) (result 
 }
 
 // GetPnsCredentials lists the PNS Credentials associated with a notification hub .
-//
-// resourceGroupName is the name of the resource group. namespaceName is the namespace name. notificationHubName is
-// the notification hub name.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// namespaceName - the namespace name.
+// notificationHubName - the notification hub name.
 func (client Client) GetPnsCredentials(ctx context.Context, resourceGroupName string, namespaceName string, notificationHubName string) (result PnsCredentialsResource, err error) {
 	req, err := client.GetPnsCredentialsPreparer(ctx, resourceGroupName, namespaceName, notificationHubName)
 	if err != nil {
@@ -611,8 +623,9 @@ func (client Client) GetPnsCredentialsResponder(resp *http.Response) (result Pns
 }
 
 // List lists the notification hubs associated with a namespace.
-//
-// resourceGroupName is the name of the resource group. namespaceName is the namespace name.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// namespaceName - the namespace name.
 func (client Client) List(ctx context.Context, resourceGroupName string, namespaceName string) (result ListResultPage, err error) {
 	result.fn = client.listNextResults
 	req, err := client.ListPreparer(ctx, resourceGroupName, namespaceName)
@@ -705,9 +718,10 @@ func (client Client) ListComplete(ctx context.Context, resourceGroupName string,
 }
 
 // ListAuthorizationRules gets the authorization rules for a NotificationHub.
-//
-// resourceGroupName is the name of the resource group. namespaceName is the namespace name notificationHubName is
-// the notification hub name.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// namespaceName - the namespace name
+// notificationHubName - the notification hub name.
 func (client Client) ListAuthorizationRules(ctx context.Context, resourceGroupName string, namespaceName string, notificationHubName string) (result SharedAccessAuthorizationRuleListResultPage, err error) {
 	result.fn = client.listAuthorizationRulesNextResults
 	req, err := client.ListAuthorizationRulesPreparer(ctx, resourceGroupName, namespaceName, notificationHubName)
@@ -801,10 +815,11 @@ func (client Client) ListAuthorizationRulesComplete(ctx context.Context, resourc
 }
 
 // ListKeys gets the Primary and Secondary ConnectionStrings to the NotificationHub
-//
-// resourceGroupName is the name of the resource group. namespaceName is the namespace name. notificationHubName is
-// the notification hub name. authorizationRuleName is the connection string of the NotificationHub for the
-// specified authorizationRule.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// namespaceName - the namespace name.
+// notificationHubName - the notification hub name.
+// authorizationRuleName - the connection string of the NotificationHub for the specified authorizationRule.
 func (client Client) ListKeys(ctx context.Context, resourceGroupName string, namespaceName string, notificationHubName string, authorizationRuleName string) (result ResourceListKeys, err error) {
 	req, err := client.ListKeysPreparer(ctx, resourceGroupName, namespaceName, notificationHubName, authorizationRuleName)
 	if err != nil {
@@ -871,11 +886,12 @@ func (client Client) ListKeysResponder(resp *http.Response) (result ResourceList
 }
 
 // RegenerateKeys regenerates the Primary/Secondary Keys to the NotificationHub Authorization Rule
-//
-// resourceGroupName is the name of the resource group. namespaceName is the namespace name. notificationHubName is
-// the notification hub name. authorizationRuleName is the connection string of the NotificationHub for the
-// specified authorizationRule. parameters is parameters supplied to regenerate the NotificationHub Authorization
-// Rule Key.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// namespaceName - the namespace name.
+// notificationHubName - the notification hub name.
+// authorizationRuleName - the connection string of the NotificationHub for the specified authorizationRule.
+// parameters - parameters supplied to regenerate the NotificationHub Authorization Rule Key.
 func (client Client) RegenerateKeys(ctx context.Context, resourceGroupName string, namespaceName string, notificationHubName string, authorizationRuleName string, parameters PolicykeyResource) (result ResourceListKeys, err error) {
 	req, err := client.RegenerateKeysPreparer(ctx, resourceGroupName, namespaceName, notificationHubName, authorizationRuleName, parameters)
 	if err != nil {

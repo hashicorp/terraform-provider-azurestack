@@ -199,13 +199,13 @@ type CertificateResponse struct {
 
 // DefinitionDescription description of the IoT hub.
 type DefinitionDescription struct {
-	// ApplyAllocationPolicy - Flag for applying allocationPolicy or not for a given IoT hub.
+	// ApplyAllocationPolicy - flag for applying allocationPolicy or not for a given iot hub.
 	ApplyAllocationPolicy *bool `json:"applyAllocationPolicy,omitempty"`
-	// AllocationWeight - Weight to apply for a given IoT hub.
+	// AllocationWeight - weight to apply for a given iot h.
 	AllocationWeight *int32 `json:"allocationWeight,omitempty"`
 	// Name - Host name of the IoT hub.
 	Name *string `json:"name,omitempty"`
-	// ConnectionString - Connection string of the IoT hub.
+	// ConnectionString - Connection string og the IoT hub.
 	ConnectionString *string `json:"connectionString,omitempty"`
 	// Location - ARM region of the IoT hub.
 	Location *string `json:"location,omitempty"`
@@ -214,13 +214,13 @@ type DefinitionDescription struct {
 // ErrorDetails error details.
 type ErrorDetails struct {
 	// Code - The error code.
-	Code *string `json:"Code,omitempty"`
+	Code *string `json:"code,omitempty"`
 	// HTTPStatusCode - The HTTP status code.
-	HTTPStatusCode *string `json:"HttpStatusCode,omitempty"`
+	HTTPStatusCode *string `json:"httpStatusCode,omitempty"`
 	// Message - The error message.
-	Message *string `json:"Message,omitempty"`
+	Message *string `json:"message,omitempty"`
 	// Details - The error details.
-	Details *string `json:"Details,omitempty"`
+	Details *string `json:"details,omitempty"`
 }
 
 // ErrorMesssage error response containing message and code.
@@ -258,12 +258,11 @@ type IotDpsPropertiesDescription struct {
 // operation.
 type IotDpsResourceCreateOrUpdateFuture struct {
 	azure.Future
-	req *http.Request
 }
 
 // Result returns the result of the asynchronous operation.
 // If the operation has not completed it will return an error.
-func (future IotDpsResourceCreateOrUpdateFuture) Result(client IotDpsResourceClient) (psd ProvisioningServiceDescription, err error) {
+func (future *IotDpsResourceCreateOrUpdateFuture) Result(client IotDpsResourceClient) (psd ProvisioningServiceDescription, err error) {
 	var done bool
 	done, err = future.Done(client)
 	if err != nil {
@@ -271,34 +270,15 @@ func (future IotDpsResourceCreateOrUpdateFuture) Result(client IotDpsResourceCli
 		return
 	}
 	if !done {
-		return psd, azure.NewAsyncOpIncompleteError("iothub.IotDpsResourceCreateOrUpdateFuture")
-	}
-	if future.PollingMethod() == azure.PollingLocation {
-		psd, err = client.CreateOrUpdateResponder(future.Response())
-		if err != nil {
-			err = autorest.NewErrorWithError(err, "iothub.IotDpsResourceCreateOrUpdateFuture", "Result", future.Response(), "Failure responding to request")
-		}
+		err = azure.NewAsyncOpIncompleteError("iothub.IotDpsResourceCreateOrUpdateFuture")
 		return
 	}
-	var req *http.Request
-	var resp *http.Response
-	if future.PollingURL() != "" {
-		req, err = http.NewRequest(http.MethodGet, future.PollingURL(), nil)
+	sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+	if psd.Response.Response, err = future.GetResult(sender); err == nil && psd.Response.Response.StatusCode != http.StatusNoContent {
+		psd, err = client.CreateOrUpdateResponder(psd.Response.Response)
 		if err != nil {
-			return
+			err = autorest.NewErrorWithError(err, "iothub.IotDpsResourceCreateOrUpdateFuture", "Result", psd.Response.Response, "Failure responding to request")
 		}
-	} else {
-		req = autorest.ChangeToGet(future.req)
-	}
-	resp, err = autorest.SendWithSender(client, req,
-		autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
-	if err != nil {
-		err = autorest.NewErrorWithError(err, "iothub.IotDpsResourceCreateOrUpdateFuture", "Result", resp, "Failure sending request")
-		return
-	}
-	psd, err = client.CreateOrUpdateResponder(resp)
-	if err != nil {
-		err = autorest.NewErrorWithError(err, "iothub.IotDpsResourceCreateOrUpdateFuture", "Result", resp, "Failure responding to request")
 	}
 	return
 }
@@ -306,12 +286,11 @@ func (future IotDpsResourceCreateOrUpdateFuture) Result(client IotDpsResourceCli
 // IotDpsResourceDeleteFuture an abstraction for monitoring and retrieving the results of a long-running operation.
 type IotDpsResourceDeleteFuture struct {
 	azure.Future
-	req *http.Request
 }
 
 // Result returns the result of the asynchronous operation.
 // If the operation has not completed it will return an error.
-func (future IotDpsResourceDeleteFuture) Result(client IotDpsResourceClient) (ar autorest.Response, err error) {
+func (future *IotDpsResourceDeleteFuture) Result(client IotDpsResourceClient) (ar autorest.Response, err error) {
 	var done bool
 	done, err = future.Done(client)
 	if err != nil {
@@ -319,47 +298,21 @@ func (future IotDpsResourceDeleteFuture) Result(client IotDpsResourceClient) (ar
 		return
 	}
 	if !done {
-		return ar, azure.NewAsyncOpIncompleteError("iothub.IotDpsResourceDeleteFuture")
-	}
-	if future.PollingMethod() == azure.PollingLocation {
-		ar, err = client.DeleteResponder(future.Response())
-		if err != nil {
-			err = autorest.NewErrorWithError(err, "iothub.IotDpsResourceDeleteFuture", "Result", future.Response(), "Failure responding to request")
-		}
+		err = azure.NewAsyncOpIncompleteError("iothub.IotDpsResourceDeleteFuture")
 		return
 	}
-	var req *http.Request
-	var resp *http.Response
-	if future.PollingURL() != "" {
-		req, err = http.NewRequest(http.MethodGet, future.PollingURL(), nil)
-		if err != nil {
-			return
-		}
-	} else {
-		req = autorest.ChangeToGet(future.req)
-	}
-	resp, err = autorest.SendWithSender(client, req,
-		autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
-	if err != nil {
-		err = autorest.NewErrorWithError(err, "iothub.IotDpsResourceDeleteFuture", "Result", resp, "Failure sending request")
-		return
-	}
-	ar, err = client.DeleteResponder(resp)
-	if err != nil {
-		err = autorest.NewErrorWithError(err, "iothub.IotDpsResourceDeleteFuture", "Result", resp, "Failure responding to request")
-	}
+	ar.Response = future.Response()
 	return
 }
 
 // IotDpsResourceUpdateFuture an abstraction for monitoring and retrieving the results of a long-running operation.
 type IotDpsResourceUpdateFuture struct {
 	azure.Future
-	req *http.Request
 }
 
 // Result returns the result of the asynchronous operation.
 // If the operation has not completed it will return an error.
-func (future IotDpsResourceUpdateFuture) Result(client IotDpsResourceClient) (psd ProvisioningServiceDescription, err error) {
+func (future *IotDpsResourceUpdateFuture) Result(client IotDpsResourceClient) (psd ProvisioningServiceDescription, err error) {
 	var done bool
 	done, err = future.Done(client)
 	if err != nil {
@@ -367,41 +320,22 @@ func (future IotDpsResourceUpdateFuture) Result(client IotDpsResourceClient) (ps
 		return
 	}
 	if !done {
-		return psd, azure.NewAsyncOpIncompleteError("iothub.IotDpsResourceUpdateFuture")
-	}
-	if future.PollingMethod() == azure.PollingLocation {
-		psd, err = client.UpdateResponder(future.Response())
-		if err != nil {
-			err = autorest.NewErrorWithError(err, "iothub.IotDpsResourceUpdateFuture", "Result", future.Response(), "Failure responding to request")
-		}
+		err = azure.NewAsyncOpIncompleteError("iothub.IotDpsResourceUpdateFuture")
 		return
 	}
-	var req *http.Request
-	var resp *http.Response
-	if future.PollingURL() != "" {
-		req, err = http.NewRequest(http.MethodGet, future.PollingURL(), nil)
+	sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+	if psd.Response.Response, err = future.GetResult(sender); err == nil && psd.Response.Response.StatusCode != http.StatusNoContent {
+		psd, err = client.UpdateResponder(psd.Response.Response)
 		if err != nil {
-			return
+			err = autorest.NewErrorWithError(err, "iothub.IotDpsResourceUpdateFuture", "Result", psd.Response.Response, "Failure responding to request")
 		}
-	} else {
-		req = autorest.ChangeToGet(future.req)
-	}
-	resp, err = autorest.SendWithSender(client, req,
-		autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
-	if err != nil {
-		err = autorest.NewErrorWithError(err, "iothub.IotDpsResourceUpdateFuture", "Result", resp, "Failure sending request")
-		return
-	}
-	psd, err = client.UpdateResponder(resp)
-	if err != nil {
-		err = autorest.NewErrorWithError(err, "iothub.IotDpsResourceUpdateFuture", "Result", resp, "Failure responding to request")
 	}
 	return
 }
 
-// IotDpsSkuDefinition available SKU's of tier and units.
+// IotDpsSkuDefinition available Sku's of tier and units.
 type IotDpsSkuDefinition struct {
-	// Name - SKU name. Possible values include: 'S1'
+	// Name - Sku name. Possible values include: 'S1'
 	Name IotDpsSku `json:"name,omitempty"`
 }
 
@@ -662,7 +596,7 @@ type ProvisioningServiceDescription struct {
 	Etag *string `json:"etag,omitempty"`
 	// Properties - Service specific properties for a provisioning service
 	Properties *IotDpsPropertiesDescription `json:"properties,omitempty"`
-	// Sku - SKU info for a provisioning service.
+	// Sku - Sku info for a provisioning Service.
 	Sku *IotDpsSkuInfo `json:"sku,omitempty"`
 	// ID - The resource identifier.
 	ID *string `json:"id,omitempty"`

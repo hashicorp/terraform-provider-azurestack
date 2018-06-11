@@ -129,6 +129,19 @@ func PossibleLocalTimestampFormatValues() []LocalTimestampFormat {
 	return []LocalTimestampFormat{Embedded, Iana, TimeSpan}
 }
 
+// PropertyType enumerates the values for property type.
+type PropertyType string
+
+const (
+	// String ...
+	String PropertyType = "String"
+)
+
+// PossiblePropertyTypeValues returns an array of possible values for the PropertyType const type.
+func PossiblePropertyTypeValues() []PropertyType {
+	return []PropertyType{String}
+}
+
 // ProvisioningState enumerates the values for provisioning state.
 type ProvisioningState string
 
@@ -156,19 +169,19 @@ func PossibleProvisioningStateValues() []ProvisioningState {
 type ReferenceDataKeyPropertyType string
 
 const (
-	// Bool ...
-	Bool ReferenceDataKeyPropertyType = "Bool"
-	// DateTime ...
-	DateTime ReferenceDataKeyPropertyType = "DateTime"
-	// Double ...
-	Double ReferenceDataKeyPropertyType = "Double"
-	// String ...
-	String ReferenceDataKeyPropertyType = "String"
+	// ReferenceDataKeyPropertyTypeBool ...
+	ReferenceDataKeyPropertyTypeBool ReferenceDataKeyPropertyType = "Bool"
+	// ReferenceDataKeyPropertyTypeDateTime ...
+	ReferenceDataKeyPropertyTypeDateTime ReferenceDataKeyPropertyType = "DateTime"
+	// ReferenceDataKeyPropertyTypeDouble ...
+	ReferenceDataKeyPropertyTypeDouble ReferenceDataKeyPropertyType = "Double"
+	// ReferenceDataKeyPropertyTypeString ...
+	ReferenceDataKeyPropertyTypeString ReferenceDataKeyPropertyType = "String"
 )
 
 // PossibleReferenceDataKeyPropertyTypeValues returns an array of possible values for the ReferenceDataKeyPropertyType const type.
 func PossibleReferenceDataKeyPropertyTypeValues() []ReferenceDataKeyPropertyType {
-	return []ReferenceDataKeyPropertyType{Bool, DateTime, Double, String}
+	return []ReferenceDataKeyPropertyType{ReferenceDataKeyPropertyTypeBool, ReferenceDataKeyPropertyTypeDateTime, ReferenceDataKeyPropertyTypeDouble, ReferenceDataKeyPropertyTypeString}
 }
 
 // SkuName enumerates the values for sku name.
@@ -522,6 +535,8 @@ type EnvironmentCreationProperties struct {
 	DataRetentionTime *string `json:"dataRetentionTime,omitempty"`
 	// StorageLimitExceededBehavior - The behavior the Time Series Insights service should take when the environment's capacity has been exceeded. If "PauseIngress" is specified, new events will not be read from the event source. If "PurgeOldData" is specified, new events will continue to be read and old events will be deleted from the environment. The default behavior is PurgeOldData. Possible values include: 'PurgeOldData', 'PauseIngress'
 	StorageLimitExceededBehavior StorageLimitExceededBehavior `json:"storageLimitExceededBehavior,omitempty"`
+	// PartitionKeyProperties - The list of partition keys according to which the data in the environment will be ordered.
+	PartitionKeyProperties *[]PartitionKeyProperty `json:"partitionKeyProperties,omitempty"`
 }
 
 // EnvironmentListResponse the response of the List Environments operation.
@@ -537,6 +552,8 @@ type EnvironmentMutableProperties struct {
 	DataRetentionTime *string `json:"dataRetentionTime,omitempty"`
 	// StorageLimitExceededBehavior - The behavior the Time Series Insights service should take when the environment's capacity has been exceeded. If "PauseIngress" is specified, new events will not be read from the event source. If "PurgeOldData" is specified, new events will continue to be read and old events will be deleted from the environment. The default behavior is PurgeOldData. Possible values include: 'PurgeOldData', 'PauseIngress'
 	StorageLimitExceededBehavior StorageLimitExceededBehavior `json:"storageLimitExceededBehavior,omitempty"`
+	// PartitionKeyProperties - The list of event properties which will be used to partition data in the environment.
+	PartitionKeyProperties *[]PartitionKeyProperty `json:"partitionKeyProperties,omitempty"`
 }
 
 // EnvironmentResource an environment is a set of time-series data avaliable for query, and is the top level Azure
@@ -669,6 +686,8 @@ type EnvironmentResourceProperties struct {
 	DataRetentionTime *string `json:"dataRetentionTime,omitempty"`
 	// StorageLimitExceededBehavior - The behavior the Time Series Insights service should take when the environment's capacity has been exceeded. If "PauseIngress" is specified, new events will not be read from the event source. If "PurgeOldData" is specified, new events will continue to be read and old events will be deleted from the environment. The default behavior is PurgeOldData. Possible values include: 'PurgeOldData', 'PauseIngress'
 	StorageLimitExceededBehavior StorageLimitExceededBehavior `json:"storageLimitExceededBehavior,omitempty"`
+	// PartitionKeyProperties - The list of partition keys according to which the data in the environment will be ordered.
+	PartitionKeyProperties *[]PartitionKeyProperty `json:"partitionKeyProperties,omitempty"`
 	// ProvisioningState - Provisioning state of the resource. Possible values include: 'Accepted', 'Creating', 'Updating', 'Succeeded', 'Failed', 'Deleting'
 	ProvisioningState ProvisioningState `json:"provisioningState,omitempty"`
 	// CreationTime - The time the resource was created.
@@ -685,12 +704,11 @@ type EnvironmentResourceProperties struct {
 // operation.
 type EnvironmentsCreateOrUpdateFuture struct {
 	azure.Future
-	req *http.Request
 }
 
 // Result returns the result of the asynchronous operation.
 // If the operation has not completed it will return an error.
-func (future EnvironmentsCreateOrUpdateFuture) Result(client EnvironmentsClient) (er EnvironmentResource, err error) {
+func (future *EnvironmentsCreateOrUpdateFuture) Result(client EnvironmentsClient) (er EnvironmentResource, err error) {
 	var done bool
 	done, err = future.Done(client)
 	if err != nil {
@@ -698,34 +716,15 @@ func (future EnvironmentsCreateOrUpdateFuture) Result(client EnvironmentsClient)
 		return
 	}
 	if !done {
-		return er, azure.NewAsyncOpIncompleteError("timeseriesinsights.EnvironmentsCreateOrUpdateFuture")
-	}
-	if future.PollingMethod() == azure.PollingLocation {
-		er, err = client.CreateOrUpdateResponder(future.Response())
-		if err != nil {
-			err = autorest.NewErrorWithError(err, "timeseriesinsights.EnvironmentsCreateOrUpdateFuture", "Result", future.Response(), "Failure responding to request")
-		}
+		err = azure.NewAsyncOpIncompleteError("timeseriesinsights.EnvironmentsCreateOrUpdateFuture")
 		return
 	}
-	var req *http.Request
-	var resp *http.Response
-	if future.PollingURL() != "" {
-		req, err = http.NewRequest(http.MethodGet, future.PollingURL(), nil)
+	sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+	if er.Response.Response, err = future.GetResult(sender); err == nil && er.Response.Response.StatusCode != http.StatusNoContent {
+		er, err = client.CreateOrUpdateResponder(er.Response.Response)
 		if err != nil {
-			return
+			err = autorest.NewErrorWithError(err, "timeseriesinsights.EnvironmentsCreateOrUpdateFuture", "Result", er.Response.Response, "Failure responding to request")
 		}
-	} else {
-		req = autorest.ChangeToGet(future.req)
-	}
-	resp, err = autorest.SendWithSender(client, req,
-		autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
-	if err != nil {
-		err = autorest.NewErrorWithError(err, "timeseriesinsights.EnvironmentsCreateOrUpdateFuture", "Result", resp, "Failure sending request")
-		return
-	}
-	er, err = client.CreateOrUpdateResponder(resp)
-	if err != nil {
-		err = autorest.NewErrorWithError(err, "timeseriesinsights.EnvironmentsCreateOrUpdateFuture", "Result", resp, "Failure responding to request")
 	}
 	return
 }
@@ -748,12 +747,11 @@ type EnvironmentStatus struct {
 // EnvironmentsUpdateFuture an abstraction for monitoring and retrieving the results of a long-running operation.
 type EnvironmentsUpdateFuture struct {
 	azure.Future
-	req *http.Request
 }
 
 // Result returns the result of the asynchronous operation.
 // If the operation has not completed it will return an error.
-func (future EnvironmentsUpdateFuture) Result(client EnvironmentsClient) (er EnvironmentResource, err error) {
+func (future *EnvironmentsUpdateFuture) Result(client EnvironmentsClient) (er EnvironmentResource, err error) {
 	var done bool
 	done, err = future.Done(client)
 	if err != nil {
@@ -761,34 +759,15 @@ func (future EnvironmentsUpdateFuture) Result(client EnvironmentsClient) (er Env
 		return
 	}
 	if !done {
-		return er, azure.NewAsyncOpIncompleteError("timeseriesinsights.EnvironmentsUpdateFuture")
-	}
-	if future.PollingMethod() == azure.PollingLocation {
-		er, err = client.UpdateResponder(future.Response())
-		if err != nil {
-			err = autorest.NewErrorWithError(err, "timeseriesinsights.EnvironmentsUpdateFuture", "Result", future.Response(), "Failure responding to request")
-		}
+		err = azure.NewAsyncOpIncompleteError("timeseriesinsights.EnvironmentsUpdateFuture")
 		return
 	}
-	var req *http.Request
-	var resp *http.Response
-	if future.PollingURL() != "" {
-		req, err = http.NewRequest(http.MethodGet, future.PollingURL(), nil)
+	sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+	if er.Response.Response, err = future.GetResult(sender); err == nil && er.Response.Response.StatusCode != http.StatusNoContent {
+		er, err = client.UpdateResponder(er.Response.Response)
 		if err != nil {
-			return
+			err = autorest.NewErrorWithError(err, "timeseriesinsights.EnvironmentsUpdateFuture", "Result", er.Response.Response, "Failure responding to request")
 		}
-	} else {
-		req = autorest.ChangeToGet(future.req)
-	}
-	resp, err = autorest.SendWithSender(client, req,
-		autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
-	if err != nil {
-		err = autorest.NewErrorWithError(err, "timeseriesinsights.EnvironmentsUpdateFuture", "Result", resp, "Failure sending request")
-		return
-	}
-	er, err = client.UpdateResponder(resp)
-	if err != nil {
-		err = autorest.NewErrorWithError(err, "timeseriesinsights.EnvironmentsUpdateFuture", "Result", resp, "Failure responding to request")
 	}
 	return
 }
@@ -2036,6 +2015,15 @@ func (page OperationListResultPage) Values() []Operation {
 	return *page.olr.Value
 }
 
+// PartitionKeyProperty the structure of the property that a partition key can have. An environment can have
+// multiple such properties.
+type PartitionKeyProperty struct {
+	// Name - The name of the property.
+	Name *string `json:"name,omitempty"`
+	// Type - The type of the property. Possible values include: 'String'
+	Type PropertyType `json:"type,omitempty"`
+}
+
 // ReferenceDataSetCreateOrUpdateParameters ...
 type ReferenceDataSetCreateOrUpdateParameters struct {
 	*ReferenceDataSetCreationProperties `json:"properties,omitempty"`
@@ -2115,7 +2103,7 @@ type ReferenceDataSetCreationProperties struct {
 type ReferenceDataSetKeyProperty struct {
 	// Name - The name of the key property.
 	Name *string `json:"name,omitempty"`
-	// Type - The type of the key property. Possible values include: 'String', 'Double', 'Bool', 'DateTime'
+	// Type - The type of the key property. Possible values include: 'ReferenceDataKeyPropertyTypeString', 'ReferenceDataKeyPropertyTypeDouble', 'ReferenceDataKeyPropertyTypeBool', 'ReferenceDataKeyPropertyTypeDateTime'
 	Type ReferenceDataKeyPropertyType `json:"type,omitempty"`
 }
 

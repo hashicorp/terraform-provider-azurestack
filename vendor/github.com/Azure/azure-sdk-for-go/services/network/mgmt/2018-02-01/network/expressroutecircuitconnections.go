@@ -41,10 +41,12 @@ func NewExpressRouteCircuitConnectionsClientWithBaseURI(baseURI string, subscrip
 }
 
 // CreateOrUpdate creates or updates a Express Route Circuit Connection in the specified express route circuits.
-//
-// resourceGroupName is the name of the resource group. circuitName is the name of the express route circuit.
-// peeringName is the name of the peering. connectionName is the name of the express route circuit connection.
-// expressRouteCircuitConnectionParameters is parameters supplied to the create or update express route circuit
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// circuitName - the name of the express route circuit.
+// peeringName - the name of the peering.
+// connectionName - the name of the express route circuit connection.
+// expressRouteCircuitConnectionParameters - parameters supplied to the create or update express route circuit
 // circuit connection operation.
 func (client ExpressRouteCircuitConnectionsClient) CreateOrUpdate(ctx context.Context, resourceGroupName string, circuitName string, peeringName string, connectionName string, expressRouteCircuitConnectionParameters ExpressRouteCircuitConnection) (result ExpressRouteCircuitConnectionsCreateOrUpdateFuture, err error) {
 	req, err := client.CreateOrUpdatePreparer(ctx, resourceGroupName, circuitName, peeringName, connectionName, expressRouteCircuitConnectionParameters)
@@ -90,15 +92,17 @@ func (client ExpressRouteCircuitConnectionsClient) CreateOrUpdatePreparer(ctx co
 // CreateOrUpdateSender sends the CreateOrUpdate request. The method will close the
 // http.Response Body if it receives an error.
 func (client ExpressRouteCircuitConnectionsClient) CreateOrUpdateSender(req *http.Request) (future ExpressRouteCircuitConnectionsCreateOrUpdateFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusCreated))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusCreated))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -116,9 +120,11 @@ func (client ExpressRouteCircuitConnectionsClient) CreateOrUpdateResponder(resp 
 }
 
 // Delete deletes the specified Express Route Circuit Connection from the specified express route circuit.
-//
-// resourceGroupName is the name of the resource group. circuitName is the name of the express route circuit.
-// peeringName is the name of the peering. connectionName is the name of the express route circuit connection.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// circuitName - the name of the express route circuit.
+// peeringName - the name of the peering.
+// connectionName - the name of the express route circuit connection.
 func (client ExpressRouteCircuitConnectionsClient) Delete(ctx context.Context, resourceGroupName string, circuitName string, peeringName string, connectionName string) (result ExpressRouteCircuitConnectionsDeleteFuture, err error) {
 	req, err := client.DeletePreparer(ctx, resourceGroupName, circuitName, peeringName, connectionName)
 	if err != nil {
@@ -161,15 +167,17 @@ func (client ExpressRouteCircuitConnectionsClient) DeletePreparer(ctx context.Co
 // DeleteSender sends the Delete request. The method will close the
 // http.Response Body if it receives an error.
 func (client ExpressRouteCircuitConnectionsClient) DeleteSender(req *http.Request) (future ExpressRouteCircuitConnectionsDeleteFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted, http.StatusNoContent))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted, http.StatusNoContent))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -186,9 +194,11 @@ func (client ExpressRouteCircuitConnectionsClient) DeleteResponder(resp *http.Re
 }
 
 // Get gets the specified Express Route Circuit Connection from the specified express route circuit.
-//
-// resourceGroupName is the name of the resource group. circuitName is the name of the express route circuit.
-// peeringName is the name of the peering. connectionName is the name of the express route circuit connection.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// circuitName - the name of the express route circuit.
+// peeringName - the name of the peering.
+// connectionName - the name of the express route circuit connection.
 func (client ExpressRouteCircuitConnectionsClient) Get(ctx context.Context, resourceGroupName string, circuitName string, peeringName string, connectionName string) (result ExpressRouteCircuitConnection, err error) {
 	req, err := client.GetPreparer(ctx, resourceGroupName, circuitName, peeringName, connectionName)
 	if err != nil {

@@ -276,6 +276,30 @@ const (
 	Rolling   UpgradeMode = original.Rolling
 )
 
+type UpgradeOperationInvoker = original.UpgradeOperationInvoker
+
+const (
+	Platform UpgradeOperationInvoker = original.Platform
+	Unknown  UpgradeOperationInvoker = original.Unknown
+	User     UpgradeOperationInvoker = original.User
+)
+
+type UpgradeState = original.UpgradeState
+
+const (
+	UpgradeStateCancelled      UpgradeState = original.UpgradeStateCancelled
+	UpgradeStateCompleted      UpgradeState = original.UpgradeStateCompleted
+	UpgradeStateFaulted        UpgradeState = original.UpgradeStateFaulted
+	UpgradeStateRollingForward UpgradeState = original.UpgradeStateRollingForward
+)
+
+type VirtualMachineEvictionPolicyTypes = original.VirtualMachineEvictionPolicyTypes
+
+const (
+	Deallocate VirtualMachineEvictionPolicyTypes = original.Deallocate
+	Delete     VirtualMachineEvictionPolicyTypes = original.Delete
+)
+
 type VirtualMachinePriorityTypes = original.VirtualMachinePriorityTypes
 
 const (
@@ -462,12 +486,11 @@ const (
 )
 
 type AccessURI = original.AccessURI
-type AccessURIOutput = original.AccessURIOutput
-type AccessURIRaw = original.AccessURIRaw
 type AdditionalUnattendContent = original.AdditionalUnattendContent
 type APIEntityReference = original.APIEntityReference
 type APIError = original.APIError
 type APIErrorBase = original.APIErrorBase
+type AutoOSUpgradePolicy = original.AutoOSUpgradePolicy
 type AvailabilitySet = original.AvailabilitySet
 type AvailabilitySetListResult = original.AvailabilitySetListResult
 type AvailabilitySetProperties = original.AvailabilitySetProperties
@@ -573,7 +596,7 @@ type ResourceSkuRestrictions = original.ResourceSkuRestrictions
 type ResourceSkusResult = original.ResourceSkusResult
 type ResourceSkusResultIterator = original.ResourceSkusResultIterator
 type ResourceSkusResultPage = original.ResourceSkusResultPage
-type ResourceUpdate = original.ResourceUpdate
+type RollbackStatusInfo = original.RollbackStatusInfo
 type RollingUpgradePolicy = original.RollingUpgradePolicy
 type RollingUpgradeProgressInfo = original.RollingUpgradeProgressInfo
 type RollingUpgradeRunningStatus = original.RollingUpgradeRunningStatus
@@ -609,6 +632,9 @@ type SubResource = original.SubResource
 type SubResourceReadOnly = original.SubResourceReadOnly
 type ThrottledRequestsInput = original.ThrottledRequestsInput
 type UpdateResource = original.UpdateResource
+type UpgradeOperationHistoricalStatusInfo = original.UpgradeOperationHistoricalStatusInfo
+type UpgradeOperationHistoricalStatusInfoProperties = original.UpgradeOperationHistoricalStatusInfoProperties
+type UpgradeOperationHistoryStatus = original.UpgradeOperationHistoryStatus
 type UpgradePolicy = original.UpgradePolicy
 type Usage = original.Usage
 type UsageName = original.UsageName
@@ -657,6 +683,9 @@ type VirtualMachineScaleSetInstanceView = original.VirtualMachineScaleSetInstanc
 type VirtualMachineScaleSetInstanceViewStatusesSummary = original.VirtualMachineScaleSetInstanceViewStatusesSummary
 type VirtualMachineScaleSetIPConfiguration = original.VirtualMachineScaleSetIPConfiguration
 type VirtualMachineScaleSetIPConfigurationProperties = original.VirtualMachineScaleSetIPConfigurationProperties
+type VirtualMachineScaleSetListOSUpgradeHistory = original.VirtualMachineScaleSetListOSUpgradeHistory
+type VirtualMachineScaleSetListOSUpgradeHistoryIterator = original.VirtualMachineScaleSetListOSUpgradeHistoryIterator
+type VirtualMachineScaleSetListOSUpgradeHistoryPage = original.VirtualMachineScaleSetListOSUpgradeHistoryPage
 type VirtualMachineScaleSetListResult = original.VirtualMachineScaleSetListResult
 type VirtualMachineScaleSetListResultIterator = original.VirtualMachineScaleSetListResultIterator
 type VirtualMachineScaleSetListResultPage = original.VirtualMachineScaleSetListResultPage
@@ -875,6 +904,15 @@ func PossibleStorageAccountTypesValues() []StorageAccountTypes {
 }
 func PossibleUpgradeModeValues() []UpgradeMode {
 	return original.PossibleUpgradeModeValues()
+}
+func PossibleUpgradeOperationInvokerValues() []UpgradeOperationInvoker {
+	return original.PossibleUpgradeOperationInvokerValues()
+}
+func PossibleUpgradeStateValues() []UpgradeState {
+	return original.PossibleUpgradeStateValues()
+}
+func PossibleVirtualMachineEvictionPolicyTypesValues() []VirtualMachineEvictionPolicyTypes {
+	return original.PossibleVirtualMachineEvictionPolicyTypesValues()
 }
 func PossibleVirtualMachinePriorityTypesValues() []VirtualMachinePriorityTypes {
 	return original.PossibleVirtualMachinePriorityTypesValues()

@@ -1,5 +1,87 @@
 # CHANGELOG
 
+## v10.11.1
+
+### Bug Fixes
+
+- Adding User information to authorization config as parsed from CLI cache.
+
+## v10.11.0
+
+### New Features
+
+- Added NewServicePrincipalTokenFromManualTokenSecret for creating a new SPT using a manual token and secret
+- Added method ServicePrincipalToken.MarshalTokenJSON() to marshall the inner Token
+
+## v10.10.0
+
+### New Features
+
+- Most ServicePrincipalTokens can now be marshalled/unmarshall to/from JSON (ServicePrincipalCertificateSecret and ServicePrincipalMSISecret are not supported).
+- Added method ServicePrincipalToken.SetRefreshCallbacks().
+
+## v10.9.2
+
+### Bug Fixes
+
+- Refreshing a refresh token obtained from a web app authorization code now works.
+
+## v10.9.1
+
+### Bug Fixes
+
+- The retry logic for MSI token requests now uses exponential backoff per the guidelines.
+- IsTemporaryNetworkError() will return true for errors that don't implement the net.Error interface.
+
+## v10.9.0
+
+### Deprecated Methods
+
+| Old Method | New Method |
+|-------------:|:-----------:|
+|azure.NewFuture() | azure.NewFutureFromResponse()|
+|Future.WaitForCompletion() | Future.WaitForCompletionRef()|
+
+### New Features
+
+- Added azure.NewFutureFromResponse() for creating a Future from the initial response from an async operation.
+- Added Future.GetResult() for making the final GET call to retrieve the result from an async operation.
+
+### Bug Fixes
+
+- Some futures failed to return their results, this should now be fixed.
+
+## v10.8.2
+
+### Bug Fixes
+
+- Add nil-gaurd to token retry logic.
+
+## v10.8.1
+
+### Bug Fixes
+
+- Return a TokenRefreshError if the sender fails on the initial request.
+- Don't retry on non-temporary network errors.
+
+## v10.8.0
+
+- Added NewAuthorizerFromEnvironmentWithResource() helper function.
+
+## v10.7.0
+
+### New Features
+
+- Added *WithContext() methods to ADAL token refresh operations.
+
+## v10.6.2
+
+- Fixed a bug on device authentication.
+
+## v10.6.1
+
+- Added retries to MSI token get request.
+
 ## v10.6.0
 
 - Changed MSI token implementation. Now, the token endpoint is the IMDS endpoint.

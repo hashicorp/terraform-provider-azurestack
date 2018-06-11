@@ -41,8 +41,9 @@ func NewIotHubResourceClientWithBaseURI(baseURI string, subscriptionID string) I
 }
 
 // CheckNameAvailability check if an IoT hub name is available.
-//
-// operationInputs is set the name parameter in the OperationInputs structure to the name of the IoT hub to check.
+// Parameters:
+// operationInputs - set the name parameter in the OperationInputs structure to the name of the IoT hub to
+// check.
 func (client IotHubResourceClient) CheckNameAvailability(ctx context.Context, operationInputs OperationInputs) (result IotHubNameAvailabilityInfo, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: operationInputs,
@@ -113,10 +114,11 @@ func (client IotHubResourceClient) CheckNameAvailabilityResponder(resp *http.Res
 }
 
 // CreateEventHubConsumerGroup add a consumer group to an Event Hub-compatible endpoint in an IoT hub.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub. eventHubEndpointName is the name of the Event Hub-compatible endpoint in the IoT hub. name is the name
-// of the consumer group to add.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
+// eventHubEndpointName - the name of the Event Hub-compatible endpoint in the IoT hub.
+// name - the name of the consumer group to add.
 func (client IotHubResourceClient) CreateEventHubConsumerGroup(ctx context.Context, resourceGroupName string, resourceName string, eventHubEndpointName string, name string) (result EventHubConsumerGroupInfo, err error) {
 	req, err := client.CreateEventHubConsumerGroupPreparer(ctx, resourceGroupName, resourceName, eventHubEndpointName, name)
 	if err != nil {
@@ -185,10 +187,12 @@ func (client IotHubResourceClient) CreateEventHubConsumerGroupResponder(resp *ht
 // CreateOrUpdate create or update the metadata of an Iot hub. The usual pattern to modify a property is to retrieve
 // the IoT hub metadata and security metadata, and then combine them with the modified values in a new body to update
 // the IoT hub.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub. iotHubDescription is the IoT hub metadata and security metadata. ifMatch is eTag of the IoT Hub. Do not
-// specify for creating a brand new IoT Hub. Required to update an existing IoT Hub.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
+// iotHubDescription - the IoT hub metadata and security metadata.
+// ifMatch - eTag of the IoT Hub. Do not specify for creating a brand new IoT Hub. Required to update an
+// existing IoT Hub.
 func (client IotHubResourceClient) CreateOrUpdate(ctx context.Context, resourceGroupName string, resourceName string, iotHubDescription IotHubDescription, ifMatch string) (result IotHubResourceCreateOrUpdateFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: iotHubDescription,
@@ -265,15 +269,17 @@ func (client IotHubResourceClient) CreateOrUpdatePreparer(ctx context.Context, r
 // CreateOrUpdateSender sends the CreateOrUpdate request. The method will close the
 // http.Response Body if it receives an error.
 func (client IotHubResourceClient) CreateOrUpdateSender(req *http.Request) (future IotHubResourceCreateOrUpdateFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusCreated))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusCreated))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -291,9 +297,9 @@ func (client IotHubResourceClient) CreateOrUpdateResponder(resp *http.Response) 
 }
 
 // Delete delete an IoT hub.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
 func (client IotHubResourceClient) Delete(ctx context.Context, resourceGroupName string, resourceName string) (result IotHubResourceDeleteFuture, err error) {
 	req, err := client.DeletePreparer(ctx, resourceGroupName, resourceName)
 	if err != nil {
@@ -334,15 +340,17 @@ func (client IotHubResourceClient) DeletePreparer(ctx context.Context, resourceG
 // DeleteSender sends the Delete request. The method will close the
 // http.Response Body if it receives an error.
 func (client IotHubResourceClient) DeleteSender(req *http.Request) (future IotHubResourceDeleteFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted, http.StatusNoContent, http.StatusNotFound))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted, http.StatusNoContent, http.StatusNotFound))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -360,10 +368,11 @@ func (client IotHubResourceClient) DeleteResponder(resp *http.Response) (result 
 }
 
 // DeleteEventHubConsumerGroup delete a consumer group from an Event Hub-compatible endpoint in an IoT hub.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub. eventHubEndpointName is the name of the Event Hub-compatible endpoint in the IoT hub. name is the name
-// of the consumer group to delete.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
+// eventHubEndpointName - the name of the Event Hub-compatible endpoint in the IoT hub.
+// name - the name of the consumer group to delete.
 func (client IotHubResourceClient) DeleteEventHubConsumerGroup(ctx context.Context, resourceGroupName string, resourceName string, eventHubEndpointName string, name string) (result autorest.Response, err error) {
 	req, err := client.DeleteEventHubConsumerGroupPreparer(ctx, resourceGroupName, resourceName, eventHubEndpointName, name)
 	if err != nil {
@@ -431,9 +440,10 @@ func (client IotHubResourceClient) DeleteEventHubConsumerGroupResponder(resp *ht
 // ExportDevices exports all the device identities in the IoT hub identity registry to an Azure Storage blob container.
 // For more information, see:
 // https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub. exportDevicesParameters is the parameters that specify the export devices operation.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
+// exportDevicesParameters - the parameters that specify the export devices operation.
 func (client IotHubResourceClient) ExportDevices(ctx context.Context, resourceGroupName string, resourceName string, exportDevicesParameters ExportDevicesRequest) (result JobResponse, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: exportDevicesParameters,
@@ -507,9 +517,9 @@ func (client IotHubResourceClient) ExportDevicesResponder(resp *http.Response) (
 }
 
 // Get get the non-security related metadata of an IoT hub.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
 func (client IotHubResourceClient) Get(ctx context.Context, resourceGroupName string, resourceName string) (result IotHubDescription, err error) {
 	req, err := client.GetPreparer(ctx, resourceGroupName, resourceName)
 	if err != nil {
@@ -573,11 +583,104 @@ func (client IotHubResourceClient) GetResponder(resp *http.Response) (result Iot
 	return
 }
 
+// GetEndpointHealth get the health for routing endpoints.
+func (client IotHubResourceClient) GetEndpointHealth(ctx context.Context, resourceGroupName string, iotHubName string) (result EndpointHealthDataListResultPage, err error) {
+	result.fn = client.getEndpointHealthNextResults
+	req, err := client.GetEndpointHealthPreparer(ctx, resourceGroupName, iotHubName)
+	if err != nil {
+		err = autorest.NewErrorWithError(err, "devices.IotHubResourceClient", "GetEndpointHealth", nil, "Failure preparing request")
+		return
+	}
+
+	resp, err := client.GetEndpointHealthSender(req)
+	if err != nil {
+		result.ehdlr.Response = autorest.Response{Response: resp}
+		err = autorest.NewErrorWithError(err, "devices.IotHubResourceClient", "GetEndpointHealth", resp, "Failure sending request")
+		return
+	}
+
+	result.ehdlr, err = client.GetEndpointHealthResponder(resp)
+	if err != nil {
+		err = autorest.NewErrorWithError(err, "devices.IotHubResourceClient", "GetEndpointHealth", resp, "Failure responding to request")
+	}
+
+	return
+}
+
+// GetEndpointHealthPreparer prepares the GetEndpointHealth request.
+func (client IotHubResourceClient) GetEndpointHealthPreparer(ctx context.Context, resourceGroupName string, iotHubName string) (*http.Request, error) {
+	pathParameters := map[string]interface{}{
+		"iotHubName":        autorest.Encode("path", iotHubName),
+		"resourceGroupName": autorest.Encode("path", resourceGroupName),
+		"subscriptionId":    autorest.Encode("path", client.SubscriptionID),
+	}
+
+	const APIVersion = "2018-04-01"
+	queryParameters := map[string]interface{}{
+		"api-version": APIVersion,
+	}
+
+	preparer := autorest.CreatePreparer(
+		autorest.AsGet(),
+		autorest.WithBaseURL(client.BaseURI),
+		autorest.WithPathParameters("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/routingEndpointsHealth", pathParameters),
+		autorest.WithQueryParameters(queryParameters))
+	return preparer.Prepare((&http.Request{}).WithContext(ctx))
+}
+
+// GetEndpointHealthSender sends the GetEndpointHealth request. The method will close the
+// http.Response Body if it receives an error.
+func (client IotHubResourceClient) GetEndpointHealthSender(req *http.Request) (*http.Response, error) {
+	return autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
+}
+
+// GetEndpointHealthResponder handles the response to the GetEndpointHealth request. The method always
+// closes the http.Response Body.
+func (client IotHubResourceClient) GetEndpointHealthResponder(resp *http.Response) (result EndpointHealthDataListResult, err error) {
+	err = autorest.Respond(
+		resp,
+		client.ByInspecting(),
+		azure.WithErrorUnlessStatusCode(http.StatusOK),
+		autorest.ByUnmarshallingJSON(&result),
+		autorest.ByClosing())
+	result.Response = autorest.Response{Response: resp}
+	return
+}
+
+// getEndpointHealthNextResults retrieves the next set of results, if any.
+func (client IotHubResourceClient) getEndpointHealthNextResults(lastResults EndpointHealthDataListResult) (result EndpointHealthDataListResult, err error) {
+	req, err := lastResults.endpointHealthDataListResultPreparer()
+	if err != nil {
+		return result, autorest.NewErrorWithError(err, "devices.IotHubResourceClient", "getEndpointHealthNextResults", nil, "Failure preparing next results request")
+	}
+	if req == nil {
+		return
+	}
+	resp, err := client.GetEndpointHealthSender(req)
+	if err != nil {
+		result.Response = autorest.Response{Response: resp}
+		return result, autorest.NewErrorWithError(err, "devices.IotHubResourceClient", "getEndpointHealthNextResults", resp, "Failure sending next results request")
+	}
+	result, err = client.GetEndpointHealthResponder(resp)
+	if err != nil {
+		err = autorest.NewErrorWithError(err, "devices.IotHubResourceClient", "getEndpointHealthNextResults", resp, "Failure responding to next results request")
+	}
+	return
+}
+
+// GetEndpointHealthComplete enumerates all values, automatically crossing page boundaries as required.
+func (client IotHubResourceClient) GetEndpointHealthComplete(ctx context.Context, resourceGroupName string, iotHubName string) (result EndpointHealthDataListResultIterator, err error) {
+	result.page, err = client.GetEndpointHealth(ctx, resourceGroupName, iotHubName)
+	return
+}
+
 // GetEventHubConsumerGroup get a consumer group from the Event Hub-compatible device-to-cloud endpoint for an IoT hub.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub. eventHubEndpointName is the name of the Event Hub-compatible endpoint in the IoT hub. name is the name
-// of the consumer group to retrieve.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
+// eventHubEndpointName - the name of the Event Hub-compatible endpoint in the IoT hub.
+// name - the name of the consumer group to retrieve.
 func (client IotHubResourceClient) GetEventHubConsumerGroup(ctx context.Context, resourceGroupName string, resourceName string, eventHubEndpointName string, name string) (result EventHubConsumerGroupInfo, err error) {
 	req, err := client.GetEventHubConsumerGroupPreparer(ctx, resourceGroupName, resourceName, eventHubEndpointName, name)
 	if err != nil {
@@ -645,9 +748,10 @@ func (client IotHubResourceClient) GetEventHubConsumerGroupResponder(resp *http.
 
 // GetJob get the details of a job from an IoT hub. For more information, see:
 // https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub. jobID is the job identifier.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
+// jobID - the job identifier.
 func (client IotHubResourceClient) GetJob(ctx context.Context, resourceGroupName string, resourceName string, jobID string) (result JobResponse, err error) {
 	req, err := client.GetJobPreparer(ctx, resourceGroupName, resourceName, jobID)
 	if err != nil {
@@ -714,9 +818,10 @@ func (client IotHubResourceClient) GetJobResponder(resp *http.Response) (result 
 
 // GetKeysForKeyName get a shared access policy by name from an IoT hub. For more information, see:
 // https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-security.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub. keyName is the name of the shared access policy.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
+// keyName - the name of the shared access policy.
 func (client IotHubResourceClient) GetKeysForKeyName(ctx context.Context, resourceGroupName string, resourceName string, keyName string) (result SharedAccessSignatureAuthorizationRule, err error) {
 	req, err := client.GetKeysForKeyNamePreparer(ctx, resourceGroupName, resourceName, keyName)
 	if err != nil {
@@ -782,9 +887,9 @@ func (client IotHubResourceClient) GetKeysForKeyNameResponder(resp *http.Respons
 }
 
 // GetQuotaMetrics get the quota metrics for an IoT hub.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
 func (client IotHubResourceClient) GetQuotaMetrics(ctx context.Context, resourceGroupName string, resourceName string) (result IotHubQuotaMetricInfoListResultPage, err error) {
 	result.fn = client.getQuotaMetricsNextResults
 	req, err := client.GetQuotaMetricsPreparer(ctx, resourceGroupName, resourceName)
@@ -877,9 +982,9 @@ func (client IotHubResourceClient) GetQuotaMetricsComplete(ctx context.Context, 
 }
 
 // GetStats get the statistics from an IoT hub.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
 func (client IotHubResourceClient) GetStats(ctx context.Context, resourceGroupName string, resourceName string) (result RegistryStatistics, err error) {
 	req, err := client.GetStatsPreparer(ctx, resourceGroupName, resourceName)
 	if err != nil {
@@ -944,9 +1049,9 @@ func (client IotHubResourceClient) GetStatsResponder(resp *http.Response) (resul
 }
 
 // GetValidSkus get the list of valid SKUs for an IoT hub.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
 func (client IotHubResourceClient) GetValidSkus(ctx context.Context, resourceGroupName string, resourceName string) (result IotHubSkuDescriptionListResultPage, err error) {
 	result.fn = client.getValidSkusNextResults
 	req, err := client.GetValidSkusPreparer(ctx, resourceGroupName, resourceName)
@@ -1041,9 +1146,10 @@ func (client IotHubResourceClient) GetValidSkusComplete(ctx context.Context, res
 // ImportDevices import, update, or delete device identities in the IoT hub identity registry from a blob. For more
 // information, see:
 // https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub. importDevicesParameters is the parameters that specify the import devices operation.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
+// importDevicesParameters - the parameters that specify the import devices operation.
 func (client IotHubResourceClient) ImportDevices(ctx context.Context, resourceGroupName string, resourceName string, importDevicesParameters ImportDevicesRequest) (result JobResponse, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: importDevicesParameters,
@@ -1117,8 +1223,8 @@ func (client IotHubResourceClient) ImportDevicesResponder(resp *http.Response) (
 }
 
 // ListByResourceGroup get all the IoT hubs in a resource group.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
 func (client IotHubResourceClient) ListByResourceGroup(ctx context.Context, resourceGroupName string) (result IotHubDescriptionListResultPage, err error) {
 	result.fn = client.listByResourceGroupNextResults
 	req, err := client.ListByResourceGroupPreparer(ctx, resourceGroupName)
@@ -1301,9 +1407,10 @@ func (client IotHubResourceClient) ListBySubscriptionComplete(ctx context.Contex
 
 // ListEventHubConsumerGroups get a list of the consumer groups in the Event Hub-compatible device-to-cloud endpoint in
 // an IoT hub.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub. eventHubEndpointName is the name of the Event Hub-compatible endpoint.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
+// eventHubEndpointName - the name of the Event Hub-compatible endpoint.
 func (client IotHubResourceClient) ListEventHubConsumerGroups(ctx context.Context, resourceGroupName string, resourceName string, eventHubEndpointName string) (result EventHubConsumerGroupsListResultPage, err error) {
 	result.fn = client.listEventHubConsumerGroupsNextResults
 	req, err := client.ListEventHubConsumerGroupsPreparer(ctx, resourceGroupName, resourceName, eventHubEndpointName)
@@ -1398,9 +1505,9 @@ func (client IotHubResourceClient) ListEventHubConsumerGroupsComplete(ctx contex
 
 // ListJobs get a list of all the jobs in an IoT hub. For more information, see:
 // https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
 func (client IotHubResourceClient) ListJobs(ctx context.Context, resourceGroupName string, resourceName string) (result JobResponseListResultPage, err error) {
 	result.fn = client.listJobsNextResults
 	req, err := client.ListJobsPreparer(ctx, resourceGroupName, resourceName)
@@ -1494,9 +1601,9 @@ func (client IotHubResourceClient) ListJobsComplete(ctx context.Context, resourc
 
 // ListKeys get the security metadata for an IoT hub. For more information, see:
 // https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-security.
-//
-// resourceGroupName is the name of the resource group that contains the IoT hub. resourceName is the name of the
-// IoT hub.
+// Parameters:
+// resourceGroupName - the name of the resource group that contains the IoT hub.
+// resourceName - the name of the IoT hub.
 func (client IotHubResourceClient) ListKeys(ctx context.Context, resourceGroupName string, resourceName string) (result SharedAccessSignatureAuthorizationRuleListResultPage, err error) {
 	result.fn = client.listKeysNextResults
 	req, err := client.ListKeysPreparer(ctx, resourceGroupName, resourceName)
@@ -1588,10 +1695,165 @@ func (client IotHubResourceClient) ListKeysComplete(ctx context.Context, resourc
 	return
 }
 
+// TestAllRoutes test all routes configured in this Iot Hub
+// Parameters:
+// input - input for testing all routes
+// iotHubName - iotHub to be tested
+// resourceGroupName - resource group which Iot Hub belongs to
+func (client IotHubResourceClient) TestAllRoutes(ctx context.Context, input TestAllRoutesInput, iotHubName string, resourceGroupName string) (result TestAllRoutesResult, err error) {
+	req, err := client.TestAllRoutesPreparer(ctx, input, iotHubName, resourceGroupName)
+	if err != nil {
+		err = autorest.NewErrorWithError(err, "devices.IotHubResourceClient", "TestAllRoutes", nil, "Failure preparing request")
+		return
+	}
+
+	resp, err := client.TestAllRoutesSender(req)
+	if err != nil {
+		result.Response = autorest.Response{Response: resp}
+		err = autorest.NewErrorWithError(err, "devices.IotHubResourceClient", "TestAllRoutes", resp, "Failure sending request")
+		return
+	}
+
+	result, err = client.TestAllRoutesResponder(resp)
+	if err != nil {
+		err = autorest.NewErrorWithError(err, "devices.IotHubResourceClient", "TestAllRoutes", resp, "Failure responding to request")
+	}
+
+	return
+}
+
+// TestAllRoutesPreparer prepares the TestAllRoutes request.
+func (client IotHubResourceClient) TestAllRoutesPreparer(ctx context.Context, input TestAllRoutesInput, iotHubName string, resourceGroupName string) (*http.Request, error) {
+	pathParameters := map[string]interface{}{
+		"iotHubName":        autorest.Encode("path", iotHubName),
+		"resourceGroupName": autorest.Encode("path", resourceGroupName),
+		"subscriptionId":    autorest.Encode("path", client.SubscriptionID),
+	}
+
+	const APIVersion = "2018-04-01"
+	queryParameters := map[string]interface{}{
+		"api-version": APIVersion,
+	}
+
+	preparer := autorest.CreatePreparer(
+		autorest.AsContentType("application/json; charset=utf-8"),
+		autorest.AsPost(),
+		autorest.WithBaseURL(client.BaseURI),
+		autorest.WithPathParameters("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/routing/routes/$testall", pathParameters),
+		autorest.WithJSON(input),
+		autorest.WithQueryParameters(queryParameters))
+	return preparer.Prepare((&http.Request{}).WithContext(ctx))
+}
+
+// TestAllRoutesSender sends the TestAllRoutes request. The method will close the
+// http.Response Body if it receives an error.
+func (client IotHubResourceClient) TestAllRoutesSender(req *http.Request) (*http.Response, error) {
+	return autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
+}
+
+// TestAllRoutesResponder handles the response to the TestAllRoutes request. The method always
+// closes the http.Response Body.
+func (client IotHubResourceClient) TestAllRoutesResponder(resp *http.Response) (result TestAllRoutesResult, err error) {
+	err = autorest.Respond(
+		resp,
+		client.ByInspecting(),
+		azure.WithErrorUnlessStatusCode(http.StatusOK),
+		autorest.ByUnmarshallingJSON(&result),
+		autorest.ByClosing())
+	result.Response = autorest.Response{Response: resp}
+	return
+}
+
+// TestRoute test the new route for this Iot Hub
+// Parameters:
+// input - route that needs to be tested
+// iotHubName - iotHub to be tested
+// resourceGroupName - resource group which Iot Hub belongs to
+func (client IotHubResourceClient) TestRoute(ctx context.Context, input TestRouteInput, iotHubName string, resourceGroupName string) (result TestRouteResult, err error) {
+	if err := validation.Validate([]validation.Validation{
+		{TargetValue: input,
+			Constraints: []validation.Constraint{{Target: "input.Route", Name: validation.Null, Rule: true,
+				Chain: []validation.Constraint{{Target: "input.Route.Name", Name: validation.Null, Rule: true,
+					Chain: []validation.Constraint{{Target: "input.Route.Name", Name: validation.Pattern, Rule: `^[A-Za-z0-9-._]{1,64}$`, Chain: nil}}},
+					{Target: "input.Route.EndpointNames", Name: validation.Null, Rule: true,
+						Chain: []validation.Constraint{{Target: "input.Route.EndpointNames", Name: validation.MaxItems, Rule: 1, Chain: nil},
+							{Target: "input.Route.EndpointNames", Name: validation.MinItems, Rule: 1, Chain: nil},
+						}},
+					{Target: "input.Route.IsEnabled", Name: validation.Null, Rule: true, Chain: nil},
+				}}}}}); err != nil {
+		return result, validation.NewError("devices.IotHubResourceClient", "TestRoute", err.Error())
+	}
+
+	req, err := client.TestRoutePreparer(ctx, input, iotHubName, resourceGroupName)
+	if err != nil {
+		err = autorest.NewErrorWithError(err, "devices.IotHubResourceClient", "TestRoute", nil, "Failure preparing request")
+		return
+	}
+
+	resp, err := client.TestRouteSender(req)
+	if err != nil {
+		result.Response = autorest.Response{Response: resp}
+		err = autorest.NewErrorWithError(err, "devices.IotHubResourceClient", "TestRoute", resp, "Failure sending request")
+		return
+	}
+
+	result, err = client.TestRouteResponder(resp)
+	if err != nil {
+		err = autorest.NewErrorWithError(err, "devices.IotHubResourceClient", "TestRoute", resp, "Failure responding to request")
+	}
+
+	return
+}
+
+// TestRoutePreparer prepares the TestRoute request.
+func (client IotHubResourceClient) TestRoutePreparer(ctx context.Context, input TestRouteInput, iotHubName string, resourceGroupName string) (*http.Request, error) {
+	pathParameters := map[string]interface{}{
+		"iotHubName":        autorest.Encode("path", iotHubName),
+		"resourceGroupName": autorest.Encode("path", resourceGroupName),
+		"subscriptionId":    autorest.Encode("path", client.SubscriptionID),
+	}
+
+	const APIVersion = "2018-04-01"
+	queryParameters := map[string]interface{}{
+		"api-version": APIVersion,
+	}
+
+	preparer := autorest.CreatePreparer(
+		autorest.AsContentType("application/json; charset=utf-8"),
+		autorest.AsPost(),
+		autorest.WithBaseURL(client.BaseURI),
+		autorest.WithPathParameters("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/routing/routes/$testnew", pathParameters),
+		autorest.WithJSON(input),
+		autorest.WithQueryParameters(queryParameters))
+	return preparer.Prepare((&http.Request{}).WithContext(ctx))
+}
+
+// TestRouteSender sends the TestRoute request. The method will close the
+// http.Response Body if it receives an error.
+func (client IotHubResourceClient) TestRouteSender(req *http.Request) (*http.Response, error) {
+	return autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
+}
+
+// TestRouteResponder handles the response to the TestRoute request. The method always
+// closes the http.Response Body.
+func (client IotHubResourceClient) TestRouteResponder(resp *http.Response) (result TestRouteResult, err error) {
+	err = autorest.Respond(
+		resp,
+		client.ByInspecting(),
+		azure.WithErrorUnlessStatusCode(http.StatusOK),
+		autorest.ByUnmarshallingJSON(&result),
+		autorest.ByClosing())
+	result.Response = autorest.Response{Response: resp}
+	return
+}
+
 // Update update an existing IoT Hub tags. to update other fields use the CreateOrUpdate method
-//
-// resourceGroupName is resource group identifier. resourceName is name of iot hub to update. iotHubTags is updated
-// tag information to set into the iot hub instance.
+// Parameters:
+// resourceGroupName - resource group identifier.
+// resourceName - name of iot hub to update.
+// iotHubTags - updated tag information to set into the iot hub instance.
 func (client IotHubResourceClient) Update(ctx context.Context, resourceGroupName string, resourceName string, iotHubTags TagsResource) (result IotHubResourceUpdateFuture, err error) {
 	req, err := client.UpdatePreparer(ctx, resourceGroupName, resourceName, iotHubTags)
 	if err != nil {
@@ -1634,15 +1896,17 @@ func (client IotHubResourceClient) UpdatePreparer(ctx context.Context, resourceG
 // UpdateSender sends the Update request. The method will close the
 // http.Response Body if it receives an error.
 func (client IotHubResourceClient) UpdateSender(req *http.Request) (future IotHubResourceUpdateFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 

@@ -42,8 +42,8 @@ func NewRegistriesClientWithBaseURI(baseURI string, subscriptionID string) Regis
 
 // CheckNameAvailability checks whether the container registry name is available for use. The name must contain only
 // alphanumeric characters, be globally unique, and between 5 and 50 characters in length.
-//
-// registryNameCheckRequest is the object containing information for the availability request.
+// Parameters:
+// registryNameCheckRequest - the object containing information for the availability request.
 func (client RegistriesClient) CheckNameAvailability(ctx context.Context, registryNameCheckRequest RegistryNameCheckRequest) (result RegistryNameStatus, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: registryNameCheckRequest,
@@ -119,9 +119,10 @@ func (client RegistriesClient) CheckNameAvailabilityResponder(resp *http.Respons
 }
 
 // Create creates a container registry with the specified parameters.
-//
-// resourceGroupName is the name of the resource group to which the container registry belongs. registryName is the
-// name of the container registry. registry is the parameters for creating a container registry.
+// Parameters:
+// resourceGroupName - the name of the resource group to which the container registry belongs.
+// registryName - the name of the container registry.
+// registry - the parameters for creating a container registry.
 func (client RegistriesClient) Create(ctx context.Context, resourceGroupName string, registryName string, registry Registry) (result RegistriesCreateFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: registryName,
@@ -178,15 +179,17 @@ func (client RegistriesClient) CreatePreparer(ctx context.Context, resourceGroup
 // CreateSender sends the Create request. The method will close the
 // http.Response Body if it receives an error.
 func (client RegistriesClient) CreateSender(req *http.Request) (future RegistriesCreateFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusCreated))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusCreated))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -204,9 +207,9 @@ func (client RegistriesClient) CreateResponder(resp *http.Response) (result Regi
 }
 
 // Delete deletes a container registry.
-//
-// resourceGroupName is the name of the resource group to which the container registry belongs. registryName is the
-// name of the container registry.
+// Parameters:
+// resourceGroupName - the name of the resource group to which the container registry belongs.
+// registryName - the name of the container registry.
 func (client RegistriesClient) Delete(ctx context.Context, resourceGroupName string, registryName string) (result RegistriesDeleteFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: registryName,
@@ -255,15 +258,17 @@ func (client RegistriesClient) DeletePreparer(ctx context.Context, resourceGroup
 // DeleteSender sends the Delete request. The method will close the
 // http.Response Body if it receives an error.
 func (client RegistriesClient) DeleteSender(req *http.Request) (future RegistriesDeleteFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted, http.StatusNoContent))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted, http.StatusNoContent))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -280,9 +285,9 @@ func (client RegistriesClient) DeleteResponder(resp *http.Response) (result auto
 }
 
 // Get gets the properties of the specified container registry.
-//
-// resourceGroupName is the name of the resource group to which the container registry belongs. registryName is the
-// name of the container registry.
+// Parameters:
+// resourceGroupName - the name of the resource group to which the container registry belongs.
+// registryName - the name of the container registry.
 func (client RegistriesClient) Get(ctx context.Context, resourceGroupName string, registryName string) (result Registry, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: registryName,
@@ -355,10 +360,10 @@ func (client RegistriesClient) GetResponder(resp *http.Response) (result Registr
 }
 
 // ImportImage copies an image to this container registry from the specified container registry.
-//
-// resourceGroupName is the name of the resource group to which the container registry belongs. registryName is the
-// name of the container registry. parameters is the parameters specifying the image to copy and the source
-// container registry.
+// Parameters:
+// resourceGroupName - the name of the resource group to which the container registry belongs.
+// registryName - the name of the container registry.
+// parameters - the parameters specifying the image to copy and the source container registry.
 func (client RegistriesClient) ImportImage(ctx context.Context, resourceGroupName string, registryName string, parameters ImportImageParameters) (result RegistriesImportImageFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: registryName,
@@ -414,15 +419,17 @@ func (client RegistriesClient) ImportImagePreparer(ctx context.Context, resource
 // ImportImageSender sends the ImportImage request. The method will close the
 // http.Response Body if it receives an error.
 func (client RegistriesClient) ImportImageSender(req *http.Request) (future RegistriesImportImageFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -529,8 +536,8 @@ func (client RegistriesClient) ListComplete(ctx context.Context) (result Registr
 }
 
 // ListByResourceGroup lists all the container registries under the specified resource group.
-//
-// resourceGroupName is the name of the resource group to which the container registry belongs.
+// Parameters:
+// resourceGroupName - the name of the resource group to which the container registry belongs.
 func (client RegistriesClient) ListByResourceGroup(ctx context.Context, resourceGroupName string) (result RegistryListResultPage, err error) {
 	result.fn = client.listByResourceGroupNextResults
 	req, err := client.ListByResourceGroupPreparer(ctx, resourceGroupName)
@@ -622,9 +629,9 @@ func (client RegistriesClient) ListByResourceGroupComplete(ctx context.Context, 
 }
 
 // ListCredentials lists the login credentials for the specified container registry.
-//
-// resourceGroupName is the name of the resource group to which the container registry belongs. registryName is the
-// name of the container registry.
+// Parameters:
+// resourceGroupName - the name of the resource group to which the container registry belongs.
+// registryName - the name of the container registry.
 func (client RegistriesClient) ListCredentials(ctx context.Context, resourceGroupName string, registryName string) (result RegistryListCredentialsResult, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: registryName,
@@ -697,9 +704,9 @@ func (client RegistriesClient) ListCredentialsResponder(resp *http.Response) (re
 }
 
 // ListUsages gets the quota usages for the specified container registry.
-//
-// resourceGroupName is the name of the resource group to which the container registry belongs. registryName is the
-// name of the container registry.
+// Parameters:
+// resourceGroupName - the name of the resource group to which the container registry belongs.
+// registryName - the name of the container registry.
 func (client RegistriesClient) ListUsages(ctx context.Context, resourceGroupName string, registryName string) (result RegistryUsageListResult, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: registryName,
@@ -772,10 +779,11 @@ func (client RegistriesClient) ListUsagesResponder(resp *http.Response) (result 
 }
 
 // RegenerateCredential regenerates one of the login credentials for the specified container registry.
-//
-// resourceGroupName is the name of the resource group to which the container registry belongs. registryName is the
-// name of the container registry. regenerateCredentialParameters is specifies name of the password which should be
-// regenerated -- password or password2.
+// Parameters:
+// resourceGroupName - the name of the resource group to which the container registry belongs.
+// registryName - the name of the container registry.
+// regenerateCredentialParameters - specifies name of the password which should be regenerated -- password or
+// password2.
 func (client RegistriesClient) RegenerateCredential(ctx context.Context, resourceGroupName string, registryName string, regenerateCredentialParameters RegenerateCredentialParameters) (result RegistryListCredentialsResult, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: registryName,
@@ -850,9 +858,10 @@ func (client RegistriesClient) RegenerateCredentialResponder(resp *http.Response
 }
 
 // Update updates a container registry with the specified parameters.
-//
-// resourceGroupName is the name of the resource group to which the container registry belongs. registryName is the
-// name of the container registry. registryUpdateParameters is the parameters for updating a container registry.
+// Parameters:
+// resourceGroupName - the name of the resource group to which the container registry belongs.
+// registryName - the name of the container registry.
+// registryUpdateParameters - the parameters for updating a container registry.
 func (client RegistriesClient) Update(ctx context.Context, resourceGroupName string, registryName string, registryUpdateParameters RegistryUpdateParameters) (result RegistriesUpdateFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: registryName,
@@ -903,15 +912,17 @@ func (client RegistriesClient) UpdatePreparer(ctx context.Context, resourceGroup
 // UpdateSender sends the Update request. The method will close the
 // http.Response Body if it receives an error.
 func (client RegistriesClient) UpdateSender(req *http.Request) (future RegistriesUpdateFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusCreated))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusCreated))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 

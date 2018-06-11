@@ -41,10 +41,12 @@ func NewLiveEventsClientWithBaseURI(baseURI string, subscriptionID string) LiveE
 }
 
 // Create creates a Live Event.
-//
-// resourceGroupName is the name of the resource group within the Azure subscription. accountName is the Media
-// Services account name. liveEventName is the name of the Live Event. parameters is live Event properties needed
-// for creation. autoStart is the flag indicates if auto start the Live Event.
+// Parameters:
+// resourceGroupName - the name of the resource group within the Azure subscription.
+// accountName - the Media Services account name.
+// liveEventName - the name of the Live Event.
+// parameters - live Event properties needed for creation.
+// autoStart - the flag indicates if auto start the Live Event.
 func (client LiveEventsClient) Create(ctx context.Context, resourceGroupName string, accountName string, liveEventName string, parameters LiveEvent, autoStart *bool) (result LiveEventsCreateFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: liveEventName,
@@ -102,15 +104,17 @@ func (client LiveEventsClient) CreatePreparer(ctx context.Context, resourceGroup
 // CreateSender sends the Create request. The method will close the
 // http.Response Body if it receives an error.
 func (client LiveEventsClient) CreateSender(req *http.Request) (future LiveEventsCreateFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -128,9 +132,10 @@ func (client LiveEventsClient) CreateResponder(resp *http.Response) (result Live
 }
 
 // Delete deletes a Live Event.
-//
-// resourceGroupName is the name of the resource group within the Azure subscription. accountName is the Media
-// Services account name. liveEventName is the name of the Live Event.
+// Parameters:
+// resourceGroupName - the name of the resource group within the Azure subscription.
+// accountName - the Media Services account name.
+// liveEventName - the name of the Live Event.
 func (client LiveEventsClient) Delete(ctx context.Context, resourceGroupName string, accountName string, liveEventName string) (result LiveEventsDeleteFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: liveEventName,
@@ -180,15 +185,17 @@ func (client LiveEventsClient) DeletePreparer(ctx context.Context, resourceGroup
 // DeleteSender sends the Delete request. The method will close the
 // http.Response Body if it receives an error.
 func (client LiveEventsClient) DeleteSender(req *http.Request) (future LiveEventsDeleteFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted, http.StatusNoContent))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted, http.StatusNoContent))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -205,9 +212,10 @@ func (client LiveEventsClient) DeleteResponder(resp *http.Response) (result auto
 }
 
 // Get gets a Live Event.
-//
-// resourceGroupName is the name of the resource group within the Azure subscription. accountName is the Media
-// Services account name. liveEventName is the name of the Live Event.
+// Parameters:
+// resourceGroupName - the name of the resource group within the Azure subscription.
+// accountName - the Media Services account name.
+// liveEventName - the name of the Live Event.
 func (client LiveEventsClient) Get(ctx context.Context, resourceGroupName string, accountName string, liveEventName string) (result LiveEvent, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: liveEventName,
@@ -281,9 +289,9 @@ func (client LiveEventsClient) GetResponder(resp *http.Response) (result LiveEve
 }
 
 // List lists the Live Events in the account.
-//
-// resourceGroupName is the name of the resource group within the Azure subscription. accountName is the Media
-// Services account name.
+// Parameters:
+// resourceGroupName - the name of the resource group within the Azure subscription.
+// accountName - the Media Services account name.
 func (client LiveEventsClient) List(ctx context.Context, resourceGroupName string, accountName string) (result LiveEventListResultPage, err error) {
 	result.fn = client.listNextResults
 	req, err := client.ListPreparer(ctx, resourceGroupName, accountName)
@@ -376,9 +384,10 @@ func (client LiveEventsClient) ListComplete(ctx context.Context, resourceGroupNa
 }
 
 // Reset resets an existing Live Event.
-//
-// resourceGroupName is the name of the resource group within the Azure subscription. accountName is the Media
-// Services account name. liveEventName is the name of the Live Event.
+// Parameters:
+// resourceGroupName - the name of the resource group within the Azure subscription.
+// accountName - the Media Services account name.
+// liveEventName - the name of the Live Event.
 func (client LiveEventsClient) Reset(ctx context.Context, resourceGroupName string, accountName string, liveEventName string) (result LiveEventsResetFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: liveEventName,
@@ -428,15 +437,17 @@ func (client LiveEventsClient) ResetPreparer(ctx context.Context, resourceGroupN
 // ResetSender sends the Reset request. The method will close the
 // http.Response Body if it receives an error.
 func (client LiveEventsClient) ResetSender(req *http.Request) (future LiveEventsResetFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -453,9 +464,10 @@ func (client LiveEventsClient) ResetResponder(resp *http.Response) (result autor
 }
 
 // Start starts an existing Live Event.
-//
-// resourceGroupName is the name of the resource group within the Azure subscription. accountName is the Media
-// Services account name. liveEventName is the name of the Live Event.
+// Parameters:
+// resourceGroupName - the name of the resource group within the Azure subscription.
+// accountName - the Media Services account name.
+// liveEventName - the name of the Live Event.
 func (client LiveEventsClient) Start(ctx context.Context, resourceGroupName string, accountName string, liveEventName string) (result LiveEventsStartFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: liveEventName,
@@ -505,15 +517,17 @@ func (client LiveEventsClient) StartPreparer(ctx context.Context, resourceGroupN
 // StartSender sends the Start request. The method will close the
 // http.Response Body if it receives an error.
 func (client LiveEventsClient) StartSender(req *http.Request) (future LiveEventsStartFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -530,9 +544,11 @@ func (client LiveEventsClient) StartResponder(resp *http.Response) (result autor
 }
 
 // Stop stops an existing Live Event.
-//
-// resourceGroupName is the name of the resource group within the Azure subscription. accountName is the Media
-// Services account name. liveEventName is the name of the Live Event. parameters is liveEvent stop parameters
+// Parameters:
+// resourceGroupName - the name of the resource group within the Azure subscription.
+// accountName - the Media Services account name.
+// liveEventName - the name of the Live Event.
+// parameters - liveEvent stop parameters
 func (client LiveEventsClient) Stop(ctx context.Context, resourceGroupName string, accountName string, liveEventName string, parameters LiveEventActionInput) (result LiveEventsStopFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: liveEventName,
@@ -584,15 +600,17 @@ func (client LiveEventsClient) StopPreparer(ctx context.Context, resourceGroupNa
 // StopSender sends the Stop request. The method will close the
 // http.Response Body if it receives an error.
 func (client LiveEventsClient) StopSender(req *http.Request) (future LiveEventsStopFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -609,10 +627,11 @@ func (client LiveEventsClient) StopResponder(resp *http.Response) (result autore
 }
 
 // Update updates a existing Live Event.
-//
-// resourceGroupName is the name of the resource group within the Azure subscription. accountName is the Media
-// Services account name. liveEventName is the name of the Live Event. parameters is live Event properties needed
-// for creation.
+// Parameters:
+// resourceGroupName - the name of the resource group within the Azure subscription.
+// accountName - the Media Services account name.
+// liveEventName - the name of the Live Event.
+// parameters - live Event properties needed for creation.
 func (client LiveEventsClient) Update(ctx context.Context, resourceGroupName string, accountName string, liveEventName string, parameters LiveEvent) (result LiveEventsUpdateFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: liveEventName,
@@ -664,15 +683,17 @@ func (client LiveEventsClient) UpdatePreparer(ctx context.Context, resourceGroup
 // UpdateSender sends the Update request. The method will close the
 // http.Response Body if it receives an error.
 func (client LiveEventsClient) UpdateSender(req *http.Request) (future LiveEventsUpdateFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 

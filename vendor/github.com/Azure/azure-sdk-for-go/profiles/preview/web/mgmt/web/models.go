@@ -19,7 +19,7 @@
 
 package web
 
-import original "github.com/Azure/azure-sdk-for-go/services/web/mgmt/2016-09-01/web"
+import original "github.com/Azure/azure-sdk-for-go/services/web/mgmt/2018-02-01/web"
 
 type AppsClient = original.AppsClient
 type AppServiceCertificateOrdersClient = original.AppServiceCertificateOrdersClient
@@ -89,6 +89,7 @@ type BackupRestoreOperationType = original.BackupRestoreOperationType
 
 const (
 	BackupRestoreOperationTypeClone      BackupRestoreOperationType = original.BackupRestoreOperationTypeClone
+	BackupRestoreOperationTypeCloudFS    BackupRestoreOperationType = original.BackupRestoreOperationTypeCloudFS
 	BackupRestoreOperationTypeDefault    BackupRestoreOperationType = original.BackupRestoreOperationTypeDefault
 	BackupRestoreOperationTypeRelocation BackupRestoreOperationType = original.BackupRestoreOperationTypeRelocation
 	BackupRestoreOperationTypeSnapshot   BackupRestoreOperationType = original.BackupRestoreOperationTypeSnapshot
@@ -281,6 +282,14 @@ const (
 	Hour FrequencyUnit = original.Hour
 )
 
+type FtpsState = original.FtpsState
+
+const (
+	AllAllowed FtpsState = original.AllAllowed
+	Disabled   FtpsState = original.Disabled
+	FtpsOnly   FtpsState = original.FtpsOnly
+)
+
 type HostingEnvironmentStatus = original.HostingEnvironmentStatus
 
 const (
@@ -376,6 +385,7 @@ type ManagedServiceIdentityType = original.ManagedServiceIdentityType
 
 const (
 	SystemAssigned ManagedServiceIdentityType = original.SystemAssigned
+	UserAssigned   ManagedServiceIdentityType = original.UserAssigned
 )
 
 type MSDeployLogEntryType = original.MSDeployLogEntryType
@@ -531,9 +541,9 @@ const (
 type SslState = original.SslState
 
 const (
-	Disabled       SslState = original.Disabled
-	IPBasedEnabled SslState = original.IPBasedEnabled
-	SniEnabled     SslState = original.SniEnabled
+	SslStateDisabled       SslState = original.SslStateDisabled
+	SslStateIPBasedEnabled SslState = original.SslStateIPBasedEnabled
+	SslStateSniEnabled     SslState = original.SslStateSniEnabled
 )
 
 type StatusOptions = original.StatusOptions
@@ -642,6 +652,8 @@ type AppServiceEnvironmentCollectionIterator = original.AppServiceEnvironmentCol
 type AppServiceEnvironmentCollectionPage = original.AppServiceEnvironmentCollectionPage
 type AppServiceEnvironmentPatchResource = original.AppServiceEnvironmentPatchResource
 type AppServiceEnvironmentResource = original.AppServiceEnvironmentResource
+type AppServiceEnvironmentsChangeVnetAllFuture = original.AppServiceEnvironmentsChangeVnetAllFuture
+type AppServiceEnvironmentsChangeVnetFuture = original.AppServiceEnvironmentsChangeVnetFuture
 type AppServiceEnvironmentsCreateOrUpdateFuture = original.AppServiceEnvironmentsCreateOrUpdateFuture
 type AppServiceEnvironmentsCreateOrUpdateMultiRolePoolFuture = original.AppServiceEnvironmentsCreateOrUpdateMultiRolePoolFuture
 type AppServiceEnvironmentsCreateOrUpdateWorkerPoolFuture = original.AppServiceEnvironmentsCreateOrUpdateWorkerPoolFuture
@@ -664,10 +676,14 @@ type AppsListPublishingCredentialsFuture = original.AppsListPublishingCredential
 type AppsListPublishingCredentialsSlotFuture = original.AppsListPublishingCredentialsSlotFuture
 type AppsMigrateMySQLFuture = original.AppsMigrateMySQLFuture
 type AppsMigrateStorageFuture = original.AppsMigrateStorageFuture
-type AppsRecoverFuture = original.AppsRecoverFuture
-type AppsRecoverSlotFuture = original.AppsRecoverSlotFuture
+type AppsRestoreFromBackupBlobFuture = original.AppsRestoreFromBackupBlobFuture
+type AppsRestoreFromBackupBlobSlotFuture = original.AppsRestoreFromBackupBlobSlotFuture
+type AppsRestoreFromDeletedAppFuture = original.AppsRestoreFromDeletedAppFuture
+type AppsRestoreFromDeletedAppSlotFuture = original.AppsRestoreFromDeletedAppSlotFuture
 type AppsRestoreFuture = original.AppsRestoreFuture
 type AppsRestoreSlotFuture = original.AppsRestoreSlotFuture
+type AppsRestoreSnapshotFuture = original.AppsRestoreSnapshotFuture
+type AppsRestoreSnapshotSlotFuture = original.AppsRestoreSnapshotSlotFuture
 type AppsSwapSlotSlotFuture = original.AppsSwapSlotSlotFuture
 type AppsSwapSlotWithProductionFuture = original.AppsSwapSlotWithProductionFuture
 type AutoHealActions = original.AutoHealActions
@@ -685,6 +701,11 @@ type BackupItemProperties = original.BackupItemProperties
 type BackupRequest = original.BackupRequest
 type BackupRequestProperties = original.BackupRequestProperties
 type BackupSchedule = original.BackupSchedule
+type BillingMeter = original.BillingMeter
+type BillingMeterCollection = original.BillingMeterCollection
+type BillingMeterCollectionIterator = original.BillingMeterCollectionIterator
+type BillingMeterCollectionPage = original.BillingMeterCollectionPage
+type BillingMeterProperties = original.BillingMeterProperties
 type Capability = original.Capability
 type Certificate = original.Certificate
 type CertificateCollection = original.CertificateCollection
@@ -729,6 +750,8 @@ type DataSource = original.DataSource
 type DefaultErrorResponse = original.DefaultErrorResponse
 type DefaultErrorResponseError = original.DefaultErrorResponseError
 type DefaultErrorResponseErrorDetailsItem = original.DefaultErrorResponseErrorDetailsItem
+type DeletedAppRestoreRequest = original.DeletedAppRestoreRequest
+type DeletedAppRestoreRequestProperties = original.DeletedAppRestoreRequestProperties
 type DeletedSite = original.DeletedSite
 type DeletedWebAppCollection = original.DeletedWebAppCollection
 type DeletedWebAppCollectionIterator = original.DeletedWebAppCollectionIterator
@@ -779,7 +802,6 @@ type DomainRecommendationSearchParameters = original.DomainRecommendationSearchP
 type DomainsCreateOrUpdateFuture = original.DomainsCreateOrUpdateFuture
 type EnabledConfig = original.EnabledConfig
 type ErrorEntity = original.ErrorEntity
-type ErrorResponse = original.ErrorResponse
 type Experiments = original.Experiments
 type FileSystemApplicationLogsConfig = original.FileSystemApplicationLogsConfig
 type FileSystemHTTPLogsConfig = original.FileSystemHTTPLogsConfig
@@ -875,6 +897,10 @@ type PremierAddOnOfferCollectionIterator = original.PremierAddOnOfferCollectionI
 type PremierAddOnOfferCollectionPage = original.PremierAddOnOfferCollectionPage
 type PremierAddOnOfferProperties = original.PremierAddOnOfferProperties
 type PremierAddOnProperties = original.PremierAddOnProperties
+type PrivateAccess = original.PrivateAccess
+type PrivateAccessProperties = original.PrivateAccessProperties
+type PrivateAccessSubnet = original.PrivateAccessSubnet
+type PrivateAccessVirtualNetwork = original.PrivateAccessVirtualNetwork
 type ProcessInfo = original.ProcessInfo
 type ProcessInfoCollection = original.ProcessInfoCollection
 type ProcessInfoCollectionIterator = original.ProcessInfoCollectionIterator
@@ -918,11 +944,6 @@ type Resource = original.Resource
 type ResourceCollection = original.ResourceCollection
 type ResourceCollectionIterator = original.ResourceCollectionIterator
 type ResourceCollectionPage = original.ResourceCollectionPage
-type ResourceHealthMetadata = original.ResourceHealthMetadata
-type ResourceHealthMetadataCollection = original.ResourceHealthMetadataCollection
-type ResourceHealthMetadataCollectionIterator = original.ResourceHealthMetadataCollectionIterator
-type ResourceHealthMetadataCollectionPage = original.ResourceHealthMetadataCollectionPage
-type ResourceHealthMetadataProperties = original.ResourceHealthMetadataProperties
 type ResourceMetric = original.ResourceMetric
 type ResourceMetricAvailability = original.ResourceMetricAvailability
 type ResourceMetricCollection = original.ResourceMetricCollection
@@ -941,8 +962,6 @@ type ResourceNameAvailabilityRequest = original.ResourceNameAvailabilityRequest
 type ResponseMetaData = original.ResponseMetaData
 type RestoreRequest = original.RestoreRequest
 type RestoreRequestProperties = original.RestoreRequestProperties
-type RestoreResponse = original.RestoreResponse
-type RestoreResponseProperties = original.RestoreResponseProperties
 type ServiceSpecification = original.ServiceSpecification
 type SetObject = original.SetObject
 type Site = original.Site
@@ -1003,7 +1022,10 @@ type SnapshotCollectionPage = original.SnapshotCollectionPage
 type SnapshotProperties = original.SnapshotProperties
 type SnapshotRecoveryRequest = original.SnapshotRecoveryRequest
 type SnapshotRecoveryRequestProperties = original.SnapshotRecoveryRequestProperties
+type SnapshotRecoverySource = original.SnapshotRecoverySource
 type SnapshotRecoveryTarget = original.SnapshotRecoveryTarget
+type SnapshotRestoreRequest = original.SnapshotRestoreRequest
+type SnapshotRestoreRequestProperties = original.SnapshotRestoreRequestProperties
 type Solution = original.Solution
 type SourceControl = original.SourceControl
 type SourceControlCollection = original.SourceControlCollection
@@ -1079,7 +1101,6 @@ type WorkerPoolCollectionPage = original.WorkerPoolCollectionPage
 type WorkerPoolResource = original.WorkerPoolResource
 type ProviderClient = original.ProviderClient
 type RecommendationsClient = original.RecommendationsClient
-type ResourceHealthMetadataClient = original.ResourceHealthMetadataClient
 type TopLevelDomainsClient = original.TopLevelDomainsClient
 
 func NewAppsClient(subscriptionID string) AppsClient {
@@ -1217,6 +1238,9 @@ func PossibleDomainTypeValues() []DomainType {
 func PossibleFrequencyUnitValues() []FrequencyUnit {
 	return original.PossibleFrequencyUnitValues()
 }
+func PossibleFtpsStateValues() []FtpsState {
+	return original.PossibleFtpsStateValues()
+}
 func PossibleHostingEnvironmentStatusValues() []HostingEnvironmentStatus {
 	return original.PossibleHostingEnvironmentStatusValues()
 }
@@ -1333,12 +1357,6 @@ func NewRecommendationsClient(subscriptionID string) RecommendationsClient {
 }
 func NewRecommendationsClientWithBaseURI(baseURI string, subscriptionID string) RecommendationsClient {
 	return original.NewRecommendationsClientWithBaseURI(baseURI, subscriptionID)
-}
-func NewResourceHealthMetadataClient(subscriptionID string) ResourceHealthMetadataClient {
-	return original.NewResourceHealthMetadataClient(subscriptionID)
-}
-func NewResourceHealthMetadataClientWithBaseURI(baseURI string, subscriptionID string) ResourceHealthMetadataClient {
-	return original.NewResourceHealthMetadataClientWithBaseURI(baseURI, subscriptionID)
 }
 func NewTopLevelDomainsClient(subscriptionID string) TopLevelDomainsClient {
 	return original.NewTopLevelDomainsClient(subscriptionID)

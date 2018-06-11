@@ -41,9 +41,9 @@ func NewWorkspacesClientWithBaseURI(baseURI string, subscriptionID string, purge
 }
 
 // GetSchema gets the schema for a given workspace.
-//
-// resourceGroupName is the name of the resource group to get. The name is case insensitive. workspaceName is log
-// Analytics workspace name
+// Parameters:
+// resourceGroupName - the name of the resource group to get. The name is case insensitive.
+// workspaceName - log Analytics workspace name
 func (client WorkspacesClient) GetSchema(ctx context.Context, resourceGroupName string, workspaceName string) (result SearchGetSchemaResponse, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: resourceGroupName,
@@ -118,9 +118,10 @@ func (client WorkspacesClient) GetSchemaResponder(resp *http.Response) (result S
 // GetSearchResults submit a search for a given workspace. The response will contain an id to track the search. User
 // can use the id to poll the search status and get the full search result later if the search takes long time to
 // finish.
-//
-// resourceGroupName is the name of the resource group to get. The name is case insensitive. workspaceName is log
-// Analytics workspace name parameters is the parameters required to execute a search query.
+// Parameters:
+// resourceGroupName - the name of the resource group to get. The name is case insensitive.
+// workspaceName - log Analytics workspace name
+// parameters - the parameters required to execute a search query.
 func (client WorkspacesClient) GetSearchResults(ctx context.Context, resourceGroupName string, workspaceName string, parameters SearchParameters) (result WorkspacesGetSearchResultsFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: resourceGroupName,
@@ -173,15 +174,17 @@ func (client WorkspacesClient) GetSearchResultsPreparer(ctx context.Context, res
 // GetSearchResultsSender sends the GetSearchResults request. The method will close the
 // http.Response Body if it receives an error.
 func (client WorkspacesClient) GetSearchResultsSender(req *http.Request) (future WorkspacesGetSearchResultsFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -262,10 +265,10 @@ func (client WorkspacesClient) ListLinkTargetsResponder(resp *http.Response) (re
 }
 
 // Purge purges data in an Log Analytics workspace by a set of user-defined filters.
-//
-// resourceGroupName is the name of the resource group to get. The name is case insensitive. workspaceName is log
-// Analytics workspace name body is describes the body of a request to purge data in a single table of an Log
-// Analytics Workspace
+// Parameters:
+// resourceGroupName - the name of the resource group to get. The name is case insensitive.
+// workspaceName - log Analytics workspace name
+// body - describes the body of a request to purge data in a single table of an Log Analytics Workspace
 func (client WorkspacesClient) Purge(ctx context.Context, resourceGroupName string, workspaceName string, body WorkspacePurgeBody) (result WorkspacesPurgeFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: resourceGroupName,
@@ -319,15 +322,17 @@ func (client WorkspacesClient) PurgePreparer(ctx context.Context, resourceGroupN
 // PurgeSender sends the Purge request. The method will close the
 // http.Response Body if it receives an error.
 func (client WorkspacesClient) PurgeSender(req *http.Request) (future WorkspacesPurgeFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -345,10 +350,11 @@ func (client WorkspacesClient) PurgeResponder(resp *http.Response) (result SetOb
 }
 
 // UpdateSearchResults gets updated search results for a given search query.
-//
-// resourceGroupName is the name of the resource group to get. The name is case insensitive. workspaceName is log
-// Analytics workspace name ID is the id of the search that will have results updated. You can get the id from the
-// response of the GetResults call.
+// Parameters:
+// resourceGroupName - the name of the resource group to get. The name is case insensitive.
+// workspaceName - log Analytics workspace name
+// ID - the id of the search that will have results updated. You can get the id from the response of the
+// GetResults call.
 func (client WorkspacesClient) UpdateSearchResults(ctx context.Context, resourceGroupName string, workspaceName string, ID string) (result SearchResultsResponse, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: resourceGroupName,

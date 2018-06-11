@@ -41,10 +41,10 @@ func NewExpressRouteCrossConnectionsClientWithBaseURI(baseURI string, subscripti
 }
 
 // CreateOrUpdate update the specified ExpressRouteCrossConnection.
-//
-// resourceGroupName is the name of the resource group. crossConnectionName is the name of the
-// ExpressRouteCrossConnection. parameters is parameters supplied to the update express route crossConnection
-// operation.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// crossConnectionName - the name of the ExpressRouteCrossConnection.
+// parameters - parameters supplied to the update express route crossConnection operation.
 func (client ExpressRouteCrossConnectionsClient) CreateOrUpdate(ctx context.Context, resourceGroupName string, crossConnectionName string, parameters ExpressRouteCrossConnection) (result ExpressRouteCrossConnectionsCreateOrUpdateFuture, err error) {
 	req, err := client.CreateOrUpdatePreparer(ctx, resourceGroupName, crossConnectionName, parameters)
 	if err != nil {
@@ -87,15 +87,17 @@ func (client ExpressRouteCrossConnectionsClient) CreateOrUpdatePreparer(ctx cont
 // CreateOrUpdateSender sends the CreateOrUpdate request. The method will close the
 // http.Response Body if it receives an error.
 func (client ExpressRouteCrossConnectionsClient) CreateOrUpdateSender(req *http.Request) (future ExpressRouteCrossConnectionsCreateOrUpdateFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -113,9 +115,9 @@ func (client ExpressRouteCrossConnectionsClient) CreateOrUpdateResponder(resp *h
 }
 
 // Get gets details about the specified ExpressRouteCrossConnection.
-//
-// resourceGroupName is the name of the resource group (peering location of the circuit). crossConnectionName is
-// the name of the ExpressRouteCrossConnection (service key of the circuit).
+// Parameters:
+// resourceGroupName - the name of the resource group (peering location of the circuit).
+// crossConnectionName - the name of the ExpressRouteCrossConnection (service key of the circuit).
 func (client ExpressRouteCrossConnectionsClient) Get(ctx context.Context, resourceGroupName string, crossConnectionName string) (result ExpressRouteCrossConnection, err error) {
 	req, err := client.GetPreparer(ctx, resourceGroupName, crossConnectionName)
 	if err != nil {
@@ -271,9 +273,11 @@ func (client ExpressRouteCrossConnectionsClient) ListComplete(ctx context.Contex
 
 // ListArpTable gets the currently advertised ARP table associated with the express route cross connection in a
 // resource group.
-//
-// resourceGroupName is the name of the resource group. crossConnectionName is the name of the
-// ExpressRouteCrossConnection. peeringName is the name of the peering. devicePath is the path of the device
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// crossConnectionName - the name of the ExpressRouteCrossConnection.
+// peeringName - the name of the peering.
+// devicePath - the path of the device
 func (client ExpressRouteCrossConnectionsClient) ListArpTable(ctx context.Context, resourceGroupName string, crossConnectionName string, peeringName string, devicePath string) (result ExpressRouteCrossConnectionsListArpTableFuture, err error) {
 	req, err := client.ListArpTablePreparer(ctx, resourceGroupName, crossConnectionName, peeringName, devicePath)
 	if err != nil {
@@ -316,15 +320,17 @@ func (client ExpressRouteCrossConnectionsClient) ListArpTablePreparer(ctx contex
 // ListArpTableSender sends the ListArpTable request. The method will close the
 // http.Response Body if it receives an error.
 func (client ExpressRouteCrossConnectionsClient) ListArpTableSender(req *http.Request) (future ExpressRouteCrossConnectionsListArpTableFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -342,8 +348,8 @@ func (client ExpressRouteCrossConnectionsClient) ListArpTableResponder(resp *htt
 }
 
 // ListByResourceGroup retrieves all the ExpressRouteCrossConnections in a resource group.
-//
-// resourceGroupName is the name of the resource group.
+// Parameters:
+// resourceGroupName - the name of the resource group.
 func (client ExpressRouteCrossConnectionsClient) ListByResourceGroup(ctx context.Context, resourceGroupName string) (result ExpressRouteCrossConnectionListResultPage, err error) {
 	result.fn = client.listByResourceGroupNextResults
 	req, err := client.ListByResourceGroupPreparer(ctx, resourceGroupName)
@@ -436,9 +442,11 @@ func (client ExpressRouteCrossConnectionsClient) ListByResourceGroupComplete(ctx
 
 // ListRoutesTable gets the currently advertised routes table associated with the express route cross connection in a
 // resource group.
-//
-// resourceGroupName is the name of the resource group. crossConnectionName is the name of the
-// ExpressRouteCrossConnection. peeringName is the name of the peering. devicePath is the path of the device.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// crossConnectionName - the name of the ExpressRouteCrossConnection.
+// peeringName - the name of the peering.
+// devicePath - the path of the device.
 func (client ExpressRouteCrossConnectionsClient) ListRoutesTable(ctx context.Context, resourceGroupName string, crossConnectionName string, peeringName string, devicePath string) (result ExpressRouteCrossConnectionsListRoutesTableFuture, err error) {
 	req, err := client.ListRoutesTablePreparer(ctx, resourceGroupName, crossConnectionName, peeringName, devicePath)
 	if err != nil {
@@ -481,15 +489,17 @@ func (client ExpressRouteCrossConnectionsClient) ListRoutesTablePreparer(ctx con
 // ListRoutesTableSender sends the ListRoutesTable request. The method will close the
 // http.Response Body if it receives an error.
 func (client ExpressRouteCrossConnectionsClient) ListRoutesTableSender(req *http.Request) (future ExpressRouteCrossConnectionsListRoutesTableFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -508,9 +518,11 @@ func (client ExpressRouteCrossConnectionsClient) ListRoutesTableResponder(resp *
 
 // ListRoutesTableSummary gets the route table summary associated with the express route cross connection in a resource
 // group.
-//
-// resourceGroupName is the name of the resource group. crossConnectionName is the name of the
-// ExpressRouteCrossConnection. peeringName is the name of the peering. devicePath is the path of the device.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// crossConnectionName - the name of the ExpressRouteCrossConnection.
+// peeringName - the name of the peering.
+// devicePath - the path of the device.
 func (client ExpressRouteCrossConnectionsClient) ListRoutesTableSummary(ctx context.Context, resourceGroupName string, crossConnectionName string, peeringName string, devicePath string) (result ExpressRouteCrossConnectionsListRoutesTableSummaryFuture, err error) {
 	req, err := client.ListRoutesTableSummaryPreparer(ctx, resourceGroupName, crossConnectionName, peeringName, devicePath)
 	if err != nil {
@@ -553,15 +565,17 @@ func (client ExpressRouteCrossConnectionsClient) ListRoutesTableSummaryPreparer(
 // ListRoutesTableSummarySender sends the ListRoutesTableSummary request. The method will close the
 // http.Response Body if it receives an error.
 func (client ExpressRouteCrossConnectionsClient) ListRoutesTableSummarySender(req *http.Request) (future ExpressRouteCrossConnectionsListRoutesTableSummaryFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -579,9 +593,10 @@ func (client ExpressRouteCrossConnectionsClient) ListRoutesTableSummaryResponder
 }
 
 // UpdateTags updates an express route cross connection tags.
-//
-// resourceGroupName is the name of the resource group. crossConnectionName is the name of the cross connection.
-// crossConnectionParameters is parameters supplied to update express route cross connection tags.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// crossConnectionName - the name of the cross connection.
+// crossConnectionParameters - parameters supplied to update express route cross connection tags.
 func (client ExpressRouteCrossConnectionsClient) UpdateTags(ctx context.Context, resourceGroupName string, crossConnectionName string, crossConnectionParameters TagsObject) (result ExpressRouteCrossConnectionsUpdateTagsFuture, err error) {
 	req, err := client.UpdateTagsPreparer(ctx, resourceGroupName, crossConnectionName, crossConnectionParameters)
 	if err != nil {
@@ -624,15 +639,17 @@ func (client ExpressRouteCrossConnectionsClient) UpdateTagsPreparer(ctx context.
 // UpdateTagsSender sends the UpdateTags request. The method will close the
 // http.Response Body if it receives an error.
 func (client ExpressRouteCrossConnectionsClient) UpdateTagsSender(req *http.Request) (future ExpressRouteCrossConnectionsUpdateTagsFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 

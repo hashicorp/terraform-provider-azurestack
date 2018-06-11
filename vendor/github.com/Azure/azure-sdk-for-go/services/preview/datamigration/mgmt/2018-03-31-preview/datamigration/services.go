@@ -41,9 +41,10 @@ func NewServicesClientWithBaseURI(baseURI string, subscriptionID string) Service
 }
 
 // CheckChildrenNameAvailability this method checks whether a proposed nested resource name is valid and available.
-//
-// groupName is name of the resource group serviceName is name of the service parameters is requested name to
-// validate
+// Parameters:
+// groupName - name of the resource group
+// serviceName - name of the service
+// parameters - requested name to validate
 func (client ServicesClient) CheckChildrenNameAvailability(ctx context.Context, groupName string, serviceName string, parameters NameAvailabilityRequest) (result NameAvailabilityResponse, err error) {
 	req, err := client.CheckChildrenNameAvailabilityPreparer(ctx, groupName, serviceName, parameters)
 	if err != nil {
@@ -110,8 +111,9 @@ func (client ServicesClient) CheckChildrenNameAvailabilityResponder(resp *http.R
 }
 
 // CheckNameAvailability this method checks whether a proposed top-level resource name is valid and available.
-//
-// location is the Azure region of the operation parameters is requested name to validate
+// Parameters:
+// location - the Azure region of the operation
+// parameters - requested name to validate
 func (client ServicesClient) CheckNameAvailability(ctx context.Context, location string, parameters NameAvailabilityRequest) (result NameAvailabilityResponse, err error) {
 	req, err := client.CheckNameAvailabilityPreparer(ctx, location, parameters)
 	if err != nil {
@@ -178,8 +180,9 @@ func (client ServicesClient) CheckNameAvailabilityResponder(resp *http.Response)
 
 // CheckStatus the services resource is the top-level resource that represents the Data Migration Service. This action
 // performs a health check and returns the status of the service and virtual machine size.
-//
-// groupName is name of the resource group serviceName is name of the service
+// Parameters:
+// groupName - name of the resource group
+// serviceName - name of the service
 func (client ServicesClient) CheckStatus(ctx context.Context, groupName string, serviceName string) (result ServiceStatusResponse, err error) {
 	req, err := client.CheckStatusPreparer(ctx, groupName, serviceName)
 	if err != nil {
@@ -250,9 +253,10 @@ func (client ServicesClient) CheckStatusResponder(resp *http.Response) (result S
 // tasks are currently running (i.e. the service is busy), this will fail with 400 Bad Request ("ServiceIsBusy"). The
 // provider will reply when successful with 200 OK or 201 Created. Long-running operations use the provisioningState
 // property.
-//
-// parameters is information about the service groupName is name of the resource group serviceName is name of the
-// service
+// Parameters:
+// parameters - information about the service
+// groupName - name of the resource group
+// serviceName - name of the service
 func (client ServicesClient) CreateOrUpdate(ctx context.Context, parameters Service, groupName string, serviceName string) (result ServicesCreateOrUpdateFuture, err error) {
 	if err := validation.Validate([]validation.Validation{
 		{TargetValue: parameters,
@@ -302,15 +306,17 @@ func (client ServicesClient) CreateOrUpdatePreparer(ctx context.Context, paramet
 // CreateOrUpdateSender sends the CreateOrUpdate request. The method will close the
 // http.Response Body if it receives an error.
 func (client ServicesClient) CreateOrUpdateSender(req *http.Request) (future ServicesCreateOrUpdateFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusCreated, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusCreated, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -329,9 +335,10 @@ func (client ServicesClient) CreateOrUpdateResponder(resp *http.Response) (resul
 
 // Delete the services resource is the top-level resource that represents the Data Migration Service. The DELETE method
 // deletes a service. Any running tasks will be canceled.
-//
-// groupName is name of the resource group serviceName is name of the service deleteRunningTasks is delete the
-// resource even if it contains running tasks
+// Parameters:
+// groupName - name of the resource group
+// serviceName - name of the service
+// deleteRunningTasks - delete the resource even if it contains running tasks
 func (client ServicesClient) Delete(ctx context.Context, groupName string, serviceName string, deleteRunningTasks *bool) (result ServicesDeleteFuture, err error) {
 	req, err := client.DeletePreparer(ctx, groupName, serviceName, deleteRunningTasks)
 	if err != nil {
@@ -375,15 +382,17 @@ func (client ServicesClient) DeletePreparer(ctx context.Context, groupName strin
 // DeleteSender sends the Delete request. The method will close the
 // http.Response Body if it receives an error.
 func (client ServicesClient) DeleteSender(req *http.Request) (future ServicesDeleteFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted, http.StatusNoContent))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted, http.StatusNoContent))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -401,8 +410,9 @@ func (client ServicesClient) DeleteResponder(resp *http.Response) (result autore
 
 // Get the services resource is the top-level resource that represents the Data Migration Service. The GET method
 // retrieves information about a service instance.
-//
-// groupName is name of the resource group serviceName is name of the service
+// Parameters:
+// groupName - name of the resource group
+// serviceName - name of the service
 func (client ServicesClient) Get(ctx context.Context, groupName string, serviceName string) (result Service, err error) {
 	req, err := client.GetPreparer(ctx, groupName, serviceName)
 	if err != nil {
@@ -559,8 +569,8 @@ func (client ServicesClient) ListComplete(ctx context.Context) (result ServiceLi
 
 // ListByResourceGroup the Services resource is the top-level resource that represents the Data Migration Service. This
 // method returns a list of service resources in a resource group.
-//
-// groupName is name of the resource group
+// Parameters:
+// groupName - name of the resource group
 func (client ServicesClient) ListByResourceGroup(ctx context.Context, groupName string) (result ServiceListPage, err error) {
 	result.fn = client.listByResourceGroupNextResults
 	req, err := client.ListByResourceGroupPreparer(ctx, groupName)
@@ -653,8 +663,9 @@ func (client ServicesClient) ListByResourceGroupComplete(ctx context.Context, gr
 
 // ListSkus the services resource is the top-level resource that represents the Data Migration Service. The skus action
 // returns the list of SKUs that a service resource can be updated to.
-//
-// groupName is name of the resource group serviceName is name of the service
+// Parameters:
+// groupName - name of the resource group
+// serviceName - name of the service
 func (client ServicesClient) ListSkus(ctx context.Context, groupName string, serviceName string) (result ServiceSkuListPage, err error) {
 	result.fn = client.listSkusNextResults
 	req, err := client.ListSkusPreparer(ctx, groupName, serviceName)
@@ -748,8 +759,9 @@ func (client ServicesClient) ListSkusComplete(ctx context.Context, groupName str
 
 // Start the services resource is the top-level resource that represents the Data Migration Service. This action starts
 // the service and the service can be used for data migration.
-//
-// groupName is name of the resource group serviceName is name of the service
+// Parameters:
+// groupName - name of the resource group
+// serviceName - name of the service
 func (client ServicesClient) Start(ctx context.Context, groupName string, serviceName string) (result ServicesStartFuture, err error) {
 	req, err := client.StartPreparer(ctx, groupName, serviceName)
 	if err != nil {
@@ -790,15 +802,17 @@ func (client ServicesClient) StartPreparer(ctx context.Context, groupName string
 // StartSender sends the Start request. The method will close the
 // http.Response Body if it receives an error.
 func (client ServicesClient) StartSender(req *http.Request) (future ServicesStartFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -817,8 +831,9 @@ func (client ServicesClient) StartResponder(resp *http.Response) (result autores
 // Stop the services resource is the top-level resource that represents the Data Migration Service. This action stops
 // the service and the service cannot be used for data migration. The service owner won't be billed when the service is
 // stopped.
-//
-// groupName is name of the resource group serviceName is name of the service
+// Parameters:
+// groupName - name of the resource group
+// serviceName - name of the service
 func (client ServicesClient) Stop(ctx context.Context, groupName string, serviceName string) (result ServicesStopFuture, err error) {
 	req, err := client.StopPreparer(ctx, groupName, serviceName)
 	if err != nil {
@@ -859,15 +874,17 @@ func (client ServicesClient) StopPreparer(ctx context.Context, groupName string,
 // StopSender sends the Stop request. The method will close the
 // http.Response Body if it receives an error.
 func (client ServicesClient) StopSender(req *http.Request) (future ServicesStopFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 
@@ -886,9 +903,10 @@ func (client ServicesClient) StopResponder(resp *http.Response) (result autorest
 // Update the services resource is the top-level resource that represents the Data Migration Service. The PATCH method
 // updates an existing service. This method can change the kind, SKU, and network of the service, but if tasks are
 // currently running (i.e. the service is busy), this will fail with 400 Bad Request ("ServiceIsBusy").
-//
-// parameters is information about the service groupName is name of the resource group serviceName is name of the
-// service
+// Parameters:
+// parameters - information about the service
+// groupName - name of the resource group
+// serviceName - name of the service
 func (client ServicesClient) Update(ctx context.Context, parameters Service, groupName string, serviceName string) (result ServicesUpdateFuture, err error) {
 	req, err := client.UpdatePreparer(ctx, parameters, groupName, serviceName)
 	if err != nil {
@@ -931,15 +949,17 @@ func (client ServicesClient) UpdatePreparer(ctx context.Context, parameters Serv
 // UpdateSender sends the Update request. The method will close the
 // http.Response Body if it receives an error.
 func (client ServicesClient) UpdateSender(req *http.Request) (future ServicesUpdateFuture, err error) {
-	sender := autorest.DecorateSender(client, azure.DoRetryWithRegistration(client.Client))
-	future.Future = azure.NewFuture(req)
-	future.req = req
-	_, err = future.Done(sender)
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	err = autorest.Respond(future.Response(),
-		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
 	return
 }
 

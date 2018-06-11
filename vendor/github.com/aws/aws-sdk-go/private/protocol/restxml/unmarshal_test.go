@@ -76,6 +76,7 @@ func newOutputService1ProtocolTestClient(cfg aws.Config, handlers request.Handle
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice1protocoltest",
+				ServiceID:     "OutputService1ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -127,7 +128,7 @@ const opOutputService1TestCaseOperation1 = "OperationName"
 //    if err == nil { // resp is now filled
 //        fmt.Println(resp)
 //    }
-func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation1Request(input *OutputService1TestShapeOutputService1TestCaseOperation1Input) (req *request.Request, output *OutputService1TestShapeOutputService1TestCaseOperation2Output) {
+func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation1Request(input *OutputService1TestShapeOutputService1TestCaseOperation1Input) (req *request.Request, output *OutputService1TestShapeOutputService1TestCaseOperation3Output) {
 	op := &request.Operation{
 		Name:     opOutputService1TestCaseOperation1,
 		HTTPPath: "/",
@@ -137,7 +138,7 @@ func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation1Request(inp
 		input = &OutputService1TestShapeOutputService1TestCaseOperation1Input{}
 	}
 
-	output = &OutputService1TestShapeOutputService1TestCaseOperation2Output{}
+	output = &OutputService1TestShapeOutputService1TestCaseOperation3Output{}
 	req = c.newRequest(op, input, output)
 	return
 }
@@ -150,7 +151,7 @@ func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation1Request(inp
 //
 // See the AWS API reference guide for 's
 // API operation OutputService1TestCaseOperation1 for usage and error information.
-func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation1(input *OutputService1TestShapeOutputService1TestCaseOperation1Input) (*OutputService1TestShapeOutputService1TestCaseOperation2Output, error) {
+func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation1(input *OutputService1TestShapeOutputService1TestCaseOperation1Input) (*OutputService1TestShapeOutputService1TestCaseOperation3Output, error) {
 	req, out := c.OutputService1TestCaseOperation1Request(input)
 	return out, req.Send()
 }
@@ -164,7 +165,7 @@ func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation1(input *Out
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation1WithContext(ctx aws.Context, input *OutputService1TestShapeOutputService1TestCaseOperation1Input, opts ...request.Option) (*OutputService1TestShapeOutputService1TestCaseOperation2Output, error) {
+func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation1WithContext(ctx aws.Context, input *OutputService1TestShapeOutputService1TestCaseOperation1Input, opts ...request.Option) (*OutputService1TestShapeOutputService1TestCaseOperation3Output, error) {
 	req, out := c.OutputService1TestCaseOperation1Request(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
@@ -195,7 +196,7 @@ const opOutputService1TestCaseOperation2 = "OperationName"
 //    if err == nil { // resp is now filled
 //        fmt.Println(resp)
 //    }
-func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation2Request(input *OutputService1TestShapeOutputService1TestCaseOperation2Input) (req *request.Request, output *OutputService1TestShapeOutputService1TestCaseOperation2Output) {
+func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation2Request(input *OutputService1TestShapeOutputService1TestCaseOperation2Input) (req *request.Request, output *OutputService1TestShapeOutputService1TestCaseOperation3Output) {
 	op := &request.Operation{
 		Name:     opOutputService1TestCaseOperation2,
 		HTTPPath: "/",
@@ -205,7 +206,7 @@ func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation2Request(inp
 		input = &OutputService1TestShapeOutputService1TestCaseOperation2Input{}
 	}
 
-	output = &OutputService1TestShapeOutputService1TestCaseOperation2Output{}
+	output = &OutputService1TestShapeOutputService1TestCaseOperation3Output{}
 	req = c.newRequest(op, input, output)
 	return
 }
@@ -218,7 +219,7 @@ func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation2Request(inp
 //
 // See the AWS API reference guide for 's
 // API operation OutputService1TestCaseOperation2 for usage and error information.
-func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation2(input *OutputService1TestShapeOutputService1TestCaseOperation2Input) (*OutputService1TestShapeOutputService1TestCaseOperation2Output, error) {
+func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation2(input *OutputService1TestShapeOutputService1TestCaseOperation2Input) (*OutputService1TestShapeOutputService1TestCaseOperation3Output, error) {
 	req, out := c.OutputService1TestCaseOperation2Request(input)
 	return out, req.Send()
 }
@@ -232,8 +233,76 @@ func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation2(input *Out
 // the context is nil a panic will occur. In the future the SDK may create
 // sub-contexts for http.Requests. See https://golang.org/pkg/context/
 // for more information on using Contexts.
-func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation2WithContext(ctx aws.Context, input *OutputService1TestShapeOutputService1TestCaseOperation2Input, opts ...request.Option) (*OutputService1TestShapeOutputService1TestCaseOperation2Output, error) {
+func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation2WithContext(ctx aws.Context, input *OutputService1TestShapeOutputService1TestCaseOperation2Input, opts ...request.Option) (*OutputService1TestShapeOutputService1TestCaseOperation3Output, error) {
 	req, out := c.OutputService1TestCaseOperation2Request(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opOutputService1TestCaseOperation3 = "OperationName"
+
+// OutputService1TestCaseOperation3Request generates a "aws/request.Request" representing the
+// client's request for the OutputService1TestCaseOperation3 operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfuly.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See OutputService1TestCaseOperation3 for more information on using the OutputService1TestCaseOperation3
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the OutputService1TestCaseOperation3Request method.
+//    req, resp := client.OutputService1TestCaseOperation3Request(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation3Request(input *OutputService1TestShapeOutputService1TestCaseOperation3Input) (req *request.Request, output *OutputService1TestShapeOutputService1TestCaseOperation3Output) {
+	op := &request.Operation{
+		Name:     opOutputService1TestCaseOperation3,
+		HTTPPath: "/",
+	}
+
+	if input == nil {
+		input = &OutputService1TestShapeOutputService1TestCaseOperation3Input{}
+	}
+
+	output = &OutputService1TestShapeOutputService1TestCaseOperation3Output{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// OutputService1TestCaseOperation3 API operation for .
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for 's
+// API operation OutputService1TestCaseOperation3 for usage and error information.
+func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation3(input *OutputService1TestShapeOutputService1TestCaseOperation3Input) (*OutputService1TestShapeOutputService1TestCaseOperation3Output, error) {
+	req, out := c.OutputService1TestCaseOperation3Request(input)
+	return out, req.Send()
+}
+
+// OutputService1TestCaseOperation3WithContext is the same as OutputService1TestCaseOperation3 with the addition of
+// the ability to pass a context and additional request options.
+//
+// See OutputService1TestCaseOperation3 for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *OutputService1ProtocolTest) OutputService1TestCaseOperation3WithContext(ctx aws.Context, input *OutputService1TestShapeOutputService1TestCaseOperation3Input, opts ...request.Option) (*OutputService1TestShapeOutputService1TestCaseOperation3Output, error) {
+	req, out := c.OutputService1TestCaseOperation3Request(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -247,8 +316,14 @@ type OutputService1TestShapeOutputService1TestCaseOperation2Input struct {
 	_ struct{} `type:"structure"`
 }
 
-type OutputService1TestShapeOutputService1TestCaseOperation2Output struct {
+type OutputService1TestShapeOutputService1TestCaseOperation3Input struct {
 	_ struct{} `type:"structure"`
+}
+
+type OutputService1TestShapeOutputService1TestCaseOperation3Output struct {
+	_ struct{} `type:"structure"`
+
+	Blobs [][]byte `type:"list"`
 
 	Char *string `type:"character"`
 
@@ -270,71 +345,85 @@ type OutputService1TestShapeOutputService1TestCaseOperation2Output struct {
 
 	Timestamp *time.Time `type:"timestamp" timestampFormat:"iso8601"`
 
+	Timestamps []*time.Time `type:"list"`
+
 	TrueBool *bool `type:"boolean"`
 }
 
+// SetBlobs sets the Blobs field's value.
+func (s *OutputService1TestShapeOutputService1TestCaseOperation3Output) SetBlobs(v [][]byte) *OutputService1TestShapeOutputService1TestCaseOperation3Output {
+	s.Blobs = v
+	return s
+}
+
 // SetChar sets the Char field's value.
-func (s *OutputService1TestShapeOutputService1TestCaseOperation2Output) SetChar(v string) *OutputService1TestShapeOutputService1TestCaseOperation2Output {
+func (s *OutputService1TestShapeOutputService1TestCaseOperation3Output) SetChar(v string) *OutputService1TestShapeOutputService1TestCaseOperation3Output {
 	s.Char = &v
 	return s
 }
 
 // SetDouble sets the Double field's value.
-func (s *OutputService1TestShapeOutputService1TestCaseOperation2Output) SetDouble(v float64) *OutputService1TestShapeOutputService1TestCaseOperation2Output {
+func (s *OutputService1TestShapeOutputService1TestCaseOperation3Output) SetDouble(v float64) *OutputService1TestShapeOutputService1TestCaseOperation3Output {
 	s.Double = &v
 	return s
 }
 
 // SetFalseBool sets the FalseBool field's value.
-func (s *OutputService1TestShapeOutputService1TestCaseOperation2Output) SetFalseBool(v bool) *OutputService1TestShapeOutputService1TestCaseOperation2Output {
+func (s *OutputService1TestShapeOutputService1TestCaseOperation3Output) SetFalseBool(v bool) *OutputService1TestShapeOutputService1TestCaseOperation3Output {
 	s.FalseBool = &v
 	return s
 }
 
 // SetFloat sets the Float field's value.
-func (s *OutputService1TestShapeOutputService1TestCaseOperation2Output) SetFloat(v float64) *OutputService1TestShapeOutputService1TestCaseOperation2Output {
+func (s *OutputService1TestShapeOutputService1TestCaseOperation3Output) SetFloat(v float64) *OutputService1TestShapeOutputService1TestCaseOperation3Output {
 	s.Float = &v
 	return s
 }
 
 // SetImaHeader sets the ImaHeader field's value.
-func (s *OutputService1TestShapeOutputService1TestCaseOperation2Output) SetImaHeader(v string) *OutputService1TestShapeOutputService1TestCaseOperation2Output {
+func (s *OutputService1TestShapeOutputService1TestCaseOperation3Output) SetImaHeader(v string) *OutputService1TestShapeOutputService1TestCaseOperation3Output {
 	s.ImaHeader = &v
 	return s
 }
 
 // SetImaHeaderLocation sets the ImaHeaderLocation field's value.
-func (s *OutputService1TestShapeOutputService1TestCaseOperation2Output) SetImaHeaderLocation(v string) *OutputService1TestShapeOutputService1TestCaseOperation2Output {
+func (s *OutputService1TestShapeOutputService1TestCaseOperation3Output) SetImaHeaderLocation(v string) *OutputService1TestShapeOutputService1TestCaseOperation3Output {
 	s.ImaHeaderLocation = &v
 	return s
 }
 
 // SetLong sets the Long field's value.
-func (s *OutputService1TestShapeOutputService1TestCaseOperation2Output) SetLong(v int64) *OutputService1TestShapeOutputService1TestCaseOperation2Output {
+func (s *OutputService1TestShapeOutputService1TestCaseOperation3Output) SetLong(v int64) *OutputService1TestShapeOutputService1TestCaseOperation3Output {
 	s.Long = &v
 	return s
 }
 
 // SetNum sets the Num field's value.
-func (s *OutputService1TestShapeOutputService1TestCaseOperation2Output) SetNum(v int64) *OutputService1TestShapeOutputService1TestCaseOperation2Output {
+func (s *OutputService1TestShapeOutputService1TestCaseOperation3Output) SetNum(v int64) *OutputService1TestShapeOutputService1TestCaseOperation3Output {
 	s.Num = &v
 	return s
 }
 
 // SetStr sets the Str field's value.
-func (s *OutputService1TestShapeOutputService1TestCaseOperation2Output) SetStr(v string) *OutputService1TestShapeOutputService1TestCaseOperation2Output {
+func (s *OutputService1TestShapeOutputService1TestCaseOperation3Output) SetStr(v string) *OutputService1TestShapeOutputService1TestCaseOperation3Output {
 	s.Str = &v
 	return s
 }
 
 // SetTimestamp sets the Timestamp field's value.
-func (s *OutputService1TestShapeOutputService1TestCaseOperation2Output) SetTimestamp(v time.Time) *OutputService1TestShapeOutputService1TestCaseOperation2Output {
+func (s *OutputService1TestShapeOutputService1TestCaseOperation3Output) SetTimestamp(v time.Time) *OutputService1TestShapeOutputService1TestCaseOperation3Output {
 	s.Timestamp = &v
 	return s
 }
 
+// SetTimestamps sets the Timestamps field's value.
+func (s *OutputService1TestShapeOutputService1TestCaseOperation3Output) SetTimestamps(v []*time.Time) *OutputService1TestShapeOutputService1TestCaseOperation3Output {
+	s.Timestamps = v
+	return s
+}
+
 // SetTrueBool sets the TrueBool field's value.
-func (s *OutputService1TestShapeOutputService1TestCaseOperation2Output) SetTrueBool(v bool) *OutputService1TestShapeOutputService1TestCaseOperation2Output {
+func (s *OutputService1TestShapeOutputService1TestCaseOperation3Output) SetTrueBool(v bool) *OutputService1TestShapeOutputService1TestCaseOperation3Output {
 	s.TrueBool = &v
 	return s
 }
@@ -371,6 +460,7 @@ func newOutputService2ProtocolTestClient(cfg aws.Config, handlers request.Handle
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice2protocoltest",
+				ServiceID:     "OutputService2ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -515,6 +605,7 @@ func newOutputService3ProtocolTestClient(cfg aws.Config, handlers request.Handle
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice3protocoltest",
+				ServiceID:     "OutputService3ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -658,6 +749,7 @@ func newOutputService4ProtocolTestClient(cfg aws.Config, handlers request.Handle
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice4protocoltest",
+				ServiceID:     "OutputService4ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -801,6 +893,7 @@ func newOutputService5ProtocolTestClient(cfg aws.Config, handlers request.Handle
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice5protocoltest",
+				ServiceID:     "OutputService5ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -944,6 +1037,7 @@ func newOutputService6ProtocolTestClient(cfg aws.Config, handlers request.Handle
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice6protocoltest",
+				ServiceID:     "OutputService6ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -1099,6 +1193,7 @@ func newOutputService7ProtocolTestClient(cfg aws.Config, handlers request.Handle
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice7protocoltest",
+				ServiceID:     "OutputService7ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -1242,6 +1337,7 @@ func newOutputService8ProtocolTestClient(cfg aws.Config, handlers request.Handle
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice8protocoltest",
+				ServiceID:     "OutputService8ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -1385,6 +1481,7 @@ func newOutputService9ProtocolTestClient(cfg aws.Config, handlers request.Handle
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice9protocoltest",
+				ServiceID:     "OutputService9ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -1548,6 +1645,7 @@ func newOutputService10ProtocolTestClient(cfg aws.Config, handlers request.Handl
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice10protocoltest",
+				ServiceID:     "OutputService10ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -1691,6 +1789,7 @@ func newOutputService11ProtocolTestClient(cfg aws.Config, handlers request.Handl
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice11protocoltest",
+				ServiceID:     "OutputService11ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -1898,6 +1997,7 @@ func newOutputService12ProtocolTestClient(cfg aws.Config, handlers request.Handl
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice12protocoltest",
+				ServiceID:     "OutputService12ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -2041,6 +2141,7 @@ func newOutputService13ProtocolTestClient(cfg aws.Config, handlers request.Handl
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice13protocoltest",
+				ServiceID:     "OutputService13ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -2290,6 +2391,7 @@ func newOutputService14ProtocolTestClient(cfg aws.Config, handlers request.Handl
 			cfg,
 			metadata.ClientInfo{
 				ServiceName:   "outputservice14protocoltest",
+				ServiceID:     "OutputService14ProtocolTest",
 				SigningName:   signingName,
 				SigningRegion: signingRegion,
 				Endpoint:      endpoint,
@@ -2499,7 +2601,7 @@ func TestOutputService1ProtocolTestScalarMembersCase1(t *testing.T) {
 	if e, a := "myname", *out.Str; e != a {
 		t.Errorf("expect %v, got %v", e, a)
 	}
-	if e, a := time.Unix(1.4221728e+09, 0).UTC().String(), out.Timestamp.String(); e != a {
+	if e, a := time.Unix(1.4221728e+09, 0).UTC().String(), out.Timestamp.UTC().String(); e != a {
 		t.Errorf("expect %v, got %v", e, a)
 	}
 	if e, a := true, *out.TrueBool; e != a {
@@ -2557,10 +2659,45 @@ func TestOutputService1ProtocolTestScalarMembersCase2(t *testing.T) {
 	if e, a := "", *out.Str; e != a {
 		t.Errorf("expect %v, got %v", e, a)
 	}
-	if e, a := time.Unix(1.4221728e+09, 0).UTC().String(), out.Timestamp.String(); e != a {
+	if e, a := time.Unix(1.4221728e+09, 0).UTC().String(), out.Timestamp.UTC().String(); e != a {
 		t.Errorf("expect %v, got %v", e, a)
 	}
 	if e, a := true, *out.TrueBool; e != a {
+		t.Errorf("expect %v, got %v", e, a)
+	}
+
+}
+
+func TestOutputService1ProtocolTestScalarMembersCase3(t *testing.T) {
+	svc := NewOutputService1ProtocolTest(unit.Session, &aws.Config{Endpoint: aws.String("https://test")})
+
+	buf := bytes.NewReader([]byte("<OperationNameResponse><Blobs><member>dmFsdWU=</member><member>dmFsdWUy</member></Blobs><Timestamps><member>2015-01-25T08:00:00Z</member><member>2015-01-25T08:00:01Z</member></Timestamps></OperationNameResponse>"))
+	req, out := svc.OutputService1TestCaseOperation3Request(nil)
+	req.HTTPResponse = &http.Response{StatusCode: 200, Body: ioutil.NopCloser(buf), Header: http.Header{}}
+
+	// set headers
+
+	// unmarshal response
+	restxml.UnmarshalMeta(req)
+	restxml.Unmarshal(req)
+	if req.Error != nil {
+		t.Errorf("expect not error, got %v", req.Error)
+	}
+
+	// assert response
+	if out == nil {
+		t.Errorf("expect not to be nil")
+	}
+	if e, a := "value", string(out.Blobs[0]); e != a {
+		t.Errorf("expect %v, got %v", e, a)
+	}
+	if e, a := "value2", string(out.Blobs[1]); e != a {
+		t.Errorf("expect %v, got %v", e, a)
+	}
+	if e, a := time.Unix(1.4221728e+09, 0).UTC().String(), out.Timestamps[0].UTC().String(); e != a {
+		t.Errorf("expect %v, got %v", e, a)
+	}
+	if e, a := time.Unix(1.422172801e+09, 0).UTC().String(), out.Timestamps[1].UTC().String(); e != a {
 		t.Errorf("expect %v, got %v", e, a)
 	}
 
@@ -2872,7 +3009,7 @@ func TestOutputService11ProtocolTestScalarMembersInHeadersCase1(t *testing.T) {
 	if e, a := "string", *out.Str; e != a {
 		t.Errorf("expect %v, got %v", e, a)
 	}
-	if e, a := time.Unix(1.4221728e+09, 0).UTC().String(), out.Timestamp.String(); e != a {
+	if e, a := time.Unix(1.4221728e+09, 0).UTC().String(), out.Timestamp.UTC().String(); e != a {
 		t.Errorf("expect %v, got %v", e, a)
 	}
 	if e, a := true, *out.TrueBool; e != a {

@@ -41,9 +41,10 @@ func NewReplicationProtectableItemsClientWithBaseURI(baseURI string, subscriptio
 }
 
 // Get the operation to get the details of a protectable item.
-//
-// fabricName is fabric name. protectionContainerName is protection container name. protectableItemName is
-// protectable item name.
+// Parameters:
+// fabricName - fabric name.
+// protectionContainerName - protection container name.
+// protectableItemName - protectable item name.
 func (client ReplicationProtectableItemsClient) Get(ctx context.Context, fabricName string, protectionContainerName string, protectableItemName string) (result ProtectableItem, err error) {
 	req, err := client.GetPreparer(ctx, fabricName, protectionContainerName, protectableItemName)
 	if err != nil {
@@ -111,11 +112,13 @@ func (client ReplicationProtectableItemsClient) GetResponder(resp *http.Response
 }
 
 // ListByReplicationProtectionContainers lists the protectable items in a protection container.
-//
-// fabricName is fabric name. protectionContainerName is protection container name.
-func (client ReplicationProtectableItemsClient) ListByReplicationProtectionContainers(ctx context.Context, fabricName string, protectionContainerName string) (result ProtectableItemCollectionPage, err error) {
+// Parameters:
+// fabricName - fabric name.
+// protectionContainerName - protection container name.
+// filter - oData filter options.
+func (client ReplicationProtectableItemsClient) ListByReplicationProtectionContainers(ctx context.Context, fabricName string, protectionContainerName string, filter string) (result ProtectableItemCollectionPage, err error) {
 	result.fn = client.listByReplicationProtectionContainersNextResults
-	req, err := client.ListByReplicationProtectionContainersPreparer(ctx, fabricName, protectionContainerName)
+	req, err := client.ListByReplicationProtectionContainersPreparer(ctx, fabricName, protectionContainerName, filter)
 	if err != nil {
 		err = autorest.NewErrorWithError(err, "siterecovery.ReplicationProtectableItemsClient", "ListByReplicationProtectionContainers", nil, "Failure preparing request")
 		return
@@ -137,7 +140,7 @@ func (client ReplicationProtectableItemsClient) ListByReplicationProtectionConta
 }
 
 // ListByReplicationProtectionContainersPreparer prepares the ListByReplicationProtectionContainers request.
-func (client ReplicationProtectableItemsClient) ListByReplicationProtectionContainersPreparer(ctx context.Context, fabricName string, protectionContainerName string) (*http.Request, error) {
+func (client ReplicationProtectableItemsClient) ListByReplicationProtectionContainersPreparer(ctx context.Context, fabricName string, protectionContainerName string, filter string) (*http.Request, error) {
 	pathParameters := map[string]interface{}{
 		"fabricName":              autorest.Encode("path", fabricName),
 		"protectionContainerName": autorest.Encode("path", protectionContainerName),
@@ -149,6 +152,9 @@ func (client ReplicationProtectableItemsClient) ListByReplicationProtectionConta
 	const APIVersion = "2018-01-10"
 	queryParameters := map[string]interface{}{
 		"api-version": APIVersion,
+	}
+	if len(filter) > 0 {
+		queryParameters["$filter"] = autorest.Encode("query", filter)
 	}
 
 	preparer := autorest.CreatePreparer(
@@ -201,7 +207,7 @@ func (client ReplicationProtectableItemsClient) listByReplicationProtectionConta
 }
 
 // ListByReplicationProtectionContainersComplete enumerates all values, automatically crossing page boundaries as required.
-func (client ReplicationProtectableItemsClient) ListByReplicationProtectionContainersComplete(ctx context.Context, fabricName string, protectionContainerName string) (result ProtectableItemCollectionIterator, err error) {
-	result.page, err = client.ListByReplicationProtectionContainers(ctx, fabricName, protectionContainerName)
+func (client ReplicationProtectableItemsClient) ListByReplicationProtectionContainersComplete(ctx context.Context, fabricName string, protectionContainerName string, filter string) (result ProtectableItemCollectionIterator, err error) {
+	result.page, err = client.ListByReplicationProtectionContainers(ctx, fabricName, protectionContainerName, filter)
 	return
 }

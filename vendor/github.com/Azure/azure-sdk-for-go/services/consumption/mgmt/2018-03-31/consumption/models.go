@@ -27,6 +27,23 @@ import (
 	"net/http"
 )
 
+// BillingFrequency enumerates the values for billing frequency.
+type BillingFrequency string
+
+const (
+	// Month ...
+	Month BillingFrequency = "Month"
+	// Quarter ...
+	Quarter BillingFrequency = "Quarter"
+	// Year ...
+	Year BillingFrequency = "Year"
+)
+
+// PossibleBillingFrequencyValues returns an array of possible values for the BillingFrequency const type.
+func PossibleBillingFrequencyValues() []BillingFrequency {
+	return []BillingFrequency{Month, Quarter, Year}
+}
+
 // CategoryType enumerates the values for category type.
 type CategoryType string
 
@@ -89,6 +106,151 @@ const (
 // PossibleTimeGrainTypeValues returns an array of possible values for the TimeGrainType const type.
 func PossibleTimeGrainTypeValues() []TimeGrainType {
 	return []TimeGrainType{Annually, Monthly, Quarterly}
+}
+
+// Balance a balance resource.
+type Balance struct {
+	autorest.Response  `json:"-"`
+	*BalanceProperties `json:"properties,omitempty"`
+	// ID - Resource Id.
+	ID *string `json:"id,omitempty"`
+	// Name - Resource name.
+	Name *string `json:"name,omitempty"`
+	// Type - Resource type.
+	Type *string `json:"type,omitempty"`
+	// Tags - Resource tags.
+	Tags map[string]*string `json:"tags"`
+}
+
+// MarshalJSON is the custom marshaler for Balance.
+func (b Balance) MarshalJSON() ([]byte, error) {
+	objectMap := make(map[string]interface{})
+	if b.BalanceProperties != nil {
+		objectMap["properties"] = b.BalanceProperties
+	}
+	if b.ID != nil {
+		objectMap["id"] = b.ID
+	}
+	if b.Name != nil {
+		objectMap["name"] = b.Name
+	}
+	if b.Type != nil {
+		objectMap["type"] = b.Type
+	}
+	if b.Tags != nil {
+		objectMap["tags"] = b.Tags
+	}
+	return json.Marshal(objectMap)
+}
+
+// UnmarshalJSON is the custom unmarshaler for Balance struct.
+func (b *Balance) UnmarshalJSON(body []byte) error {
+	var m map[string]*json.RawMessage
+	err := json.Unmarshal(body, &m)
+	if err != nil {
+		return err
+	}
+	for k, v := range m {
+		switch k {
+		case "properties":
+			if v != nil {
+				var balanceProperties BalanceProperties
+				err = json.Unmarshal(*v, &balanceProperties)
+				if err != nil {
+					return err
+				}
+				b.BalanceProperties = &balanceProperties
+			}
+		case "id":
+			if v != nil {
+				var ID string
+				err = json.Unmarshal(*v, &ID)
+				if err != nil {
+					return err
+				}
+				b.ID = &ID
+			}
+		case "name":
+			if v != nil {
+				var name string
+				err = json.Unmarshal(*v, &name)
+				if err != nil {
+					return err
+				}
+				b.Name = &name
+			}
+		case "type":
+			if v != nil {
+				var typeVar string
+				err = json.Unmarshal(*v, &typeVar)
+				if err != nil {
+					return err
+				}
+				b.Type = &typeVar
+			}
+		case "tags":
+			if v != nil {
+				var tags map[string]*string
+				err = json.Unmarshal(*v, &tags)
+				if err != nil {
+					return err
+				}
+				b.Tags = tags
+			}
+		}
+	}
+
+	return nil
+}
+
+// BalanceProperties the properties of the balance.
+type BalanceProperties struct {
+	// Currency - The ISO currency in which the meter is charged, for example, USD.
+	Currency *string `json:"currency,omitempty"`
+	// BeginningBalance - The beginning balance for the billing period.
+	BeginningBalance *decimal.Decimal `json:"beginningBalance,omitempty"`
+	// EndingBalance - The ending balance for the billing period (for open periods this will be updated daily).
+	EndingBalance *decimal.Decimal `json:"endingBalance,omitempty"`
+	// NewPurchases - Total new purchase amount.
+	NewPurchases *decimal.Decimal `json:"newPurchases,omitempty"`
+	// Adjustments - Total adjustment amount.
+	Adjustments *decimal.Decimal `json:"adjustments,omitempty"`
+	// Utilized - Total Commitment usage.
+	Utilized *decimal.Decimal `json:"utilized,omitempty"`
+	// ServiceOverage - Overage for Azure services.
+	ServiceOverage *decimal.Decimal `json:"serviceOverage,omitempty"`
+	// ChargesBilledSeparately - Charges Billed separately.
+	ChargesBilledSeparately *decimal.Decimal `json:"chargesBilledSeparately,omitempty"`
+	// TotalOverage - serviceOverage + chargesBilledSeparately.
+	TotalOverage *decimal.Decimal `json:"totalOverage,omitempty"`
+	// TotalUsage - Azure service commitment + total Overage.
+	TotalUsage *decimal.Decimal `json:"totalUsage,omitempty"`
+	// AzureMarketplaceServiceCharges - Total charges for Azure Marketplace.
+	AzureMarketplaceServiceCharges *decimal.Decimal `json:"azureMarketplaceServiceCharges,omitempty"`
+	// BillingFrequency - The billing frequency. Possible values include: 'Month', 'Quarter', 'Year'
+	BillingFrequency BillingFrequency `json:"billingFrequency,omitempty"`
+	// PriceHidden - Price is hidden or not.
+	PriceHidden *bool `json:"priceHidden,omitempty"`
+	// NewPurchasesDetails - List of new purchases.
+	NewPurchasesDetails *[]BalancePropertiesNewPurchasesDetailsItem `json:"newPurchasesDetails,omitempty"`
+	// AdjustmentDetails - List of Adjustments (Promo credit, SIE credit etc.).
+	AdjustmentDetails *[]BalancePropertiesAdjustmentDetailsItem `json:"adjustmentDetails,omitempty"`
+}
+
+// BalancePropertiesAdjustmentDetailsItem ...
+type BalancePropertiesAdjustmentDetailsItem struct {
+	// Name - the name of new adjustment.
+	Name *string `json:"name,omitempty"`
+	// Value - the value of new adjustment.
+	Value *decimal.Decimal `json:"value,omitempty"`
+}
+
+// BalancePropertiesNewPurchasesDetailsItem ...
+type BalancePropertiesNewPurchasesDetailsItem struct {
+	// Name - the name of new purchase.
+	Name *string `json:"name,omitempty"`
+	// Value - the value of new purchase.
+	Value *decimal.Decimal `json:"value,omitempty"`
 }
 
 // Budget a budget resource.
@@ -339,6 +501,113 @@ type BudgetTimePeriod struct {
 	StartDate *date.Time `json:"startDate,omitempty"`
 	// EndDate - The end date for the budget. If not provided, we default this to 10 years from the start date.
 	EndDate *date.Time `json:"endDate,omitempty"`
+}
+
+// CostTag the cost tag.
+type CostTag struct {
+	// Key - Cost tag key.
+	Key *string `json:"key,omitempty"`
+}
+
+// CostTagProperties the properties of the cost tag.
+type CostTagProperties struct {
+	// CostTags - Cost tags.
+	CostTags *[]CostTag `json:"costTags,omitempty"`
+}
+
+// CostTags a cost tag resource.
+type CostTags struct {
+	autorest.Response  `json:"-"`
+	*CostTagProperties `json:"properties,omitempty"`
+	// ID - Resource Id.
+	ID *string `json:"id,omitempty"`
+	// Name - Resource name.
+	Name *string `json:"name,omitempty"`
+	// Type - Resource type.
+	Type *string `json:"type,omitempty"`
+	// ETag - eTag of the resource. To handle concurrent update scenarion, this field will be used to determine whether the user is updating the latest version or not.
+	ETag *string `json:"eTag,omitempty"`
+}
+
+// MarshalJSON is the custom marshaler for CostTags.
+func (ct CostTags) MarshalJSON() ([]byte, error) {
+	objectMap := make(map[string]interface{})
+	if ct.CostTagProperties != nil {
+		objectMap["properties"] = ct.CostTagProperties
+	}
+	if ct.ID != nil {
+		objectMap["id"] = ct.ID
+	}
+	if ct.Name != nil {
+		objectMap["name"] = ct.Name
+	}
+	if ct.Type != nil {
+		objectMap["type"] = ct.Type
+	}
+	if ct.ETag != nil {
+		objectMap["eTag"] = ct.ETag
+	}
+	return json.Marshal(objectMap)
+}
+
+// UnmarshalJSON is the custom unmarshaler for CostTags struct.
+func (ct *CostTags) UnmarshalJSON(body []byte) error {
+	var m map[string]*json.RawMessage
+	err := json.Unmarshal(body, &m)
+	if err != nil {
+		return err
+	}
+	for k, v := range m {
+		switch k {
+		case "properties":
+			if v != nil {
+				var costTagProperties CostTagProperties
+				err = json.Unmarshal(*v, &costTagProperties)
+				if err != nil {
+					return err
+				}
+				ct.CostTagProperties = &costTagProperties
+			}
+		case "id":
+			if v != nil {
+				var ID string
+				err = json.Unmarshal(*v, &ID)
+				if err != nil {
+					return err
+				}
+				ct.ID = &ID
+			}
+		case "name":
+			if v != nil {
+				var name string
+				err = json.Unmarshal(*v, &name)
+				if err != nil {
+					return err
+				}
+				ct.Name = &name
+			}
+		case "type":
+			if v != nil {
+				var typeVar string
+				err = json.Unmarshal(*v, &typeVar)
+				if err != nil {
+					return err
+				}
+				ct.Type = &typeVar
+			}
+		case "eTag":
+			if v != nil {
+				var eTag string
+				err = json.Unmarshal(*v, &eTag)
+				if err != nil {
+					return err
+				}
+				ct.ETag = &eTag
+			}
+		}
+	}
+
+	return nil
 }
 
 // CurrentSpend the current amount of cost which is being tracked for a budget.
@@ -1650,6 +1919,113 @@ type ResourceAttributes struct {
 	Location *string `json:"location,omitempty"`
 	// Sku - Resource sku
 	Sku *string `json:"sku,omitempty"`
+}
+
+// Tag the tag resource.
+type Tag struct {
+	// Key - Tag key.
+	Key *string `json:"key,omitempty"`
+}
+
+// TagProperties the properties of the tag.
+type TagProperties struct {
+	// Tags - A list of Tag.
+	Tags *[]Tag `json:"tags,omitempty"`
+}
+
+// Tags a resource listing all tags.
+type Tags struct {
+	autorest.Response `json:"-"`
+	*TagProperties    `json:"properties,omitempty"`
+	// ID - Resource Id.
+	ID *string `json:"id,omitempty"`
+	// Name - Resource name.
+	Name *string `json:"name,omitempty"`
+	// Type - Resource type.
+	Type *string `json:"type,omitempty"`
+	// ETag - eTag of the resource. To handle concurrent update scenarion, this field will be used to determine whether the user is updating the latest version or not.
+	ETag *string `json:"eTag,omitempty"`
+}
+
+// MarshalJSON is the custom marshaler for Tags.
+func (t Tags) MarshalJSON() ([]byte, error) {
+	objectMap := make(map[string]interface{})
+	if t.TagProperties != nil {
+		objectMap["properties"] = t.TagProperties
+	}
+	if t.ID != nil {
+		objectMap["id"] = t.ID
+	}
+	if t.Name != nil {
+		objectMap["name"] = t.Name
+	}
+	if t.Type != nil {
+		objectMap["type"] = t.Type
+	}
+	if t.ETag != nil {
+		objectMap["eTag"] = t.ETag
+	}
+	return json.Marshal(objectMap)
+}
+
+// UnmarshalJSON is the custom unmarshaler for Tags struct.
+func (t *Tags) UnmarshalJSON(body []byte) error {
+	var m map[string]*json.RawMessage
+	err := json.Unmarshal(body, &m)
+	if err != nil {
+		return err
+	}
+	for k, v := range m {
+		switch k {
+		case "properties":
+			if v != nil {
+				var tagProperties TagProperties
+				err = json.Unmarshal(*v, &tagProperties)
+				if err != nil {
+					return err
+				}
+				t.TagProperties = &tagProperties
+			}
+		case "id":
+			if v != nil {
+				var ID string
+				err = json.Unmarshal(*v, &ID)
+				if err != nil {
+					return err
+				}
+				t.ID = &ID
+			}
+		case "name":
+			if v != nil {
+				var name string
+				err = json.Unmarshal(*v, &name)
+				if err != nil {
+					return err
+				}
+				t.Name = &name
+			}
+		case "type":
+			if v != nil {
+				var typeVar string
+				err = json.Unmarshal(*v, &typeVar)
+				if err != nil {
+					return err
+				}
+				t.Type = &typeVar
+			}
+		case "eTag":
+			if v != nil {
+				var eTag string
+				err = json.Unmarshal(*v, &eTag)
+				if err != nil {
+					return err
+				}
+				t.ETag = &eTag
+			}
+		}
+	}
+
+	return nil
 }
 
 // UsageDetail an usage detail resource.

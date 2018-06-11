@@ -19,7 +19,7 @@
 
 package network
 
-import original "github.com/Azure/azure-sdk-for-go/services/network/mgmt/2018-02-01/network"
+import original "github.com/Azure/azure-sdk-for-go/services/network/mgmt/2018-05-01/network"
 
 type ApplicationGatewaysClient = original.ApplicationGatewaysClient
 type ApplicationSecurityGroupsClient = original.ApplicationSecurityGroupsClient
@@ -224,6 +224,14 @@ const (
 	Disconnected CircuitConnectionStatus = original.Disconnected
 )
 
+type ConnectionMonitorSourceStatus = original.ConnectionMonitorSourceStatus
+
+const (
+	Active   ConnectionMonitorSourceStatus = original.Active
+	Inactive ConnectionMonitorSourceStatus = original.Inactive
+	Uknown   ConnectionMonitorSourceStatus = original.Uknown
+)
+
 type ConnectionState = original.ConnectionState
 
 const (
@@ -273,8 +281,8 @@ const (
 type EffectiveRouteState = original.EffectiveRouteState
 
 const (
-	Active  EffectiveRouteState = original.Active
-	Invalid EffectiveRouteState = original.Invalid
+	EffectiveRouteStateActive  EffectiveRouteState = original.EffectiveRouteStateActive
+	EffectiveRouteStateInvalid EffectiveRouteState = original.EffectiveRouteStateInvalid
 )
 
 type EffectiveSecurityRuleProtocol = original.EffectiveSecurityRuleProtocol
@@ -338,6 +346,12 @@ const (
 	MicrosoftPeering    ExpressRoutePeeringType = original.MicrosoftPeering
 )
 
+type HTTPMethod = original.HTTPMethod
+
+const (
+	Get HTTPMethod = original.Get
+)
+
 type IkeEncryption = original.IkeEncryption
 
 const (
@@ -366,6 +380,13 @@ type IPAllocationMethod = original.IPAllocationMethod
 const (
 	Dynamic IPAllocationMethod = original.Dynamic
 	Static  IPAllocationMethod = original.Static
+)
+
+type IPFlowProtocol = original.IPFlowProtocol
+
+const (
+	IPFlowProtocolTCP IPFlowProtocol = original.IPFlowProtocolTCP
+	IPFlowProtocolUDP IPFlowProtocol = original.IPFlowProtocolUDP
 )
 
 type IpsecEncryption = original.IpsecEncryption
@@ -515,8 +536,10 @@ const (
 type Protocol = original.Protocol
 
 const (
-	ProtocolTCP Protocol = original.ProtocolTCP
-	ProtocolUDP Protocol = original.ProtocolUDP
+	ProtocolHTTP  Protocol = original.ProtocolHTTP
+	ProtocolHTTPS Protocol = original.ProtocolHTTPS
+	ProtocolIcmp  Protocol = original.ProtocolIcmp
+	ProtocolTCP   Protocol = original.ProtocolTCP
 )
 
 type ProvisioningState = original.ProvisioningState
@@ -613,24 +636,36 @@ type VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuName
 
 const (
 	VirtualNetworkGatewaySkuNameBasic            VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuNameBasic
+	VirtualNetworkGatewaySkuNameErGw1AZ          VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuNameErGw1AZ
+	VirtualNetworkGatewaySkuNameErGw2AZ          VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuNameErGw2AZ
+	VirtualNetworkGatewaySkuNameErGw3AZ          VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuNameErGw3AZ
 	VirtualNetworkGatewaySkuNameHighPerformance  VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuNameHighPerformance
 	VirtualNetworkGatewaySkuNameStandard         VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuNameStandard
 	VirtualNetworkGatewaySkuNameUltraPerformance VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuNameUltraPerformance
 	VirtualNetworkGatewaySkuNameVpnGw1           VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuNameVpnGw1
+	VirtualNetworkGatewaySkuNameVpnGw1AZ         VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuNameVpnGw1AZ
 	VirtualNetworkGatewaySkuNameVpnGw2           VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuNameVpnGw2
+	VirtualNetworkGatewaySkuNameVpnGw2AZ         VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuNameVpnGw2AZ
 	VirtualNetworkGatewaySkuNameVpnGw3           VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuNameVpnGw3
+	VirtualNetworkGatewaySkuNameVpnGw3AZ         VirtualNetworkGatewaySkuName = original.VirtualNetworkGatewaySkuNameVpnGw3AZ
 )
 
 type VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTier
 
 const (
 	VirtualNetworkGatewaySkuTierBasic            VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTierBasic
+	VirtualNetworkGatewaySkuTierErGw1AZ          VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTierErGw1AZ
+	VirtualNetworkGatewaySkuTierErGw2AZ          VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTierErGw2AZ
+	VirtualNetworkGatewaySkuTierErGw3AZ          VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTierErGw3AZ
 	VirtualNetworkGatewaySkuTierHighPerformance  VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTierHighPerformance
 	VirtualNetworkGatewaySkuTierStandard         VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTierStandard
 	VirtualNetworkGatewaySkuTierUltraPerformance VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTierUltraPerformance
 	VirtualNetworkGatewaySkuTierVpnGw1           VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTierVpnGw1
+	VirtualNetworkGatewaySkuTierVpnGw1AZ         VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTierVpnGw1AZ
 	VirtualNetworkGatewaySkuTierVpnGw2           VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTierVpnGw2
+	VirtualNetworkGatewaySkuTierVpnGw2AZ         VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTierVpnGw2AZ
 	VirtualNetworkGatewaySkuTierVpnGw3           VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTierVpnGw3
+	VirtualNetworkGatewaySkuTierVpnGw3AZ         VirtualNetworkGatewaySkuTier = original.VirtualNetworkGatewaySkuTierVpnGw3AZ
 )
 
 type VirtualNetworkGatewayType = original.VirtualNetworkGatewayType
@@ -869,6 +904,8 @@ type FrontendIPConfiguration = original.FrontendIPConfiguration
 type FrontendIPConfigurationPropertiesFormat = original.FrontendIPConfigurationPropertiesFormat
 type GatewayRoute = original.GatewayRoute
 type GatewayRouteListResult = original.GatewayRouteListResult
+type HTTPConfiguration = original.HTTPConfiguration
+type HTTPHeader = original.HTTPHeader
 type InboundNatPool = original.InboundNatPool
 type InboundNatPoolPropertiesFormat = original.InboundNatPoolPropertiesFormat
 type InboundNatRule = original.InboundNatRule
@@ -964,6 +1001,7 @@ type PatchRouteFilter = original.PatchRouteFilter
 type PatchRouteFilterRule = original.PatchRouteFilterRule
 type Probe = original.Probe
 type ProbePropertiesFormat = original.ProbePropertiesFormat
+type ProtocolConfiguration = original.ProtocolConfiguration
 type PublicIPAddress = original.PublicIPAddress
 type PublicIPAddressDNSSettings = original.PublicIPAddressDNSSettings
 type PublicIPAddressesCreateOrUpdateFuture = original.PublicIPAddressesCreateOrUpdateFuture
@@ -1045,6 +1083,8 @@ type Topology = original.Topology
 type TopologyAssociation = original.TopologyAssociation
 type TopologyParameters = original.TopologyParameters
 type TopologyResource = original.TopologyResource
+type TrafficAnalyticsConfigurationProperties = original.TrafficAnalyticsConfigurationProperties
+type TrafficAnalyticsProperties = original.TrafficAnalyticsProperties
 type TroubleshootingDetails = original.TroubleshootingDetails
 type TroubleshootingParameters = original.TroubleshootingParameters
 type TroubleshootingProperties = original.TroubleshootingProperties
@@ -1089,11 +1129,9 @@ type VirtualNetworkGatewaysGenerateVpnProfileFuture = original.VirtualNetworkGat
 type VirtualNetworkGatewaysGetAdvertisedRoutesFuture = original.VirtualNetworkGatewaysGetAdvertisedRoutesFuture
 type VirtualNetworkGatewaysGetBgpPeerStatusFuture = original.VirtualNetworkGatewaysGetBgpPeerStatusFuture
 type VirtualNetworkGatewaysGetLearnedRoutesFuture = original.VirtualNetworkGatewaysGetLearnedRoutesFuture
-type VirtualNetworkGatewaysGetVpnclientIpsecParametersFuture = original.VirtualNetworkGatewaysGetVpnclientIpsecParametersFuture
 type VirtualNetworkGatewaysGetVpnProfilePackageURLFuture = original.VirtualNetworkGatewaysGetVpnProfilePackageURLFuture
 type VirtualNetworkGatewaySku = original.VirtualNetworkGatewaySku
 type VirtualNetworkGatewaysResetFuture = original.VirtualNetworkGatewaysResetFuture
-type VirtualNetworkGatewaysSetVpnclientIpsecParametersFuture = original.VirtualNetworkGatewaysSetVpnclientIpsecParametersFuture
 type VirtualNetworkGatewaysUpdateTagsFuture = original.VirtualNetworkGatewaysUpdateTagsFuture
 type VirtualNetworkListResult = original.VirtualNetworkListResult
 type VirtualNetworkListResultIterator = original.VirtualNetworkListResultIterator
@@ -1366,6 +1404,9 @@ func PossibleBgpPeerStateValues() []BgpPeerState {
 func PossibleCircuitConnectionStatusValues() []CircuitConnectionStatus {
 	return original.PossibleCircuitConnectionStatusValues()
 }
+func PossibleConnectionMonitorSourceStatusValues() []ConnectionMonitorSourceStatus {
+	return original.PossibleConnectionMonitorSourceStatusValues()
+}
 func PossibleConnectionStateValues() []ConnectionState {
 	return original.PossibleConnectionStateValues()
 }
@@ -1408,6 +1449,9 @@ func PossibleExpressRoutePeeringStateValues() []ExpressRoutePeeringState {
 func PossibleExpressRoutePeeringTypeValues() []ExpressRoutePeeringType {
 	return original.PossibleExpressRoutePeeringTypeValues()
 }
+func PossibleHTTPMethodValues() []HTTPMethod {
+	return original.PossibleHTTPMethodValues()
+}
 func PossibleIkeEncryptionValues() []IkeEncryption {
 	return original.PossibleIkeEncryptionValues()
 }
@@ -1416,6 +1460,9 @@ func PossibleIkeIntegrityValues() []IkeIntegrity {
 }
 func PossibleIPAllocationMethodValues() []IPAllocationMethod {
 	return original.PossibleIPAllocationMethodValues()
+}
+func PossibleIPFlowProtocolValues() []IPFlowProtocol {
+	return original.PossibleIPFlowProtocolValues()
 }
 func PossibleIpsecEncryptionValues() []IpsecEncryption {
 	return original.PossibleIpsecEncryptionValues()

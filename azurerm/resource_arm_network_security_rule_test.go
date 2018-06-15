@@ -167,6 +167,11 @@ func testCheckAzureRMNetworkSecurityRuleDisappears(name string) resource.TestChe
 			}
 		}
 
+		err = future.WaitForCompletion(ctx, client.Client)
+		if err != nil {
+			return fmt.Errorf("Error waiting for the deletion of Network Security Rule %q (NSG %q / Resource Group %q): %+v", sgrName, sgName, resourceGroup, err)
+		}
+
 		return nil
 	}
 }

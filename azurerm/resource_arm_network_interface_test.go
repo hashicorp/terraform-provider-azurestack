@@ -171,7 +171,12 @@ func TestAccAzureRMNetworkInterface_removeNetworkSecurityGroupId(t *testing.T) {
 	})
 }
 
+// Not supported by the account
+// Microsoft.Network/AllowMultipleIpConfigurationsPerNic
 func TestAccAzureRMNetworkInterface_multipleSubnets(t *testing.T) {
+
+	t.Skip()
+
 	resourceName := "azurerm_network_interface.test"
 	rInt := acctest.RandInt()
 	location := testLocation()

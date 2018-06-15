@@ -396,7 +396,11 @@ func TestAccAzureRMNetworkInterface_applicationSecurityGroups(t *testing.T) {
 	})
 }
 
+// Not enough configuration to run this.
 func TestAccAzureRMNetworkInterface_internalFQDN(t *testing.T) {
+
+	t.Skip()
+
 	resourceName := "azurerm_network_interface.test"
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{

@@ -106,7 +106,11 @@ func TestAccAzureRMStorageAccount_importBlobEncryption(t *testing.T) {
 	})
 }
 
+// File encryption not supported by the profile 2017-03-09
 func TestAccAzureRMStorageAccount_importFileEncryption(t *testing.T) {
+
+	t.Skip()
+
 	resourceName := "azurerm_storage_account.testsa"
 
 	ri := acctest.RandInt()
@@ -131,7 +135,11 @@ func TestAccAzureRMStorageAccount_importFileEncryption(t *testing.T) {
 	})
 }
 
+// EnableHttpsTraffic is not supported on 2017-03-09
 func TestAccAzureRMStorageAccount_importEnableHttpsTrafficOnly(t *testing.T) {
+
+	t.Skip()
+
 	resourceName := "azurerm_storage_account.testsa"
 
 	ri := acctest.RandInt()

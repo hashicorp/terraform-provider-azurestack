@@ -341,7 +341,10 @@ func testCheckAzureRMSubnetDestroy(s *terraform.State) error {
 	return nil
 }
 
+// Not supported for 2017-03-09 profile
 func TestAccAzureRMSubnet_serviceEndpoints(t *testing.T) {
+
+	t.Skip()
 
 	ri := acctest.RandInt()
 	config := testAccAzureRMSubnet_serviceEndpoints(ri, testLocation())

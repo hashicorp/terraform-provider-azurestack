@@ -306,7 +306,11 @@ func TestAccAzureRMStorageAccount_blobStorageWithUpdate(t *testing.T) {
 	})
 }
 
+// V2 not supported by the account
 func TestAccAzureRMStorageAccount_storageV2WithUpdate(t *testing.T) {
+
+	t.Skip()
+
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
 	location := testLocation()

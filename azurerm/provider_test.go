@@ -99,6 +99,7 @@ func testGetAzureConfig(t *testing.T) *authentication.Config {
 		ClientID:                 os.Getenv("ARM_CLIENT_ID"),
 		TenantID:                 os.Getenv("ARM_TENANT_ID"),
 		ClientSecret:             os.Getenv("ARM_CLIENT_SECRET"),
+		ARMEndpoint:              os.Getenv("ARM_ENDPOINT"),
 		Environment:              environment,
 		SkipProviderRegistration: false,
 	}

@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -54,23 +54,23 @@ func TestValidateArmStorageAccountName(t *testing.T) {
 // Property AccountType that cannot be updated for the
 // storage account was specified in the request."
 
-func TestAccAzureRMStorageAccount_basic(t *testing.T) {
-	resourceName := "azurerm_storage_account.testsa"
+func TestAccAzureStackStorageAccount_basic(t *testing.T) {
+	resourceName := "azurestack_storage_account.testsa"
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
 	location := testLocation()
-	preConfig := testAccAzureRMStorageAccount_basic(ri, rs, location)
-	// postConfig := testAccAzureRMStorageAccount_update(ri, rs, location)
+	preConfig := testAccAzureStackStorageAccount_basic(ri, rs, location)
+	// postConfig := testAccAzureStackStorageAccount_update(ri, rs, location)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists(resourceName),
+					testCheckAzureStackStorageAccountExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "account_tier", "Standard"),
 					resource.TestCheckResourceAttr(resourceName, "account_replication_type", "LRS"),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
@@ -81,7 +81,7 @@ func TestAccAzureRMStorageAccount_basic(t *testing.T) {
 			// {
 			// 	Config: postConfig,
 			// 	Check: resource.ComposeTestCheckFunc(
-			// 		testCheckAzureRMStorageAccountExists(resourceName),
+			// 		testCheckAzureStackStorageAccountExists(resourceName),
 			// 		resource.TestCheckResourceAttr(resourceName, "account_tier", "Standard"),
 			// 		resource.TestCheckResourceAttr(resourceName, "account_replication_type", "GRS"),
 			// 		resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
@@ -92,22 +92,22 @@ func TestAccAzureRMStorageAccount_basic(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMStorageAccount_premium(t *testing.T) {
-	resourceName := "azurerm_storage_account.testsa"
+func TestAccAzureStackStorageAccount_premium(t *testing.T) {
+	resourceName := "azurestack_storage_account.testsa"
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
 	location := testLocation()
-	preConfig := testAccAzureRMStorageAccount_premium(ri, rs, location)
+	preConfig := testAccAzureStackStorageAccount_premium(ri, rs, location)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists(resourceName),
+					testCheckAzureStackStorageAccountExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "account_tier", "Premium"),
 					resource.TestCheckResourceAttr(resourceName, "account_replication_type", "LRS"),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
@@ -118,26 +118,26 @@ func TestAccAzureRMStorageAccount_premium(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMStorageAccount_disappears(t *testing.T) {
-	resourceName := "azurerm_storage_account.testsa"
+func TestAccAzureStackStorageAccount_disappears(t *testing.T) {
+	resourceName := "azurestack_storage_account.testsa"
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
-	preConfig := testAccAzureRMStorageAccount_basic(ri, rs, testLocation())
+	preConfig := testAccAzureStackStorageAccount_basic(ri, rs, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists(resourceName),
+					testCheckAzureStackStorageAccountExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "account_tier", "Standard"),
 					resource.TestCheckResourceAttr(resourceName, "account_replication_type", "LRS"),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.environment", "production"),
-					testCheckAzureRMStorageAccountDisappears(resourceName),
+					testCheckAzureStackStorageAccountDisappears(resourceName),
 				),
 				ExpectNonEmptyPlan: true,
 			},
@@ -145,21 +145,21 @@ func TestAccAzureRMStorageAccount_disappears(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMStorageAccount_blobConnectionString(t *testing.T) {
+func TestAccAzureStackStorageAccount_blobConnectionString(t *testing.T) {
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
-	preConfig := testAccAzureRMStorageAccount_basic(ri, rs, testLocation())
+	preConfig := testAccAzureStackStorageAccount_basic(ri, rs, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists("azurerm_storage_account.testsa"),
-					resource.TestCheckResourceAttrSet("azurerm_storage_account.testsa", "primary_blob_connection_string"),
+					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
+					resource.TestCheckResourceAttrSet("azurestack_storage_account.testsa", "primary_blob_connection_string"),
 				),
 			},
 		},
@@ -169,32 +169,32 @@ func TestAccAzureRMStorageAccount_blobConnectionString(t *testing.T) {
 // Skipped due to error:
 // Data Encryption is not supported to disable in the specified location.
 
-func TestAccAzureRMStorageAccount_blobEncryption(t *testing.T) {
+func TestAccAzureStackStorageAccount_blobEncryption(t *testing.T) {
 	t.Skip()
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
 	location := testLocation()
-	preConfig := testAccAzureRMStorageAccount_blobEncryption(ri, rs, location)
-	postConfig := testAccAzureRMStorageAccount_blobEncryptionDisabled(ri, rs, location)
+	preConfig := testAccAzureStackStorageAccount_blobEncryption(ri, rs, location)
+	postConfig := testAccAzureStackStorageAccount_blobEncryptionDisabled(ri, rs, location)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists("azurerm_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurerm_storage_account.testsa", "enable_blob_encryption", "true"),
+					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
+					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "enable_blob_encryption", "true"),
 				),
 			},
 
 			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists("azurerm_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurerm_storage_account.testsa", "enable_blob_encryption", "false"),
+					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
+					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "enable_blob_encryption", "false"),
 				),
 			},
 		},
@@ -202,33 +202,33 @@ func TestAccAzureRMStorageAccount_blobEncryption(t *testing.T) {
 }
 
 // File Encryption is not supported in the profile
-func TestAccAzureRMStorageAccount_fileEncryption(t *testing.T) {
+func TestAccAzureStackStorageAccount_fileEncryption(t *testing.T) {
 	t.Skip()
 
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
 	location := testLocation()
-	preConfig := testAccAzureRMStorageAccount_fileEncryption(ri, rs, location)
-	postConfig := testAccAzureRMStorageAccount_fileEncryptionDisabled(ri, rs, location)
+	preConfig := testAccAzureStackStorageAccount_fileEncryption(ri, rs, location)
+	postConfig := testAccAzureStackStorageAccount_fileEncryptionDisabled(ri, rs, location)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists("azurerm_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurerm_storage_account.testsa", "enable_file_encryption", "true"),
+					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
+					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "enable_file_encryption", "true"),
 				),
 			},
 
 			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists("azurerm_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurerm_storage_account.testsa", "enable_file_encryption", "false"),
+					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
+					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "enable_file_encryption", "false"),
 				),
 			},
 		},
@@ -236,33 +236,33 @@ func TestAccAzureRMStorageAccount_fileEncryption(t *testing.T) {
 }
 
 // HTTPS traffic not supported by the profile
-func TestAccAzureRMStorageAccount_enableHttpsTrafficOnly(t *testing.T) {
+func TestAccAzureStackStorageAccount_enableHttpsTrafficOnly(t *testing.T) {
 	t.Skip()
 
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
 	location := testLocation()
-	preConfig := testAccAzureRMStorageAccount_enableHttpsTrafficOnly(ri, rs, location)
-	postConfig := testAccAzureRMStorageAccount_enableHttpsTrafficOnlyDisabled(ri, rs, location)
+	preConfig := testAccAzureStackStorageAccount_enableHttpsTrafficOnly(ri, rs, location)
+	postConfig := testAccAzureStackStorageAccount_enableHttpsTrafficOnlyDisabled(ri, rs, location)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists("azurerm_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurerm_storage_account.testsa", "enable_https_traffic_only", "true"),
+					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
+					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "enable_https_traffic_only", "true"),
 				),
 			},
 
 			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists("azurerm_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurerm_storage_account.testsa", "enable_https_traffic_only", "false"),
+					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
+					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "enable_https_traffic_only", "false"),
 				),
 			},
 		},
@@ -272,34 +272,34 @@ func TestAccAzureRMStorageAccount_enableHttpsTrafficOnly(t *testing.T) {
 // Skip due to limitations of the account, if BlobStorage is specified as an argument
 // It returns an error 400, BlobStorage is disabled in my account too when
 // I try to create an account
-func TestAccAzureRMStorageAccount_blobStorageWithUpdate(t *testing.T) {
+func TestAccAzureStackStorageAccount_blobStorageWithUpdate(t *testing.T) {
 	t.Skip()
 
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
 	location := testLocation()
-	preConfig := testAccAzureRMStorageAccount_blobStorage(ri, rs, location)
-	postConfig := testAccAzureRMStorageAccount_blobStorageUpdate(ri, rs, location)
+	preConfig := testAccAzureStackStorageAccount_blobStorage(ri, rs, location)
+	postConfig := testAccAzureStackStorageAccount_blobStorageUpdate(ri, rs, location)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists("azurerm_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurerm_storage_account.testsa", "account_kind", "BlobStorage"),
-					resource.TestCheckResourceAttr("azurerm_storage_account.testsa", "access_tier", "Hot"),
+					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
+					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "account_kind", "BlobStorage"),
+					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "access_tier", "Hot"),
 				),
 			},
 
 			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists("azurerm_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurerm_storage_account.testsa", "access_tier", "Cool"),
+					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
+					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "access_tier", "Cool"),
 				),
 			},
 		},
@@ -307,55 +307,55 @@ func TestAccAzureRMStorageAccount_blobStorageWithUpdate(t *testing.T) {
 }
 
 // V2 not supported by the account
-func TestAccAzureRMStorageAccount_storageV2WithUpdate(t *testing.T) {
+func TestAccAzureStackStorageAccount_storageV2WithUpdate(t *testing.T) {
 
 	t.Skip()
 
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
 	location := testLocation()
-	preConfig := testAccAzureRMStorageAccount_storageV2(ri, rs, location)
-	postConfig := testAccAzureRMStorageAccount_storageV2Update(ri, rs, location)
+	preConfig := testAccAzureStackStorageAccount_storageV2(ri, rs, location)
+	postConfig := testAccAzureStackStorageAccount_storageV2Update(ri, rs, location)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists("azurerm_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurerm_storage_account.testsa", "account_kind", "StorageV2"),
-					resource.TestCheckResourceAttr("azurerm_storage_account.testsa", "access_tier", "Hot"),
+					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
+					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "account_kind", "StorageV2"),
+					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "access_tier", "Hot"),
 				),
 			},
 
 			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists("azurerm_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurerm_storage_account.testsa", "access_tier", "Cool"),
+					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
+					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "access_tier", "Cool"),
 				),
 			},
 		},
 	})
 }
 
-func TestAccAzureRMStorageAccount_NonStandardCasing(t *testing.T) {
+func TestAccAzureStackStorageAccount_NonStandardCasing(t *testing.T) {
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
-	preConfig := testAccAzureRMStorageAccount_nonStandardCasing(ri, rs, testLocation())
+	preConfig := testAccAzureStackStorageAccount_nonStandardCasing(ri, rs, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageAccountExists("azurerm_storage_account.testsa"),
+					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
 				),
 			},
 
@@ -368,7 +368,7 @@ func TestAccAzureRMStorageAccount_NonStandardCasing(t *testing.T) {
 	})
 }
 
-func testCheckAzureRMStorageAccountExists(name string) resource.TestCheckFunc {
+func testCheckAzureStackStorageAccountExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
@@ -396,7 +396,7 @@ func testCheckAzureRMStorageAccountExists(name string) resource.TestCheckFunc {
 	}
 }
 
-func testCheckAzureRMStorageAccountDisappears(name string) resource.TestCheckFunc {
+func testCheckAzureStackStorageAccountDisappears(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
@@ -420,12 +420,12 @@ func testCheckAzureRMStorageAccountDisappears(name string) resource.TestCheckFun
 	}
 }
 
-func testCheckAzureRMStorageAccountDestroy(s *terraform.State) error {
+func testCheckAzureStackStorageAccountDestroy(s *terraform.State) error {
 	ctx := testAccProvider.Meta().(*ArmClient).StopContext
 	conn := testAccProvider.Meta().(*ArmClient).storageServiceClient
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "azurerm_storage_account" {
+		if rs.Type != "azurestack_storage_account" {
 			continue
 		}
 
@@ -445,18 +445,18 @@ func testCheckAzureRMStorageAccountDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccAzureRMStorageAccount_basic(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_basic(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
 
-    location = "${azurerm_resource_group.testrg.location}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_tier = "Standard"
     account_replication_type = "LRS"
 
@@ -467,18 +467,18 @@ resource "azurerm_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageAccount_premium(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_premium(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
 
-    location = "${azurerm_resource_group.testrg.location}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_tier = "Premium"
     account_replication_type = "LRS"
 
@@ -489,18 +489,18 @@ resource "azurerm_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageAccount_update(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_update(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
 
-    location = "${azurerm_resource_group.testrg.location}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_tier = "Standard"
     account_replication_type = "GRS"
 
@@ -511,18 +511,18 @@ resource "azurerm_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageAccount_blobEncryption(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_blobEncryption(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
 
-    location = "${azurerm_resource_group.testrg.location}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_tier = "Standard"
     account_replication_type = "LRS"
     enable_blob_encryption = true
@@ -534,18 +534,18 @@ resource "azurerm_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageAccount_blobEncryptionDisabled(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_blobEncryptionDisabled(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
 
-    location = "${azurerm_resource_group.testrg.location}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_tier = "Standard"
     account_replication_type = "LRS"
     enable_blob_encryption = false
@@ -557,18 +557,18 @@ resource "azurerm_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageAccount_fileEncryption(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_fileEncryption(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
 
-    location = "${azurerm_resource_group.testrg.location}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_tier = "Standard"
     account_replication_type = "LRS"
     enable_file_encryption = true
@@ -580,18 +580,18 @@ resource "azurerm_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageAccount_fileEncryptionDisabled(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_fileEncryptionDisabled(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
 
-    location = "${azurerm_resource_group.testrg.location}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_tier = "Standard"
     account_replication_type = "LRS"
     enable_file_encryption = false
@@ -603,18 +603,18 @@ resource "azurerm_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageAccount_enableHttpsTrafficOnly(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_enableHttpsTrafficOnly(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
 
-    location = "${azurerm_resource_group.testrg.location}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_tier = "Standard"
     account_replication_type = "LRS"
     enable_https_traffic_only = true
@@ -626,18 +626,18 @@ resource "azurerm_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageAccount_enableHttpsTrafficOnlyDisabled(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_enableHttpsTrafficOnlyDisabled(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
 
-    location = "${azurerm_resource_group.testrg.location}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_tier = "Standard"
     account_replication_type = "LRS"
     enable_https_traffic_only = false
@@ -649,18 +649,18 @@ resource "azurerm_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageAccount_blobStorage(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_blobStorage(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
 
-    location = "${azurerm_resource_group.testrg.location}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_kind = "BlobStorage"
     account_tier = "Standard"
     account_replication_type = "LRS"
@@ -672,18 +672,18 @@ resource "azurerm_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageAccount_blobStorageUpdate(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_blobStorageUpdate(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
 
-    location = "${azurerm_resource_group.testrg.location}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_kind = "BlobStorage"
     account_tier = "Standard"
     account_replication_type = "LRS"
@@ -696,18 +696,18 @@ resource "azurerm_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageAccount_storageV2(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_storageV2(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
 
-    location = "${azurerm_resource_group.testrg.location}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_kind = "StorageV2"
     account_tier = "Standard"
     account_replication_type = "LRS"
@@ -719,18 +719,18 @@ resource "azurerm_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageAccount_storageV2Update(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_storageV2Update(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
 
-    location = "${azurerm_resource_group.testrg.location}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_kind = "StorageV2"
     account_tier = "Standard"
     account_replication_type = "LRS"
@@ -743,16 +743,16 @@ resource "azurerm_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageAccount_nonStandardCasing(rInt int, rString string, location string) string {
+func testAccAzureStackStorageAccount_nonStandardCasing(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "testrg" {
-    name = "testAccAzureRMSA-%d"
+resource "azurestack_resource_group" "testrg" {
+    name = "testAccAzureStackSA-%d"
     location = "%s"
 }
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
     name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurerm_resource_group.testrg.name}"
-    location = "${azurerm_resource_group.testrg.location}"
+    resource_group_name = "${azurestack_resource_group.testrg.name}"
+    location = "${azurestack_resource_group.testrg.location}"
     account_tier = "standard"
     account_replication_type = "lrs"
     tags {

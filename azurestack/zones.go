@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"github.com/hashicorp/terraform/helper/schema"

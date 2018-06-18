@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"testing"
@@ -7,17 +7,17 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccAzureRMNetworkSecurityRule_importBasic(t *testing.T) {
+func TestAccAzureStackNetworkSecurityRule_importBasic(t *testing.T) {
 	rInt := acctest.RandInt()
-	resourceName := "azurerm_network_security_rule.test"
+	resourceName := "azurestack_network_security_rule.test"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkSecurityRuleDestroy,
+		CheckDestroy: testCheckAzureStackNetworkSecurityRuleDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkSecurityRule_basic(rInt, testLocation()),
+				Config: testAccAzureStackNetworkSecurityRule_basic(rInt, testLocation()),
 			},
 			{
 				ResourceName:      resourceName,

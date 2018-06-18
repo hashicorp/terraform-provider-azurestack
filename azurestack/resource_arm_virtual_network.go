@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"bytes"
@@ -10,10 +10,10 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
-var virtualNetworkResourceName = "azurerm_virtual_network"
+var virtualNetworkResourceName = "azurestack_virtual_network"
 
 func resourceArmVirtualNetwork() *schema.Resource {
 	return &schema.Resource{
@@ -87,7 +87,7 @@ func resourceArmVirtualNetworkCreate(d *schema.ResourceData, meta interface{}) e
 	log.Printf("[INFO] preparing arguments for Azure ARM virtual network creation.")
 
 	name := d.Get("name").(string)
-	location := azureRMNormalizeLocation(d.Get("location").(string))
+	location := azureStackNormalizeLocation(d.Get("location").(string))
 	resGroup := d.Get("resource_group_name").(string)
 	tags := d.Get("tags").(map[string]interface{})
 	vnetProperties, vnetPropsErr := getVirtualNetworkProperties(ctx, d, meta)
@@ -116,8 +116,8 @@ func resourceArmVirtualNetworkCreate(d *schema.ResourceData, meta interface{}) e
 		}
 	}
 
-	azureRMLockMultipleByName(&networkSecurityGroupNames, networkSecurityGroupResourceName)
-	defer azureRMUnlockMultipleByName(&networkSecurityGroupNames, networkSecurityGroupResourceName)
+	azureStackLockMultipleByName(&networkSecurityGroupNames, networkSecurityGroupResourceName)
+	defer azureStackUnlockMultipleByName(&networkSecurityGroupNames, networkSecurityGroupResourceName)
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, vnet)
 	if err != nil {
@@ -169,7 +169,7 @@ func resourceArmVirtualNetworkRead(d *schema.ResourceData, meta interface{}) err
 	d.Set("resource_group_name", resGroup)
 	d.Set("address_space", vnet.AddressSpace.AddressPrefixes)
 	if location := resp.Location; location != nil {
-		d.Set("location", azureRMNormalizeLocation(*location))
+		d.Set("location", azureStackNormalizeLocation(*location))
 	}
 
 	subnets := &schema.Set{
@@ -213,13 +213,13 @@ func resourceArmVirtualNetworkDelete(d *schema.ResourceData, meta interface{}) e
 	resGroup := id.ResourceGroup
 	name := id.Path["virtualNetworks"]
 
-	nsgNames, err := expandAzureRmVirtualNetworkVirtualNetworkSecurityGroupNames(d)
+	nsgNames, err := expandAzureStackVirtualNetworkVirtualNetworkSecurityGroupNames(d)
 	if err != nil {
 		return fmt.Errorf("[ERROR] Error parsing Network Security Group ID's: %+v", err)
 	}
 
-	azureRMLockMultipleByName(&nsgNames, virtualNetworkResourceName)
-	defer azureRMUnlockMultipleByName(&nsgNames, virtualNetworkResourceName)
+	azureStackLockMultipleByName(&nsgNames, virtualNetworkResourceName)
+	defer azureStackUnlockMultipleByName(&nsgNames, virtualNetworkResourceName)
 
 	future, err := client.Delete(ctx, resGroup, name)
 	if err != nil {
@@ -349,7 +349,7 @@ func getExistingSubnet(ctx context.Context, resGroup string, vnetName string, su
 	return &existingSubnet, nil
 }
 
-func expandAzureRmVirtualNetworkVirtualNetworkSecurityGroupNames(d *schema.ResourceData) ([]string, error) {
+func expandAzureStackVirtualNetworkVirtualNetworkSecurityGroupNames(d *schema.ResourceData) ([]string, error) {
 	nsgNames := make([]string, 0)
 
 	if v, ok := d.GetOk("subnet"); ok {

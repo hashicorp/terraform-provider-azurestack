@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"testing"
@@ -7,16 +7,16 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccAzureRMResourceGroup_importBasic(t *testing.T) {
-	resourceName := "azurerm_resource_group.test"
+func TestAccAzureStackResourceGroup_importBasic(t *testing.T) {
+	resourceName := "azurestack_resource_group.test"
 
 	ri := acctest.RandInt()
-	config := testAccAzureRMResourceGroup_basic(ri, testLocation())
+	config := testAccAzureStackResourceGroup_basic(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMResourceGroupDestroy,
+		CheckDestroy: testCheckAzureStackResourceGroupDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

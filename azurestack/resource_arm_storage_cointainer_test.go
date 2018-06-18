@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -12,45 +12,45 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccAzureRMStorageContainer_basic(t *testing.T) {
+func TestAccAzureStackStorageContainer_basic(t *testing.T) {
 	var c storage.Container
 
 	ri := acctest.RandInt()
 	rs := strings.ToLower(acctest.RandString(11))
-	config := testAccAzureRMStorageContainer_basic(ri, rs, testLocation())
+	config := testAccAzureStackStorageContainer_basic(ri, rs, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageContainerDestroy,
+		CheckDestroy: testCheckAzureStackStorageContainerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageContainerExists("azurerm_storage_container.test", &c),
+					testCheckAzureStackStorageContainerExists("azurestack_storage_container.test", &c),
 				),
 			},
 		},
 	})
 }
 
-func TestAccAzureRMStorageContainer_disappears(t *testing.T) {
+func TestAccAzureStackStorageContainer_disappears(t *testing.T) {
 	var c storage.Container
 
 	ri := acctest.RandInt()
 	rs := strings.ToLower(acctest.RandString(11))
-	config := testAccAzureRMStorageContainer_basic(ri, rs, testLocation())
+	config := testAccAzureStackStorageContainer_basic(ri, rs, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageContainerDestroy,
+		CheckDestroy: testCheckAzureStackStorageContainerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageContainerExists("azurerm_storage_container.test", &c),
-					testAccARMStorageContainerDisappears("azurerm_storage_container.test", &c),
+					testCheckAzureStackStorageContainerExists("azurestack_storage_container.test", &c),
+					testAccARMStorageContainerDisappears("azurestack_storage_container.test", &c),
 				),
 				ExpectNonEmptyPlan: true,
 			},
@@ -58,30 +58,30 @@ func TestAccAzureRMStorageContainer_disappears(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMStorageContainer_root(t *testing.T) {
+func TestAccAzureStackStorageContainer_root(t *testing.T) {
 	var c storage.Container
 
 	ri := acctest.RandInt()
 	rs := strings.ToLower(acctest.RandString(11))
-	config := testAccAzureRMStorageContainer_root(ri, rs, testLocation())
+	config := testAccAzureStackStorageContainer_root(ri, rs, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageContainerDestroy,
+		CheckDestroy: testCheckAzureStackStorageContainerDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMStorageContainerExists("azurerm_storage_container.test", &c),
-					resource.TestCheckResourceAttr("azurerm_storage_container.test", "name", "$root"),
+					testCheckAzureStackStorageContainerExists("azurestack_storage_container.test", &c),
+					resource.TestCheckResourceAttr("azurestack_storage_container.test", "name", "$root"),
 				),
 			},
 		},
 	})
 }
 
-func testCheckAzureRMStorageContainerExists(name string, c *storage.Container) resource.TestCheckFunc {
+func testCheckAzureStackStorageContainerExists(name string, c *storage.Container) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
 		rs, ok := s.RootModule().Resources[name]
@@ -167,9 +167,9 @@ func testAccARMStorageContainerDisappears(name string, c *storage.Container) res
 	}
 }
 
-func testCheckAzureRMStorageContainerDestroy(s *terraform.State) error {
+func testCheckAzureStackStorageContainerDestroy(s *terraform.State) error {
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "azurerm_storage_container" {
+		if rs.Type != "azurestack_storage_container" {
 			continue
 		}
 
@@ -245,17 +245,17 @@ func TestValidateArmStorageContainerName(t *testing.T) {
 	}
 }
 
-func testAccAzureRMStorageContainer_basic(rInt int, rString string, location string) string {
+func testAccAzureStackStorageContainer_basic(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
     name = "acctestRG-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "test" {
+resource "azurestack_storage_account" "test" {
     name                     = "acctestacc%s"
-    resource_group_name      = "${azurerm_resource_group.test.name}"
-    location                 = "${azurerm_resource_group.test.location}"
+    resource_group_name      = "${azurestack_resource_group.test.name}"
+    location                 = "${azurestack_resource_group.test.location}"
     account_tier             = "Standard"
     account_replication_type = "LRS"
 
@@ -264,26 +264,26 @@ resource "azurerm_storage_account" "test" {
     }
 }
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
     name = "vhds"
-    resource_group_name = "${azurerm_resource_group.test.name}"
-    storage_account_name = "${azurerm_storage_account.test.name}"
+    resource_group_name = "${azurestack_resource_group.test.name}"
+    storage_account_name = "${azurestack_storage_account.test.name}"
     container_access_type = "private"
 }
 `, rInt, location, rString)
 }
 
-func testAccAzureRMStorageContainer_root(rInt int, rString string, location string) string {
+func testAccAzureStackStorageContainer_root(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
     name     = "acctestRG-%d"
     location = "%s"
 }
 
-resource "azurerm_storage_account" "test" {
+resource "azurestack_storage_account" "test" {
     name                     = "acctestacc%s"
-    resource_group_name      = "${azurerm_resource_group.test.name}"
-    location                 = "${azurerm_resource_group.test.location}"
+    resource_group_name      = "${azurestack_resource_group.test.name}"
+    location                 = "${azurestack_resource_group.test.location}"
     account_tier             = "Standard"
     account_replication_type = "LRS"
 
@@ -292,10 +292,10 @@ resource "azurerm_storage_account" "test" {
     }
 }
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
     name = "$root"
-    resource_group_name = "${azurerm_resource_group.test.name}"
-    storage_account_name = "${azurerm_storage_account.test.name}"
+    resource_group_name = "${azurestack_resource_group.test.name}"
+    storage_account_name = "${azurestack_storage_account.test.name}"
     container_access_type = "private"
 }
 `, rInt, location, rString)

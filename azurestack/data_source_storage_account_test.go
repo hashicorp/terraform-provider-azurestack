@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -8,18 +8,18 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccDataSourceAzureRMStorageAccount_basic(t *testing.T) {
-	dataSourceName := "data.azurerm_storage_account.test"
+func TestAccDataSourceAzureStackStorageAccount_basic(t *testing.T) {
+	dataSourceName := "data.azurestack_storage_account.test"
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
 	location := testLocation()
-	preConfig := testAccDataSourceAzureRMStorageAccount_basic(ri, rs, location)
-	config := testAccDataSourceAzureRMStorageAccount_basicWithDataSource(ri, rs, location)
+	preConfig := testAccDataSourceAzureStackStorageAccount_basic(ri, rs, location)
+	config := testAccDataSourceAzureStackStorageAccount_basicWithDataSource(ri, rs, location)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
@@ -37,18 +37,18 @@ func TestAccDataSourceAzureRMStorageAccount_basic(t *testing.T) {
 	})
 }
 
-func testAccDataSourceAzureRMStorageAccount_basic(rInt int, rString string, location string) string {
+func testAccDataSourceAzureStackStorageAccount_basic(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name = "acctestsa-%d"
   location = "%s"
 }
 
-resource "azurerm_storage_account" "test" {
+resource "azurestack_storage_account" "test" {
   name = "acctestsads%s"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
-  location = "${azurerm_resource_group.test.location}"
+  location = "${azurestack_resource_group.test.location}"
   account_tier = "Standard"
   account_replication_type = "LRS"
 
@@ -59,14 +59,14 @@ resource "azurerm_storage_account" "test" {
 `, rInt, location, rString)
 }
 
-func testAccDataSourceAzureRMStorageAccount_basicWithDataSource(rInt int, rString string, location string) string {
-	config := testAccDataSourceAzureRMStorageAccount_basic(rInt, rString, location)
+func testAccDataSourceAzureStackStorageAccount_basicWithDataSource(rInt int, rString string, location string) string {
+	config := testAccDataSourceAzureStackStorageAccount_basic(rInt, rString, location)
 	return fmt.Sprintf(`
 %s
 
-data "azurerm_storage_account" "test" {
-  name                = "${azurerm_storage_account.test.name}"
-  resource_group_name = "${azurerm_storage_account.test.resource_group_name}"
+data "azurestack_storage_account" "test" {
+  name                = "${azurestack_storage_account.test.name}"
+  resource_group_name = "${azurestack_storage_account.test.resource_group_name}"
 }
 `, config)
 }

@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"testing"
@@ -7,16 +7,16 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccAzureRMSubnet_importBasic(t *testing.T) {
-	resourceName := "azurerm_subnet.test"
+func TestAccAzureStackSubnet_importBasic(t *testing.T) {
+	resourceName := "azurestack_subnet.test"
 
 	ri := acctest.RandInt()
-	config := testAccAzureRMSubnet_basic(ri, testLocation())
+	config := testAccAzureStackSubnet_basic(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMSubnetDestroy,
+		CheckDestroy: testCheckAzureStackSubnetDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -31,19 +31,19 @@ func TestAccAzureRMSubnet_importBasic(t *testing.T) {
 }
 
 // Route table not supported yet
-func TestAccAzureRMSubnet_importWithRouteTable(t *testing.T) {
+func TestAccAzureStackSubnet_importWithRouteTable(t *testing.T) {
 
 	t.Skip()
 
-	resourceName := "azurerm_subnet.test"
+	resourceName := "azurestack_subnet.test"
 
 	ri := acctest.RandInt()
-	config := testAccAzureRMSubnet_routeTable(ri, testLocation())
+	config := testAccAzureStackSubnet_routeTable(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMSubnetDestroy,
+		CheckDestroy: testCheckAzureStackSubnetDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -57,16 +57,16 @@ func TestAccAzureRMSubnet_importWithRouteTable(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMSubnet_importWithNetworkSecurityGroup(t *testing.T) {
-	resourceName := "azurerm_subnet.test"
+func TestAccAzureStackSubnet_importWithNetworkSecurityGroup(t *testing.T) {
+	resourceName := "azurestack_subnet.test"
 
 	ri := acctest.RandInt()
-	config := testAccAzureRMSubnet_networkSecurityGroup(ri, testLocation())
+	config := testAccAzureStackSubnet_networkSecurityGroup(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMSubnetDestroy,
+		CheckDestroy: testCheckAzureStackSubnetDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

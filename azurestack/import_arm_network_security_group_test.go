@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"testing"
@@ -7,17 +7,17 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccAzureRMNetworkSecurityGroup_importBasic(t *testing.T) {
-	resourceName := "azurerm_network_security_group.test"
+func TestAccAzureStackNetworkSecurityGroup_importBasic(t *testing.T) {
+	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkSecurityGroupDestroy,
+		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_basic(rInt, testLocation()),
+				Config: testAccAzureStackNetworkSecurityGroup_basic(rInt, testLocation()),
 			},
 			{
 				ResourceName:      resourceName,
@@ -28,17 +28,17 @@ func TestAccAzureRMNetworkSecurityGroup_importBasic(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMNetworkSecurityGroup_importSingleRule(t *testing.T) {
-	resourceName := "azurerm_network_security_group.test"
+func TestAccazureStackNetworkSecurityGroup_importSingleRule(t *testing.T) {
+	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkSecurityGroupDestroy,
+		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_singleRule(rInt, testLocation()),
+				Config: testAccAzureStackNetworkSecurityGroup_singleRule(rInt, testLocation()),
 			},
 			{
 				ResourceName:      resourceName,
@@ -49,17 +49,17 @@ func TestAccAzureRMNetworkSecurityGroup_importSingleRule(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMNetworkSecurityGroup_importMultipleRules(t *testing.T) {
-	resourceName := "azurerm_network_security_group.test"
+func TestAccAzureStackNetworkSecurityGroup_importMultipleRules(t *testing.T) {
+	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkSecurityGroupDestroy,
+		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_anotherRule(rInt, testLocation()),
+				Config: testAccAzureStackNetworkSecurityGroup_anotherRule(rInt, testLocation()),
 			},
 			{
 				ResourceName:      resourceName,

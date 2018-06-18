@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/terraform/helper/mutexkv"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/authentication"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/authentication"
 )
 
 // Provider returns a terraform.ResourceProvider.
@@ -82,29 +82,29 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"azurerm_network_interface":      dataSourceArmNetworkInterface(),
-			"azurerm_network_security_group": dataSourceArmNetworkSecurityGroup(),
-			"azurerm_resource_group":         dataSourceArmResourceGroup(),
-			"azurerm_storage_account":        dataSourceArmStorageAccount(),
-			"azurerm_virtual_network":        dataSourceArmVirtualNetwork(),
+			"azurestack_network_interface":      dataSourceArmNetworkInterface(),
+			"azurestack_network_security_group": dataSourceArmNetworkSecurityGroup(),
+			"azurestack_resource_group":         dataSourceArmResourceGroup(),
+			"azurestack_storage_account":        dataSourceArmStorageAccount(),
+			"azurestack_virtual_network":        dataSourceArmVirtualNetwork(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"azurerm_availability_set":          resourceArmAvailabilitySet(),
-			"azurerm_dns_zone":                  resourceArmDnsZone(),
-			"azurerm_dns_a_record":              resourceArmDnsARecord(),
-			"azurerm_network_interface":         resourceArmNetworkInterface(),
-			"azurerm_network_security_group":    resourceArmNetworkSecurityGroup(),
-			"azurerm_network_security_rule":     resourceArmNetworkSecurityRule(),
-			"azurerm_public_ip":                 resourceArmPublicIp(),
-			"azurerm_resource_group":            resourceArmResourceGroup(),
-			"azurerm_storage_account":           resourceArmStorageAccount(),
-			"azurerm_storage_blob":              resourceArmStorageBlob(),
-			"azurerm_storage_container":         resourceArmStorageContainer(),
-			"azurerm_subnet":                    resourceArmSubnet(),
-			"azurerm_virtual_network":           resourceArmVirtualNetwork(),
-			"azurerm_virtual_machine":           resourceArmVirtualMachine(),
-			"azurerm_virtual_machine_extension": resourceArmVirtualMachineExtensions(),
+			"azurestack_availability_set":          resourceArmAvailabilitySet(),
+			"azurestack_dns_zone":                  resourceArmDnsZone(),
+			"azurestack_dns_a_record":              resourceArmDnsARecord(),
+			"azurestack_network_interface":         resourceArmNetworkInterface(),
+			"azurestack_network_security_group":    resourceArmNetworkSecurityGroup(),
+			"azurestack_network_security_rule":     resourceArmNetworkSecurityRule(),
+			"azurestack_public_ip":                 resourceArmPublicIp(),
+			"azurestack_resource_group":            resourceArmResourceGroup(),
+			"azurestack_storage_account":           resourceArmStorageAccount(),
+			"azurestack_storage_blob":              resourceArmStorageBlob(),
+			"azurestack_storage_container":         resourceArmStorageContainer(),
+			"azurestack_subnet":                    resourceArmSubnet(),
+			"azurestack_virtual_network":           resourceArmVirtualNetwork(),
+			"azurestack_virtual_machine":           resourceArmVirtualMachine(),
+			"azurestack_virtual_machine_extension": resourceArmVirtualMachineExtensions(),
 		},
 	}
 
@@ -275,7 +275,7 @@ var armMutexKV = mutexkv.NewMutexKV()
 
 // Resource group names can be capitalised, but we store them in lowercase.
 // Use a custom diff function to avoid creation of new resources.
-func resourceAzurermResourceGroupNameDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
+func resourceAzureStackResourceGroupNameDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
 	return strings.ToLower(old) == strings.ToLower(new)
 }
 

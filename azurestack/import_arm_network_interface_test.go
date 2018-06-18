@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"testing"
@@ -7,17 +7,17 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccAzureRMNetworkInterface_importBasic(t *testing.T) {
-	resourceName := "azurerm_network_interface.test"
+func TestAccAzureStackNetworkInterface_importBasic(t *testing.T) {
+	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkInterfaceDestroy,
+		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkInterface_basic(rInt, testLocation()),
+				Config: testAccAzureStackNetworkInterface_basic(rInt, testLocation()),
 			},
 			{
 				ResourceName:      resourceName,
@@ -28,17 +28,17 @@ func TestAccAzureRMNetworkInterface_importBasic(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMNetworkInterface_importIPForwarding(t *testing.T) {
-	resourceName := "azurerm_network_interface.test"
+func TestAccAzureStackNetworkInterface_importIPForwarding(t *testing.T) {
+	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkInterfaceDestroy,
+		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkInterface_ipForwarding(rInt, testLocation()),
+				Config: testAccAzureStackNetworkInterface_ipForwarding(rInt, testLocation()),
 			},
 			{
 				ResourceName:            resourceName,
@@ -50,17 +50,17 @@ func TestAccAzureRMNetworkInterface_importIPForwarding(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMNetworkInterface_importWithTags(t *testing.T) {
-	resourceName := "azurerm_network_interface.test"
+func TestAccAzureStackNetworkInterface_importWithTags(t *testing.T) {
+	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkInterfaceDestroy,
+		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkInterface_withTags(rInt, testLocation()),
+				Config: testAccAzureStackNetworkInterface_withTags(rInt, testLocation()),
 			},
 			{
 				ResourceName:            resourceName,
@@ -73,20 +73,20 @@ func TestAccAzureRMNetworkInterface_importWithTags(t *testing.T) {
 }
 
 // Load Balancer not yet supported
-func TestAccAzureRMNetworkInterface_importMultipleLoadBalancers(t *testing.T) {
+func TestAccAzureStackNetworkInterface_importMultipleLoadBalancers(t *testing.T) {
 
 	t.Skip()
 
-	resourceName := "azurerm_network_interface.test1"
+	resourceName := "azurestack_network_interface.test1"
 	rInt := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkInterfaceDestroy,
+		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkInterface_multipleLoadBalancers(rInt, testLocation()),
+				Config: testAccAzureStackNetworkInterface_multipleLoadBalancers(rInt, testLocation()),
 			},
 			{
 				ResourceName:      resourceName,
@@ -98,20 +98,20 @@ func TestAccAzureRMNetworkInterface_importMultipleLoadBalancers(t *testing.T) {
 }
 
 // App gateway not supported
-func TestAccAzureRMNetworkInterface_importApplicationGateway(t *testing.T) {
+func TestAccAzureStackNetworkInterface_importApplicationGateway(t *testing.T) {
 
 	t.Skip()
 
-	resourceName := "azurerm_network_interface.test"
+	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkInterfaceDestroy,
+		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkInterface_applicationGatewayBackendPool(rInt, testLocation()),
+				Config: testAccAzureStackNetworkInterface_applicationGatewayBackendPool(rInt, testLocation()),
 			},
 			{
 				ResourceName:      resourceName,
@@ -123,20 +123,20 @@ func TestAccAzureRMNetworkInterface_importApplicationGateway(t *testing.T) {
 }
 
 // public IP not yet supported
-func TestAccAzureRMNetworkInterface_importPublicIP(t *testing.T) {
+func TestAccAzureStackNetworkInterface_importPublicIP(t *testing.T) {
 
 	t.Skip()
 
-	resourceName := "azurerm_network_interface.test"
+	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkInterfaceDestroy,
+		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkInterface_publicIP(rInt, testLocation()),
+				Config: testAccAzureStackNetworkInterface_publicIP(rInt, testLocation()),
 			},
 			{
 				ResourceName:      resourceName,
@@ -148,20 +148,20 @@ func TestAccAzureRMNetworkInterface_importPublicIP(t *testing.T) {
 }
 
 // App Security Group not supported
-func TestAccAzureRMNetworkInterface_importApplicationSecurityGroup(t *testing.T) {
+func TestAccAzureStackNetworkInterface_importApplicationSecurityGroup(t *testing.T) {
 
 	t.Skip()
 
-	resourceName := "azurerm_network_interface.test"
+	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkInterfaceDestroy,
+		CheckDestroy: testCheckAzureStackNetworkInterfaceDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkInterface_applicationSecurityGroup(rInt, testLocation()),
+				Config: testAccAzureStackNetworkInterface_applicationSecurityGroup(rInt, testLocation()),
 			},
 			{
 				ResourceName:      resourceName,

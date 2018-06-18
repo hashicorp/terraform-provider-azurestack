@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"testing"
@@ -7,16 +7,16 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccAzureRMVirtualNetwork_importBasic(t *testing.T) {
-	resourceName := "azurerm_virtual_network.test"
+func TestAccAzureStackVirtualNetwork_importBasic(t *testing.T) {
+	resourceName := "azurestack_virtual_network.test"
 
 	ri := acctest.RandInt()
-	config := testAccAzureRMVirtualNetwork_basic(ri, testLocation())
+	config := testAccAzureStackVirtualNetwork_basic(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMVirtualNetworkDestroy,
+		CheckDestroy: testCheckAzureStackVirtualNetworkDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

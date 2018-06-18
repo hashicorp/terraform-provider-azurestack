@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/services/dns/mgmt/2016-04-01/dns"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
 func resourceArmDnsARecord() *schema.Resource {
@@ -60,7 +60,7 @@ func resourceArmDnsARecordCreateOrUpdate(d *schema.ResourceData, meta interface{
 	ttl := int64(d.Get("ttl").(int))
 	tags := d.Get("tags").(map[string]interface{})
 
-	records, err := expandAzureRmDnsARecords(d)
+	records, err := expandAzureStackDnsARecords(d)
 	if err != nil {
 		return err
 	}
@@ -117,7 +117,7 @@ func resourceArmDnsARecordRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("zone_name", zoneName)
 	d.Set("ttl", resp.TTL)
 
-	if err := d.Set("records", flattenAzureRmDnsARecords(resp.ARecords)); err != nil {
+	if err := d.Set("records", flattenAzureStackDnsARecords(resp.ARecords)); err != nil {
 		return err
 	}
 	flattenAndSetTags(d, &resp.Metadata)
@@ -146,7 +146,7 @@ func resourceArmDnsARecordDelete(d *schema.ResourceData, meta interface{}) error
 	return nil
 }
 
-func flattenAzureRmDnsARecords(records *[]dns.ARecord) []string {
+func flattenAzureStackDnsARecords(records *[]dns.ARecord) []string {
 	results := make([]string, 0, len(*records))
 
 	if records != nil {
@@ -158,7 +158,7 @@ func flattenAzureRmDnsARecords(records *[]dns.ARecord) []string {
 	return results
 }
 
-func expandAzureRmDnsARecords(d *schema.ResourceData) ([]dns.ARecord, error) {
+func expandAzureStackDnsARecords(d *schema.ResourceData) ([]dns.ARecord, error) {
 	recordStrings := d.Get("records").(*schema.Set).List()
 	records := make([]dns.ARecord, len(recordStrings))
 

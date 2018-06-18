@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"testing"
@@ -7,16 +7,16 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccAzureRMAvailabilitySet_importBasic(t *testing.T) {
-	resourceName := "azurerm_availability_set.test"
+func TestAccAzureStackAvailabilitySet_importBasic(t *testing.T) {
+	resourceName := "azurestack_availability_set.test"
 
 	ri := acctest.RandInt()
-	config := testAccAzureRMAvailabilitySet_basic(ri, testLocation())
+	config := testAccAzureStackAvailabilitySet_basic(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMAvailabilitySetDestroy,
+		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -31,16 +31,16 @@ func TestAccAzureRMAvailabilitySet_importBasic(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMAvailabilitySet_importWithTags(t *testing.T) {
-	resourceName := "azurerm_availability_set.test"
+func TestAccAzureStackAvailabilitySet_importWithTags(t *testing.T) {
+	resourceName := "azurestack_availability_set.test"
 
 	ri := acctest.RandInt()
-	config := testAccAzureRMAvailabilitySet_withTags(ri, testLocation())
+	config := testAccAzureStackAvailabilitySet_withTags(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMAvailabilitySetDestroy,
+		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -55,16 +55,16 @@ func TestAccAzureRMAvailabilitySet_importWithTags(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMAvailabilitySet_importWithDomainCounts(t *testing.T) {
-	resourceName := "azurerm_availability_set.test"
+func TestAccAzureStackAvailabilitySet_importWithDomainCounts(t *testing.T) {
+	resourceName := "azurestack_availability_set.test"
 
 	ri := acctest.RandInt()
-	config := testAccAzureRMAvailabilitySet_withDomainCounts(ri, testLocation())
+	config := testAccAzureStackAvailabilitySet_withDomainCounts(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMAvailabilitySetDestroy,
+		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -80,19 +80,19 @@ func TestAccAzureRMAvailabilitySet_importWithDomainCounts(t *testing.T) {
 }
 
 // Managed is not supported in the profile, skipping
-func TestAccAzureRMAvailabilitySet_importManaged(t *testing.T) {
+func TestAccAzureStackAvailabilitySet_importManaged(t *testing.T) {
 
 	t.Skip()
 
-	resourceName := "azurerm_availability_set.test"
+	resourceName := "azurestack_availability_set.test"
 
 	ri := acctest.RandInt()
-	config := testAccAzureRMAvailabilitySet_managed(ri, testLocation())
+	config := testAccAzureStackAvailabilitySet_managed(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMAvailabilitySetDestroy,
+		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

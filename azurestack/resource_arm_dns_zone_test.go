@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -10,49 +10,49 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccAzureRMDnsZone_basic(t *testing.T) {
-	resourceName := "azurerm_dns_zone.test"
+func TestAccAzureStackDnsZone_basic(t *testing.T) {
+	resourceName := "azurestack_dns_zone.test"
 	ri := acctest.RandInt()
-	config := testAccAzureRMDnsZone_basic(ri, testLocation())
+	config := testAccAzureStackDnsZone_basic(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMDnsZoneDestroy,
+		CheckDestroy: testCheckAzureStackDnsZoneDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMDnsZoneExists(resourceName),
+					testCheckAzureStackDnsZoneExists(resourceName),
 				),
 			},
 		},
 	})
 }
 
-func TestAccAzureRMDnsZone_withTags(t *testing.T) {
-	resourceName := "azurerm_dns_zone.test"
+func TestAccAzureStackDnsZone_withTags(t *testing.T) {
+	resourceName := "azurestack_dns_zone.test"
 	ri := acctest.RandInt()
 	location := testLocation()
-	preConfig := testAccAzureRMDnsZone_withTags(ri, location)
-	postConfig := testAccAzureRMDnsZone_withTagsUpdate(ri, location)
+	preConfig := testAccAzureStackDnsZone_withTags(ri, location)
+	postConfig := testAccAzureStackDnsZone_withTagsUpdate(ri, location)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMDnsZoneDestroy,
+		CheckDestroy: testCheckAzureStackDnsZoneDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMDnsZoneExists(resourceName),
+					testCheckAzureStackDnsZoneExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "2"),
 				),
 			},
 			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMDnsZoneExists(resourceName),
+					testCheckAzureStackDnsZoneExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
 				),
 			},
@@ -60,7 +60,7 @@ func TestAccAzureRMDnsZone_withTags(t *testing.T) {
 	})
 }
 
-func testCheckAzureRMDnsZoneExists(name string) resource.TestCheckFunc {
+func testCheckAzureStackDnsZoneExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
@@ -89,12 +89,12 @@ func testCheckAzureRMDnsZoneExists(name string) resource.TestCheckFunc {
 	}
 }
 
-func testCheckAzureRMDnsZoneDestroy(s *terraform.State) error {
+func testCheckAzureStackDnsZoneDestroy(s *terraform.State) error {
 	conn := testAccProvider.Meta().(*ArmClient).zonesClient
 	ctx := testAccProvider.Meta().(*ArmClient).StopContext
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "azurerm_dns_zone" {
+		if rs.Type != "azurestack_dns_zone" {
 			continue
 		}
 
@@ -116,30 +116,30 @@ func testCheckAzureRMDnsZoneDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccAzureRMDnsZone_basic(rInt int, location string) string {
+func testAccAzureStackDnsZone_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
     name = "acctestRG_%d"
     location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
     name = "acctestzone%d.com"
-    resource_group_name = "${azurerm_resource_group.test.name}"
+    resource_group_name = "${azurestack_resource_group.test.name}"
 }
 `, rInt, location, rInt)
 }
 
-func testAccAzureRMDnsZone_withTags(rInt int, location string) string {
+func testAccAzureStackDnsZone_withTags(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
     name = "acctestRG_%d"
     location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
     name = "acctestzone%d.com"
-    resource_group_name = "${azurerm_resource_group.test.name}"
+    resource_group_name = "${azurestack_resource_group.test.name}"
     tags {
         environment = "Production"
         cost_center = "MSFT"
@@ -148,16 +148,16 @@ resource "azurerm_dns_zone" "test" {
 `, rInt, location, rInt)
 }
 
-func testAccAzureRMDnsZone_withTagsUpdate(rInt int, location string) string {
+func testAccAzureStackDnsZone_withTagsUpdate(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
     name = "acctestRG_%d"
     location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
     name = "acctestzone%d.com"
-    resource_group_name = "${azurerm_resource_group.test.name}"
+    resource_group_name = "${azurestack_resource_group.test.name}"
     tags {
         environment = "staging"
     }

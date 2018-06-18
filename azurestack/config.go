@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"context"
@@ -20,8 +20,8 @@ import (
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/authentication"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/authentication"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
 // ArmClient contains the handles to all the specific Azure Resource Manager
@@ -183,20 +183,20 @@ func withRequestLogging() autorest.SendDecorator {
 		return autorest.SenderFunc(func(r *http.Request) (*http.Response, error) {
 			// dump request to wire format
 			if dump, err := httputil.DumpRequestOut(r, true); err == nil {
-				log.Printf("[DEBUG] AzureRM Request: \n%s\n", dump)
+				log.Printf("[DEBUG] azurestack Request: \n%s\n", dump)
 			} else {
 				// fallback to basic message
-				log.Printf("[DEBUG] AzureRM Request: %s to %s\n", r.Method, r.URL)
+				log.Printf("[DEBUG] azurestack Request: %s to %s\n", r.Method, r.URL)
 			}
 
 			resp, err := s.Do(r)
 			if resp != nil {
 				// dump response to wire format
 				if dump, err := httputil.DumpResponse(resp, true); err == nil {
-					log.Printf("[DEBUG] AzureRM Response for %s: \n%s\n", r.URL, dump)
+					log.Printf("[DEBUG] azurestack Response for %s: \n%s\n", r.URL, dump)
 				} else {
 					// fallback to basic message
-					log.Printf("[DEBUG] AzureRM Response: %s for %s\n", resp.Status, r.URL)
+					log.Printf("[DEBUG] azurestack Response: %s for %s\n", resp.Status, r.URL)
 				}
 			} else {
 				log.Printf("[DEBUG] Request to %s completed with no response", r.URL)

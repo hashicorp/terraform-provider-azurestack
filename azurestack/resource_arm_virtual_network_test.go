@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -10,18 +10,18 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func init() {
-	resource.AddTestSweepers("azurerm_virtual_network", &resource.Sweeper{
-		Name: "azurerm_virtual_network",
+	resource.AddTestSweepers("azurestack_virtual_network", &resource.Sweeper{
+		Name: "azurestack_virtual_network",
 		F:    testSweepVirtualNetworks,
 		Dependencies: []string{
-			"azurerm_application_gateway",
-			"azurerm_subnet",
-			"azurerm_network_interface",
-			"azurerm_virtual_machine",
+			"azurestack_application_gateway",
+			"azurestack_subnet",
+			"azurestack_network_interface",
+			"azurestack_virtual_machine",
 		},
 	})
 }
@@ -78,41 +78,41 @@ func testSweepVirtualNetworks(region string) error {
 	return nil
 }
 
-func TestAccAzureRMVirtualNetwork_basic(t *testing.T) {
-	resourceName := "azurerm_virtual_network.test"
+func TestAccAzureStackVirtualNetwork_basic(t *testing.T) {
+	resourceName := "azurestack_virtual_network.test"
 	ri := acctest.RandInt()
-	config := testAccAzureRMVirtualNetwork_basic(ri, testLocation())
+	config := testAccAzureStackVirtualNetwork_basic(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMVirtualNetworkDestroy,
+		CheckDestroy: testCheckAzureStackVirtualNetworkDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMVirtualNetworkExists(resourceName),
+					testCheckAzureStackVirtualNetworkExists(resourceName),
 				),
 			},
 		},
 	})
 }
 
-func TestAccAzureRMVirtualNetwork_disappears(t *testing.T) {
-	resourceName := "azurerm_virtual_network.test"
+func TestAccAzureStackVirtualNetwork_disappears(t *testing.T) {
+	resourceName := "azurestack_virtual_network.test"
 	ri := acctest.RandInt()
-	config := testAccAzureRMVirtualNetwork_basic(ri, testLocation())
+	config := testAccAzureStackVirtualNetwork_basic(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMVirtualNetworkDestroy,
+		CheckDestroy: testCheckAzureStackVirtualNetworkDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMVirtualNetworkExists(resourceName),
-					testCheckAzureRMVirtualNetworkDisappears(resourceName),
+					testCheckAzureStackVirtualNetworkExists(resourceName),
+					testCheckAzureStackVirtualNetworkDisappears(resourceName),
 				),
 				ExpectNonEmptyPlan: true,
 			},
@@ -120,22 +120,22 @@ func TestAccAzureRMVirtualNetwork_disappears(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMVirtualNetwork_withTags(t *testing.T) {
-	resourceName := "azurerm_virtual_network.test"
+func TestAccAzureStackVirtualNetwork_withTags(t *testing.T) {
+	resourceName := "azurestack_virtual_network.test"
 	location := testLocation()
 	ri := acctest.RandInt()
-	preConfig := testAccAzureRMVirtualNetwork_withTags(ri, location)
-	postConfig := testAccAzureRMVirtualNetwork_withTagsUpdated(ri, location)
+	preConfig := testAccAzureStackVirtualNetwork_withTags(ri, location)
+	postConfig := testAccAzureStackVirtualNetwork_withTagsUpdated(ri, location)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMVirtualNetworkDestroy,
+		CheckDestroy: testCheckAzureStackVirtualNetworkDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMVirtualNetworkExists(resourceName),
+					testCheckAzureStackVirtualNetworkExists(resourceName),
 					resource.TestCheckResourceAttr(
 						resourceName, "tags.%", "2"),
 					resource.TestCheckResourceAttr(
@@ -146,7 +146,7 @@ func TestAccAzureRMVirtualNetwork_withTags(t *testing.T) {
 			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMVirtualNetworkExists(resourceName),
+					testCheckAzureStackVirtualNetworkExists(resourceName),
 					resource.TestCheckResourceAttr(
 						resourceName, "tags.%", "1"),
 					resource.TestCheckResourceAttr(
@@ -157,27 +157,27 @@ func TestAccAzureRMVirtualNetwork_withTags(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMVirtualNetwork_bug373(t *testing.T) {
-	resourceName := "azurerm_virtual_network.test"
+func TestAccAzureStackVirtualNetwork_bug373(t *testing.T) {
+	resourceName := "azurestack_virtual_network.test"
 	rs := acctest.RandString(6)
-	config := testAccAzureRMVirtualNetwork_bug373(rs, testLocation())
+	config := testAccAzureStackVirtualNetwork_bug373(rs, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMVirtualNetworkDestroy,
+		CheckDestroy: testCheckAzureStackVirtualNetworkDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMVirtualNetworkExists(resourceName),
+					testCheckAzureStackVirtualNetworkExists(resourceName),
 				),
 			},
 		},
 	})
 }
 
-func testCheckAzureRMVirtualNetworkExists(name string) resource.TestCheckFunc {
+func testCheckAzureStackVirtualNetworkExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
@@ -208,7 +208,7 @@ func testCheckAzureRMVirtualNetworkExists(name string) resource.TestCheckFunc {
 	}
 }
 
-func testCheckAzureRMVirtualNetworkDisappears(name string) resource.TestCheckFunc {
+func testCheckAzureStackVirtualNetworkDisappears(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
@@ -240,12 +240,12 @@ func testCheckAzureRMVirtualNetworkDisappears(name string) resource.TestCheckFun
 	}
 }
 
-func testCheckAzureRMVirtualNetworkDestroy(s *terraform.State) error {
+func testCheckAzureStackVirtualNetworkDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*ArmClient).vnetClient
 	ctx := testAccProvider.Meta().(*ArmClient).StopContext
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "azurerm_virtual_network" {
+		if rs.Type != "azurestack_virtual_network" {
 			continue
 		}
 
@@ -266,18 +266,18 @@ func testCheckAzureRMVirtualNetworkDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccAzureRMVirtualNetwork_basic(rInt int, location string) string {
+func testAccAzureStackVirtualNetwork_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
     name = "acctestRG-%d"
     location = "%s"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
     name = "acctestvirtnet%d"
     address_space = ["10.0.0.0/16"]
-    location = "${azurerm_resource_group.test.location}"
-    resource_group_name = "${azurerm_resource_group.test.name}"
+    location = "${azurestack_resource_group.test.location}"
+    resource_group_name = "${azurestack_resource_group.test.name}"
 
     subnet {
         name = "subnet1"
@@ -287,18 +287,18 @@ resource "azurerm_virtual_network" "test" {
 `, rInt, location, rInt)
 }
 
-func testAccAzureRMVirtualNetwork_withTags(rInt int, location string) string {
+func testAccAzureStackVirtualNetwork_withTags(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
     name = "acctestRG-%d"
     location = "%s"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
     name = "acctestvirtnet%d"
     address_space = ["10.0.0.0/16"]
-    location = "${azurerm_resource_group.test.location}"
-    resource_group_name = "${azurerm_resource_group.test.name}"
+    location = "${azurestack_resource_group.test.location}"
+    resource_group_name = "${azurestack_resource_group.test.name}"
 
     subnet {
         name = "subnet1"
@@ -313,18 +313,18 @@ resource "azurerm_virtual_network" "test" {
 `, rInt, location, rInt)
 }
 
-func testAccAzureRMVirtualNetwork_withTagsUpdated(rInt int, location string) string {
+func testAccAzureStackVirtualNetwork_withTagsUpdated(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
     name = "acctestRG-%d"
     location = "%s"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
     name = "acctestvirtnet%d"
     address_space = ["10.0.0.0/16"]
-    location = "${azurerm_resource_group.test.location}"
-    resource_group_name = "${azurerm_resource_group.test.name}"
+    location = "${azurestack_resource_group.test.location}"
+    resource_group_name = "${azurestack_resource_group.test.name}"
 
     subnet {
         name = "subnet1"
@@ -338,7 +338,7 @@ resource "azurerm_virtual_network" "test" {
 `, rInt, location, rInt)
 }
 
-func testAccAzureRMVirtualNetwork_bug373(rString string, location string) string {
+func testAccAzureStackVirtualNetwork_bug373(rString string, location string) string {
 	return fmt.Sprintf(`
 variable "environment" {
   default = "TestVirtualNetworkBug373"
@@ -348,42 +348,42 @@ variable "network_cidr" {
   default = "10.0.0.0/16"
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestrg%s"
   location = "%s"
 }
 
-resource "azurerm_virtual_network" "test" {
-  name                = "${azurerm_resource_group.test.name}-vnet"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+resource "azurestack_virtual_network" "test" {
+  name                = "${azurestack_resource_group.test.name}-vnet"
+  resource_group_name = "${azurestack_resource_group.test.name}"
   address_space       = ["${var.network_cidr}"]
-  location            = "${azurerm_resource_group.test.location}"
+  location            = "${azurestack_resource_group.test.location}"
 
   tags {
     environment = "${var.environment}"
   }
 }
 
-resource "azurerm_subnet" "public" {
-  name                      = "${azurerm_resource_group.test.name}-subnet-public"
-  resource_group_name       = "${azurerm_resource_group.test.name}"
-  virtual_network_name      = "${azurerm_virtual_network.test.name}"
+resource "azurestack_subnet" "public" {
+  name                      = "${azurestack_resource_group.test.name}-subnet-public"
+  resource_group_name       = "${azurestack_resource_group.test.name}"
+  virtual_network_name      = "${azurestack_virtual_network.test.name}"
   address_prefix            = "10.0.1.0/24"
-  network_security_group_id = "${azurerm_network_security_group.test.id}"
+  network_security_group_id = "${azurestack_network_security_group.test.id}"
 }
 
-resource "azurerm_subnet" "private" {
-  name                      = "${azurerm_resource_group.test.name}-subnet-private"
-  resource_group_name       = "${azurerm_resource_group.test.name}"
-  virtual_network_name      = "${azurerm_virtual_network.test.name}"
+resource "azurestack_subnet" "private" {
+  name                      = "${azurestack_resource_group.test.name}-subnet-private"
+  resource_group_name       = "${azurestack_resource_group.test.name}"
+  virtual_network_name      = "${azurestack_virtual_network.test.name}"
   address_prefix            = "10.0.2.0/24"
-  network_security_group_id = "${azurerm_network_security_group.test.id}"
+  network_security_group_id = "${azurestack_network_security_group.test.id}"
 }
 
-resource "azurerm_network_security_group" "test" {
+resource "azurestack_network_security_group" "test" {
   name                = "default-network-sg"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   security_rule {
     name                       = "default-allow-all"

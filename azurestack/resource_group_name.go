@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ func resourceGroupNameDiffSuppressSchema() *schema.Schema {
 		Type:             schema.TypeString,
 		Required:         true,
 		ForceNew:         true,
-		DiffSuppressFunc: resourceAzurermResourceGroupNameDiffSuppress,
+		DiffSuppressFunc: resourceAzureStackResourceGroupNameDiffSuppress,
 		ValidateFunc:     validateArmResourceGroupName,
 	}
 }

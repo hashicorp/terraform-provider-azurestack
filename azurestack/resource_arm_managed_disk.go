@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import "fmt"
 
@@ -109,7 +109,7 @@ func validateDiskSizeGB(v interface{}, k string) (ws []string, errors []error) {
 // 	log.Printf("[INFO] preparing arguments for Azure ARM Managed Disk creation.")
 //
 // 	name := d.Get("name").(string)
-// 	location := azureRMNormalizeLocation(d.Get("location").(string))
+// 	location := azureStackNormalizeLocation(d.Get("location").(string))
 // 	resGroup := d.Get("resource_group_name").(string)
 // 	storageAccountType := d.Get("storage_account_type").(string)
 // 	osType := d.Get("os_type").(string)
@@ -223,7 +223,7 @@ func validateDiskSizeGB(v interface{}, k string) (ws []string, errors []error) {
 // 	d.Set("zones", resp.Zones)
 //
 // 	if location := resp.Location; location != nil {
-// 		d.Set("location", azureRMNormalizeLocation(*location))
+// 		d.Set("location", azureStackNormalizeLocation(*location))
 // 	}
 //
 // 	if sku := resp.Sku; sku != nil {
@@ -240,7 +240,7 @@ func validateDiskSizeGB(v interface{}, k string) (ws []string, errors []error) {
 // 	}
 //
 // 	if resp.CreationData != nil {
-// 		flattenAzureRmManagedDiskCreationData(d, resp.CreationData)
+// 		flattenAzureStackManagedDiskCreationData(d, resp.CreationData)
 // 	}
 //
 // 	if settings := resp.EncryptionSettings; settings != nil {
@@ -283,7 +283,7 @@ func validateDiskSizeGB(v interface{}, k string) (ws []string, errors []error) {
 // 	return nil
 // }
 //
-// func flattenAzureRmManagedDiskCreationData(d *schema.ResourceData, creationData *compute.CreationData) {
+// func flattenAzureStackManagedDiskCreationData(d *schema.ResourceData, creationData *compute.CreationData) {
 // 	d.Set("create_option", string(creationData.CreateOption))
 // 	if ref := creationData.ImageReference; ref != nil {
 // 		d.Set("image_reference_id", *ref.ID)

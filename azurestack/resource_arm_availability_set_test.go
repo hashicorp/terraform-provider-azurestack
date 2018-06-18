@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -7,23 +7,23 @@ import (
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
-func TestAccAzureRMAvailabilitySet_basic(t *testing.T) {
-	resourceName := "azurerm_availability_set.test"
+func TestAccAzureStackAvailabilitySet_basic(t *testing.T) {
+	resourceName := "azurestack_availability_set.test"
 	ri := acctest.RandInt()
-	config := testAccAzureRMAvailabilitySet_basic(ri, testLocation())
+	config := testAccAzureStackAvailabilitySet_basic(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMAvailabilitySetDestroy,
+		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMAvailabilitySetExists(resourceName),
+					testCheckAzureStackAvailabilitySetExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "platform_update_domain_count", "5"),
 					resource.TestCheckResourceAttr(resourceName, "platform_fault_domain_count", "3"),
 				),
@@ -32,23 +32,23 @@ func TestAccAzureRMAvailabilitySet_basic(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMAvailabilitySet_disappears(t *testing.T) {
-	resourceName := "azurerm_availability_set.test"
+func TestAccAzureStackAvailabilitySet_disappears(t *testing.T) {
+	resourceName := "azurestack_availability_set.test"
 	ri := acctest.RandInt()
-	config := testAccAzureRMAvailabilitySet_basic(ri, testLocation())
+	config := testAccAzureStackAvailabilitySet_basic(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMAvailabilitySetDestroy,
+		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMAvailabilitySetExists(resourceName),
+					testCheckAzureStackAvailabilitySetExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "platform_update_domain_count", "5"),
 					resource.TestCheckResourceAttr(resourceName, "platform_fault_domain_count", "3"),
-					testCheckAzureRMAvailabilitySetDisappears(resourceName),
+					testCheckAzureStackAvailabilitySetDisappears(resourceName),
 				),
 				ExpectNonEmptyPlan: true,
 			},
@@ -56,22 +56,22 @@ func TestAccAzureRMAvailabilitySet_disappears(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMAvailabilitySet_withTags(t *testing.T) {
-	resourceName := "azurerm_availability_set.test"
+func TestAccAzureStackAvailabilitySet_withTags(t *testing.T) {
+	resourceName := "azurestack_availability_set.test"
 	ri := acctest.RandInt()
 	location := testLocation()
-	preConfig := testAccAzureRMAvailabilitySet_withTags(ri, location)
-	postConfig := testAccAzureRMAvailabilitySet_withUpdatedTags(ri, location)
+	preConfig := testAccAzureStackAvailabilitySet_withTags(ri, location)
+	postConfig := testAccAzureStackAvailabilitySet_withUpdatedTags(ri, location)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMAvailabilitySetDestroy,
+		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMAvailabilitySetExists(resourceName),
+					testCheckAzureStackAvailabilitySetExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "2"),
 					resource.TestCheckResourceAttr(resourceName, "tags.environment", "Production"),
 					resource.TestCheckResourceAttr(resourceName, "tags.cost_center", "MSFT"),
@@ -80,7 +80,7 @@ func TestAccAzureRMAvailabilitySet_withTags(t *testing.T) {
 			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMAvailabilitySetExists(resourceName),
+					testCheckAzureStackAvailabilitySetExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.environment", "staging"),
 				),
@@ -89,20 +89,20 @@ func TestAccAzureRMAvailabilitySet_withTags(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMAvailabilitySet_withDomainCounts(t *testing.T) {
-	resourceName := "azurerm_availability_set.test"
+func TestAccAzureStackAvailabilitySet_withDomainCounts(t *testing.T) {
+	resourceName := "azurestack_availability_set.test"
 	ri := acctest.RandInt()
-	config := testAccAzureRMAvailabilitySet_withDomainCounts(ri, testLocation())
+	config := testAccAzureStackAvailabilitySet_withDomainCounts(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMAvailabilitySetDestroy,
+		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMAvailabilitySetExists(resourceName),
+					testCheckAzureStackAvailabilitySetExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "platform_update_domain_count", "3"),
 					resource.TestCheckResourceAttr(resourceName, "platform_fault_domain_count", "3"),
 				),
@@ -112,23 +112,23 @@ func TestAccAzureRMAvailabilitySet_withDomainCounts(t *testing.T) {
 }
 
 // managed not supported in the profile, skipping
-func TestAccAzureRMAvailabilitySet_managed(t *testing.T) {
+func TestAccAzureStackAvailabilitySet_managed(t *testing.T) {
 
 	t.Skip()
 
-	resourceName := "azurerm_availability_set.test"
+	resourceName := "azurestack_availability_set.test"
 	ri := acctest.RandInt()
-	config := testAccAzureRMAvailabilitySet_managed(ri, testLocation())
+	config := testAccAzureStackAvailabilitySet_managed(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMAvailabilitySetDestroy,
+		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMAvailabilitySetExists(resourceName),
+					testCheckAzureStackAvailabilitySetExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "managed", "true"),
 				),
 			},
@@ -136,7 +136,7 @@ func TestAccAzureRMAvailabilitySet_managed(t *testing.T) {
 	})
 }
 
-func testCheckAzureRMAvailabilitySetExists(name string) resource.TestCheckFunc {
+func testCheckAzureStackAvailabilitySetExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
@@ -165,7 +165,7 @@ func testCheckAzureRMAvailabilitySetExists(name string) resource.TestCheckFunc {
 	}
 }
 
-func testCheckAzureRMAvailabilitySetDisappears(name string) resource.TestCheckFunc {
+func testCheckAzureStackAvailabilitySetDisappears(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
@@ -192,9 +192,9 @@ func testCheckAzureRMAvailabilitySetDisappears(name string) resource.TestCheckFu
 	}
 }
 
-func testCheckAzureRMAvailabilitySetDestroy(s *terraform.State) error {
+func testCheckAzureStackAvailabilitySetDestroy(s *terraform.State) error {
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "azurerm_availability_set" {
+		if rs.Type != "azurestack_availability_set" {
 			continue
 		}
 
@@ -218,32 +218,32 @@ func testCheckAzureRMAvailabilitySetDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccAzureRMAvailabilitySet_basic(rInt int, location string) string {
+func testAccAzureStackAvailabilitySet_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_availability_set" "test" {
+resource "azurestack_availability_set" "test" {
   name                = "acctestavset-%d"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 `, rInt, location, rInt)
 }
 
-func testAccAzureRMAvailabilitySet_withTags(rInt int, location string) string {
+func testAccAzureStackAvailabilitySet_withTags(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_availability_set" "test" {
+resource "azurestack_availability_set" "test" {
   name                = "acctestavset-%d"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   tags {
     environment = "Production"
@@ -253,17 +253,17 @@ resource "azurerm_availability_set" "test" {
 `, rInt, location, rInt)
 }
 
-func testAccAzureRMAvailabilitySet_withUpdatedTags(rInt int, location string) string {
+func testAccAzureStackAvailabilitySet_withUpdatedTags(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_availability_set" "test" {
+resource "azurestack_availability_set" "test" {
   name                = "acctestavset-%d"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   tags {
     environment = "staging"
@@ -272,34 +272,34 @@ resource "azurerm_availability_set" "test" {
 `, rInt, location, rInt)
 }
 
-func testAccAzureRMAvailabilitySet_withDomainCounts(rInt int, location string) string {
+func testAccAzureStackAvailabilitySet_withDomainCounts(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_availability_set" "test" {
+resource "azurestack_availability_set" "test" {
   name                         = "acctestavset-%d"
-  location                     = "${azurerm_resource_group.test.location}"
-  resource_group_name          = "${azurerm_resource_group.test.name}"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   platform_update_domain_count = 3
   platform_fault_domain_count  = 3
 }
 `, rInt, location, rInt)
 }
 
-func testAccAzureRMAvailabilitySet_managed(rInt int, location string) string {
+func testAccAzureStackAvailabilitySet_managed(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_availability_set" "test" {
+resource "azurestack_availability_set" "test" {
   name                         = "acctestavset-%d"
-  location                     = "${azurerm_resource_group.test.location}"
-  resource_group_name          = "${azurerm_resource_group.test.name}"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   platform_update_domain_count = 3
   platform_fault_domain_count  = 3
   managed                      = true

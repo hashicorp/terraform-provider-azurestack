@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"testing"
@@ -7,16 +7,16 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccAzureRMVirtualMachine_importBasic(t *testing.T) {
-	resourceName := "azurerm_virtual_machine.test"
+func TestAccAzureStackVirtualMachine_importBasic(t *testing.T) {
+	resourceName := "azurestack_virtual_machine.test"
 
 	ri := acctest.RandInt()
-	config := testAccAzureRMVirtualMachine_basicLinuxMachine(ri, testLocation())
+	config := testAccAzureStackVirtualMachine_basicLinuxMachine(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMVirtualMachineDestroy,
+		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -35,16 +35,16 @@ func TestAccAzureRMVirtualMachine_importBasic(t *testing.T) {
 	})
 }
 
-// func TestAccAzureRMVirtualMachine_importBasic_withZone(t *testing.T) {
-// 	resourceName := "azurerm_virtual_machine.test"
+// func TestAccAzureStackVirtualMachine_importBasic_withZone(t *testing.T) {
+// 	resourceName := "azurestack_virtual_machine.test"
 //
 // 	ri := acctest.RandInt()
-// 	config := testAccAzureRMVirtualMachine_basicLinuxMachine_managedDisk_implicit_withZone(ri, testLocation())
+// 	config := testAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_implicit_withZone(ri, testLocation())
 //
 // 	resource.Test(t, resource.TestCase{
 // 		PreCheck:     func() { testAccPreCheck(t) },
 // 		Providers:    testAccProviders,
-// 		CheckDestroy: testCheckAzureRMVirtualMachineDestroy,
+// 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
 // 		Steps: []resource.TestStep{
 // 			{
 // 				Config: config,
@@ -63,16 +63,16 @@ func TestAccAzureRMVirtualMachine_importBasic(t *testing.T) {
 // 	})
 // }
 //
-// func TestAccAzureRMVirtualMachine_importBasic_managedDisk(t *testing.T) {
-// 	resourceName := "azurerm_virtual_machine.test"
+// func TestAccAzureStackVirtualMachine_importBasic_managedDisk(t *testing.T) {
+// 	resourceName := "azurestack_virtual_machine.test"
 //
 // 	ri := acctest.RandInt()
-// 	config := testAccAzureRMVirtualMachine_basicLinuxMachine_managedDisk_explicit(ri, testLocation())
+// 	config := testAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_explicit(ri, testLocation())
 //
 // 	resource.Test(t, resource.TestCase{
 // 		PreCheck:     func() { testAccPreCheck(t) },
 // 		Providers:    testAccProviders,
-// 		CheckDestroy: testCheckAzureRMVirtualMachineDestroy,
+// 		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
 // 		Steps: []resource.TestStep{
 // 			{
 // 				Config: config,

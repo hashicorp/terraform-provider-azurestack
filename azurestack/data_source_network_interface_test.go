@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccDataSourceArmVirtualNetworkInterface_basic(t *testing.T) {
-	dataSourceName := "data.azurerm_network_interface.test"
+	dataSourceName := "data.azurestack_network_interface.test"
 	ri := acctest.RandInt()
 
 	name := fmt.Sprintf("acctest-nic-%d", ri)
@@ -36,40 +36,40 @@ func TestAccDataSourceArmVirtualNetworkInterface_basic(t *testing.T) {
 
 func testAccDataSourceArmVirtualNetworkInterface_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctest-%d-rg"
   location = "%s"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
   name                = "acctest-vn-%d"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_network_security_group" "test" {
+resource "azurestack_network_security_group" "test" {
   name                 = "acctest-nsg-%d"
-  location             = "${azurerm_resource_group.test.location}"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
+  location             = "${azurestack_resource_group.test.location}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_subnet" "test" {
+resource "azurestack_subnet" "test" {
   name                 = "subnet1"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
-  virtual_network_name = "${azurerm_virtual_network.test.name}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
   address_prefix       = "10.0.1.0/24"
 }
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                      = "acctest-nic-%d"
-  location                  = "${azurerm_resource_group.test.location}"
-  resource_group_name       = "${azurerm_resource_group.test.name}"
-  network_security_group_id = "${azurerm_network_security_group.test.id}"
+  location                  = "${azurestack_resource_group.test.location}"
+  resource_group_name       = "${azurestack_resource_group.test.name}"
+  network_security_group_id = "${azurestack_network_security_group.test.id}"
 
   ip_configuration {
     name                          = "testconfiguration1"
-    subnet_id                     = "${azurerm_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
     private_ip_address_allocation = "dynamic"
   }
 
@@ -83,40 +83,40 @@ resource "azurerm_network_interface" "test" {
 
 func testAccDataSourceArmVirtualNetworkInterface_withDataSource(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctest-%d-rg"
   location = "%s"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
   name                = "acctest-vn-%d"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_network_security_group" "test" {
+resource "azurestack_network_security_group" "test" {
   name                 = "acctest-nsg-%d"
-  location             = "${azurerm_resource_group.test.location}"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
+  location             = "${azurestack_resource_group.test.location}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_subnet" "test" {
+resource "azurestack_subnet" "test" {
   name                 = "subnet1"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
-  virtual_network_name = "${azurerm_virtual_network.test.name}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
   address_prefix       = "10.0.1.0/24"
 }
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                      = "acctest-nic-%d"
-  location                  = "${azurerm_resource_group.test.location}"
-  resource_group_name       = "${azurerm_resource_group.test.name}"
-  network_security_group_id = "${azurerm_network_security_group.test.id}"
+  location                  = "${azurestack_resource_group.test.location}"
+  resource_group_name       = "${azurestack_resource_group.test.name}"
+  network_security_group_id = "${azurestack_network_security_group.test.id}"
 
   ip_configuration {
     name                          = "testconfiguration1"
-    subnet_id                     = "${azurerm_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
     private_ip_address_allocation = "dynamic"
   }
 
@@ -125,9 +125,9 @@ resource "azurerm_network_interface" "test" {
   }
 }
 
-data "azurerm_network_interface" "test" {
+data "azurestack_network_interface" "test" {
   name = "acctest-nic-%d"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 

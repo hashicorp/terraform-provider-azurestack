@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"errors"
@@ -12,7 +12,7 @@ func tagsSchema() *schema.Schema {
 		Type:         schema.TypeMap,
 		Optional:     true,
 		Computed:     true,
-		ValidateFunc: validateAzureRMTags,
+		ValidateFunc: validateAzureStackTags,
 	}
 }
 
@@ -22,7 +22,7 @@ func tagsForceNewSchema() *schema.Schema {
 		Optional:     true,
 		Computed:     true,
 		ForceNew:     true,
-		ValidateFunc: validateAzureRMTags,
+		ValidateFunc: validateAzureStackTags,
 	}
 }
 
@@ -44,7 +44,7 @@ func tagValueToString(v interface{}) (string, error) {
 	}
 }
 
-func validateAzureRMTags(v interface{}, k string) (ws []string, es []error) {
+func validateAzureStackTags(v interface{}, k string) (ws []string, es []error) {
 	tagsMap := v.(map[string]interface{})
 
 	if len(tagsMap) > 15 {

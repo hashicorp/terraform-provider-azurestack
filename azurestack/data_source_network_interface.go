@@ -1,10 +1,10 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
 
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
 func dataSourceArmNetworkInterface() *schema.Resource {
@@ -246,7 +246,7 @@ func dataSourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{})
 	d.Set("name", resp.Name)
 	d.Set("resource_group_name", resGroup)
 	if location := resp.Location; location != nil {
-		d.Set("location", azureRMNormalizeLocation(*location))
+		d.Set("location", azureStackNormalizeLocation(*location))
 	}
 
 	d.Set("applied_dns_servers", appliedDNSServers)

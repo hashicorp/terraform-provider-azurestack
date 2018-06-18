@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -7,83 +7,83 @@ import (
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
-func TestAccAzureRMNetworkSecurityGroup_basic(t *testing.T) {
-	resourceName := "azurerm_network_security_group.test"
+func TestAccAzureStackNetworkSecurityGroup_basic(t *testing.T) {
+	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkSecurityGroupDestroy,
+		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_basic(rInt, testLocation()),
+				Config: testAccAzureStackNetworkSecurityGroup_basic(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMNetworkSecurityGroupExists(resourceName),
+					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
 				),
 			},
 		},
 	})
 }
 
-func TestAccAzureRMNetworkSecurityGroup_singleRule(t *testing.T) {
-	resourceName := "azurerm_network_security_group.test"
+func TestAccAzureStackNetworkSecurityGroup_singleRule(t *testing.T) {
+	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkSecurityGroupDestroy,
+		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_singleRule(rInt, testLocation()),
+				Config: testAccAzureStackNetworkSecurityGroup_singleRule(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMNetworkSecurityGroupExists(resourceName),
+					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
 				),
 			},
 		},
 	})
 }
 
-func TestAccAzureRMNetworkSecurityGroup_update(t *testing.T) {
-	resourceName := "azurerm_network_security_group.test"
+func TestAccAzureStackNetworkSecurityGroup_update(t *testing.T) {
+	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
 	location := testLocation()
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkSecurityGroupDestroy,
+		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_singleRule(rInt, location),
+				Config: testAccAzureStackNetworkSecurityGroup_singleRule(rInt, location),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMNetworkSecurityGroupExists(resourceName),
+					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
 				),
 			},
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_basic(rInt, location),
+				Config: testAccAzureStackNetworkSecurityGroup_basic(rInt, location),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMNetworkSecurityGroupExists(resourceName),
+					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
 				),
 			},
 		},
 	})
 }
 
-func TestAccAzureRMNetworkSecurityGroup_disappears(t *testing.T) {
-	resourceName := "azurerm_network_security_group.test"
+func TestAccAzureStackNetworkSecurityGroup_disappears(t *testing.T) {
+	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkSecurityGroupDestroy,
+		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_basic(rInt, testLocation()),
+				Config: testAccAzureStackNetworkSecurityGroup_basic(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMNetworkSecurityGroupExists(resourceName),
-					testCheckAzureRMNetworkSecurityGroupDisappears(resourceName),
+					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
+					testCheckAzureStackNetworkSecurityGroupDisappears(resourceName),
 				),
 				ExpectNonEmptyPlan: true,
 			},
@@ -91,18 +91,18 @@ func TestAccAzureRMNetworkSecurityGroup_disappears(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMNetworkSecurityGroup_withTags(t *testing.T) {
-	resourceName := "azurerm_network_security_group.test"
+func TestAccAzureStackNetworkSecurityGroup_withTags(t *testing.T) {
+	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkSecurityGroupDestroy,
+		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_withTags(rInt, testLocation()),
+				Config: testAccAzureStackNetworkSecurityGroup_withTags(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMNetworkSecurityGroupExists(resourceName),
+					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "2"),
 					resource.TestCheckResourceAttr(resourceName, "tags.environment", "Production"),
 					resource.TestCheckResourceAttr(resourceName, "tags.cost_center", "MSFT"),
@@ -110,9 +110,9 @@ func TestAccAzureRMNetworkSecurityGroup_withTags(t *testing.T) {
 			},
 
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_withTagsUpdate(rInt, testLocation()),
+				Config: testAccAzureStackNetworkSecurityGroup_withTagsUpdate(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMNetworkSecurityGroupExists(resourceName),
+					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.environment", "staging"),
 				),
@@ -121,26 +121,26 @@ func TestAccAzureRMNetworkSecurityGroup_withTags(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMNetworkSecurityGroup_addingExtraRules(t *testing.T) {
-	resourceName := "azurerm_network_security_group.test"
+func TestAccAzureStackNetworkSecurityGroup_addingExtraRules(t *testing.T) {
+	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkSecurityGroupDestroy,
+		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_singleRule(rInt, testLocation()),
+				Config: testAccAzureStackNetworkSecurityGroup_singleRule(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMNetworkSecurityGroupExists(resourceName),
+					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "security_rule.#", "1"),
 				),
 			},
 
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_anotherRule(rInt, testLocation()),
+				Config: testAccAzureStackNetworkSecurityGroup_anotherRule(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMNetworkSecurityGroupExists(resourceName),
+					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "security_rule.#", "2"),
 				),
 			},
@@ -149,21 +149,21 @@ func TestAccAzureRMNetworkSecurityGroup_addingExtraRules(t *testing.T) {
 }
 
 // Not supported by the profile by now
-func TestAccAzureRMNetworkSecurityGroup_augmented(t *testing.T) {
+func TestAccAzureStackNetworkSecurityGroup_augmented(t *testing.T) {
 
 	t.Skip()
 
-	resourceName := "azurerm_network_security_group.test"
+	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkSecurityGroupDestroy,
+		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_augmented(rInt, testLocation()),
+				Config: testAccAzureStackNetworkSecurityGroup_augmented(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMNetworkSecurityGroupExists(resourceName),
+					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "security_rule.#", "1"),
 				),
 			},
@@ -172,21 +172,21 @@ func TestAccAzureRMNetworkSecurityGroup_augmented(t *testing.T) {
 }
 
 // application security group not in scope
-func TestAccAzureRMNetworkSecurityGroup_applicationSecurityGroup(t *testing.T) {
+func TestAccAzureStackNetworkSecurityGroup_applicationSecurityGroup(t *testing.T) {
 
 	t.Skip()
 
-	resourceName := "azurerm_network_security_group.test"
+	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMNetworkSecurityGroupDestroy,
+		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMNetworkSecurityGroup_applicationSecurityGroup(rInt, testLocation()),
+				Config: testAccAzureStackNetworkSecurityGroup_applicationSecurityGroup(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMNetworkSecurityGroupExists(resourceName),
+					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "security_rule.#", "1"),
 				),
 			},
@@ -194,7 +194,7 @@ func TestAccAzureRMNetworkSecurityGroup_applicationSecurityGroup(t *testing.T) {
 	})
 }
 
-func testCheckAzureRMNetworkSecurityGroupExists(name string) resource.TestCheckFunc {
+func testCheckAzureStackNetworkSecurityGroupExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
 		rs, ok := s.RootModule().Resources[name]
@@ -223,7 +223,7 @@ func testCheckAzureRMNetworkSecurityGroupExists(name string) resource.TestCheckF
 	}
 }
 
-func testCheckAzureRMNetworkSecurityGroupDisappears(name string) resource.TestCheckFunc {
+func testCheckAzureStackNetworkSecurityGroupDisappears(name string) resource.TestCheckFunc {
 
 	return func(s *terraform.State) error {
 
@@ -253,12 +253,12 @@ func testCheckAzureRMNetworkSecurityGroupDisappears(name string) resource.TestCh
 	}
 }
 
-func testCheckAzureRMNetworkSecurityGroupDestroy(s *terraform.State) error {
+func testCheckAzureStackNetworkSecurityGroupDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*ArmClient).secGroupClient
 	ctx := testAccProvider.Meta().(*ArmClient).StopContext
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "azurerm_network_security_group" {
+		if rs.Type != "azurestack_network_security_group" {
 			continue
 		}
 
@@ -280,32 +280,32 @@ func testCheckAzureRMNetworkSecurityGroupDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccAzureRMNetworkSecurityGroup_basic(rInt int, location string) string {
+func testAccAzureStackNetworkSecurityGroup_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_network_security_group" "test" {
+resource "azurestack_network_security_group" "test" {
   name                = "acceptanceTestSecurityGroup1"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 `, rInt, location)
 }
 
-func testAccAzureRMNetworkSecurityGroup_singleRule(rInt int, location string) string {
+func testAccAzureStackNetworkSecurityGroup_singleRule(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_network_security_group" "test" {
+resource "azurestack_network_security_group" "test" {
   name                = "acceptanceTestSecurityGroup1"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   security_rule {
     name                       = "test123"
@@ -323,17 +323,17 @@ resource "azurerm_network_security_group" "test" {
 `, rInt, location)
 }
 
-func testAccAzureRMNetworkSecurityGroup_anotherRule(rInt int, location string) string {
+func testAccAzureStackNetworkSecurityGroup_anotherRule(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_network_security_group" "test" {
+resource "azurestack_network_security_group" "test" {
   name                = "acceptanceTestSecurityGroup1"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   security_rule {
     name                       = "test123"
@@ -362,17 +362,17 @@ resource "azurerm_network_security_group" "test" {
 `, rInt, location)
 }
 
-func testAccAzureRMNetworkSecurityGroup_withTags(rInt int, location string) string {
+func testAccAzureStackNetworkSecurityGroup_withTags(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_network_security_group" "test" {
+resource "azurestack_network_security_group" "test" {
   name                = "acceptanceTestSecurityGroup1"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   security_rule {
     name                       = "test123"
@@ -394,17 +394,17 @@ resource "azurerm_network_security_group" "test" {
 `, rInt, location)
 }
 
-func testAccAzureRMNetworkSecurityGroup_withTagsUpdate(rInt int, location string) string {
+func testAccAzureStackNetworkSecurityGroup_withTagsUpdate(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_network_security_group" "test" {
+resource "azurestack_network_security_group" "test" {
   name                = "acceptanceTestSecurityGroup1"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   security_rule {
     name                       = "test123"
@@ -426,17 +426,17 @@ resource "azurerm_network_security_group" "test" {
 `, rInt, location)
 }
 
-func testAccAzureRMNetworkSecurityGroup_augmented(rInt int, location string) string {
+func testAccAzureStackNetworkSecurityGroup_augmented(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_network_security_group" "test" {
+resource "azurestack_network_security_group" "test" {
   name                = "acceptanceTestSecurityGroup1"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   security_rule {
     name                         = "test123"
@@ -453,29 +453,29 @@ resource "azurerm_network_security_group" "test" {
 `, rInt, location)
 }
 
-func testAccAzureRMNetworkSecurityGroup_applicationSecurityGroup(rInt int, location string) string {
+func testAccAzureStackNetworkSecurityGroup_applicationSecurityGroup(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_application_security_group" "first" {
+resource "azurestack_application_security_group" "first" {
   name                = "acctest-first%d"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_application_security_group" "second" {
+resource "azurestack_application_security_group" "second" {
   name                = "acctest-second%d"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_network_security_group" "test" {
+resource "azurestack_network_security_group" "test" {
   name                = "acctestnsg-%d"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   security_rule {
     name                                       = "test123"
@@ -483,8 +483,8 @@ resource "azurerm_network_security_group" "test" {
     direction                                  = "Inbound"
     access                                     = "Allow"
     protocol                                   = "Tcp"
-    source_application_security_group_ids      = ["${azurerm_application_security_group.first.id}"]
-    destination_application_security_group_ids = ["${azurerm_application_security_group.second.id}"]
+    source_application_security_group_ids      = ["${azurestack_application_security_group.first.id}"]
+    destination_application_security_group_ids = ["${azurestack_application_security_group.second.id}"]
     source_port_ranges                         = [ "10000-40000" ]
     destination_port_ranges                    = [ "80", "443", "8080", "8190" ]
   }

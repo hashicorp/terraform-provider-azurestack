@@ -1,11 +1,11 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
 	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
 func dataSourceArmStorageAccount() *schema.Resource {
@@ -174,7 +174,7 @@ func dataSourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) e
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error reading the state of AzureRM Storage Account %q: %+v", name, err)
+		return fmt.Errorf("Error reading the state of AzureStack Storage Account %q: %+v", name, err)
 	}
 
 	d.SetId(*resp.ID)
@@ -186,7 +186,7 @@ func dataSourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) e
 
 	accessKeys := *keys.Keys
 	if location := resp.Location; location != nil {
-		d.Set("location", azureRMNormalizeLocation(*location))
+		d.Set("location", azureStackNormalizeLocation(*location))
 	}
 	d.Set("account_kind", resp.Kind)
 

@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"testing"
@@ -7,17 +7,17 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccAzureRMStorageAccount_importBasic(t *testing.T) {
-	resourceName := "azurerm_storage_account.testsa"
+func TestAccAzureStackStorageAccount_importBasic(t *testing.T) {
+	resourceName := "azurestack_storage_account.testsa"
 
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
-	config := testAccAzureRMStorageAccount_basic(ri, rs, testLocation())
+	config := testAccAzureStackStorageAccount_basic(ri, rs, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -31,42 +31,17 @@ func TestAccAzureRMStorageAccount_importBasic(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMStorageAccount_importPremium(t *testing.T) {
-	resourceName := "azurerm_storage_account.testsa"
+func TestAccazureStackStorageAccount_importPremium(t *testing.T) {
+	resourceName := "azurestack_storage_account.testsa"
 
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
-	config := testAccAzureRMStorageAccount_premium(ri, rs, testLocation())
+	config := testAccAzureStackStorageAccount_premium(ri, rs, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-			},
-
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
-func TestAccAzureRMStorageAccount_importNonStandardCasing(t *testing.T) {
-	resourceName := "azurerm_storage_account.testsa"
-
-	ri := acctest.RandInt()
-	rs := acctest.RandString(4)
-	config := testAccAzureRMStorageAccount_nonStandardCasing(ri, rs, testLocation())
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -81,17 +56,42 @@ func TestAccAzureRMStorageAccount_importNonStandardCasing(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMStorageAccount_importBlobEncryption(t *testing.T) {
-	resourceName := "azurerm_storage_account.testsa"
+func TestAccAzureStackStorageAccount_importNonStandardCasing(t *testing.T) {
+	resourceName := "azurestack_storage_account.testsa"
 
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
-	config := testAccAzureRMStorageAccount_blobEncryption(ri, rs, testLocation())
+	config := testAccAzureStackStorageAccount_nonStandardCasing(ri, rs, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+			},
+
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccAzureStackStorageAccount_importBlobEncryption(t *testing.T) {
+	resourceName := "azurestack_storage_account.testsa"
+
+	ri := acctest.RandInt()
+	rs := acctest.RandString(4)
+	config := testAccAzureStackStorageAccount_blobEncryption(ri, rs, testLocation())
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -107,20 +107,20 @@ func TestAccAzureRMStorageAccount_importBlobEncryption(t *testing.T) {
 }
 
 // File encryption not supported by the profile 2017-03-09
-func TestAccAzureRMStorageAccount_importFileEncryption(t *testing.T) {
+func TestAccAzureStackStorageAccount_importFileEncryption(t *testing.T) {
 
 	t.Skip()
 
-	resourceName := "azurerm_storage_account.testsa"
+	resourceName := "azurestack_storage_account.testsa"
 
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
-	config := testAccAzureRMStorageAccount_fileEncryption(ri, rs, testLocation())
+	config := testAccAzureStackStorageAccount_fileEncryption(ri, rs, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -136,20 +136,20 @@ func TestAccAzureRMStorageAccount_importFileEncryption(t *testing.T) {
 }
 
 // EnableHttpsTraffic is not supported on 2017-03-09
-func TestAccAzureRMStorageAccount_importEnableHttpsTrafficOnly(t *testing.T) {
+func TestAccAzureStackStorageAccount_importEnableHttpsTrafficOnly(t *testing.T) {
 
 	t.Skip()
 
-	resourceName := "azurerm_storage_account.testsa"
+	resourceName := "azurestack_storage_account.testsa"
 
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
-	config := testAccAzureRMStorageAccount_enableHttpsTrafficOnly(ri, rs, testLocation())
+	config := testAccAzureStackStorageAccount_enableHttpsTrafficOnly(ri, rs, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMStorageAccountDestroy,
+		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

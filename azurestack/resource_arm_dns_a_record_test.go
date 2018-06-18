@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -11,49 +11,49 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestAccAzureRMDnsARecord_basic(t *testing.T) {
-	resourceName := "azurerm_dns_a_record.test"
+func TestAccAzureStackDnsARecord_basic(t *testing.T) {
+	resourceName := "azurestack_dns_a_record.test"
 	ri := acctest.RandInt()
-	config := testAccAzureRMDnsARecord_basic(ri, testLocation())
+	config := testAccAzureStackDnsARecord_basic(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMDnsARecordDestroy,
+		CheckDestroy: testCheckAzureStackDnsARecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMDnsARecordExists(resourceName),
+					testCheckAzureStackDnsARecordExists(resourceName),
 				),
 			},
 		},
 	})
 }
 
-func TestAccAzureRMDnsARecord_updateRecords(t *testing.T) {
-	resourceName := "azurerm_dns_a_record.test"
+func TestAccAzureStackDnsARecord_updateRecords(t *testing.T) {
+	resourceName := "azurestack_dns_a_record.test"
 	ri := acctest.RandInt()
 	location := testLocation()
-	preConfig := testAccAzureRMDnsARecord_basic(ri, location)
-	postConfig := testAccAzureRMDnsARecord_updateRecords(ri, location)
+	preConfig := testAccAzureStackDnsARecord_basic(ri, location)
+	postConfig := testAccAzureStackDnsARecord_updateRecords(ri, location)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMDnsARecordDestroy,
+		CheckDestroy: testCheckAzureStackDnsARecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMDnsARecordExists(resourceName),
+					testCheckAzureStackDnsARecordExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "records.#", "2"),
 				),
 			},
 			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMDnsARecordExists(resourceName),
+					testCheckAzureStackDnsARecordExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "records.#", "3"),
 				),
 			},
@@ -61,29 +61,29 @@ func TestAccAzureRMDnsARecord_updateRecords(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMDnsARecord_withTags(t *testing.T) {
-	resourceName := "azurerm_dns_a_record.test"
+func TestAccAzureStackDnsARecord_withTags(t *testing.T) {
+	resourceName := "azurestack_dns_a_record.test"
 	ri := acctest.RandInt()
 	location := testLocation()
-	preConfig := testAccAzureRMDnsARecord_withTags(ri, location)
-	postConfig := testAccAzureRMDnsARecord_withTagsUpdate(ri, location)
+	preConfig := testAccAzureStackDnsARecord_withTags(ri, location)
+	postConfig := testAccAzureStackDnsARecord_withTagsUpdate(ri, location)
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMDnsARecordDestroy,
+		CheckDestroy: testCheckAzureStackDnsARecordDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMDnsARecordExists(resourceName),
+					testCheckAzureStackDnsARecordExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "2"),
 				),
 			},
 			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMDnsARecordExists(resourceName),
+					testCheckAzureStackDnsARecordExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
 				),
 			},
@@ -91,7 +91,7 @@ func TestAccAzureRMDnsARecord_withTags(t *testing.T) {
 	})
 }
 
-func testCheckAzureRMDnsARecordExists(name string) resource.TestCheckFunc {
+func testCheckAzureStackDnsARecordExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
@@ -121,12 +121,12 @@ func testCheckAzureRMDnsARecordExists(name string) resource.TestCheckFunc {
 	}
 }
 
-func testCheckAzureRMDnsARecordDestroy(s *terraform.State) error {
+func testCheckAzureStackDnsARecordDestroy(s *terraform.State) error {
 	conn := testAccProvider.Meta().(*ArmClient).dnsClient
 	ctx := testAccProvider.Meta().(*ArmClient).StopContext
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "azurerm_dns_a_record" {
+		if rs.Type != "azurestack_dns_a_record" {
 			continue
 		}
 
@@ -150,66 +150,66 @@ func testCheckAzureRMDnsARecordDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccAzureRMDnsARecord_basic(rInt int, location string) string {
+func testAccAzureStackDnsARecord_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG_%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_dns_a_record" "test" {
+resource "azurestack_dns_a_record" "test" {
   name                = "myarecord%d"
-  resource_group_name = "${azurerm_resource_group.test.name}"
-  zone_name           = "${azurerm_dns_zone.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  zone_name           = "${azurestack_dns_zone.test.name}"
   ttl                 = 300
   records             = ["1.2.3.4", "1.2.4.5"]
 }
 `, rInt, location, rInt, rInt)
 }
 
-func testAccAzureRMDnsARecord_updateRecords(rInt int, location string) string {
+func testAccAzureStackDnsARecord_updateRecords(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG_%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_dns_a_record" "test" {
+resource "azurestack_dns_a_record" "test" {
   name                = "myarecord%d"
-  resource_group_name = "${azurerm_resource_group.test.name}"
-  zone_name           = "${azurerm_dns_zone.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  zone_name           = "${azurestack_dns_zone.test.name}"
   ttl                 = 300
   records             = ["1.2.3.4", "1.2.4.5", "1.2.3.7"]
 }
 `, rInt, location, rInt, rInt)
 }
 
-func testAccAzureRMDnsARecord_withTags(rInt int, location string) string {
+func testAccAzureStackDnsARecord_withTags(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG_%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_dns_a_record" "test" {
+resource "azurestack_dns_a_record" "test" {
   name                = "myarecord%d"
-  resource_group_name = "${azurerm_resource_group.test.name}"
-  zone_name           = "${azurerm_dns_zone.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  zone_name           = "${azurestack_dns_zone.test.name}"
   ttl                 = 300
   records             = ["1.2.3.4", "1.2.4.5"]
 
@@ -221,22 +221,22 @@ resource "azurerm_dns_a_record" "test" {
 `, rInt, location, rInt, rInt)
 }
 
-func testAccAzureRMDnsARecord_withTagsUpdate(rInt int, location string) string {
+func testAccAzureStackDnsARecord_withTagsUpdate(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG_%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_dns_a_record" "test" {
+resource "azurestack_dns_a_record" "test" {
   name                = "myarecord%d"
-  resource_group_name = "${azurerm_resource_group.test.name}"
-  zone_name           = "${azurerm_dns_zone.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  zone_name           = "${azurestack_dns_zone.test.name}"
   ttl                 = 300
   records             = ["1.2.3.4", "1.2.4.5"]
 

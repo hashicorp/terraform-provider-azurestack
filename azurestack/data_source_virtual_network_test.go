@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 )
 
 func TestAccDataSourceArmVirtualNetwork_basic(t *testing.T) {
-	dataSourceName := "data.azurerm_virtual_network.test"
+	dataSourceName := "data.azurestack_virtual_network.test"
 	ri := acctest.RandInt()
 
 	name := fmt.Sprintf("acctestvnet-%d", ri)
@@ -37,7 +37,7 @@ func TestAccDataSourceArmVirtualNetwork_peering(t *testing.T) {
 
 	t.Skip()
 
-	dataSourceName := "data.azurerm_virtual_network.test"
+	dataSourceName := "data.azurestack_virtual_network.test"
 	ri := acctest.RandInt()
 
 	virtualNetworkName := fmt.Sprintf("acctestvnet-1-%d", ri)
@@ -64,16 +64,16 @@ func TestAccDataSourceArmVirtualNetwork_peering(t *testing.T) {
 
 func testAccDataSourceArmVirtualNetwork_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctest%d-rg"
   location = "%s"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
   name                = "acctestvnet-%d"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
   dns_servers         = ["10.0.0.4"]
 
   subnet {
@@ -82,74 +82,74 @@ resource "azurerm_virtual_network" "test" {
   }
 }
 
-data "azurerm_virtual_network" "test" {
-  resource_group_name = "${azurerm_resource_group.test.name}"
-  name                = "${azurerm_virtual_network.test.name}"
+data "azurestack_virtual_network" "test" {
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "${azurestack_virtual_network.test.name}"
 }
 	`, rInt, location, rInt)
 }
 
 func testAccDataSourceArmVirtualNetwork_peering(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctest%d-rg"
   location = "%s"
 }
 
-resource "azurerm_virtual_network" "test1" {
+resource "azurestack_virtual_network" "test1" {
   name                = "acctestvnet-1-%d"
   address_space       = ["10.0.1.0/24"]
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_virtual_network" "test2" {
+resource "azurestack_virtual_network" "test2" {
   name                = "acctestvnet-2-%d"
   address_space       = ["10.0.2.0/24"]
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_virtual_network_peering" "test1" {
+resource "azurestack_virtual_network_peering" "test1" {
   name                      = "peer-1to2"
-  resource_group_name       = "${azurerm_resource_group.test.name}"
-  virtual_network_name      = "${azurerm_virtual_network.test1.name}"
-  remote_virtual_network_id = "${azurerm_virtual_network.test2.id}"
+  resource_group_name       = "${azurestack_resource_group.test.name}"
+  virtual_network_name      = "${azurestack_virtual_network.test1.name}"
+  remote_virtual_network_id = "${azurestack_virtual_network.test2.id}"
 }
 `, rInt, location, rInt, rInt)
 }
 
 func testAccDataSourceArmVirtualNetwork_peeringWithDataSource(rInt int, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctest%d-rg"
   location = "%s"
 }
 
-resource "azurerm_virtual_network" "test1" {
+resource "azurestack_virtual_network" "test1" {
   name                = "acctestvnet-1-%d"
   address_space       = ["10.0.1.0/24"]
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_virtual_network" "test2" {
+resource "azurestack_virtual_network" "test2" {
   name                = "acctestvnet-2-%d"
   address_space       = ["10.0.2.0/24"]
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_virtual_network_peering" "test1" {
+resource "azurestack_virtual_network_peering" "test1" {
   name                      = "peer-1to2"
-  resource_group_name       = "${azurerm_resource_group.test.name}"
-  virtual_network_name      = "${azurerm_virtual_network.test1.name}"
-  remote_virtual_network_id = "${azurerm_virtual_network.test2.id}"
+  resource_group_name       = "${azurestack_resource_group.test.name}"
+  virtual_network_name      = "${azurestack_virtual_network.test1.name}"
+  remote_virtual_network_id = "${azurestack_virtual_network.test2.id}"
 }
 
-data "azurerm_virtual_network" "test" {
-  resource_group_name = "${azurerm_resource_group.test.name}"
-  name                = "${azurerm_virtual_network.test1.name}"
+data "azurestack_virtual_network" "test" {
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "${azurestack_virtual_network.test1.name}"
 }
 `, rInt, location, rInt, rInt)
 }

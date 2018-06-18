@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -6,11 +6,11 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
-var subnetResourceName = "azurerm_subnet"
-var routeTableResourceName = "azurerm_route_table"
+var subnetResourceName = "azurestack_subnet"
+var routeTableResourceName = "azurestack_route_table"
 
 func resourceArmSubnet() *schema.Resource {
 	return &schema.Resource{
@@ -81,8 +81,8 @@ func resourceArmSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 	resGroup := d.Get("resource_group_name").(string)
 	addressPrefix := d.Get("address_prefix").(string)
 
-	azureRMLockByName(vnetName, virtualNetworkResourceName)
-	defer azureRMUnlockByName(vnetName, virtualNetworkResourceName)
+	azureStackLockByName(vnetName, virtualNetworkResourceName)
+	defer azureStackUnlockByName(vnetName, virtualNetworkResourceName)
 
 	properties := network.SubnetPropertiesFormat{
 		AddressPrefix: &addressPrefix,
@@ -99,8 +99,8 @@ func resourceArmSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 
-		azureRMLockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
-		defer azureRMUnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		azureStackLockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		defer azureStackUnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
 	}
 
 	if v, ok := d.GetOk("route_table_id"); ok {
@@ -114,12 +114,12 @@ func resourceArmSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 
-		azureRMLockByName(routeTableName, routeTableResourceName)
-		defer azureRMUnlockByName(routeTableName, routeTableResourceName)
+		azureStackLockByName(routeTableName, routeTableResourceName)
+		defer azureStackUnlockByName(routeTableName, routeTableResourceName)
 	}
 
 	// Not supported for 2017-03-09 profile
-	// serviceEndpoints, serviceEndpointsErr := expandAzureRmServiceEndpoints(d)
+	// serviceEndpoints, serviceEndpointsErr := expandAzureStackServiceEndpoints(d)
 	// if serviceEndpointsErr != nil {
 	// 	return fmt.Errorf("Error Building list of Service Endpoints: %+v", serviceEndpointsErr)
 	// }
@@ -225,8 +225,8 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 
-		azureRMLockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
-		defer azureRMUnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		azureStackLockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		defer azureStackUnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
 	}
 
 	if v, ok := d.GetOk("route_table_id"); ok {
@@ -236,15 +236,15 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 
-		azureRMLockByName(routeTableName, routeTableResourceName)
-		defer azureRMUnlockByName(routeTableName, routeTableResourceName)
+		azureStackLockByName(routeTableName, routeTableResourceName)
+		defer azureStackUnlockByName(routeTableName, routeTableResourceName)
 	}
 
-	azureRMLockByName(vnetName, virtualNetworkResourceName)
-	defer azureRMUnlockByName(vnetName, virtualNetworkResourceName)
+	azureStackLockByName(vnetName, virtualNetworkResourceName)
+	defer azureStackUnlockByName(vnetName, virtualNetworkResourceName)
 
-	azureRMLockByName(name, subnetResourceName)
-	defer azureRMUnlockByName(name, subnetResourceName)
+	azureStackLockByName(name, subnetResourceName)
+	defer azureStackUnlockByName(name, subnetResourceName)
 
 	future, err := client.Delete(ctx, resGroup, vnetName, name)
 	if err != nil {
@@ -262,7 +262,7 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 // Since ServiceEndpointPropertiesFormat is not on the 2017-03-09 profile
 // This will not compile
 
-// func expandAzureRmServiceEndpoints(d *schema.ResourceData) ([]network.ServiceEndpointPropertiesFormat, error) {
+// func expandAzureStackServiceEndpoints(d *schema.ResourceData) ([]network.ServiceEndpointPropertiesFormat, error) {
 // 	serviceEndpoints := d.Get("service_endpoints").([]interface{})
 // 	enpoints := make([]network.ServiceEndpointPropertiesFormat, 0)
 //

@@ -1,11 +1,11 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
 func dataSourceArmVirtualNetwork() *schema.Resource {

@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -10,16 +10,16 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccAzureRMPublicIpStatic_importBasic(t *testing.T) {
-	resourceName := "azurerm_public_ip.test"
+func TestAccAzureStackPublicIpStatic_importBasic(t *testing.T) {
+	resourceName := "azurestack_public_ip.test"
 
 	ri := acctest.RandInt()
-	config := testAccAzureRMPublicIPStatic_basic(ri, testLocation())
+	config := testAccAzureStackPublicIPStatic_basic(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMPublicIpDestroy,
+		CheckDestroy: testCheckAzureStackPublicIpDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -34,19 +34,19 @@ func TestAccAzureRMPublicIpStatic_importBasic(t *testing.T) {
 }
 
 // Zones not supported in the profile, skipping
-func TestAccAzureRMPublicIpStatic_importBasic_withZone(t *testing.T) {
+func TestAccAzureStackPublicIpStatic_importBasic_withZone(t *testing.T) {
 
 	t.Skip()
 
-	resourceName := "azurerm_public_ip.test"
+	resourceName := "azurestack_public_ip.test"
 
 	ri := acctest.RandInt()
-	config := testAccAzureRMPublicIPStatic_basic_withZone(ri, testLocation())
+	config := testAccAzureStackPublicIPStatic_basic_withZone(ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMPublicIpDestroy,
+		CheckDestroy: testCheckAzureStackPublicIpDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -60,15 +60,15 @@ func TestAccAzureRMPublicIpStatic_importBasic_withZone(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMPublicIpStatic_importIdError(t *testing.T) {
-	resourceName := "azurerm_public_ip.test"
+func TestAccAzureStackPublicIpStatic_importIdError(t *testing.T) {
+	resourceName := "azurestack_public_ip.test"
 
 	ri := acctest.RandInt()
-	config := testAccAzureRMPublicIPStatic_basic(ri, testLocation())
+	config := testAccAzureStackPublicIPStatic_basic(ri, testLocation())
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMPublicIpDestroy,
+		CheckDestroy: testCheckAzureStackPublicIpDestroy,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

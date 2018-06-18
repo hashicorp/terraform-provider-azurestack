@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/storage/mgmt/storage"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
 const blobStorageAccountDefaultAccessTier = "Hot"
@@ -447,7 +447,7 @@ func resourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) err
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error reading the state of AzureRM Storage Account %q: %+v", name, err)
+		return fmt.Errorf("Error reading the state of AzurStack Storage Account %q: %+v", name, err)
 	}
 	// (resGroup, name)
 	keys, err := client.ListKeys(ctx, resGroup, name)
@@ -458,7 +458,7 @@ func resourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) err
 	accessKeys := *keys.Keys
 	d.Set("name", resp.Name)
 	d.Set("resource_group_name", resGroup)
-	d.Set("location", azureRMNormalizeLocation(*resp.Location))
+	d.Set("location", azureStackNormalizeLocation(*resp.Location))
 	d.Set("account_kind", resp.Kind)
 
 	if sku := resp.Sku; sku != nil {
@@ -556,7 +556,7 @@ func resourceArmStorageAccountDelete(d *schema.ResourceData, meta interface{}) e
 
 	_, err = client.Delete(ctx, resGroup, name)
 	if err != nil {
-		return fmt.Errorf("Error issuing AzureRM delete request for storage account %q: %+v", name, err)
+		return fmt.Errorf("Error issuing AzureStack delete request for storage account %q: %+v", name, err)
 	}
 
 	return nil

@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func testCheckAzureRMVirtualMachineExists(name string, vm *compute.VirtualMachine) resource.TestCheckFunc {
+func testCheckAzureStackVirtualMachineExists(name string, vm *compute.VirtualMachine) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
 		rs, ok := s.RootModule().Resources[name]
@@ -41,12 +41,12 @@ func testCheckAzureRMVirtualMachineExists(name string, vm *compute.VirtualMachin
 	}
 }
 
-func testCheckAzureRMVirtualMachineDestroy(s *terraform.State) error {
+func testCheckAzureStackVirtualMachineDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*ArmClient).vmClient
 	ctx := testAccProvider.Meta().(*ArmClient).StopContext
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "azurerm_virtual_machine" {
+		if rs.Type != "azurestack_virtual_machine" {
 			continue
 		}
 

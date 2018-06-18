@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
 func resourceArmNetworkInterface() *schema.Resource {
@@ -202,10 +202,10 @@ func resourceArmNetworkInterfaceCreateUpdate(d *schema.ResourceData, meta interf
 	client := meta.(*ArmClient).ifaceClient
 	ctx := meta.(*ArmClient).StopContext
 
-	log.Printf("[INFO] preparing arguments for AzureRM Network Interface creation.")
+	log.Printf("[INFO] preparing arguments for AzureStack Network Interface creation.")
 
 	name := d.Get("name").(string)
-	location := azureRMNormalizeLocation(d.Get("location").(string))
+	location := azureStackNormalizeLocation(d.Get("location").(string))
 	resGroup := d.Get("resource_group_name").(string)
 	enableIpForwarding := d.Get("enable_ip_forwarding").(bool)
 	// enableAcceleratedNetworking := d.Get("enable_accelerated_networking").(bool)
@@ -228,8 +228,8 @@ func resourceArmNetworkInterfaceCreateUpdate(d *schema.ResourceData, meta interf
 			return err
 		}
 
-		azureRMLockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
-		defer azureRMUnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		azureStackLockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		defer azureStackUnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
 	}
 
 	dns, hasDns := d.GetOk("dns_servers")
@@ -260,16 +260,16 @@ func resourceArmNetworkInterfaceCreateUpdate(d *schema.ResourceData, meta interf
 		properties.DNSSettings = &ifaceDnsSettings
 	}
 
-	ipConfigs, subnetnToLock, vnnToLock, sgErr := expandAzureRmNetworkInterfaceIpConfigurations(d)
+	ipConfigs, subnetnToLock, vnnToLock, sgErr := expandAzureStackNetworkInterfaceIpConfigurations(d)
 	if sgErr != nil {
 		return fmt.Errorf("Error Building list of Network Interface IP Configurations: %+v", sgErr)
 	}
 
-	azureRMLockMultipleByName(subnetnToLock, subnetResourceName)
-	defer azureRMUnlockMultipleByName(subnetnToLock, subnetResourceName)
+	azureStackLockMultipleByName(subnetnToLock, subnetResourceName)
+	defer azureStackUnlockMultipleByName(subnetnToLock, subnetResourceName)
 
-	azureRMLockMultipleByName(vnnToLock, virtualNetworkResourceName)
-	defer azureRMUnlockMultipleByName(vnnToLock, virtualNetworkResourceName)
+	azureStackLockMultipleByName(vnnToLock, virtualNetworkResourceName)
+	defer azureStackUnlockMultipleByName(vnnToLock, virtualNetworkResourceName)
 
 	if len(ipConfigs) > 0 {
 		properties.IPConfigurations = &ipConfigs
@@ -389,7 +389,7 @@ func resourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{}) e
 	d.Set("name", resp.Name)
 	d.Set("resource_group_name", resGroup)
 	if location := resp.Location; location != nil {
-		d.Set("location", azureRMNormalizeLocation(*location))
+		d.Set("location", azureStackNormalizeLocation(*location))
 	}
 
 	d.Set("applied_dns_servers", appliedDNSServers)
@@ -420,8 +420,8 @@ func resourceArmNetworkInterfaceDelete(d *schema.ResourceData, meta interface{})
 			return err
 		}
 
-		azureRMLockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
-		defer azureRMUnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		azureStackLockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		defer azureStackUnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
 	}
 
 	configs := d.Get("ip_configuration").([]interface{})
@@ -447,11 +447,11 @@ func resourceArmNetworkInterfaceDelete(d *schema.ResourceData, meta interface{})
 		}
 	}
 
-	azureRMLockMultipleByName(&subnetNamesToLock, subnetResourceName)
-	defer azureRMUnlockMultipleByName(&subnetNamesToLock, subnetResourceName)
+	azureStackLockMultipleByName(&subnetNamesToLock, subnetResourceName)
+	defer azureStackUnlockMultipleByName(&subnetNamesToLock, subnetResourceName)
 
-	azureRMLockMultipleByName(&virtualNetworkNamesToLock, virtualNetworkResourceName)
-	defer azureRMUnlockMultipleByName(&virtualNetworkNamesToLock, virtualNetworkResourceName)
+	azureStackLockMultipleByName(&virtualNetworkNamesToLock, virtualNetworkResourceName)
+	defer azureStackUnlockMultipleByName(&virtualNetworkNamesToLock, virtualNetworkResourceName)
 
 	future, err := client.Delete(ctx, resGroup, name)
 	if err != nil {
@@ -526,7 +526,7 @@ func flattenNetworkInterfaceIPConfigurations(ipConfigs *[]network.InterfaceIPCon
 	return result
 }
 
-func expandAzureRmNetworkInterfaceIpConfigurations(d *schema.ResourceData) ([]network.InterfaceIPConfiguration, *[]string, *[]string, error) {
+func expandAzureStackNetworkInterfaceIpConfigurations(d *schema.ResourceData) ([]network.InterfaceIPConfiguration, *[]string, *[]string, error) {
 	configs := d.Get("ip_configuration").([]interface{})
 	ipConfigs := make([]network.InterfaceIPConfiguration, 0, len(configs))
 	subnetNamesToLock := make([]string, 0)

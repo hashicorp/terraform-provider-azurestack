@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/authentication"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/authentication"
 )
 
 var testAccProviders map[string]terraform.ResourceProvider
@@ -19,7 +19,7 @@ var testAccProvider *schema.Provider
 func init() {
 	testAccProvider = Provider().(*schema.Provider)
 	testAccProviders = map[string]terraform.ResourceProvider{
-		"azurerm": testAccProvider,
+		"azurestack": testAccProvider,
 	}
 }
 
@@ -106,7 +106,7 @@ func testGetAzureConfig(t *testing.T) *authentication.Config {
 	return &config
 }
 
-func TestAccAzureRMResourceProviderRegistration(t *testing.T) {
+func TestAccAzureStackResourceProviderRegistration(t *testing.T) {
 	config := testGetAzureConfig(t)
 	if config == nil {
 		return

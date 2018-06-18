@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2015-06-15/network"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
 func resourceArmNetworkSecurityRule() *schema.Resource {
@@ -186,8 +186,8 @@ func resourceArmNetworkSecurityRuleCreate(d *schema.ResourceData, meta interface
 	direction := d.Get("direction").(string)
 	protocol := d.Get("protocol").(string)
 
-	azureRMLockByName(nsgName, networkSecurityGroupResourceName)
-	defer azureRMUnlockByName(nsgName, networkSecurityGroupResourceName)
+	azureStackLockByName(nsgName, networkSecurityGroupResourceName)
+	defer azureStackUnlockByName(nsgName, networkSecurityGroupResourceName)
 
 	rule := network.SecurityRule{
 		Name: &name,
@@ -359,8 +359,8 @@ func resourceArmNetworkSecurityRuleDelete(d *schema.ResourceData, meta interface
 	nsgName := id.Path["networkSecurityGroups"]
 	sgRuleName := id.Path["securityRules"]
 
-	azureRMLockByName(nsgName, networkSecurityGroupResourceName)
-	defer azureRMUnlockByName(nsgName, networkSecurityGroupResourceName)
+	azureStackLockByName(nsgName, networkSecurityGroupResourceName)
+	defer azureStackUnlockByName(nsgName, networkSecurityGroupResourceName)
 
 	future, err := client.Delete(ctx, resGroup, nsgName, sgRuleName)
 	if err != nil {

@@ -1,4 +1,4 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/authentication"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/authentication"
 )
 
 func TestMain(m *testing.M) {
@@ -50,8 +50,8 @@ func shouldSweepAcceptanceTestResource(name string, resourceLocation string, reg
 		return false
 	}
 
-	normalisedResourceLocation := azureRMNormalizeLocation(resourceLocation)
-	normalisedRegion := azureRMNormalizeLocation(region)
+	normalisedResourceLocation := azureStackNormalizeLocation(resourceLocation)
+	normalisedRegion := azureStackNormalizeLocation(region)
 
 	if normalisedResourceLocation != normalisedRegion {
 		log.Printf("Region %q isn't %q - skipping", normalisedResourceLocation, normalisedRegion)

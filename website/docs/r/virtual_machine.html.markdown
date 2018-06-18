@@ -1,63 +1,63 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_virtual_machine"
-sidebar_current: "docs-azurerm-resource-compute-virtual-machine"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_virtual_machine"
+sidebar_current: "docs-azurestack-resource-compute-virtual-machine"
 description: |-
   Create a Virtual Machine.
 ---
 
-# azurerm\_virtual\_machine
+# azurestack\_virtual\_machine
 
 Create a virtual machine.
 
 ## Example Usage with Managed Disks and Azure Platform Images (Recommended)
 
 ```hcl
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestrg"
   location = "West US 2"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
   name                = "acctvn"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_subnet" "test" {
+resource "azurestack_subnet" "test" {
   name                 = "acctsub"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
-  virtual_network_name = "${azurerm_virtual_network.test.name}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
   address_prefix       = "10.0.2.0/24"
 }
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctni"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   ip_configuration {
     name                          = "testconfiguration1"
-    subnet_id                     = "${azurerm_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
     private_ip_address_allocation = "dynamic"
   }
 }
 
-resource "azurerm_managed_disk" "test" {
+resource "azurestack_managed_disk" "test" {
   name                 = "datadisk_existing"
-  location             = "${azurerm_resource_group.test.location}"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
+  location             = "${azurestack_resource_group.test.location}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
   disk_size_gb         = "1023"
 }
 
-resource "azurerm_virtual_machine" "test" {
+resource "azurestack_virtual_machine" "test" {
   name                  = "acctvm"
-  location              = "${azurerm_resource_group.test.location}"
-  resource_group_name   = "${azurerm_resource_group.test.name}"
-  network_interface_ids = ["${azurerm_network_interface.test.id}"]
+  location              = "${azurestack_resource_group.test.location}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  network_interface_ids = ["${azurestack_network_interface.test.id}"]
   vm_size               = "Standard_DS1_v2"
 
   # Uncomment this line to delete the OS disk automatically when deleting the VM
@@ -90,11 +90,11 @@ resource "azurerm_virtual_machine" "test" {
   }
 
   storage_data_disk {
-    name            = "${azurerm_managed_disk.test.name}"
-    managed_disk_id = "${azurerm_managed_disk.test.id}"
+    name            = "${azurestack_managed_disk.test.name}"
+    managed_disk_id = "${azurestack_managed_disk.test.id}"
     create_option   = "Attach"
     lun             = 1
-    disk_size_gb    = "${azurerm_managed_disk.test.disk_size_gb}"
+    disk_size_gb    = "${azurestack_managed_disk.test.disk_size_gb}"
   }
 
   os_profile {
@@ -117,60 +117,60 @@ resource "azurerm_virtual_machine" "test" {
 
 ```hcl
 #Assume that custom image has been already created in the 'customimage' resource group
-data "azurerm_resource_group" "image" {
+data "azurestack_resource_group" "image" {
   name = "customimage"
 }
 
-data "azurerm_image" "image" {
+data "azurestack_image" "image" {
   name                = "myCustomImage"
-  resource_group_name = "${data.azurerm_resource_group.image.name}"
+  resource_group_name = "${data.azurestack_resource_group.image.name}"
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestrg"
   location = "West US 2"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
   name                = "acctvn"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_subnet" "test" {
+resource "azurestack_subnet" "test" {
   name                 = "acctsub"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
-  virtual_network_name = "${azurerm_virtual_network.test.name}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
   address_prefix       = "10.0.2.0/24"
 }
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctni"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   ip_configuration {
     name                          = "testconfiguration1"
-    subnet_id                     = "${azurerm_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
     private_ip_address_allocation = "dynamic"
   }
 }
 
-resource "azurerm_managed_disk" "test" {
+resource "azurestack_managed_disk" "test" {
   name                 = "datadisk_existing"
-  location             = "${azurerm_resource_group.test.location}"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
+  location             = "${azurestack_resource_group.test.location}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
   disk_size_gb         = "1023"
 }
 
-resource "azurerm_virtual_machine" "test" {
+resource "azurestack_virtual_machine" "test" {
   name                  = "acctvm"
-  location              = "${azurerm_resource_group.test.location}"
-  resource_group_name   = "${azurerm_resource_group.test.name}"
-  network_interface_ids = ["${azurerm_network_interface.test.id}"]
+  location              = "${azurestack_resource_group.test.location}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  network_interface_ids = ["${azurestack_network_interface.test.id}"]
   vm_size               = "Standard_DS1_v2"
 
   # Uncomment this line to delete the OS disk automatically when deleting the VM
@@ -180,7 +180,7 @@ resource "azurerm_virtual_machine" "test" {
   # delete_data_disks_on_termination = true
 
   storage_image_reference {
-    id="${data.azurerm_image.image.id}"
+    id="${data.azurestack_image.image.id}"
   }
 
   storage_os_disk {
@@ -200,11 +200,11 @@ resource "azurerm_virtual_machine" "test" {
   }
 
   storage_data_disk {
-    name            = "${azurerm_managed_disk.test.name}"
-    managed_disk_id = "${azurerm_managed_disk.test.id}"
+    name            = "${azurestack_managed_disk.test.name}"
+    managed_disk_id = "${azurestack_managed_disk.test.id}"
     create_option   = "Attach"
     lun             = 1
-    disk_size_gb    = "${azurerm_managed_disk.test.disk_size_gb}"
+    disk_size_gb    = "${azurestack_managed_disk.test.disk_size_gb}"
   }
 
   os_profile {
@@ -226,41 +226,41 @@ resource "azurerm_virtual_machine" "test" {
 ## Example Usage with Unmanaged Disks
 
 ```hcl
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestrg"
   location = "West US"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
   name                = "acctvn"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_subnet" "test" {
+resource "azurestack_subnet" "test" {
   name                 = "acctsub"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
-  virtual_network_name = "${azurerm_virtual_network.test.name}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
   address_prefix       = "10.0.2.0/24"
 }
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctni"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   ip_configuration {
     name                          = "testconfiguration1"
-    subnet_id                     = "${azurerm_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
     private_ip_address_allocation = "dynamic"
   }
 }
 
-resource "azurerm_storage_account" "test" {
+resource "azurestack_storage_account" "test" {
   name                     = "accsa"
-  resource_group_name      = "${azurerm_resource_group.test.name}"
-  location                 = "${azurerm_resource_group.test.location}"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
@@ -269,18 +269,18 @@ resource "azurerm_storage_account" "test" {
   }
 }
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
   name                  = "vhds"
-  resource_group_name   = "${azurerm_resource_group.test.name}"
-  storage_account_name  = "${azurerm_storage_account.test.name}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
   container_access_type = "private"
 }
 
-resource "azurerm_virtual_machine" "test" {
+resource "azurestack_virtual_machine" "test" {
   name                  = "acctvm"
-  location              = "${azurerm_resource_group.test.location}"
-  resource_group_name   = "${azurerm_resource_group.test.name}"
-  network_interface_ids = ["${azurerm_network_interface.test.id}"]
+  location              = "${azurestack_resource_group.test.location}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  network_interface_ids = ["${azurestack_network_interface.test.id}"]
   vm_size               = "Standard_F2"
 
   # Uncomment this line to delete the OS disk automatically when deleting the VM
@@ -298,7 +298,7 @@ resource "azurerm_virtual_machine" "test" {
 
   storage_os_disk {
     name          = "myosdisk1"
-    vhd_uri       = "${azurerm_storage_account.test.primary_blob_endpoint}${azurerm_storage_container.test.name}/myosdisk1.vhd"
+    vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
     caching       = "ReadWrite"
     create_option = "FromImage"
   }
@@ -306,7 +306,7 @@ resource "azurerm_virtual_machine" "test" {
   # Optional data disks
   storage_data_disk {
     name          = "datadisk0"
-    vhd_uri       = "${azurerm_storage_account.test.primary_blob_endpoint}${azurerm_storage_container.test.name}/datadisk0.vhd"
+    vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/datadisk0.vhd"
     disk_size_gb  = "1023"
     create_option = "Empty"
     lun           = 0
@@ -377,17 +377,17 @@ machine, for example:
 
 ```hcl
 
-resource "azurerm_image" "test" {
+resource "azurestack_image" "test" {
 	name = "test"
   ...
 }
 
-resource "azurerm_virtual_machine" "test" {
+resource "azurestack_virtual_machine" "test" {
 	name = "test"
   ...
 
 	storage_image_reference {
-		id = "${azurerm_image.test.id}"
+		id = "${azurestack_image.test.id}"
 	}
 
 ...
@@ -439,18 +439,18 @@ resource "azurerm_virtual_machine" "test" {
 * `type` - (Required) Specifies the identity type of the virtual machine. The only allowable value is `SystemAssigned`. To enable Managed Service Identity the virtual machine extension "ManagedIdentityExtensionForWindows" or "ManagedIdentityExtensionForLinux" must also be added to the virtual machine. The Principal ID can be retrieved after the virtual machine has been created, e.g.
 
 ```hcl
-resource "azurerm_virtual_machine" "test" {
+resource "azurestack_virtual_machine" "test" {
   name                = "test"
 
   identity = {
     type = "SystemAssigned"
   }
 }
-resource "azurerm_virtual_machine_extension" "test" {
+resource "azurestack_virtual_machine_extension" "test" {
   name                 = "test"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
-  location             = "${azurerm_resource_group.test.location}"
-  virtual_machine_name = "${azurerm_virtual_machine.test.name}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  location             = "${azurestack_resource_group.test.location}"
+  virtual_machine_name = "${azurestack_virtual_machine.test.name}"
   publisher            = "Microsoft.ManagedIdentity"
   type                 = "ManagedIdentityExtensionForWindows"
   type_handler_version = "1.0"
@@ -462,7 +462,7 @@ resource "azurerm_virtual_machine_extension" "test" {
 SETTINGS
 }
 output "principal_id" {
-  value = "${lookup(azurerm_virtual_machine.test.identity[0], "principal_id")}"
+  value = "${lookup(azurestack_virtual_machine.test.identity[0], "principal_id")}"
 }
 ```
 
@@ -522,5 +522,5 @@ The following attributes are exported:
 Virtual Machines can be imported using the `resource id`, e.g.
 
 ```hcl
-terraform import azurerm_virtual_machine.test /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/microsoft.compute/virtualMachines/machine1
+terraform import azurestack_virtual_machine.test /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/microsoft.compute/virtualMachines/machine1
 ```

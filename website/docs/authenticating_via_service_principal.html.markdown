@@ -1,7 +1,7 @@
 ---
-layout: "azurerm"
+layout: "azurestack"
 page_title: "Azure Provider: Authenticating via a Service Principal"
-sidebar_current: "docs-azurerm-index-authentication-service-principal"
+sidebar_current: "docs-azurestack-index-authentication-service-principal"
 description: |-
   This guide will cover how to use a Service Principal (Shared Account) as authentication for the Azure Provider.
 

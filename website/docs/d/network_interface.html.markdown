@@ -1,25 +1,25 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_network_interface"
-sidebar_current: "docs-azurerm-datasource-network-interface"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_network_interface"
+sidebar_current: "docs-azurestack-datasource-network-interface"
 description: |-
   Get information about the specified Network Interface.
 ---
 
-# Data Source: azurerm_network_interface
+# Data Source: azurestack_network_interface
 
 Use this data source to access the properties of an Azure Network Interface.
 
 ## Example Usage
 
 ```hcl
-data "azurerm_network_interface" "test" {
+data "azurestack_network_interface" "test" {
   name                 = "acctest-nic"
   resource_group_name  = "networking"
 }
 
 output "network_interface_id" {
-  value = "${data.azurerm_network_interface.test.id}"
+  value = "${data.azurestack_network_interface.test.id}"
 }
 ```
 

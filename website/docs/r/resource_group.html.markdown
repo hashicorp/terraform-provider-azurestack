@@ -1,19 +1,19 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_resource_group"
-sidebar_current: "docs-azurerm-resource-resource-group"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_resource_group"
+sidebar_current: "docs-azurestack-resource-resource-group"
 description: |-
     Creates a new resource group on Azure.
 ---
 
-# azurerm\_resource\_group
+# azurestack\_resource\_group
 
 Creates a new resource group on Azure.
 
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "testResourceGroup1"
   location = "West US"
 
@@ -47,5 +47,5 @@ The following attributes are exported:
 Resource Groups can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_resource_group.mygroup /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup
+terraform import azurestack_resource_group.mygroup /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup
 ```

@@ -1,26 +1,26 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_storage_container"
-sidebar_current: "docs-azurerm-resource-storage-container"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_storage_container"
+sidebar_current: "docs-azurestack-resource-storage-container"
 description: |-
   Create a Azure Storage Container.
 ---
 
-# azurerm\_storage\_container
+# azurestack\_storage\_container
 
 Create an Azure Storage Container.
 
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestrg"
   location = "westus"
 }
 
-resource "azurerm_storage_account" "test" {
+resource "azurestack_storage_account" "test" {
   name                     = "accteststorageaccount"
-  resource_group_name      = "${azurerm_resource_group.test.name}"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
   location                 = "westus"
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -30,10 +30,10 @@ resource "azurerm_storage_account" "test" {
   }
 }
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
   name                  = "vhds"
-  resource_group_name   = "${azurerm_resource_group.test.name}"
-  storage_account_name  = "${azurerm_storage_account.test.name}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
   container_access_type = "private"
 }
 ```

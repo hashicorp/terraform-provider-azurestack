@@ -1,12 +1,12 @@
 ---
-layout: "azurerm"
+layout: "azurestack"
 page_title: "Azure Resource Manager: azure_virtual_network"
-sidebar_current: "docs-azurerm-resource-network-virtual-network"
+sidebar_current: "docs-azurestack-resource-network-virtual-network"
 description: |-
   Creates a new virtual network including any configured subnets. Each subnet can optionally be configured with a security group to be associated with the subnet.
 ---
 
-# azurerm\_virtual\_network
+# azurestack\_virtual\_network
 
 Creates a new virtual network including any configured subnets. Each subnet can
 optionally be configured with a security group to be associated with the subnet.
@@ -18,20 +18,20 @@ At this time you cannot use a Virtual Network with in-line Subnets in conjunctio
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acceptanceTestResourceGroup1"
   location = "West US"
 }
 
-resource "azurerm_network_security_group" "test" {
+resource "azurestack_network_security_group" "test" {
   name                = "acceptanceTestSecurityGroup1"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
   name                = "virtualNetwork1"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
   address_space       = ["10.0.0.0/16"]
   location            = "West US"
   dns_servers         = ["10.0.0.4", "10.0.0.5"]
@@ -49,7 +49,7 @@ resource "azurerm_virtual_network" "test" {
   subnet {
     name           = "subnet3"
     address_prefix = "10.0.3.0/24"
-    security_group = "${azurerm_network_security_group.test.id}"
+    security_group = "${azurestack_network_security_group.test.id}"
   }
 
   tags {
@@ -89,7 +89,7 @@ The `subnet` block supports:
 * `address_prefix` - (Required) The address prefix to use for the subnet.
 
 * `security_group` - (Optional) The Network Security Group to associate with
-    the subnet. (Referenced by `id`, ie. `azurerm_network_security_group.test.id`)
+    the subnet. (Referenced by `id`, ie. `azurestack_network_security_group.test.id`)
 
 ## Attributes Reference
 
@@ -111,5 +111,5 @@ The following attributes are exported:
 Virtual Networks can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_virtual_network.testNetwork /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Network/virtualNetworks/myvnet1
+terraform import azurestack_virtual_network.testNetwork /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Network/virtualNetworks/myvnet1
 ```

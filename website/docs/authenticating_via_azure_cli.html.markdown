@@ -1,7 +1,7 @@
 ---
-layout: "azurerm"
+layout: "azurestack"
 page_title: "Azure Provider: Authenticating via the Azure CLI"
-sidebar_current: "docs-azurerm-index-authentication-azure-cli"
+sidebar_current: "docs-azurestack-index-authentication-azure-cli"
 description: |-
   This guide will cover how to use the Azure CLI to provide authentication for the Azure Provider.
 

@@ -1,46 +1,46 @@
 ---
-layout: "azurerm"
+layout: "azurestack"
 page_title: "Azure Resource Manager: azure_network_interface"
-sidebar_current: "docs-azurerm-resource-network-interface"
+sidebar_current: "docs-azurestack-resource-network-interface"
 description: |-
   Manages a Network Interface located in a Virtual Network, usually attached to a Virtual Machine.
 
 ---
 
-# azurerm_network_interface
+# azurestack_network_interface
 
 Manages a Network Interface located in a Virtual Network, usually attached to a Virtual Machine.
 
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acceptanceTestResourceGroup1"
   location = "West US"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
   name                = "acceptanceTestVirtualNetwork1"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_subnet" "test" {
+resource "azurestack_subnet" "test" {
   name                 = "testsubnet"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
-  virtual_network_name = "${azurerm_virtual_network.test.name}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
   address_prefix       = "10.0.2.0/24"
 }
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acceptanceTestNetworkInterface1"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   ip_configuration {
     name                          = "testconfiguration1"
-    subnet_id                     = "${azurerm_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
     private_ip_address_allocation = "dynamic"
   }
 
@@ -110,5 +110,5 @@ The following attributes are exported:
 Network Interfaces can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_network_interface.test /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/microsoft.network/networkInterfaces/nic1
+terraform import azurestack_network_interface.test /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/microsoft.network/networkInterfaces/nic1
 ```

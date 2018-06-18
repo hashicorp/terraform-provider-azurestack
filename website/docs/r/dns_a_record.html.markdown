@@ -1,32 +1,32 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_dns_a_record"
-sidebar_current: "docs-azurerm-resource-dns-a-record"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_dns_a_record"
+sidebar_current: "docs-azurestack-resource-dns-a-record"
 description: |-
   Create a DNS A Record.
 ---
 
-# azurerm\_dns\_a\_record
+# azurestack\_dns\_a\_record
 
 Enables you to manage DNS A Records within Azure DNS.
 
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acceptanceTestResourceGroup1"
   location = "West US"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "mydomain.com"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_dns_a_record" "test" {
+resource "azurestack_dns_a_record" "test" {
   name                = "test"
-  zone_name           = "${azurerm_dns_zone.test.name}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  zone_name           = "${azurestack_dns_zone.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
   ttl                 = 300
   records             = ["10.0.180.17"]
 }
@@ -59,5 +59,5 @@ The following attributes are exported:
 A records can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_dns_a_record.test /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Network/dnsZones/zone1/A/myrecord1
+terraform import azurestack_dns_a_record.test /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Network/dnsZones/zone1/A/myrecord1
 ```

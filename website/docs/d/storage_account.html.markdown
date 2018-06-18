@@ -1,26 +1,26 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_storage_account"
-sidebar_current: "docs-azurerm-datasource-storage-account"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_storage_account"
+sidebar_current: "docs-azurestack-datasource-storage-account"
 description: |-
   Gets information about the specified Storage Account.
 
 ---
 
-# Data Source: azurerm_storage_account
+# Data Source: azurestack_storage_account
 
 Gets information about the specified Storage Account.
 
 ## Example Usage
 
 ```hcl
-data "azurerm_storage_account" "test" {
+data "azurestack_storage_account" "test" {
   name                 = "packerimages"
   resource_group_name  = "packer-storage"
 }
 
 output "storage_account_tier" {
-  value = "${data.azurerm_storage_account.test.account_tier}"
+  value = "${data.azurestack_storage_account.test.account_tier}"
 }
 ```
 

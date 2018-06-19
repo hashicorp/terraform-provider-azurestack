@@ -3,25 +3,19 @@ layout: "azurestack"
 page_title: "Provider: Azure Stack"
 sidebar_current: "docs-azurestack-index"
 description: |-
-  The Azure Stack Provider is used to interact with the many resources supported by Azure Resource Manager (also known as azurestack) through its APIs.
+  The Azure Stack Provider is used to manage resources in Azure Stack via the Azure Resource Manager API's.
 
 ---
 
 # Azure Stack Provider
 
-The Azure Stack Provider is used to interact with the many resources supported by Azure Resource Manager (azurestack) through its APIs.
-
-~> **Note:** This supercedes the [legacy Azure provider](/docs/providers/azure/index.html), which interacts with Azure using the Service Management API.
+The Azure Stack Provider is used to manage resources in Azure Stack via the Azure Resource Manager API's.
 
 Use the navigation to the left to read about the available resources.
 
 # Creating Credentials
 
-Terraform supports authenticating to Azure through a Service Principal or the Azure CLI.
-
-We recommend [using a Service Principal when running in a shared environment](authenticating_via_service_principal.html) (such as within a CI server/automation) - and [authenticating via the Azure CLI](authenticating_via_azure_cli.html) when you're running Terraform locally.
-
-~> **NOTE:** Authenticating via the Azure CLI is only supported when using a User Account. If you're using a Service Principal (e.g. via `az login --service-principal`) you should instead [authenticate via the Service Principal directly](authenticating_via_service_principal.html).
+Terraform supports authenticating to Azure Stack through a Service Principal - [this page explains how to Create a Service Principal](authenticating_via_service_principal.html).
 
 ## Example Usage
 
@@ -63,6 +57,10 @@ resource "azurestack_virtual_network" "network" {
 
 The following arguments are supported:
 
+* `arm_endpoint` - (Optional) The Azure Resource Manager API Endpoint for
+  your Azure Stack instance, such as `https://management.westus.mydomain.com`.
+  It can also be sourced from the `ARM_ENDPOINT` environment variable.
+
 * `subscription_id` - (Optional) The subscription ID to use. It can also
   be sourced from the `ARM_SUBSCRIPTION_ID` environment variable.
 
@@ -74,20 +72,6 @@ The following arguments are supported:
 
 * `tenant_id` - (Optional) The tenant ID to use. It can also be sourced from the
   `ARM_TENANT_ID` environment variable.
-
-* `use_msi` - (Optional) Set to true to authenticate using managed service identity.
-  It can also be sourced from the `ARM_USE_MSI` environment variable.
-
-* `msi_endpoint` - (Optional) The REST endpoint to retrieve an MSI token from. Terraform
-  will attempt to discover this automatically but it can be specified manually here.
-  It can also be sourced from the `ARM_MSI_ENDPOINT` environment variable.
-
-* `environment` - (Optional) The cloud environment to use. It can also be sourced
-  from the `ARM_ENVIRONMENT` environment variable. Supported values are:
-  * `public` (default)
-  * `usgovernment`
-  * `german`
-  * `china`
 
 * `skip_credentials_validation` - (Optional) Prevents the provider from validating
   the given credentials. When set to `true`, `skip_provider_registration` is assumed.
@@ -104,12 +88,11 @@ The following arguments are supported:
 
 The following Environment Variables must be set to run the acceptance tests:
 
-~> **NOTE:** The Acceptance Tests require the use of a Service Principal - authenticating via either the Azure CLI or MSI is not supported.
+~> **NOTE:** The Acceptance Tests require the use of a Service Principal.
 
+* `ARM_ENDPOINT` - The Azure Resource Manager API Endpoint for Azure Stack.
 * `ARM_SUBSCRIPTION_ID` - The ID of the Azure Subscription in which to run the Acceptance Tests.
 * `ARM_CLIENT_ID` - The Client ID of the Service Principal.
 * `ARM_CLIENT_SECRET` - The Client Secret associated with the Service Principal.
 * `ARM_TENANT_ID` - The Tenant ID to use.
-* `ARM_ENVIRONMENT` - The Azure Cloud Environment to use, such as `public`, `german` etc. Defaults to `public`.
-* `ARM_TEST_LOCATION` - The primary Azure Region to provision resources in for the Acceptance Tests.
-* `ARM_TEST_LOCATION_ALT` - The secondary Azure Region to provision resources in for the Acceptance Tests. This needs to be a different region to `ARM_TEST_LOCATION`.
+* `ARM_TEST_LOCATION` - The Azure Stack Location to provision resources in for the Acceptance Tests.

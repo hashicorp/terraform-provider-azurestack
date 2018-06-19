@@ -1,4 +1,4 @@
-AzureRM Terraform Provider
+Azure Stack Terraform Provider
 ==================
 
 - Website: https://www.terraform.io
@@ -23,11 +23,11 @@ For *Git Bash for Windows*, at the step of "Adjusting your PATH environment", pl
 Building The Provider
 ---------------------
 
-Clone repository to: `$GOPATH/src/github.com/terraform-providers/terraform-provider-azurerm`
+Clone repository to: `$GOPATH/src/github.com/terraform-providers/terraform-provider-azurestack`
 
 ```sh
 $ mkdir -p $GOPATH/src/github.com/terraform-providers; cd $GOPATH/src/github.com/terraform-providers
-$ git clone git@github.com:terraform-providers/terraform-provider-azurerm
+$ git clone git@github.com:terraform-providers/terraform-provider-azurestack
 ```
 
 Enter the provider directory and build the provider
@@ -41,26 +41,28 @@ Using the provider
 ----------------------
 
 ```
-# Configure the Microsoft Azure Provider
-provider "azurerm" {
-  subscription_id = "..."
-  client_id       = "..."
-  client_secret   = "..."
-  tenant_id       = "..."
+# These variables can also be set as Environment Variables
+# see http://terraform.io/docs/providers/azurestack/index.html for more info
+provider "azurestack" {
+  # arm_endpoint    = "..."
+  # subscription_id = "..."
+  # client_id       = "..."
+  # client_secret   = "..."
+  # tenant_id       = "..."
 }
 
 # Create a resource group
-resource "azurerm_resource_group" "production" {
+resource "azurestack_resource_group" "production" {
   name     = "production"
   location = "West US"
 }
 
 # Create a virtual network in the web_servers resource group
-resource "azurerm_virtual_network" "network" {
+resource "azurestack_virtual_network" "network" {
   name                = "productionNetwork"
   address_space       = ["10.0.0.0/16"]
   location            = "West US"
-  resource_group_name = "${azurerm_resource_group.production.name}"
+  resource_group_name = "${azurestack_resource_group.production.name}"
 
   subnet {
     name           = "subnet1"
@@ -79,7 +81,7 @@ resource "azurerm_virtual_network" "network" {
 }
 ```
 
-Further [usage documentation is available on the Terraform website](https://www.terraform.io/docs/providers/azurerm/index.html).
+Further [usage documentation is available on the Terraform website](https://www.terraform.io/docs/providers/azurestack/index.html).
 
 Developing the Provider
 ---------------------------
@@ -91,7 +93,7 @@ To compile the provider, run `make build`. This will build the provider and put 
 ```sh
 $ make build
 ...
-$ $GOPATH/bin/terraform-provider-azurerm
+$ $GOPATH/bin/terraform-provider-azurestack
 ...
 ```
 
@@ -104,19 +106,15 @@ $ make test
 In order to run the full suite of Acceptance tests, run `make testacc`.
 
 The following ENV variables must be set in your shell prior to running acceptance tests:
+
+- ARM_ENDPOINT
 - ARM_CLIENT_ID
 - ARM_CLIENT_SECRET
 - ARM_SUBSCRIPTION_ID
 - ARM_TENANT_ID
 - ARM_TEST_LOCATION
-- ARM_TEST_LOCATION_ALT
-- ARM_ENDPOINT
 
 *Note:* Acceptance tests create real resources, and often cost money to run.
-
-To run Azure Stack resources set `ARM_ENDPOINT` with the Azure Management endpoint
-or set `ARM_ENVIRONMENT` with `AZURESTACKCLOUD` and the variable `AZURE_ENVIRONMENT_FILEPATH`
-with a the path of the Azure Environment configuration file.
 
 ```sh
 $ make testacc

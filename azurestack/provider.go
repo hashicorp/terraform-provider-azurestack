@@ -11,7 +11,6 @@ import (
 	"sync"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
-	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/hashicorp/terraform/helper/mutexkv"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
@@ -23,6 +22,11 @@ func Provider() terraform.ResourceProvider {
 	var p *schema.Provider
 	p = &schema.Provider{
 		Schema: map[string]*schema.Schema{
+			"arm_endpoint": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ARM_ENDPOINT", ""),
+			},
 			"subscription_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -47,12 +51,6 @@ func Provider() terraform.ResourceProvider {
 				DefaultFunc: schema.EnvDefaultFunc("ARM_TENANT_ID", ""),
 			},
 
-			"environment": {
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ARM_ENVIRONMENT", "public"),
-			},
-
 			"skip_credentials_validation": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -63,21 +61,6 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("ARM_SKIP_PROVIDER_REGISTRATION", false),
-			},
-			"use_msi": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ARM_USE_MSI", false),
-			},
-			"msi_endpoint": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ARM_MSI_ENDPOINT", ""),
-			},
-			"arm_endpoint": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ARM_ENDPOINT", ""),
 			},
 		},
 
@@ -120,42 +103,20 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 			ClientID:                  d.Get("client_id").(string),
 			ClientSecret:              d.Get("client_secret").(string),
 			TenantID:                  d.Get("tenant_id").(string),
-			Environment:               d.Get("environment").(string),
-			UseMsi:                    d.Get("use_msi").(bool),
-			MsiEndpoint:               d.Get("msi_endpoint").(string),
+			Environment:               "AZURESTACKCLOUD",
 			SkipCredentialsValidation: d.Get("skip_credentials_validation").(bool),
 			SkipProviderRegistration:  d.Get("skip_provider_registration").(bool),
 			ARMEndpoint:               d.Get("arm_endpoint").(string),
 		}
 
-		if config.UseMsi {
-			log.Printf("[DEBUG] use_msi specified - using MSI Authentication")
-			if config.MsiEndpoint == "" {
-				msiEndpoint, err := adal.GetMSIVMEndpoint()
-				if err != nil {
-					return nil, fmt.Errorf("Could not retrieve MSI endpoint from VM settings."+
-						"Ensure the VM has MSI enabled, or try setting msi_endpoint. Error: %s", err)
-				}
-				config.MsiEndpoint = msiEndpoint
-			}
-			log.Printf("[DEBUG] Using MSI endpoint %s", config.MsiEndpoint)
-			if err := config.ValidateMsi(); err != nil {
-				return nil, err
-			}
-		} else if config.ClientSecret != "" {
-			log.Printf("[DEBUG] Client Secret specified - using Service Principal for Authentication")
-			if err := config.ValidateServicePrincipal(); err != nil {
-				return nil, err
-			}
-		} else {
-			log.Printf("[DEBUG] No Client Secret specified - loading credentials from Azure CLI")
-			if err := config.LoadTokensFromAzureCLI(); err != nil {
-				return nil, err
-			}
+		if config.ARMEndpoint == "" {
+			return nil, fmt.Errorf("The Azure Resource Manager endpoint must be specified either" +
+				" via `arm_endpoint` in the Provider Block or the `ARM_ENDPOINT` Environment Variable.")
+		}
 
-			if err := config.ValidateBearerAuth(); err != nil {
-				return nil, fmt.Errorf("Please specify either a Service Principal, or log in with the Azure CLI (using `az login`)")
-			}
+		log.Printf("[DEBUG] Using Service Principal for Authentication")
+		if err := config.ValidateServicePrincipal(); err != nil {
+			return nil, err
 		}
 
 		client, err := getArmClient(config)
@@ -289,11 +250,6 @@ func ignoreCaseDiffSuppressFunc(k, old, new string, d *schema.ResourceData) bool
 // supplied value to lower before saving to state for consistency.
 func ignoreCaseStateFunc(val interface{}) string {
 	return strings.ToLower(val.(string))
-}
-
-func userDataDiffSuppressFunc(k, old, new string, d *schema.ResourceData) bool {
-	oldValue := userDataStateFunc(old)
-	return oldValue == new
 }
 
 func userDataStateFunc(v interface{}) string {

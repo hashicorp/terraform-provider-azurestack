@@ -179,8 +179,7 @@ func TestAzurePopulateFromAccessToken_Exists(t *testing.T) {
 		AccessToken: &adal.Token{
 			AccessToken: "abc123",
 		},
-		ClientID:     "bcd234",
-		IsCloudShell: true,
+		ClientID: "bcd234",
 	}
 
 	successful, err := config.populateFromAccessToken(&token)
@@ -190,10 +189,6 @@ func TestAzurePopulateFromAccessToken_Exists(t *testing.T) {
 
 	if !successful {
 		t.Fatalf("Expected the population of an existing token to be successful, it wasn't")
-	}
-
-	if config.IsCloudShell != token.IsCloudShell {
-		t.Fatalf("Expected `IsCloudShell` to be %t, got %t", token.IsCloudShell, config.IsCloudShell)
 	}
 
 	if config.ClientID != token.ClientID {

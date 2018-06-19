@@ -32,19 +32,19 @@ func (c *Config) ValidateServicePrincipal() error {
 	var err *multierror.Error
 
 	if c.SubscriptionID == "" {
-		err = multierror.Append(err, fmt.Errorf("Subscription ID must be configured for the AzureRM provider"))
+		err = multierror.Append(err, fmt.Errorf("Subscription ID must be configured for the Azure Stack provider"))
 	}
 	if c.ClientID == "" {
-		err = multierror.Append(err, fmt.Errorf("Client ID must be configured for the AzureRM provider"))
+		err = multierror.Append(err, fmt.Errorf("Client ID must be configured for the Azure Stack provider"))
 	}
 	if c.ClientSecret == "" {
-		err = multierror.Append(err, fmt.Errorf("Client Secret must be configured for the AzureRM provider"))
+		err = multierror.Append(err, fmt.Errorf("Client Secret must be configured for the Azure Stack provider"))
 	}
 	if c.TenantID == "" {
-		err = multierror.Append(err, fmt.Errorf("Tenant ID must be configured for the AzureRM provider"))
+		err = multierror.Append(err, fmt.Errorf("Tenant ID must be configured for the Azure Stack provider"))
 	}
 	if c.Environment == "" {
-		err = multierror.Append(err, fmt.Errorf("Environment must be configured for the AzureRM provider"))
+		err = multierror.Append(err, fmt.Errorf("Environment must be configured for the Azure Stack provider"))
 	}
 
 	return err.ErrorOrNil()
@@ -54,16 +54,13 @@ func (c *Config) ValidateMsi() error {
 	var err *multierror.Error
 
 	if c.SubscriptionID == "" {
-		err = multierror.Append(err, fmt.Errorf("Subscription ID must be configured for the AzureRM provider"))
+		err = multierror.Append(err, fmt.Errorf("Subscription ID must be configured for the Azure Stack provider"))
 	}
 	if c.TenantID == "" {
-		err = multierror.Append(err, fmt.Errorf("Tenant ID must be configured for the AzureRM provider"))
+		err = multierror.Append(err, fmt.Errorf("Tenant ID must be configured for the Azure Stack provider"))
 	}
 	if c.Environment == "" {
-		err = multierror.Append(err, fmt.Errorf("Environment must be configured for the AzureRM provider"))
-	}
-	if c.MsiEndpoint == "" {
-		err = multierror.Append(err, fmt.Errorf("MSI endpoint must be configured for the AzureRM provider"))
+		err = multierror.Append(err, fmt.Errorf("Environment must be configured for the Azure Stack provider"))
 	}
 
 	return err.ErrorOrNil()

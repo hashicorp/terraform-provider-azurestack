@@ -9,7 +9,7 @@ description: |-
 
 # Azure Stack Provider: Authenticating using a Service Principal
 
-Terraform supports authenticating to Azure through a Service Principal. At this time this is the only supported authentication method for Azure Stack.
+Terraform supports authenticating to Azure Stack through a Service Principal. At this time this is the only supported authentication method for Azure Stack.
 
 ## Creating a Service Principal
 

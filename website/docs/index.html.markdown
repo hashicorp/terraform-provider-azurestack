@@ -15,7 +15,7 @@ Use the navigation to the left to read about the available resources.
 
 # Creating Credentials
 
-Terraform supports authenticating to Azure through a Service Principal - [this page explains how to Create a Service Principal](authenticating_via_service_principal.html).
+Terraform supports authenticating to Azure Stack through a Service Principal - [this page explains how to Create a Service Principal](authenticating_via_service_principal.html).
 
 ## Example Usage
 

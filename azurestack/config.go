@@ -223,20 +223,8 @@ func setUserAgent(client *autorest.Client) {
 }
 
 func getAuthorizationToken(c *authentication.Config, oauthConfig *adal.OAuthConfig, endpoint string) (*autorest.BearerAuthorizer, error) {
-	useServicePrincipal := c.ClientSecret != ""
-
-	if useServicePrincipal {
-		spt, err := adal.NewServicePrincipalToken(*oauthConfig, c.ClientID, c.ClientSecret, endpoint)
-		if err != nil {
-			return nil, err
-		}
-
-		auth := autorest.NewBearerAuthorizer(spt)
-		return auth, nil
-	}
-
-	// TODO (tombuildsstuff): verify if the Azure CLI works
-	spt, err := adal.NewServicePrincipalTokenFromManualToken(*oauthConfig, c.ClientID, endpoint, *c.AccessToken)
+	// TODO: support Azure CLI auth / Service Principal Certificate auth
+	spt, err := adal.NewServicePrincipalToken(*oauthConfig, c.ClientID, c.ClientSecret, endpoint)
 	if err != nil {
 		return nil, err
 	}

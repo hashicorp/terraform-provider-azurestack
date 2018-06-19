@@ -22,6 +22,11 @@ func Provider() terraform.ResourceProvider {
 	var p *schema.Provider
 	p = &schema.Provider{
 		Schema: map[string]*schema.Schema{
+			"arm_endpoint": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ARM_ENDPOINT", ""),
+			},
 			"subscription_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -56,11 +61,6 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("ARM_SKIP_PROVIDER_REGISTRATION", false),
-			},
-			"arm_endpoint": {
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ARM_ENDPOINT", ""),
 			},
 		},
 
@@ -109,21 +109,14 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 			ARMEndpoint:               d.Get("arm_endpoint").(string),
 		}
 
-		if config.ClientSecret != "" {
-			log.Printf("[DEBUG] Client Secret specified - using Service Principal for Authentication")
-			if err := config.ValidateServicePrincipal(); err != nil {
-				return nil, err
-			}
-		} else {
-			// TODO: confirm this works with Azure Stack
-			log.Printf("[DEBUG] No Client Secret specified - loading credentials from Azure CLI")
-			if err := config.LoadTokensFromAzureCLI(); err != nil {
-				return nil, err
-			}
+		if config.ARMEndpoint == "" {
+			return nil, fmt.Errorf("The Azure Resource Manager endpoint must be specified either" +
+				" via `arm_endpoint` in the Provider Block or the `ARM_ENDPOINT` Environment Variable.")
+		}
 
-			if err := config.ValidateBearerAuth(); err != nil {
-				return nil, fmt.Errorf("Please specify either a Service Principal, or log in with the Azure CLI (using `az login`)")
-			}
+		log.Printf("[DEBUG] Using Service Principal for Authentication")
+		if err := config.ValidateServicePrincipal(); err != nil {
+			return nil, err
 		}
 
 		client, err := getArmClient(config)

@@ -1,6 +1,6 @@
 ---
 layout: "azurestack"
-page_title: "azurestack: Authenticating via Managed Service Identity"
+page_title: "Azure Stack Provider: Authenticating via Managed Service Identity"
 sidebar_current: "docs-azurestack-index-authentication-msi"
 description: |-
   The Azure Resource Manager provider supports authenticating via multiple means. This guide will cover configuring a Managed Service Identity which can be used to access Azure Resource Manager.

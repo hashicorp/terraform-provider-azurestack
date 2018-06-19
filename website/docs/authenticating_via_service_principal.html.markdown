@@ -1,13 +1,13 @@
 ---
 layout: "azurestack"
-page_title: "Azure Provider: Authenticating via a Service Principal"
+page_title: "Azure Stack Provider: Authenticating via a Service Principal"
 sidebar_current: "docs-azurestack-index-authentication-service-principal"
 description: |-
   This guide will cover how to use a Service Principal (Shared Account) as authentication for the Azure Provider.
 
 ---
 
-# Azure Provider: Authenticating using a Service Principal
+# Azure Stack Provider: Authenticating using a Service Principal
 
 Terraform supports authenticating to Azure through a Service Principal or the Azure CLI.
 

@@ -1,15 +1,15 @@
 ---
 layout: "azurestack"
-page_title: "Provider: Azure"
+page_title: "Provider: Azure Stack"
 sidebar_current: "docs-azurestack-index"
 description: |-
-  The Azure Provider is used to interact with the many resources supported by Azure Resource Manager (also known as azurestack) through its APIs.
+  The Azure Stack Provider is used to interact with the many resources supported by Azure Resource Manager (also known as azurestack) through its APIs.
 
 ---
 
-# Azure Provider
+# Azure Stack Provider
 
-The Azure Provider is used to interact with the many resources supported by Azure Resource Manager (azurestack) through its APIs.
+The Azure Stack Provider is used to interact with the many resources supported by Azure Resource Manager (azurestack) through its APIs.
 
 ~> **Note:** This supercedes the [legacy Azure provider](/docs/providers/azure/index.html), which interacts with Azure using the Service Management API.
 

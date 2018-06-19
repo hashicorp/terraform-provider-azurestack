@@ -1268,5 +1268,5 @@
 			"revisionTime": "2017-11-15T17:09:47Z"
 		}
 	],
-	"rootPath": "github.com/terraform-providers/terraform-provider-azurerm"
+	"rootPath": "github.com/terraform-providers/terraform-provider-azurestack"
 }

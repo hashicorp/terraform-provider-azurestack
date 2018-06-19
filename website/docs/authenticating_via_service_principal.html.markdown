@@ -3,115 +3,21 @@ layout: "azurestack"
 page_title: "Azure Stack Provider: Authenticating via a Service Principal"
 sidebar_current: "docs-azurestack-index-authentication-service-principal"
 description: |-
-  This guide will cover how to use a Service Principal (Shared Account) as authentication for the Azure Provider.
+  This guide will cover how to use a Service Principal (Shared Account) as authentication for the Azure Stack Provider.
 
 ---
 
 # Azure Stack Provider: Authenticating using a Service Principal
 
-Terraform supports authenticating to Azure through a Service Principal or the Azure CLI.
-
-We recommend using a Service Principal when running in a shared environment (such as within a CI server/automation) - and [authenticating via the Azure CLI](authenticating_via_azure_cli.html) when you're running Terraform locally.
+Terraform supports authenticating to Azure through a Service Principal. At this time this is the only supported authentication method for Azure Stack.
 
 ## Creating a Service Principal
 
 A Service Principal is an application within Azure Active Directory whose authentication tokens can be used as the `client_id`, `client_secret`, and `tenant_id` fields needed by Terraform (`subscription_id` can be independently recovered from your Azure account details).
 
-It's possible to complete this task in either the [Azure CLI](#creating-a-service-principal-using-the-azure-cli) or in the [Azure Portal](#creating-a-service-principal-in-the-azure-portal) - in both we'll create a Service Principal which has `Contributor` rights to the subscription. [It's also possible to assign other rights](https://azure.microsoft.com/en-gb/documentation/articles/role-based-access-built-in-roles/) depending on your configuration.
-
-### Creating a Service Principal using the Azure CLI
-
-~> **Note**: If you're using the **China**, **German** or **Government** Azure Clouds - you'll need to first configure the Azure CLI to work with that Cloud.  You can do this by running:
-
-```shell
-$ az cloud set --name AzureChinaCloud|AzureGermanCloud|AzureUSGovernment
-```
-
----
-
-Firstly, login to the Azure CLI using:
-
-```shell
-$ az login
-```
-
-
-Once logged in - it's possible to list the Subscriptions associated with the account via:
-
-```shell
-$ az account list
-```
-
-The output (similar to below) will display one or more Subscriptions - with the `id` field being the `subscription_id` field referenced above.
-
-```json
-[
-  {
-    "cloudName": "AzureCloud",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "isDefault": true,
-    "name": "PAYG Subscription",
-    "state": "Enabled",
-    "tenantId": "00000000-0000-0000-0000-000000000000",
-    "user": {
-      "name": "user@example.com",
-      "type": "user"
-    }
-  }
-]
-```
-
-Should you have more than one Subscription, you can specify the Subscription to use via the following command:
-
-```shell
-$ az account set --subscription="SUBSCRIPTION_ID"
-```
-
-We can now create the Service Principal which will have permissions to manage resources in the specified Subscription using the following command:
-
-```shell
-$ az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/SUBSCRIPTION_ID"
-```
-
-This command will output 5 values:
-
-```json
-{
-  "appId": "00000000-0000-0000-0000-000000000000",
-  "displayName": "azure-cli-2017-06-05-10-41-15",
-  "name": "http://azure-cli-2017-06-05-10-41-15",
-  "password": "0000-0000-0000-0000-000000000000",
-  "tenant": "00000000-0000-0000-0000-000000000000"
-}
-```
-
-These values map to the Terraform variables like so:
-
- - `appId` is the `client_id` defined above.
- - `password` is the `client_secret` defined above.
- - `tenant` is the `tenant_id` defined above.
-
----
-
-Finally, it's possible to test these values work as expected by first logging in:
-
-```shell
-$ az login --service-principal -u CLIENT_ID -p CLIENT_SECRET --tenant TENANT_ID
-```
-
-Once logged in as the Service Principal - we should be able to list the VM sizes by specifying an Azure region, for example here we use the `West US` region:
-
-```shell
-$ az vm list-sizes --location westus
-```
-
-~> **Note**: If you're using the **China**, **German** or **Government** Azure Clouds - you will need to switch `westus` out for another region. You can find which regions are available by running:
-
-```shell
-$ az account list-locations
-```
-
 ### Creating a Service Principal in the Azure Portal
+
+~> **NOTE:** This needs to be completed in the main Azure (Public) Portal - not the Azure Stack Portal.
 
 There are two tasks needed to create a Service Principal via [the Azure Portal](https://portal.azure.com):
 
@@ -140,12 +46,6 @@ Firstly, specify a Role which grants the appropriate permissions needed for the 
 
 Secondly, search for and select the name of the Application created in Azure Active Directory to assign it this role - then press **Save**.
 
-## Creating a Service Principal through the Legacy CLI's
-
-It's also possible to create credentials via [the legacy cross-platform CLI](https://azure.microsoft.com/en-us/documentation/articles/resource-group-authenticate-service-principal-cli/) and the [legacy PowerShell Cmdlets](https://azure.microsoft.com/en-us/documentation/articles/resource-group-authenticate-service-principal/) - however we would highly recommend using the Azure CLI above.
-
 ## Configuring your Service Principal
 
 Service Principals can be configured in Terraform in one of two ways, either as Environment Variables or in the Provider block. Please see [this section](index.html#argument-reference) for an example of which fields are available and can be specified either through Environment Variables - or in the Provider Block.
-
-~> **NOTE:** Authenticating using a Service Principal via the Azure CLI is unsupported. Service Principal credentials either need to be specified either as Environment Variables or in the Provider Block.

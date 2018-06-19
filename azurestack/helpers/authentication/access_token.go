@@ -11,9 +11,8 @@ import (
 )
 
 type AccessToken struct {
-	ClientID     string
-	AccessToken  *adal.Token
-	IsCloudShell bool
+	ClientID    string
+	AccessToken *adal.Token
 }
 
 func findValidAccessTokenForTenant(tokens []cli.Token, tenantId string) (*AccessToken, error) {
@@ -44,9 +43,8 @@ func findValidAccessTokenForTenant(tokens []cli.Token, tenantId string) (*Access
 		}
 
 		validAccessToken := AccessToken{
-			ClientID:     accessToken.ClientID,
-			AccessToken:  &token,
-			IsCloudShell: accessToken.RefreshToken == "",
+			ClientID:    accessToken.ClientID,
+			AccessToken: &token,
 		}
 		return &validAccessToken, nil
 	}

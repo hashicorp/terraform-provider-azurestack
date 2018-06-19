@@ -26,10 +26,7 @@ type Config struct {
 	ClientSecret string
 
 	// Bearer Auth
-	AccessToken  *adal.Token
-	IsCloudShell bool
-	UseMsi       bool
-	MsiEndpoint  string
+	AccessToken *adal.Token
 
 	ARMEndpoint string
 }
@@ -144,7 +141,6 @@ func (c *Config) populateFromAccessToken(token *AccessToken) (bool, error) {
 
 	c.ClientID = token.ClientID
 	c.AccessToken = token.AccessToken
-	c.IsCloudShell = token.IsCloudShell
 
 	return true, nil
 }

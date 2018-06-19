@@ -5,7 +5,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -40,7 +39,6 @@ func testAccPreCheck(t *testing.T) {
 		"ARM_SUBSCRIPTION_ID",
 		"ARM_TENANT_ID",
 		"ARM_TEST_LOCATION",
-		"ARM_TEST_LOCATION_ALT",
 	}
 
 	for _, variable := range variables {
@@ -55,43 +53,11 @@ func testLocation() string {
 	return os.Getenv("ARM_TEST_LOCATION")
 }
 
-func testAltLocation() string {
-	return os.Getenv("ARM_TEST_LOCATION_ALT")
-}
-
-func testArmEnvironmentName() string {
-	envName, exists := os.LookupEnv("ARM_ENVIRONMENT")
-	if !exists {
-		envName = "public"
-	}
-
-	return envName
-}
-
-func testArmEnvironment() (*azure.Environment, error) {
-	envName := testArmEnvironmentName()
-
-	// detect cloud from environment
-	env, envErr := azure.EnvironmentFromName(envName)
-	if envErr != nil {
-		// try again with wrapped value to support readable values like german instead of AZUREGERMANCLOUD
-		wrapped := fmt.Sprintf("AZURE%sCLOUD", envName)
-		var innerErr error
-		if env, innerErr = azure.EnvironmentFromName(wrapped); innerErr != nil {
-			return nil, envErr
-		}
-	}
-
-	return &env, nil
-}
-
 func testGetAzureConfig(t *testing.T) *authentication.Config {
 	if os.Getenv(resource.TestEnvVar) == "" {
 		t.Skip(fmt.Sprintf("Integration test skipped unless env '%s' set", resource.TestEnvVar))
 		return nil
 	}
-
-	environment := testArmEnvironmentName()
 
 	// we deliberately don't use the main config - since we care about
 	config := authentication.Config{
@@ -100,7 +66,7 @@ func testGetAzureConfig(t *testing.T) *authentication.Config {
 		TenantID:                 os.Getenv("ARM_TENANT_ID"),
 		ClientSecret:             os.Getenv("ARM_CLIENT_SECRET"),
 		ARMEndpoint:              os.Getenv("ARM_ENDPOINT"),
-		Environment:              environment,
+		Environment:              "AZURESTACKCLOUD",
 		SkipProviderRegistration: false,
 	}
 	return &config

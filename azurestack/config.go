@@ -235,23 +235,7 @@ func getAuthorizationToken(c *authentication.Config, oauthConfig *adal.OAuthConf
 		return auth, nil
 	}
 
-	if c.UseMsi {
-		spt, err := adal.NewServicePrincipalTokenFromMSI(c.MsiEndpoint, endpoint)
-		if err != nil {
-			return nil, err
-		}
-		auth := autorest.NewBearerAuthorizer(spt)
-		return auth, nil
-	}
-
-	if c.IsCloudShell {
-		// load the refreshed tokens from the Azure CLI
-		err := c.LoadTokensFromAzureCLI()
-		if err != nil {
-			return nil, fmt.Errorf("Error loading the refreshed CloudShell tokens: %+v", err)
-		}
-	}
-
+	// TODO (tombuildsstuff): verify if the Azure CLI works
 	spt, err := adal.NewServicePrincipalTokenFromManualToken(*oauthConfig, c.ClientID, endpoint, *c.AccessToken)
 	if err != nil {
 		return nil, err
@@ -265,24 +249,9 @@ func getAuthorizationToken(c *authentication.Config, oauthConfig *adal.OAuthConf
 // *ArmClient based on the Config's current settings.
 func getArmClient(c *authentication.Config) (*ArmClient, error) {
 
-	var env azure.Environment
-	var err error
-	if c.ARMEndpoint != "" {
-		env, err = azure.EnvironmentFromURL(c.ARMEndpoint)
-		if err != nil {
-			return nil, fmt.Errorf("Cannot load environment, reason: %s", err)
-		}
-	} else {
-		// detect cloud from environment
-		env, err = azure.EnvironmentFromName(c.Environment)
-		if err != nil {
-			// try again with wrapped value to support readable values like german instead of AZUREGERMANCLOUD
-			wrapped := fmt.Sprintf("AZURE%sCLOUD", c.Environment)
-			var innerErr error
-			if env, innerErr = azure.EnvironmentFromName(wrapped); innerErr != nil {
-				return nil, err
-			}
-		}
+	env, err := azure.EnvironmentFromURL(c.ARMEndpoint)
+	if err != nil {
+		return nil, fmt.Errorf("Cannot load environment, reason: %s", err)
 	}
 
 	// client declarations:

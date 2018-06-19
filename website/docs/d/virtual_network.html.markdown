@@ -1,25 +1,25 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_virtual_network"
-sidebar_current: "docs-azurerm-datasource-virtual-network-x"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_virtual_network"
+sidebar_current: "docs-azurestack-datasource-virtual-network-x"
 description: |-
   Get information about the specified Virtual Network.
 ---
 
-# Data Source: azurerm_virtual_network
+# Data Source: azurestack_virtual_network
 
 Use this data source to access the properties of an Azure Virtual Network.
 
 ## Example Usage
 
 ```hcl
-data "azurerm_virtual_network" "test" {
+data "azurestack_virtual_network" "test" {
   name                 = "production"
   resource_group_name  = "networking"
 }
 
 output "virtual_network_id" {
-  value = "${data.azurerm_virtual_network.test.id}"
+  value = "${data.azurestack_virtual_network.test.id}"
 }
 ```
 

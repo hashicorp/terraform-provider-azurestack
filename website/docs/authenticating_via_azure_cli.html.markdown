@@ -1,13 +1,13 @@
 ---
-layout: "azurerm"
-page_title: "Azure Provider: Authenticating via the Azure CLI"
-sidebar_current: "docs-azurerm-index-authentication-azure-cli"
+layout: "azurestack"
+page_title: "Azure Stack Provider: Authenticating via the Azure CLI"
+sidebar_current: "docs-azurestack-index-authentication-azure-cli"
 description: |-
   This guide will cover how to use the Azure CLI to provide authentication for the Azure Provider.
 
 ---
 
-# Azure Provider: Authenticating using the Azure CLI
+# Azure Stack Provider: Authenticating using the Azure CLI
 
 Terraform supports authenticating to Azure through a Service Principal or the Azure CLI.
 

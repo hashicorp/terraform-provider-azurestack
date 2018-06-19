@@ -1,15 +1,15 @@
 ---
-layout: "azurerm"
-page_title: "Provider: Azure"
-sidebar_current: "docs-azurerm-index"
+layout: "azurestack"
+page_title: "Provider: Azure Stack"
+sidebar_current: "docs-azurestack-index"
 description: |-
-  The Azure Provider is used to interact with the many resources supported by Azure Resource Manager (also known as AzureRM) through its APIs.
+  The Azure Stack Provider is used to interact with the many resources supported by Azure Resource Manager (also known as azurestack) through its APIs.
 
 ---
 
-# Azure Provider
+# Azure Stack Provider
 
-The Azure Provider is used to interact with the many resources supported by Azure Resource Manager (AzureRM) through its APIs.
+The Azure Stack Provider is used to interact with the many resources supported by Azure Resource Manager (azurestack) through its APIs.
 
 ~> **Note:** This supercedes the [legacy Azure provider](/docs/providers/azure/index.html), which interacts with Azure using the Service Management API.
 
@@ -27,20 +27,20 @@ We recommend [using a Service Principal when running in a shared environment](au
 
 ```hcl
 # Configure the Azure Provider
-provider "azurerm" { }
+provider "azurestack" { }
 
 # Create a resource group
-resource "azurerm_resource_group" "network" {
+resource "azurestack_resource_group" "network" {
   name     = "production"
   location = "West US"
 }
 
 # Create a virtual network within the resource group
-resource "azurerm_virtual_network" "network" {
+resource "azurestack_virtual_network" "network" {
   name                = "production-network"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurerm_resource_group.network.location}"
-  resource_group_name = "${azurerm_resource_group.network.name}"
+  location            = "${azurestack_resource_group.network.location}"
+  resource_group_name = "${azurestack_resource_group.network.name}"
 
   subnet {
     name           = "subnet1"

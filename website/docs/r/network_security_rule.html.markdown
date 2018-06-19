@@ -1,13 +1,13 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_network_security_rule"
-sidebar_current: "docs-azurerm-resource-network-security-rule"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_network_security_rule"
+sidebar_current: "docs-azurestack-resource-network-security-rule"
 description: |-
   Manages a Network Security Rule.
 
 ---
 
-# azurerm_network_security_rule
+# azurestack_network_security_rule
 
 Manages a Network Security Rule.
 
@@ -18,18 +18,18 @@ At this time you cannot use a Network Security Group with in-line Network Securi
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acceptanceTestResourceGroup1"
   location = "West US"
 }
 
-resource "azurerm_network_security_group" "test" {
+resource "azurestack_network_security_group" "test" {
   name                = "acceptanceTestSecurityGroup1"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_network_security_rule" "test" {
+resource "azurestack_network_security_rule" "test" {
   name                        = "test123"
   priority                    = 100
   direction                   = "Outbound"
@@ -39,8 +39,8 @@ resource "azurerm_network_security_rule" "test" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "${azurerm_resource_group.test.name}"
-  network_security_group_name = "${azurerm_network_security_group.test.name}"
+  resource_group_name         = "${azurestack_resource_group.test.name}"
+  network_security_group_name = "${azurestack_network_security_group.test.name}"
 }
 ```
 
@@ -84,5 +84,5 @@ The following attributes are exported:
 Network Security Rules can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_network_security_rule.rule1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Network/networkSecurityGroups/mySecurityGroup/securityRules/rule1
+terraform import azurestack_network_security_rule.rule1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Network/networkSecurityGroups/mySecurityGroup/securityRules/rule1
 ```

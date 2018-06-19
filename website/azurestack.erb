@@ -1,0 +1,151 @@
+
+<% wrap_layout :inner do %>
+    <% content_for :sidebar do %>
+        <div class="docs-sidebar hidden-print affix-top" role="complementary">
+          <ul class="nav docs-sidenav">
+            <li<%= sidebar_current("docs-home") %>>
+              <a href="/docs/providers/index.html">All Providers</a>
+            </li>
+
+            <li<%= sidebar_current("docs-azurestack-index") %>>
+              <a href="/docs/providers/azurestack/index.html">Azure Provider</a>
+              <ul class="nav nav-visible">
+                <li<%= sidebar_current("docs-azurestack-index-authentication-azure-cli") %>>
+                    <a href="/docs/providers/azurestack/authenticating_via_azure_cli.html">Authenticating via the Azure CLI</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-index-authentication-service-principal") %>>
+                    <a href="/docs/providers/azurestack/authenticating_via_service_principal.html">Authenticating via a Service Principal (Shared Account)</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-index-authentication-msi") %>>
+                    <a href="/docs/providers/azurestack/authenticating_via_msi.html">Authenticating via Managed Service Identity</a>
+                </li>
+              </ul>
+            </li>
+
+            <li<%= sidebar_current("docs-azurestack-datasource") %>>
+              <a href="#">Data Sources</a>
+              <ul class="nav nav-visible">
+
+                <li<%= sidebar_current("docs-azurestack-datasource-network-interface") %>>
+                    <a href="/docs/providers/azurestack/d/network_interface.html">azurestack_network_interface</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-datasource-network-security-group") %>>
+                    <a href="/docs/providers/azurestack/d/network_security_group.html">azurestack_network_security_group</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-datasource-resource-group") %>>
+                    <a href="/docs/providers/azurestack/d/resource_group.html">azurestack_resource_group</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-datasource-storage-account") %>>
+                    <a href="/docs/providers/azurestack/d/storage_account.html">azurestack_storage_account</a>
+                </li>
+
+
+                <li<%= sidebar_current("docs-azurestack-datasource-virtual-network-x") %>>
+                    <a href="/docs/providers/azurestack/d/virtual_network.html">azurestack_virtual_network</a>
+                </li>
+
+              </ul>
+            </li>
+
+            <li<%= sidebar_current("docs-azurestack-resource-resource") %>>
+              <a href="#">Base Resources</a>
+              <ul class="nav nav-visible">
+                <li<%= sidebar_current("docs-azurestack-resource-resource-group") %>>
+                  <a href="/docs/providers/azurestack/r/resource_group.html">azurestack_resource_group</a>
+                </li>
+              </ul>
+            </li>
+
+            <li<%= sidebar_current("docs-azurestack-resource-compute") %>>
+              <a href="#">Compute Resources</a>
+              <ul class="nav nav-visible">
+
+                <li<%= sidebar_current("docs-azurestack-resource-compute-availability-set") %>>
+                  <a href="/docs/providers/azurestack/r/availability_set.html">azurestack_availability_set</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-resource-compute-virtual-machine") %>>
+                  <a href="/docs/providers/azurestack/r/virtual_machine.html">azurestack_virtual_machine</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-resource-compute-virtualmachine-extension") %>>
+                  <a href="/docs/providers/azurestack/r/virtual_machine_extension.html">azurestack_virtual_machine_extension</a>
+                </li>
+
+              </ul>
+            </li>
+
+            <li<%= sidebar_current("docs-azurestack-resource-dns") %>>
+                <a href="#">DNS Resources</a>
+                <ul class="nav nav-visible">
+
+                  <li<%= sidebar_current("docs-azurestack-resource-dns-a-record") %>>
+                    <a href="/docs/providers/azurestack/r/dns_a_record.html">azurestack_dns_a_record</a>
+                  </li>
+
+                  <li<%= sidebar_current("docs-azurestack-resource-dns-zone") %>>
+                      <a href="/docs/providers/azurestack/r/dns_zone.html">azurestack_dns_zone</a>
+                  </li>
+
+                </ul>
+            </li>
+
+            <li<%= sidebar_current("docs-azurestack-resource-network") %>>
+              <a href="#">Network Resources</a>
+              <ul class="nav nav-visible">
+
+                <li<%= sidebar_current("docs-azurestack-resource-network-interface") %>>
+                  <a href="/docs/providers/azurestack/r/network_interface.html">azurestack_network_interface</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-resource-network-security-group") %>>
+                  <a href="/docs/providers/azurestack/r/network_security_group.html">azurestack_network_security_group</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-resource-network-security-rule") %>>
+                  <a href="/docs/providers/azurestack/r/network_security_rule.html">azurestack_network_security_rule</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-resource-network-public-ip") %>>
+                  <a href="/docs/providers/azurestack/r/public_ip.html">azurestack_public_ip</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-resource-network-subnet") %>>
+                  <a href="/docs/providers/azurestack/r/subnet.html">azurestack_subnet</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-resource-network-virtual-network") %>>
+                  <a href="/docs/providers/azurestack/r/virtual_network.html">azurestack_virtual_network</a>
+                </li>
+              </ul>
+            </li>
+
+            <li<%= sidebar_current("docs-azurestack-resource-storage") %>>
+              <a href="#">Storage Resources</a>
+              <ul class="nav nav-visible">
+
+                <li<%= sidebar_current("docs-azurestack-resource-storage-account") %>>
+                  <a href="/docs/providers/azurestack/r/storage_account.html">azurestack_storage_account</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-resource-storage-container") %>>
+                  <a href="/docs/providers/azurestack/r/storage_container.html">azurestack_storage_container</a>
+                </li>
+
+                <li<%= sidebar_current("docs-azurestack-resource-storage-blob") %>>
+                  <a href="/docs/providers/azurestack/r/storage_blob.html">azurestack_storage_blob</a>
+                </li>
+              </ul>
+            </li>
+
+          </ul>
+        </div>
+    <% end %>
+
+    <%= yield %>
+<% end %>

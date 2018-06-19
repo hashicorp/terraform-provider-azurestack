@@ -1,26 +1,26 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_dns_zone"
-sidebar_current: "docs-azurerm-resource-dns-zone"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_dns_zone"
+sidebar_current: "docs-azurestack-resource-dns-zone"
 description: |-
   Create a DNS Zone.
 ---
 
-# azurerm\_dns\_zone
+# azurestack\_dns\_zone
 
 Enables you to manage DNS zones within Azure DNS. These zones are hosted on Azure's name servers to which you can delegate the zone from the parent domain.
 
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acceptanceTestResourceGroup1"
   location = "West US"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "mydomain.com"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 ```
 ## Argument Reference
@@ -48,5 +48,5 @@ The following attributes are exported:
 DNS Zones can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_dns_zone.zone1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Network/dnsZones/zone1
+terraform import azurestack_dns_zone.zone1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Network/dnsZones/zone1
 ```

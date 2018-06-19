@@ -1,13 +1,13 @@
 ---
-layout: "azurerm"
+layout: "azurestack"
 page_title: "Azure Resource Manager: azure_virtual_machine_extension"
-sidebar_current: "docs-azurerm-resource-compute-virtualmachine-extension"
+sidebar_current: "docs-azurestack-resource-compute-virtualmachine-extension"
 description: |-
     Creates a new Virtual Machine Extension to provide post deployment
     configuration and run automated tasks.
 ---
 
-# azurerm_virtual_machine_extension
+# azurestack_virtual_machine_extension
 
 Creates a new Virtual Machine Extension to provide post deployment configuration
 and run automated tasks.
@@ -17,40 +17,40 @@ and run automated tasks.
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestrg"
   location = "West US"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
   name                = "acctvn"
   address_space       = ["10.0.0.0/16"]
   location            = "West US"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_subnet" "test" {
+resource "azurestack_subnet" "test" {
   name                 = "acctsub"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
-  virtual_network_name = "${azurerm_virtual_network.test.name}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
   address_prefix       = "10.0.2.0/24"
 }
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctni"
   location            = "West US"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   ip_configuration {
     name                          = "testconfiguration1"
-    subnet_id                     = "${azurerm_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
     private_ip_address_allocation = "dynamic"
   }
 }
 
-resource "azurerm_storage_account" "test" {
+resource "azurestack_storage_account" "test" {
   name                     = "accsa"
-  resource_group_name      = "${azurerm_resource_group.test.name}"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
   location                 = "westus"
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -60,18 +60,18 @@ resource "azurerm_storage_account" "test" {
   }
 }
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
   name                  = "vhds"
-  resource_group_name   = "${azurerm_resource_group.test.name}"
-  storage_account_name  = "${azurerm_storage_account.test.name}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
   container_access_type = "private"
 }
 
-resource "azurerm_virtual_machine" "test" {
+resource "azurestack_virtual_machine" "test" {
   name                  = "acctvm"
   location              = "West US"
-  resource_group_name   = "${azurerm_resource_group.test.name}"
-  network_interface_ids = ["${azurerm_network_interface.test.id}"]
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  network_interface_ids = ["${azurestack_network_interface.test.id}"]
   vm_size               = "Standard_A0"
 
   storage_image_reference {
@@ -83,7 +83,7 @@ resource "azurerm_virtual_machine" "test" {
 
   storage_os_disk {
     name          = "myosdisk1"
-    vhd_uri       = "${azurerm_storage_account.test.primary_blob_endpoint}${azurerm_storage_container.test.name}/myosdisk1.vhd"
+    vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
     caching       = "ReadWrite"
     create_option = "FromImage"
   }
@@ -103,11 +103,11 @@ resource "azurerm_virtual_machine" "test" {
   }
 }
 
-resource "azurerm_virtual_machine_extension" "test" {
+resource "azurestack_virtual_machine_extension" "test" {
   name                 = "hostname"
   location             = "West US"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
-  virtual_machine_name = "${azurerm_virtual_machine.test.name}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_machine_name = "${azurestack_virtual_machine.test.name}"
   publisher            = "Microsoft.Azure.Extensions"
   type                 = "CustomScript"
   type_handler_version = "2.0"
@@ -179,5 +179,5 @@ The following attributes are exported:
 Virtual Machine Extensions can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_virtual_machine_extension.test /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Compute/virtualMachines/myVM/extensions/hostname
+terraform import azurestack_virtual_machine_extension.test /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Compute/virtualMachines/myVM/extensions/hostname
 ```

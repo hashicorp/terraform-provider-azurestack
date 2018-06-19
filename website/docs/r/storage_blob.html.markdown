@@ -1,44 +1,44 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_storage_blob"
-sidebar_current: "docs-azurerm-resource-storage-blob"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_storage_blob"
+sidebar_current: "docs-azurestack-resource-storage-blob"
 description: |-
   Create a Azure Storage Blob.
 ---
 
-# azurerm\_storage\_blob
+# azurestack\_storage\_blob
 
 Create an Azure Storage Blob.
 
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestrg-d"
   location = "westus"
 }
 
-resource "azurerm_storage_account" "test" {
+resource "azurestack_storage_account" "test" {
   name                     = "acctestaccs"
-  resource_group_name      = "${azurerm_resource_group.test.name}"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
   location                 = "westus"
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
   name                  = "vhds"
-  resource_group_name   = "${azurerm_resource_group.test.name}"
-  storage_account_name  = "${azurerm_storage_account.test.name}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
   container_access_type = "private"
 }
 
-resource "azurerm_storage_blob" "testsb" {
+resource "azurestack_storage_blob" "testsb" {
   name = "sample.vhd"
 
-  resource_group_name    = "${azurerm_resource_group.test.name}"
-  storage_account_name   = "${azurerm_storage_account.test.name}"
-  storage_container_name = "${azurerm_storage_container.test.name}"
+  resource_group_name    = "${azurestack_resource_group.test.name}"
+  storage_account_name   = "${azurestack_storage_account.test.name}"
+  storage_container_name = "${azurestack_storage_container.test.name}"
 
   type = "page"
   size = 5120

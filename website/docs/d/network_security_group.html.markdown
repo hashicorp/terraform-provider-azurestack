@@ -1,25 +1,25 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_network_security_group"
-sidebar_current: "docs-azurerm-datasource-network-security-group"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_network_security_group"
+sidebar_current: "docs-azurestack-datasource-network-security-group"
 description: |-
   Get information about the specified Network Security Group.
 ---
 
-# Data Source: azurerm_network_security_group
+# Data Source: azurestack_network_security_group
 
 Use this data source to access the properties of a Network Security Group.
 
 ## Example Usage
 
 ```hcl
-data "azurerm_network_security_group" "test" {
-  name                = "${azurerm_network_security_group.test.name}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+data "azurestack_network_security_group" "test" {
+  name                = "${azurestack_network_security_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 output "location" {
-  value = "${data.azurerm_network_security_group.test.location}"
+  value = "${data.azurestack_network_security_group.test.location}"
 }
 ```
 

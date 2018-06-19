@@ -1,26 +1,26 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_storage_account"
-sidebar_current: "docs-azurerm-resource-storage-account"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_storage_account"
+sidebar_current: "docs-azurestack-resource-storage-account"
 description: |-
   Create a Azure Storage Account.
 ---
 
-# azurerm_storage_account
+# azurestack_storage_account
 
 Create an Azure Storage Account.
 
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "testrg" {
+resource "azurestack_resource_group" "testrg" {
   name     = "resourceGroupName"
   location = "westus"
 }
 
-resource "azurerm_storage_account" "testsa" {
+resource "azurestack_storage_account" "testsa" {
   name                     = "storageaccountname"
-  resource_group_name      = "${azurerm_resource_group.testrg.name}"
+  resource_group_name      = "${azurestack_resource_group.testrg.name}"
   location                 = "westus"
   account_tier             = "Standard"
   account_replication_type = "GRS"
@@ -98,5 +98,5 @@ The following attributes are exported in addition to the arguments listed above:
 Storage Accounts can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_storage_account.storageAcc1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/myaccount
+terraform import azurestack_storage_account.storageAcc1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/myaccount
 ```

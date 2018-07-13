@@ -8,7 +8,7 @@ description: |-
 
 # Data Source: azurestack_client_config
 
-Use this data source to access the configuration of the Azure Resource Manager
+Use this data source to access the configuration of the Azure Stack
 provider.
 
 ## Example Usage
@@ -37,6 +37,3 @@ There are no arguments available for this data source.
 
 * `service_principal_application_id` is the Service Principal Application ID.
 * `service_principal_object_id` is the Service Principal Object ID.
-
-~> **Note:** To better understand "application" and "service principal", please read
-[Application and service principal objects in Azure Active Directory](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-application-objects).

@@ -49,8 +49,9 @@ type ArmClient struct {
 	zonesClient dns.ZonesClient
 
 	// Networking
-	ifaceClient   network.InterfacesClient
-	secRuleClient network.SecurityRulesClient
+	ifaceClient        network.InterfacesClient
+	localNetConnClient network.LocalNetworkGatewaysClient
+	secRuleClient      network.SecurityRulesClient
 
 	// Resources
 	providersClient resources.ProvidersClient
@@ -216,6 +217,10 @@ func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, a
 	interfacesClient := network.NewInterfacesClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&interfacesClient.Client, auth)
 	c.ifaceClient = interfacesClient
+
+	localNetworkGatewaysClient := network.NewLocalNetworkGatewaysClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&localNetworkGatewaysClient.Client, auth)
+	c.localNetConnClient = localNetworkGatewaysClient
 
 	networksClient := network.NewVirtualNetworksClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&networksClient.Client, auth)

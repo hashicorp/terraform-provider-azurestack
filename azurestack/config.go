@@ -15,6 +15,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/storage/mgmt/storage"
 	"github.com/Azure/azure-sdk-for-go/services/dns/mgmt/2016-04-01/dns"
+	"github.com/Azure/azure-sdk-for-go/services/graphrbac/1.6/graphrbac"
 	mainStorage "github.com/Azure/azure-sdk-for-go/storage"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
@@ -35,6 +36,9 @@ type ArmClient struct {
 	skipProviderRegistration bool
 
 	StopContext context.Context
+
+	// Authentication
+	servicePrincipalsClient graphrbac.ServicePrincipalsClient
 
 	// Compute
 	availSetClient    compute.AvailabilitySetsClient
@@ -167,11 +171,19 @@ func getArmClient(c *authentication.Config) (*ArmClient, error) {
 		return nil, err
 	}
 
-	client.registerDNSClients(endpoint, c.SubscriptionID, auth, sender)
+	// Graph Endpoints
+	graphEndpoint := env.GraphEndpoint
+	graphAuth, err := getAuthorizationToken(c, oauthConfig, graphEndpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	client.registerAuthentication(endpoint, graphEndpoint, c.SubscriptionID, c.TenantID, auth, graphAuth, sender)
 	client.registerComputeClients(endpoint, c.SubscriptionID, auth, sender)
-	client.registerStorageClients(endpoint, c.SubscriptionID, auth)
+	client.registerDNSClients(endpoint, c.SubscriptionID, auth, sender)
 	client.registerNetworkingClients(endpoint, c.SubscriptionID, auth, sender)
 	client.registerResourcesClients(endpoint, c.SubscriptionID, auth)
+	client.registerStorageClients(endpoint, c.SubscriptionID, auth)
 
 	return &client, nil
 }
@@ -313,4 +325,13 @@ func (armClient *ArmClient) getBlobStorageClientForStorageAccount(ctx context.Co
 
 	blobClient := storageClient.GetBlobService()
 	return &blobClient, true, nil
+}
+
+func (c *ArmClient) registerAuthentication(endpoint, graphEndpoint, subscriptionId, tenantId string, auth, graphAuth autorest.Authorizer, sender autorest.Sender) {
+	servicePrincipalsClient := graphrbac.NewServicePrincipalsClientWithBaseURI(graphEndpoint, tenantId)
+	setUserAgent(&servicePrincipalsClient.Client)
+	servicePrincipalsClient.Authorizer = graphAuth
+	servicePrincipalsClient.Sender = sender
+	servicePrincipalsClient.SkipResourceProviderRegistration = c.skipProviderRegistration
+	c.servicePrincipalsClient = servicePrincipalsClient
 }

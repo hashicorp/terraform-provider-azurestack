@@ -42,7 +42,7 @@ Finally, we can create the `client_secret` by selecting **Keys** and then genera
 
 Once the Application exists in Azure Active Directory - we can grant it permissions to modify resources in the Subscription. To do this, [navigate to the **Subscriptions** blade within the Azure Portal](https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade), then select the Subscription you wish to use, then click **Access Control (IAM)**, and finally **Add**.
 
-~> **NOTE:**  This will only give SPN access to your Azure Subscription - This is **NOT** required to interact with Azure Stack. To allow SPN access to Azure Stack you need to do it under Azure Stack Subscription [navigate to the **Subscriptions** blade within the Azure Portal](https://portal.{region}.{domain}/#blade/Microsoft_Azure_Billing/SubscriptionsBlade), then select the Subscription you wish to use, then click **Access Control (IAM)**, and finally **Add**.
+~> **NOTE:**  This will only give SPN access to your Azure Subscription - This is **NOT** required to interact with Azure Stack. To allow SPN access to Azure Stack you need to do it under Azure Stack Subscription [navigate to the **Subscriptions** blade within the Azure Stack Portal](https://portal.{region}.{domain}/#blade/Microsoft_Azure_Billing/SubscriptionsBlade), then select the Subscription you wish to use, then click **Access Control (IAM)**, and finally **Add**.
 
 Firstly, specify a Role which grants the appropriate permissions needed for the Service Principal (for example, `Contributor` will grant Read/Write on all resources in the Subscription). There's more information about [the built in roles available here](https://azure.microsoft.com/en-gb/documentation/articles/role-based-access-built-in-roles/).
 

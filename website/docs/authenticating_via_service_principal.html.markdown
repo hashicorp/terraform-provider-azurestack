@@ -93,9 +93,11 @@ Service Principals can be configured in Terraform in one of two ways, either as 
 
   ```hcl
   # Configure the Azure Stack Provider
-  arm_endpoint    = "https://management.{region}.{domain}"
-  subscription_id = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
-  client_id       = "{applicationId}@{tenantDomain}"
-  client_secret   = "{applicationPassword}"
-  tenant_id       = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
+  provider "azurestack" {
+    arm_endpoint    = "https://management.{region}.{domain}"
+    subscription_id = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
+    client_id       = "{applicationId}@{tenantDomain}"
+    client_secret   = "{applicationPassword}"
+    tenant_id       = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
+  }
   ```

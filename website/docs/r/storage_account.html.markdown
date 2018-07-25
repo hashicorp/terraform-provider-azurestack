@@ -51,7 +51,7 @@ The following arguments are supported:
 
 * `account_tier` - (Required) Defines the Tier to use for this storage account. Valid options are `Standard` and `Premium`. Changing this forces a new resource to be created
 
-* `account_replication_type` - (Required) Defines the type of replication to use for this storage account. Valid options are `LRS`  currently as per [Azure Stack Storage Differences](https://docs.microsoft.com/en-us/azure/azure-stack/user/azure-stack-acs-differences)
+* `account_replication_type` - (Required) Defines the type of replication to use for this storage account. Valid option is `LRS` currently as per [Azure Stack Storage Differences](https://docs.microsoft.com/en-us/azure/azure-stack/user/azure-stack-acs-differences)
 
 * `access_tier` - (Required for `BlobStorage` accounts) Defines the access tier
     for `BlobStorage` accounts. Valid options are `Hot` and `Cold`, defaults to

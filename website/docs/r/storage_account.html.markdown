@@ -45,9 +45,9 @@ The following arguments are supported:
 * `location` - (Required) Specifies the supported Azure location where the
     resource exists. Changing this forces a new resource to be created.
 
-* `account_kind` - (Optional) Defines the Kind of account. Valid options are `Storage`,
-    `StorageV2` and `BlobStorage`. Changing this forces a new resource to be created.
-    Defaults to `Storage`.
+* `account_kind` - (Optional) Defines the Kind of account. Valid option is `Storage`.
+   . Changing this forces a new resource to be created.
+    Defaults to `Storage` currently as per [Azure Stack Storage Differences](https://docs.microsoft.com/en-us/azure/azure-stack/user/azure-stack-acs-differences)
 
 * `account_tier` - (Required) Defines the Tier to use for this storage account. Valid options are `Standard` and `Premium`. Changing this forces a new resource to be created - **`Can be provisioned, but no performance limit or guarantee.`**
 

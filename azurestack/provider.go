@@ -89,6 +89,7 @@ func Provider() terraform.ResourceProvider {
 			"azurestack_virtual_network":           resourceArmVirtualNetwork(),
 			"azurestack_virtual_machine":           resourceArmVirtualMachine(),
 			"azurestack_virtual_machine_extension": resourceArmVirtualMachineExtensions(),
+			"azurestack_virtual_machine_scale_set": resourceArmVirtualMachineScaleSet(),
 		},
 	}
 
@@ -279,4 +280,9 @@ func base64Encode(data string) string {
 func isBase64Encoded(data string) bool {
 	_, err := base64.StdEncoding.DecodeString(data)
 	return err == nil
+}
+
+func userDataDiffSuppressFunc(k, old, new string, d *schema.ResourceData) bool {
+	oldValue := userDataStateFunc(old)
+	return oldValue == new
 }

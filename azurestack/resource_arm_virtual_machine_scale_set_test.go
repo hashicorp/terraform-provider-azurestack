@@ -279,7 +279,12 @@ func TestAccAzureStackVirtualMachineScaleSet_customDataUpdated(t *testing.T) {
 	})
 }
 
+// 	Managed disks not supported yet
+
 func TestAccAzureStackVirtualMachineScaleSet_basicLinux_managedDisk(t *testing.T) {
+
+	t.Skip()
+
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_basicLinux_managedDisk(ri, testLocation())
@@ -395,7 +400,11 @@ func TestAccAzureStackVirtualMachineScaleSet_basicLinux_disappears(t *testing.T)
 	})
 }
 
+// managed disk not supported yet
 func TestAccAzureStackVirtualMachineScaleSet_planManagedDisk(t *testing.T) {
+
+	t.Skip()
+
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_planManagedDisk(ri, testLocation())
@@ -490,7 +499,11 @@ func TestAccAzureStackVirtualMachineScaleSet_loadBalancer(t *testing.T) {
 	})
 }
 
+// Managed disks not supported yet
 func TestAccAzureStackVirtualMachineScaleSet_loadBalancerManagedDataDisks(t *testing.T) {
+
+	t.Skip()
+
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSetLoadBalancerTemplateManagedDataDisks(ri, testLocation())

@@ -81,6 +81,7 @@ func Provider() terraform.ResourceProvider {
 			"azurestack_network_security_group":    resourceArmNetworkSecurityGroup(),
 			"azurestack_network_security_rule":     resourceArmNetworkSecurityRule(),
 			"azurestack_local_network_gateway":     resourceArmLocalNetworkGateway(),
+			"azurestack_lb":                        resourceArmLoadBalancer(),
 			"azurestack_public_ip":                 resourceArmPublicIp(),
 			"azurestack_resource_group":            resourceArmResourceGroup(),
 			"azurestack_storage_account":           resourceArmStorageAccount(),

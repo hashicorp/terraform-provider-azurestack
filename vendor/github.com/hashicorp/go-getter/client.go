@@ -17,7 +17,6 @@ import (
 	"strings"
 
 	urlhelper "github.com/hashicorp/go-getter/helper/url"
-	"github.com/hashicorp/go-safetemp"
 )
 
 // Client is a client for downloading things.
@@ -101,14 +100,17 @@ func (c *Client) Get() error {
 	dst := c.Dst
 	src, subDir := SourceDirSubdir(src)
 	if subDir != "" {
-		td, tdcloser, err := safetemp.Dir("", "getter")
+		tmpDir, err := ioutil.TempDir("", "tf")
 		if err != nil {
 			return err
 		}
-		defer tdcloser.Close()
+		if err := os.RemoveAll(tmpDir); err != nil {
+			return err
+		}
+		defer os.RemoveAll(tmpDir)
 
 		realDst = dst
-		dst = td
+		dst = tmpDir
 	}
 
 	u, err := urlhelper.Parse(src)
@@ -230,18 +232,7 @@ func (c *Client) Get() error {
 		// Destination is the base name of the URL path in "any" mode when
 		// a file source is detected.
 		if mode == ClientModeFile {
-			filename := filepath.Base(u.Path)
-
-			// Determine if we have a custom file name
-			if v := q.Get("filename"); v != "" {
-				// Delete the query parameter if we have it.
-				q.Del("filename")
-				u.RawQuery = q.Encode()
-
-				filename = v
-			}
-
-			dst = filepath.Join(dst, filename)
+			dst = filepath.Join(dst, filepath.Base(u.Path))
 		}
 	}
 

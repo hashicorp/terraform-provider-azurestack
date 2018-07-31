@@ -59,8 +59,38 @@ func (n *NodeLocal) References() []string {
 
 // GraphNodeEvalable
 func (n *NodeLocal) EvalTree() EvalNode {
-	return &EvalLocal{
-		Name:  n.Config.Name,
-		Value: n.Config.RawConfig,
+	return &EvalSequence{
+		Nodes: []EvalNode{
+			&EvalOpFilter{
+				Ops: []walkOperation{
+					walkInput,
+					walkValidate,
+					walkRefresh,
+					walkPlan,
+					walkApply,
+				},
+				Node: &EvalSequence{
+					Nodes: []EvalNode{
+						&EvalLocal{
+							Name:  n.Config.Name,
+							Value: n.Config.RawConfig,
+						},
+					},
+				},
+			},
+			&EvalOpFilter{
+				Ops: []walkOperation{
+					walkPlanDestroy,
+					walkDestroy,
+				},
+				Node: &EvalSequence{
+					Nodes: []EvalNode{
+						&EvalDeleteLocal{
+							Name: n.Config.Name,
+						},
+					},
+				},
+			},
+		},
 	}
 }

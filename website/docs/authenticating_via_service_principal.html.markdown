@@ -38,9 +38,11 @@ Once that's done - select the Application you just created in [the **App Registr
 
 Finally, we can create the `client_secret` by selecting **Keys** and then generating a new key by entering a description, selecting how long the `client_secret` should be valid for - and finally pressing **Save**. This value will only be visible whilst on the page, so be sure to copy it now (otherwise you'll need to regenerate a new key).
 
-### 2. Granting the Application access to manage resources in your Azure Subscription
+### 2. Granting the Application access to manage resources in your Azure and Azure Stack Subscriptions
 
 Once the Application exists in Azure Active Directory - we can grant it permissions to modify resources in the Subscription. To do this, [navigate to the **Subscriptions** blade within the Azure Portal](https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade), then select the Subscription you wish to use, then click **Access Control (IAM)**, and finally **Add**.
+
+~> **NOTE:**  This will only give SPN access to your Azure Subscription - This is **NOT** required to interact with Azure Stack. To allow SPN access to Azure Stack you need to do it under Azure Stack Subscription [navigate to the **Subscriptions** blade within the Azure Stack Portal](https://portal.{region}.{domain}/#blade/Microsoft_Azure_Billing/SubscriptionsBlade), then select the Subscription you wish to use, then click **Access Control (IAM)**, and finally **Add**.
 
 Firstly, specify a Role which grants the appropriate permissions needed for the Service Principal (for example, `Contributor` will grant Read/Write on all resources in the Subscription). There's more information about [the built in roles available here](https://azure.microsoft.com/en-gb/documentation/articles/role-based-access-built-in-roles/).
 
@@ -49,3 +51,53 @@ Secondly, search for and select the name of the Application created in Azure Act
 ## Configuring your Service Principal
 
 Service Principals can be configured in Terraform in one of two ways, either as Environment Variables or in the Provider block. Please see [this section](index.html#argument-reference) for an example of which fields are available and can be specified either through Environment Variables - or in the Provider Block.
+
+### Example of Environment Variables
+
+- `variables.tf`
+
+  ```hcl
+  variable "arm_endpoint" {}
+  variable "subscription_id" {}
+  variable "client_id" {}
+  variable "client_secret" {}
+  variable "tenant_id" {}
+  ```
+
+- `example.tf`
+
+  ```hcl
+  provider "azurestack" {
+    arm_endpoint    = "${var.arm_endpoint}"
+    subscription_id = "${var.subscription_id}"
+    client_id       = "${var.client_id}"
+    client_secret   = "${var.client_secret}"
+    tenant_id       = "${var.tenant_id}"
+  }
+  ```
+
+- `terraform.tfvars`
+
+  ```hcl
+  # Configure the Azure Stack Provider
+  arm_endpoint    = "https://management.{region}.{domain}"
+  subscription_id = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
+  client_id       = "{applicationId}@{tenantDomain}"
+  client_secret   = "{applicationPassword}"
+  tenant_id       = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
+  ```
+
+### Example of Provider Block
+
+- `example.tf`
+
+  ```hcl
+  # Configure the Azure Stack Provider
+  provider "azurestack" {
+    arm_endpoint    = "https://management.{region}.{domain}"
+    subscription_id = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
+    client_id       = "{applicationId}@{tenantDomain}"
+    client_secret   = "{applicationPassword}"
+    tenant_id       = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
+  }
+  ```

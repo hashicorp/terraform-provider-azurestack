@@ -3,12 +3,12 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_storage_blob"
 sidebar_current: "docs-azurestack-resource-storage-blob"
 description: |-
-  Create a Azure Storage Blob.
+  Manages a Azure Storage Blob.
 ---
 
-# azurestack\_storage\_blob
+# azurestack_storage_blob
 
-Create an Azure Storage Blob.
+Manages an Azure Storage Blob.
 
 ## Example Usage
 

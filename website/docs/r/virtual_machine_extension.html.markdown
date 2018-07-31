@@ -1,6 +1,6 @@
 ---
 layout: "azurestack"
-page_title: "Azure Resource Manager: azure_virtual_machine_extension"
+page_title: "Azure Resource Manager: azurestack_virtual_machine_extension"
 sidebar_current: "docs-azurestack-resource-compute-virtualmachine-extension"
 description: |-
     Creates a new Virtual Machine Extension to provide post deployment

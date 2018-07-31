@@ -3,12 +3,12 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_virtual_machine"
 sidebar_current: "docs-azurestack-resource-compute-virtual-machine"
 description: |-
-  Create a Virtual Machine.
+  Manages a Virtual Machine.
 ---
 
-# azurestack\_virtual\_machine
+# azurestack_virtual_machine
 
-Create a virtual machine.
+Manages a virtual machine.
 
 ## Example Usage with Unmanaged Disks
 

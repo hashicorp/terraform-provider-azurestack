@@ -6,7 +6,7 @@ description: |-
     Creates a new resource group on Azure.
 ---
 
-# azurestack\_resource\_group
+# azurestack_resource_group
 
 Creates a new resource group on Azure.
 

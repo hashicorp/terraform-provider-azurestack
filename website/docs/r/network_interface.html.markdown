@@ -1,6 +1,6 @@
 ---
 layout: "azurestack"
-page_title: "Azure Resource Manager: azure_network_interface"
+page_title: "Azure Resource Manager: azurestack_network_interface"
 sidebar_current: "docs-azurestack-resource-network-interface"
 description: |-
   Manages a Network Interface located in a Virtual Network, usually attached to a Virtual Machine.

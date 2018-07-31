@@ -3,12 +3,12 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_public_ip"
 sidebar_current: "docs-azurestack-resource-network-public-ip"
 description: |-
-  Create a Public IP Address.
+  Manages a Public IP Address.
 ---
 
-# azurestack\_public\_ip
+# azurestack_public_ip
 
-Create a Public IP Address.
+Manages a Public IP Address.
 
 ## Example Usage
 

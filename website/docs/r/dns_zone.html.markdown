@@ -3,7 +3,7 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_dns_zone"
 sidebar_current: "docs-azurestack-resource-dns-zone"
 description: |-
-  Create a DNS Zone.
+  Manages a DNS Zone.
 ---
 
 # azurestack_dns_zone

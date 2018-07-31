@@ -1,7 +1,7 @@
 ---
-layout: "azurerm"
+layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_local_network_gateway"
-sidebar_current: "docs-azurerm-resource-network-local-network-gateway"
+sidebar_current: "docs-azurestack-resource-network-local-network-gateway"
 description: |-
   Manages a local network gateway connection over which specific connections can be configured.
 ---

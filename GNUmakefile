@@ -10,10 +10,10 @@ build: fmtcheck
 
 build-docker:
 	mkdir -p bin
-	docker run --rm -v $$(pwd)/bin:/go/bin -v $$(pwd):/go/src/github.com/terraform-providers/terraform-provider-azurerm -w /go/src/github.com/terraform-providers/terraform-provider-azurerm -e GOOS golang:1.10 make build
+	docker run --rm -v $$(pwd)/bin:/go/bin -v $$(pwd):/go/src/github.com/terraform-providers/terraform-provider-azurestack -w /go/src/github.com/terraform-providers/terraform-provider-azurestack -e GOOS golang:1.10 make build
 
 test-docker:
-	docker run --rm -v $$(pwd):/go/src/github.com/terraform-providers/terraform-provider-azurerm -w /go/src/github.com/terraform-providers/terraform-provider-azurerm golang:1.10 make test
+	docker run --rm -v $$(pwd):/go/src/github.com/terraform-providers/terraform-provider-azurestack -w /go/src/github.com/terraform-providers/terraform-provider-azurestack golang:1.10 make test
 
 test: fmtcheck
 	go test -i $(TEST) || exit 1

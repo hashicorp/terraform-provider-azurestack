@@ -3,7 +3,7 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_dns_a_record"
 sidebar_current: "docs-azurestack-resource-dns-a-record"
 description: |-
-  Create a DNS A Record.
+  Manages a DNS A Record.
 ---
 
 # azurestack_dns_a_record

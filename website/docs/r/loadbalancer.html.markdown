@@ -3,12 +3,12 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_lb"
 sidebar_current: "docs-azurestack-resource-loadbalancer-x"
 description: |-
-  Manages a LoadBalancer Resource.
+  Manages a Load Balancer Resource.
 ---
 
 # azurestack_lb
 
-Manages a LoadBalancer Resource.
+Manages a Load Balancer Resource.
 
 ## Example Usage
 

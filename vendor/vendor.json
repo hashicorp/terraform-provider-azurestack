@@ -7,6 +7,10 @@
 			"revision": ""
 		},
 		{
+			"path": "appengine/cloudsql",
+			"revision": ""
+		},
+		{
 			"path": "appengine_internal",
 			"revision": ""
 		},
@@ -692,6 +696,12 @@
 			"path": "github.com/go-ini/ini",
 			"revision": "31ee29050e14e48374e392ccd5c01dd50f3c5cd3",
 			"revisionTime": "2017-11-15T17:09:47Z"
+		},
+		{
+			"checksumSHA1": "k9izYoyobR8Upb3Yjsw9htgE/Mk=",
+			"path": "github.com/go-sql-driver/mysql",
+			"revision": "99ff426eb706cffe92ff3d058e168b278cabf7c7",
+			"revisionTime": "2018-07-19T07:19:42Z"
 		},
 		{
 			"checksumSHA1": "Gay+mu0LGL3M53eDVwTEbe2CjuY=",
@@ -2091,6 +2101,12 @@
 			"revisionTime": "2017-11-15T17:09:47Z"
 		},
 		{
+			"checksumSHA1": "40vJyUB4ezQSn/NSadsKEOrudMc=",
+			"path": "github.com/inconshreveable/mousetrap",
+			"revision": "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75",
+			"revisionTime": "2014-10-17T20:07:13Z"
+		},
+		{
 			"checksumSHA1": "0ZrwvB6KoGPj2PoDNSEJwxQ6Mog=",
 			"origin": "github.com/hashicorp/terraform/vendor/github.com/jmespath/go-jmespath",
 			"path": "github.com/jmespath/go-jmespath",
@@ -2553,6 +2569,30 @@
 			"revisionTime": "2018-07-19T22:19:02Z"
 		},
 		{
+			"checksumSHA1": "D34ZqOW907kHAGTRU6lmxJs1ToU=",
+			"path": "go4.org/syncutil/singleflight",
+			"revision": "9599cf28b011184741f249bd9f9330756b506cbc",
+			"revisionTime": "2018-04-17T22:48:46Z"
+		},
+		{
+			"checksumSHA1": "DPJ4grD/YgFUxsPMmjgHuP0MQIM=",
+			"path": "golang.org/x/build/autocertcache",
+			"revision": "b9f5d4d869e48ba6384b5ac09b7907478919f6c9",
+			"revisionTime": "2018-07-28T07:31:49Z"
+		},
+		{
+			"checksumSHA1": "J6lNRPdrYhKft6S8x33K9brxyhE=",
+			"path": "golang.org/x/crypto/acme",
+			"revision": "c126467f60eb25f8f27e5a981f32a87e3965053f",
+			"revisionTime": "2018-07-23T15:26:11Z"
+		},
+		{
+			"checksumSHA1": "EFjIi/zCZ1Cte0MQtyxGCTgSzk8=",
+			"path": "golang.org/x/crypto/acme/autocert",
+			"revision": "c126467f60eb25f8f27e5a981f32a87e3965053f",
+			"revisionTime": "2018-07-23T15:26:11Z"
+		},
+		{
 			"checksumSHA1": "vE43s37+4CJ2CDU6TlOUOYE0K9c=",
 			"origin": "github.com/hashicorp/terraform/vendor/golang.org/x/crypto/bcrypt",
 			"path": "golang.org/x/crypto/bcrypt",
@@ -2643,6 +2683,18 @@
 			"revisionTime": "2018-07-31T16:30:02Z"
 		},
 		{
+			"checksumSHA1": "PJY7uCr3UnX4/Mf/RoWnbieSZ8o=",
+			"path": "golang.org/x/crypto/pkcs12",
+			"revision": "c126467f60eb25f8f27e5a981f32a87e3965053f",
+			"revisionTime": "2018-07-23T15:26:11Z"
+		},
+		{
+			"checksumSHA1": "p0GC51McIdA7JygoP223twJ1s0E=",
+			"path": "golang.org/x/crypto/pkcs12/internal/rc2",
+			"revision": "c126467f60eb25f8f27e5a981f32a87e3965053f",
+			"revisionTime": "2018-07-23T15:26:11Z"
+		},
+		{
 			"checksumSHA1": "fsrFs762jlaILyqqQImS1GfvIvw=",
 			"origin": "github.com/hashicorp/terraform/vendor/golang.org/x/crypto/ssh",
 			"path": "golang.org/x/crypto/ssh",
@@ -2655,6 +2707,12 @@
 			"path": "golang.org/x/crypto/ssh/agent",
 			"revision": "15ad2e4f9ef87905fa6330349940afa8ed669aa1",
 			"revisionTime": "2018-07-31T16:30:02Z"
+		},
+		{
+			"checksumSHA1": "BGm8lKZmvJbf/YOJLeL1rw2WVjA=",
+			"path": "golang.org/x/crypto/ssh/terminal",
+			"revision": "c126467f60eb25f8f27e5a981f32a87e3965053f",
+			"revisionTime": "2018-07-23T15:26:11Z"
 		},
 		{
 			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
@@ -2769,6 +2827,12 @@
 			"path": "golang.org/x/sys/unix",
 			"revision": "31ee29050e14e48374e392ccd5c01dd50f3c5cd3",
 			"revisionTime": "2017-11-15T17:09:47Z"
+		},
+		{
+			"checksumSHA1": "k3aXicSfO+3+JmTNstuZrsTCRyI=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "bd9dbc187b6e1dacfdd2722a87e83093c2d7bd6e",
+			"revisionTime": "2018-07-27T21:32:08Z"
 		},
 		{
 			"checksumSHA1": "Mr4ur60bgQJnQFfJY0dGtwWwMPE=",
@@ -2927,6 +2991,12 @@
 		{
 			"checksumSHA1": "Rw0Fk/K5OCGiyOJYAvrd/RZtwBw=",
 			"path": "google.golang.org/appengine",
+			"revision": "4216e58b9158e5f1c906f1aca75162a46a2ec88a",
+			"revisionTime": "2018-07-31T16:49:58Z"
+		},
+		{
+			"checksumSHA1": "LiyXfqOzaeQ8vgYZH3t2hUEdVTw=",
+			"path": "google.golang.org/appengine/cloudsql",
 			"revision": "4216e58b9158e5f1c906f1aca75162a46a2ec88a",
 			"revisionTime": "2018-07-31T16:49:58Z"
 		},

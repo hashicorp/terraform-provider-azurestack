@@ -60,11 +60,12 @@ type ArmClient struct {
 	vmClient             compute.VirtualMachinesClient
 	storageServiceClient storage.AccountsClient
 
-	vnetClient     network.VirtualNetworksClient
-	secGroupClient network.SecurityGroupsClient
-	publicIPClient network.PublicIPAddressesClient
-	subnetClient   network.SubnetsClient
-	nicClient      network.InterfacesClient
+	vnetClient         network.VirtualNetworksClient
+	secGroupClient     network.SecurityGroupsClient
+	publicIPClient     network.PublicIPAddressesClient
+	subnetClient       network.SubnetsClient
+	nicClient          network.InterfacesClient
+	loadBalancerClient network.LoadBalancersClient
 
 	resourceGroupsClient resources.GroupsClient
 }
@@ -221,6 +222,10 @@ func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, a
 	localNetworkGatewaysClient := network.NewLocalNetworkGatewaysClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&localNetworkGatewaysClient.Client, auth)
 	c.localNetConnClient = localNetworkGatewaysClient
+
+	loadBalancersClient := network.NewLoadBalancersClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&loadBalancersClient.Client, auth)
+	c.loadBalancerClient = loadBalancersClient
 
 	networksClient := network.NewVirtualNetworksClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&networksClient.Client, auth)

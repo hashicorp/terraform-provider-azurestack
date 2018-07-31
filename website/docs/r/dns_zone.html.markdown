@@ -3,10 +3,10 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_dns_zone"
 sidebar_current: "docs-azurestack-resource-dns-zone"
 description: |-
-  Create a DNS Zone.
+  Manages a DNS Zone.
 ---
 
-# azurestack\_dns\_zone
+# azurestack_dns_zone
 
 Enables you to manage DNS zones within Azure DNS. These zones are hosted on Azure's name servers to which you can delegate the zone from the parent domain.
 

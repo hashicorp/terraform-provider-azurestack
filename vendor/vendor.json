@@ -3,10 +3,6 @@
 	"ignore": "test",
 	"package": [
 		{
-			"path": "github.com/Azure/azure-sdk-for-go/arm/storage",
-			"revision": ""
-		},
-		{
 			"checksumSHA1": "j/IxWXPfQn/pDPz9UljWZCddImU=",
 			"path": "github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/compute/mgmt/compute",
 			"revision": "cd93ccfe0395e70031704ca68f14606588eec120",

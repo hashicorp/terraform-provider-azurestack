@@ -6,7 +6,7 @@ description: |-
   Creates a new virtual network including any configured subnets. Each subnet can optionally be configured with a security group to be associated with the subnet.
 ---
 
-# azurestack\_virtual\_network
+# azurestack_virtual_network
 
 Creates a new virtual network including any configured subnets. Each subnet can
 optionally be configured with a security group to be associated with the subnet.

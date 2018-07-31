@@ -6,7 +6,7 @@ description: |-
   Create a DNS A Record.
 ---
 
-# azurestack\_dns\_a\_record
+# azurestack_dns_a_record
 
 Enables you to manage DNS A Records within Azure DNS.
 

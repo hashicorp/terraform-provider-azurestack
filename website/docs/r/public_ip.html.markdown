@@ -6,7 +6,7 @@ description: |-
   Create a Public IP Address.
 ---
 
-# azurestack\_public\_ip
+# azurestack_public_ip
 
 Create a Public IP Address.
 

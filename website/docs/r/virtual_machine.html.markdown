@@ -6,7 +6,7 @@ description: |-
   Create a Virtual Machine.
 ---
 
-# azurestack\_virtual\_machine
+# azurestack_virtual_machine
 
 Create a virtual machine.
 

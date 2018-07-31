@@ -6,7 +6,7 @@ description: |-
   Create a Azure Storage Blob.
 ---
 
-# azurestack\_storage\_blob
+# azurestack_storage_blob
 
 Create an Azure Storage Blob.
 

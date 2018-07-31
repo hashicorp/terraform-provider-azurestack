@@ -1,12 +1,12 @@
 ---
 layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_local_network_gateway"
+page_title: "Azure Resource Manager: azurestack_local_network_gateway"
 sidebar_current: "docs-azurerm-resource-network-local-network-gateway"
 description: |-
   Manages a local network gateway connection over which specific connections can be configured.
 ---
 
-# azurerm_local_network_gateway
+# azurestack_local_network_gateway
 
 Manages a local network gateway connection over which specific connections can be configured.
 
@@ -14,15 +14,15 @@ Manages a local network gateway connection over which specific connections can b
 
 ```hcl
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "localNetworkGWTest"
   location = "West US"
 }
 
-resource "azurerm_local_network_gateway" "home" {
+resource "azurestack_local_network_gateway" "home" {
   name                = "backHome"
-  resource_group_name = "${azurerm_resource_group.test.name}"
-  location            = "${azurerm_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
   gateway_address     = "12.13.14.15"
   address_space       = ["10.0.0.0/16"]
 }
@@ -75,5 +75,5 @@ The following attributes are exported:
 Local Network Gateways can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_local_network_gateway.lng1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Network/localNetworkGateways/lng1
+terraform import azurestack_local_network_gateway.lng1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Network/localNetworkGateways/lng1
 ```

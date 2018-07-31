@@ -15,9 +15,9 @@ import (
 
 	"golang.org/x/net/html"
 
+	cleanhttp "github.com/hashicorp/go-cleanhttp"
 	getter "github.com/hashicorp/go-getter"
 	multierror "github.com/hashicorp/go-multierror"
-	"github.com/hashicorp/terraform/httpclient"
 	"github.com/mitchellh/cli"
 )
 
@@ -33,19 +33,7 @@ const protocolVersionHeader = "x-terraform-protocol-version"
 
 var releaseHost = "https://releases.hashicorp.com"
 
-var httpClient *http.Client
-
-func init() {
-	httpClient = httpclient.New()
-
-	httpGetter := &getter.HttpGetter{
-		Client: httpClient,
-		Netrc:  true,
-	}
-
-	getter.Getters["http"] = httpGetter
-	getter.Getters["https"] = httpGetter
-}
+var httpClient = cleanhttp.DefaultPooledClient()
 
 // An Installer maintains a local cache of plugins by downloading plugins
 // from an online repository.

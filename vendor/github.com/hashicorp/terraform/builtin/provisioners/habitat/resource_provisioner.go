@@ -6,10 +6,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/url"
 	"path"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/hashicorp/terraform/communicator"
 	"github.com/hashicorp/terraform/communicator/remote"
@@ -52,7 +54,6 @@ type provisioner struct {
 	SkipInstall      bool
 	UseSudo          bool
 	ServiceType      string
-	ServiceName      string
 	URL              string
 	Channel          string
 	Events           string
@@ -77,11 +78,6 @@ func Provisioner() terraform.ResourceProvisioner {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "systemd",
-			},
-			"service_name": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "hab-supervisor",
 			},
 			"use_sudo": &schema.Schema{
 				Type:     schema.TypeBool,
@@ -179,7 +175,6 @@ func Provisioner() terraform.ResourceProvisioner {
 							Optional: true,
 						},
 						"channel": &schema.Schema{
-
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -232,13 +227,10 @@ func applyFn(ctx context.Context) error {
 		return err
 	}
 
-	retryCtx, cancel := context.WithTimeout(ctx, comm.Timeout())
-	defer cancel()
-
-	err = communicator.Retry(retryCtx, func() error {
-		return comm.Connect(o)
+	err = retryFunc(comm.Timeout(), func() error {
+		err = comm.Connect(o)
+		return err
 	})
-
 	if err != nil {
 		return err
 	}
@@ -352,7 +344,6 @@ func decodeConfig(d *schema.ResourceData) (*provisioner, error) {
 		Services:         getServices(d.Get("service").(*schema.Set).List()),
 		UseSudo:          d.Get("use_sudo").(bool),
 		ServiceType:      d.Get("service_type").(string),
-		ServiceName:      d.Get("service_name").(string),
 		RingKey:          d.Get("ring_key").(string),
 		RingKeyContent:   d.Get("ring_key_content").(string),
 		PermanentPeer:    d.Get("permanent_peer").(bool),
@@ -578,9 +569,9 @@ func (p *provisioner) startHabSystemd(o terraform.UIOutput, comm communicator.Co
 
 	var command string
 	if p.UseSudo {
-		command = fmt.Sprintf("sudo echo '%s' | sudo tee /etc/systemd/system/%s.service > /dev/null", &buf, p.ServiceName)
+		command = fmt.Sprintf("sudo echo '%s' | sudo tee /etc/systemd/system/hab-supervisor.service > /dev/null", &buf)
 	} else {
-		command = fmt.Sprintf("echo '%s' | tee /etc/systemd/system/%s.service > /dev/null", &buf, p.ServiceName)
+		command = fmt.Sprintf("echo '%s' | tee /etc/systemd/system/hab-supervisor.service > /dev/null", &buf)
 	}
 
 	if err := p.runCommand(o, comm, command); err != nil {
@@ -588,16 +579,15 @@ func (p *provisioner) startHabSystemd(o terraform.UIOutput, comm communicator.Co
 	}
 
 	if p.UseSudo {
-		command = fmt.Sprintf("sudo systemctl enable hab-supervisor && sudo systemctl start hab-supervisor")
+		command = fmt.Sprintf("sudo systemctl start hab-supervisor")
 	} else {
-		command = fmt.Sprintf("systemctl enable hab-supervisor && systemctl start hab-supervisor")
+		command = fmt.Sprintf("systemctl start hab-supervisor")
 	}
 	return p.runCommand(o, comm, command)
 }
 
 func (p *provisioner) createHabUser(o terraform.UIOutput, comm communicator.Communicator) error {
-	addUser := false
-	// Install busybox to get us the user tools we need
+	// Create the hab user
 	command := fmt.Sprintf("env HAB_NONINTERACTIVE=true hab install core/busybox")
 	if p.UseSudo {
 		command = fmt.Sprintf("sudo %s", command)
@@ -606,57 +596,29 @@ func (p *provisioner) createHabUser(o terraform.UIOutput, comm communicator.Comm
 		return err
 	}
 
-	// Check for existing hab user
-	command = fmt.Sprintf("hab pkg exec core/busybox id hab")
+	command = fmt.Sprintf("hab pkg exec core/busybox adduser -D -g \"\" hab")
 	if p.UseSudo {
 		command = fmt.Sprintf("sudo %s", command)
-	}
-	if err := p.runCommand(o, comm, command); err != nil {
-		o.Output("No existing hab user detected, creating...")
-		addUser = true
-	}
-
-	if addUser {
-		command = fmt.Sprintf("hab pkg exec core/busybox adduser -D -g \"\" hab")
-		if p.UseSudo {
-			command = fmt.Sprintf("sudo %s", command)
-		}
-		return p.runCommand(o, comm, command)
-	}
-
-	return nil
-}
-
-// In the future we'll remove the dedicated install once the synchronous load feature in hab-sup is
-// available. Until then we install here to provide output and a noisy failure mechanism because
-// if you install with the pkg load, it occurs asynchronously and fails quietly.
-func (p *provisioner) installHabPackage(o terraform.UIOutput, comm communicator.Communicator, service Service) error {
-	var command string
-	options := ""
-	if service.Channel != "" {
-		options += fmt.Sprintf(" --channel %s", service.Channel)
-	}
-
-	if service.URL != "" {
-		options += fmt.Sprintf(" --url %s", service.URL)
-	}
-	if p.UseSudo {
-		command = fmt.Sprintf("env HAB_NONINTERACTIVE=true sudo -E hab pkg install %s %s", service.Name, options)
-	} else {
-		command = fmt.Sprintf("env HAB_NONINTERACTIVE=true hab pkg install %s %s", service.Name, options)
-	}
-
-	if p.BuilderAuthToken != "" {
-		command = fmt.Sprintf("env HAB_AUTH_TOKEN=%s %s", p.BuilderAuthToken, command)
 	}
 	return p.runCommand(o, comm, command)
 }
 
 func (p *provisioner) startHabService(o terraform.UIOutput, comm communicator.Communicator, service Service) error {
 	var command string
-	if err := p.installHabPackage(o, comm, service); err != nil {
+	if p.UseSudo {
+		command = fmt.Sprintf("env HAB_NONINTERACTIVE=true sudo -E hab pkg install %s", service.Name)
+	} else {
+		command = fmt.Sprintf("env HAB_NONINTERACTIVE=true hab pkg install %s", service.Name)
+	}
+
+	if p.BuilderAuthToken != "" {
+		command = fmt.Sprintf("env HAB_AUTH_TOKEN=%s %s", p.BuilderAuthToken, command)
+	}
+
+	if err := p.runCommand(o, comm, command); err != nil {
 		return err
 	}
+
 	if err := p.uploadUserTOML(o, comm, service); err != nil {
 		return err
 	}
@@ -744,7 +706,26 @@ func (p *provisioner) uploadUserTOML(o terraform.UIOutput, comm communicator.Com
 
 }
 
-func (p *provisioner) copyOutput(o terraform.UIOutput, r io.Reader) {
+func retryFunc(timeout time.Duration, f func() error) error {
+	finish := time.After(timeout)
+
+	for {
+		err := f()
+		if err == nil {
+			return nil
+		}
+		log.Printf("Retryable error: %v", err)
+
+		select {
+		case <-finish:
+			return err
+		case <-time.After(3 * time.Second):
+		}
+	}
+}
+
+func (p *provisioner) copyOutput(o terraform.UIOutput, r io.Reader, doneCh chan<- struct{}) {
+	defer close(doneCh)
 	lr := linereader.New(r)
 	for line := range lr.Ch {
 		o.Output(line)
@@ -754,11 +735,12 @@ func (p *provisioner) copyOutput(o terraform.UIOutput, r io.Reader) {
 func (p *provisioner) runCommand(o terraform.UIOutput, comm communicator.Communicator, command string) error {
 	outR, outW := io.Pipe()
 	errR, errW := io.Pipe()
+	var err error
 
-	go p.copyOutput(o, outR)
-	go p.copyOutput(o, errR)
-	defer outW.Close()
-	defer errW.Close()
+	outDoneCh := make(chan struct{})
+	errDoneCh := make(chan struct{})
+	go p.copyOutput(o, outR, outDoneCh)
+	go p.copyOutput(o, errR, errDoneCh)
 
 	cmd := &remote.Cmd{
 		Command: command,
@@ -766,15 +748,22 @@ func (p *provisioner) runCommand(o terraform.UIOutput, comm communicator.Communi
 		Stderr:  errW,
 	}
 
-	if err := comm.Start(cmd); err != nil {
+	if err = comm.Start(cmd); err != nil {
 		return fmt.Errorf("Error executing command %q: %v", cmd.Command, err)
 	}
 
-	if err := cmd.Wait(); err != nil {
-		return err
+	cmd.Wait()
+	if cmd.ExitStatus != 0 {
+		err = fmt.Errorf(
+			"Command %q exited with non-zero exit status: %d", cmd.Command, cmd.ExitStatus)
 	}
 
-	return nil
+	outW.Close()
+	errW.Close()
+	<-outDoneCh
+	<-errDoneCh
+
+	return err
 }
 
 func getBindFromString(bind string) (Bind, error) {

@@ -583,11 +583,18 @@ func (m *Meta) backendFromPlan(opts *BackendOpts) (backend.Backend, error) {
 	}
 
 	if m.stateLock {
-		stateLocker := clistate.NewLocker(context.Background(), m.stateLockTimeout, m.Ui, m.Colorize())
-		if err := stateLocker.Lock(realMgr, "backend from plan"); err != nil {
+		lockCtx, cancel := context.WithTimeout(context.Background(), m.stateLockTimeout)
+		defer cancel()
+
+		// Lock the state if we can
+		lockInfo := state.NewLockInfo()
+		lockInfo.Operation = "backend from plan"
+
+		lockID, err := clistate.Lock(lockCtx, realMgr, lockInfo, m.Ui, m.Colorize())
+		if err != nil {
 			return nil, fmt.Errorf("Error locking state: %s", err)
 		}
-		defer stateLocker.Unlock(nil)
+		defer clistate.Unlock(realMgr, lockID, m.Ui, m.Colorize())
 	}
 
 	if err := realMgr.RefreshState(); err != nil {
@@ -957,11 +964,18 @@ func (m *Meta) backend_C_r_s(
 	}
 
 	if m.stateLock {
-		stateLocker := clistate.NewLocker(context.Background(), m.stateLockTimeout, m.Ui, m.Colorize())
-		if err := stateLocker.Lock(sMgr, "backend from plan"); err != nil {
+		lockCtx, cancel := context.WithTimeout(context.Background(), m.stateLockTimeout)
+		defer cancel()
+
+		// Lock the state if we can
+		lockInfo := state.NewLockInfo()
+		lockInfo.Operation = "backend from config"
+
+		lockID, err := clistate.Lock(lockCtx, sMgr, lockInfo, m.Ui, m.Colorize())
+		if err != nil {
 			return nil, fmt.Errorf("Error locking state: %s", err)
 		}
-		defer stateLocker.Unlock(nil)
+		defer clistate.Unlock(sMgr, lockID, m.Ui, m.Colorize())
 	}
 
 	// Store the metadata in our saved state location
@@ -1033,11 +1047,18 @@ func (m *Meta) backend_C_r_S_changed(
 	}
 
 	if m.stateLock {
-		stateLocker := clistate.NewLocker(context.Background(), m.stateLockTimeout, m.Ui, m.Colorize())
-		if err := stateLocker.Lock(sMgr, "backend from plan"); err != nil {
+		lockCtx, cancel := context.WithTimeout(context.Background(), m.stateLockTimeout)
+		defer cancel()
+
+		// Lock the state if we can
+		lockInfo := state.NewLockInfo()
+		lockInfo.Operation = "backend from config"
+
+		lockID, err := clistate.Lock(lockCtx, sMgr, lockInfo, m.Ui, m.Colorize())
+		if err != nil {
 			return nil, fmt.Errorf("Error locking state: %s", err)
 		}
-		defer stateLocker.Unlock(nil)
+		defer clistate.Unlock(sMgr, lockID, m.Ui, m.Colorize())
 	}
 
 	// Update the backend state
@@ -1169,11 +1190,18 @@ func (m *Meta) backend_C_R_S_unchanged(
 	}
 
 	if m.stateLock {
-		stateLocker := clistate.NewLocker(context.Background(), m.stateLockTimeout, m.Ui, m.Colorize())
-		if err := stateLocker.Lock(sMgr, "backend from plan"); err != nil {
+		lockCtx, cancel := context.WithTimeout(context.Background(), m.stateLockTimeout)
+		defer cancel()
+
+		// Lock the state if we can
+		lockInfo := state.NewLockInfo()
+		lockInfo.Operation = "backend from config"
+
+		lockID, err := clistate.Lock(lockCtx, sMgr, lockInfo, m.Ui, m.Colorize())
+		if err != nil {
 			return nil, fmt.Errorf("Error locking state: %s", err)
 		}
-		defer stateLocker.Unlock(nil)
+		defer clistate.Unlock(sMgr, lockID, m.Ui, m.Colorize())
 	}
 
 	// Unset the remote state

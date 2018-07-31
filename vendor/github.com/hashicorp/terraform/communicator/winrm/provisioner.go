@@ -37,7 +37,6 @@ type connectionInfo struct {
 	Port       int
 	HTTPS      bool
 	Insecure   bool
-	NTLM       bool   `mapstructure:"use_ntlm"`
 	CACert     string `mapstructure:"cacert"`
 	Timeout    string
 	ScriptPath string        `mapstructure:"script_path"`

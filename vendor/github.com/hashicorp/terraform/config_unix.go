@@ -3,10 +3,12 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"os"
-	"os/user"
+	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 func configFile() (string, error) {
@@ -38,15 +40,18 @@ func homeDir() (string, error) {
 		return home, nil
 	}
 
-	// If that fails, try build-in module
-	user, err := user.Current()
-	if err != nil {
+	// If that fails, try the shell
+	var stdout bytes.Buffer
+	cmd := exec.Command("sh", "-c", "eval echo ~$USER")
+	cmd.Stdout = &stdout
+	if err := cmd.Run(); err != nil {
 		return "", err
 	}
 
-	if user.HomeDir == "" {
+	result := strings.TrimSpace(stdout.String())
+	if result == "" {
 		return "", errors.New("blank output")
 	}
 
-	return user.HomeDir, nil
+	return result, nil
 }

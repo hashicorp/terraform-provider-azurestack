@@ -64,7 +64,7 @@ func dataSourceRemoteState() *schema.Resource {
 }
 
 func dataSourceRemoteStateRead(d *schema.ResourceData, meta interface{}) error {
-	backendType := d.Get("backend").(string)
+	backend := d.Get("backend").(string)
 
 	// Get the configuration in a type we want.
 	rawConfig, err := config.NewRawConfig(d.Get("config").(map[string]interface{}))
@@ -73,16 +73,16 @@ func dataSourceRemoteStateRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	// Don't break people using the old _local syntax - but note warning above
-	if backendType == "_local" {
+	if backend == "_local" {
 		log.Println(`[INFO] Switching old (unsupported) backend "_local" to "local"`)
-		backendType = "local"
+		backend = "local"
 	}
 
 	// Create the client to access our remote state
-	log.Printf("[DEBUG] Initializing remote state backend: %s", backendType)
-	f := backendinit.Backend(backendType)
+	log.Printf("[DEBUG] Initializing remote state backend: %s", backend)
+	f := backendinit.Backend(backend)
 	if f == nil {
-		return fmt.Errorf("Unknown backend type: %s", backendType)
+		return fmt.Errorf("Unknown backend type: %s", backend)
 	}
 	b := f()
 
@@ -94,10 +94,9 @@ func dataSourceRemoteStateRead(d *schema.ResourceData, meta interface{}) error {
 	// environment is deprecated in favour of workspace.
 	// If both keys are set workspace should win.
 	name := d.Get("environment").(string)
-	if ws, ok := d.GetOk("workspace"); ok && ws != backend.DefaultStateName {
+	if ws, ok := d.GetOk("workspace"); ok {
 		name = ws.(string)
 	}
-
 	state, err := b.State(name)
 	if err != nil {
 		return fmt.Errorf("error loading the remote state: %s", err)
@@ -119,9 +118,7 @@ func dataSourceRemoteStateRead(d *schema.ResourceData, meta interface{}) error {
 		log.Println("[DEBUG] empty remote state")
 	} else {
 		for key, val := range remoteState.RootModule().Outputs {
-			if val.Value != nil {
-				outputMap[key] = val.Value
-			}
+			outputMap[key] = val.Value
 		}
 	}
 

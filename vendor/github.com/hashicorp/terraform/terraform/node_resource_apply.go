@@ -140,10 +140,7 @@ func (n *NodeApplyableResource) evalTreeDataResource(
 			// Here we are just populating the interpolated value in-place
 			// inside this RawConfig object, like we would in
 			// NodeAbstractCountResource.
-			&EvalInterpolate{
-				Config:        n.Config.RawCount,
-				ContinueOnErr: true,
-			},
+			&EvalInterpolate{Config: n.Config.RawCount},
 
 			// We need to re-interpolate the config here, rather than
 			// just using the diff's values directly, because we've
@@ -274,10 +271,7 @@ func (n *NodeApplyableResource) evalTreeManagedResource(
 			// Here we are just populating the interpolated value in-place
 			// inside this RawConfig object, like we would in
 			// NodeAbstractCountResource.
-			&EvalInterpolate{
-				Config:        n.Config.RawCount,
-				ContinueOnErr: true,
-			},
+			&EvalInterpolate{Config: n.Config.RawCount},
 
 			&EvalInterpolate{
 				Config:   n.Config.RawConfig.Copy(),

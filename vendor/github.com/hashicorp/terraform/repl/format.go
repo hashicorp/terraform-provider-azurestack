@@ -13,15 +13,12 @@ import (
 // The value must currently be a string, list, map, and any nested values
 // with those same types.
 func FormatResult(value interface{}) (string, error) {
-	return formatResult(value, false)
+	return formatResult(value)
 }
 
-func formatResult(value interface{}, nested bool) (string, error) {
+func formatResult(value interface{}) (string, error) {
 	switch output := value.(type) {
 	case string:
-		if nested {
-			return fmt.Sprintf("%q", output), nil
-		}
 		return output, nil
 	case []interface{}:
 		return formatListResult(output)
@@ -39,14 +36,18 @@ func formatListResult(value []interface{}) (string, error) {
 		outputBuf.WriteString("\n")
 	}
 
-	for _, v := range value {
-		raw, err := formatResult(v, true)
+	lastIdx := len(value) - 1
+	for i, v := range value {
+		raw, err := formatResult(v)
 		if err != nil {
 			return "", err
 		}
 
 		outputBuf.WriteString(indent(raw))
-		outputBuf.WriteString(",\n")
+		if lastIdx != i {
+			outputBuf.WriteString(",")
+		}
+		outputBuf.WriteString("\n")
 	}
 
 	outputBuf.WriteString("]")
@@ -68,17 +69,12 @@ func formatMapResult(value map[string]interface{}) (string, error) {
 
 	for _, k := range ks {
 		v := value[k]
-		rawK, err := formatResult(k, true)
-		if err != nil {
-			return "", err
-		}
-		rawV, err := formatResult(v, true)
+		raw, err := formatResult(v)
 		if err != nil {
 			return "", err
 		}
 
-		outputBuf.WriteString(indent(fmt.Sprintf("%s = %s", rawK, rawV)))
-		outputBuf.WriteString("\n")
+		outputBuf.WriteString(indent(fmt.Sprintf("%s = %v\n", k, raw)))
 	}
 
 	outputBuf.WriteString("}")
@@ -88,13 +84,8 @@ func formatMapResult(value map[string]interface{}) (string, error) {
 func indent(value string) string {
 	var outputBuf bytes.Buffer
 	s := bufio.NewScanner(strings.NewReader(value))
-	newline := false
 	for s.Scan() {
-		if newline {
-			outputBuf.WriteByte('\n')
-		}
 		outputBuf.WriteString("  " + s.Text())
-		newline = true
 	}
 
 	return outputBuf.String()

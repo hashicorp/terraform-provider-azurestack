@@ -114,6 +114,8 @@ func Provisioner() terraform.ResourceProvisioner {
 // Apply executes the file provisioner
 func applyFn(ctx context.Context) error {
 	// Decode the raw config for this provisioner
+	var err error
+
 	o := ctx.Value(schema.ProvOutputKey).(terraform.UIOutput)
 	d := ctx.Value(schema.ProvConfigDataKey).(*schema.ResourceData)
 	connState := ctx.Value(schema.ProvRawStateKey).(*terraform.InstanceState)
@@ -129,24 +131,6 @@ func applyFn(ctx context.Context) error {
 		return err
 	}
 
-	retryCtx, cancel := context.WithTimeout(ctx, comm.Timeout())
-	defer cancel()
-
-	// Wait and retry until we establish the connection
-	err = communicator.Retry(retryCtx, func() error {
-		return comm.Connect(o)
-	})
-
-	if err != nil {
-		return err
-	}
-
-	// Wait for the context to end and then disconnect
-	go func() {
-		<-ctx.Done()
-		comm.Disconnect()
-	}()
-
 	var src, dst string
 
 	o.Output("Provisioning with Salt...")
@@ -160,17 +144,19 @@ func applyFn(ctx context.Context) error {
 			err = fmt.Errorf("Unable to download Salt: %s", err)
 		}
 
-		if err := cmd.Wait(); err != nil {
-			return err
+		if err == nil {
+			cmd.Wait()
+			if cmd.ExitStatus != 0 {
+				err = fmt.Errorf("Script exited with non-zero exit status: %d", cmd.ExitStatus)
+			}
 		}
 
 		outR, outW := io.Pipe()
 		errR, errW := io.Pipe()
-		go copyOutput(o, outR)
-		go copyOutput(o, errR)
-		defer outW.Close()
-		defer errW.Close()
-
+		outDoneCh := make(chan struct{})
+		errDoneCh := make(chan struct{})
+		go copyOutput(o, outR, outDoneCh)
+		go copyOutput(o, errR, errDoneCh)
 		cmd = &remote.Cmd{
 			Command: fmt.Sprintf("%s /tmp/install_salt.sh %s", p.sudo("sh"), p.BootstrapArgs),
 			Stdout:  outW,
@@ -178,11 +164,22 @@ func applyFn(ctx context.Context) error {
 		}
 
 		o.Output(fmt.Sprintf("Installing Salt with command %s", cmd.Command))
-		if err := comm.Start(cmd); err != nil {
-			return fmt.Errorf("Unable to install Salt: %s", err)
+		if err = comm.Start(cmd); err != nil {
+			err = fmt.Errorf("Unable to install Salt: %s", err)
 		}
 
-		if err := cmd.Wait(); err != nil {
+		if err == nil {
+			cmd.Wait()
+			if cmd.ExitStatus != 0 {
+				err = fmt.Errorf("Script exited with non-zero exit status: %d", cmd.ExitStatus)
+			}
+		}
+		// Wait for output to clean up
+		outW.Close()
+		errW.Close()
+		<-outDoneCh
+		<-errDoneCh
+		if err != nil {
 			return err
 		}
 	}
@@ -251,25 +248,37 @@ func applyFn(ctx context.Context) error {
 
 	outR, outW := io.Pipe()
 	errR, errW := io.Pipe()
-	go copyOutput(o, outR)
-	go copyOutput(o, errR)
-	defer outW.Close()
-	defer errW.Close()
+	outDoneCh := make(chan struct{})
+	errDoneCh := make(chan struct{})
 
+	go copyOutput(o, outR, outDoneCh)
+	go copyOutput(o, errR, errDoneCh)
 	o.Output(fmt.Sprintf("Running: salt-call --local %s", p.CmdArgs))
 	cmd := &remote.Cmd{
 		Command: p.sudo(fmt.Sprintf("salt-call --local %s", p.CmdArgs)),
 		Stdout:  outW,
 		Stderr:  errW,
 	}
-	if err = comm.Start(cmd); err != nil {
+	if err = comm.Start(cmd); err != nil || cmd.ExitStatus != 0 {
+		if err == nil {
+			err = fmt.Errorf("Bad exit status: %d", cmd.ExitStatus)
+		}
+
 		err = fmt.Errorf("Error executing salt-call: %s", err)
 	}
-
-	if err := cmd.Wait(); err != nil {
-		return err
+	if err == nil {
+		cmd.Wait()
+		if cmd.ExitStatus != 0 {
+			err = fmt.Errorf("Script exited with non-zero exit status: %d", cmd.ExitStatus)
+		}
 	}
-	return nil
+	// Wait for output to clean up
+	outW.Close()
+	errW.Close()
+	<-outDoneCh
+	<-errDoneCh
+
+	return err
 }
 
 // Prepends sudo to supplied command if config says to
@@ -327,11 +336,12 @@ func (p *provisioner) uploadFile(o terraform.UIOutput, comm communicator.Communi
 func (p *provisioner) moveFile(o terraform.UIOutput, comm communicator.Communicator, dst, src string) error {
 	o.Output(fmt.Sprintf("Moving %s to %s", src, dst))
 	cmd := &remote.Cmd{Command: fmt.Sprintf(p.sudo("mv %s %s"), src, dst)}
-	if err := comm.Start(cmd); err != nil {
+	if err := comm.Start(cmd); err != nil || cmd.ExitStatus != 0 {
+		if err == nil {
+			err = fmt.Errorf("Bad exit status: %d", cmd.ExitStatus)
+		}
+
 		return fmt.Errorf("Unable to move %s to %s: %s", src, dst, err)
-	}
-	if err := cmd.Wait(); err != nil {
-		return err
 	}
 	return nil
 }
@@ -344,9 +354,8 @@ func (p *provisioner) createDir(o terraform.UIOutput, comm communicator.Communic
 	if err := comm.Start(cmd); err != nil {
 		return err
 	}
-
-	if err := cmd.Wait(); err != nil {
-		return err
+	if cmd.ExitStatus != 0 {
+		return fmt.Errorf("Non-zero exit status.")
 	}
 	return nil
 }
@@ -359,8 +368,8 @@ func (p *provisioner) removeDir(o terraform.UIOutput, comm communicator.Communic
 	if err := comm.Start(cmd); err != nil {
 		return err
 	}
-	if err := cmd.Wait(); err != nil {
-		return err
+	if cmd.ExitStatus != 0 {
+		return fmt.Errorf("Non-zero exit status.")
 	}
 	return nil
 }
@@ -515,7 +524,8 @@ func decodeConfig(d *schema.ResourceData) (*provisioner, error) {
 }
 
 func copyOutput(
-	o terraform.UIOutput, r io.Reader) {
+	o terraform.UIOutput, r io.Reader, doneCh chan<- struct{}) {
+	defer close(doneCh)
 	lr := linereader.New(r)
 	for line := range lr.Ch {
 		o.Output(line)

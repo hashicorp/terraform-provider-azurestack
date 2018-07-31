@@ -2,7 +2,6 @@ package local
 
 import (
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"testing"
 
@@ -16,22 +15,15 @@ import (
 //
 // No operations will be called on the returned value, so you can still set
 // public fields without any locks.
-func TestLocal(t *testing.T) (*Local, func()) {
+func TestLocal(t *testing.T) *Local {
 	tempDir := testTempDir(t)
-	local := &Local{
+	return &Local{
 		StatePath:         filepath.Join(tempDir, "state.tfstate"),
 		StateOutPath:      filepath.Join(tempDir, "state.tfstate"),
 		StateBackupPath:   filepath.Join(tempDir, "state.tfstate.bak"),
 		StateWorkspaceDir: filepath.Join(tempDir, "state.tfstate.d"),
 		ContextOpts:       &terraform.ContextOpts{},
 	}
-	cleanup := func() {
-		if err := os.RemoveAll(tempDir); err != nil {
-			t.Fatal("error clecanup up test:", err)
-		}
-	}
-
-	return local, cleanup
 }
 
 // TestLocalProvider modifies the ContextOpts of the *Local parameter to

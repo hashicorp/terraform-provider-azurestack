@@ -487,13 +487,6 @@ func (c *Context) Input(mode InputMode) error {
 func (c *Context) Apply() (*State, error) {
 	defer c.acquireRun("apply")()
 
-	// Check there are no empty target parameter values
-	for _, target := range c.targets {
-		if target == "" {
-			return nil, fmt.Errorf("Target parameter must not have empty value")
-		}
-	}
-
 	// Copy our own state
 	c.state = c.state.DeepCopy()
 
@@ -530,13 +523,6 @@ func (c *Context) Apply() (*State, error) {
 // by the plan, so Apply can be called after.
 func (c *Context) Plan() (*Plan, error) {
 	defer c.acquireRun("plan")()
-
-	// Check there are no empty target parameter values
-	for _, target := range c.targets {
-		if target == "" {
-			return nil, fmt.Errorf("Target parameter must not have empty value")
-		}
-	}
 
 	p := &Plan{
 		Module:  c.module,

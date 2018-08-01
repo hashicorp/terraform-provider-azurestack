@@ -9,7 +9,6 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"os"
 	"reflect"
 	"sort"
 	"strconv"
@@ -17,10 +16,10 @@ import (
 	"sync"
 
 	"github.com/hashicorp/go-multierror"
-	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/terraform/config"
 	"github.com/mitchellh/copystructure"
+	"github.com/satori/go.uuid"
 
 	tfversion "github.com/hashicorp/terraform/version"
 )
@@ -707,11 +706,7 @@ func (s *State) EnsureHasLineage() {
 
 func (s *State) ensureHasLineage() {
 	if s.Lineage == "" {
-		lineage, err := uuid.GenerateUUID()
-		if err != nil {
-			panic(fmt.Errorf("Failed to generate lineage: %v", err))
-		}
-		s.Lineage = lineage
+		s.Lineage = uuid.NewV4().String()
 		log.Printf("[DEBUG] New state was assigned lineage %q\n", s.Lineage)
 	} else {
 		log.Printf("[TRACE] Preserving existing state lineage %q\n", s.Lineage)
@@ -1877,19 +1872,11 @@ var ErrNoState = errors.New("no state")
 // ReadState reads a state structure out of a reader in the format that
 // was written by WriteState.
 func ReadState(src io.Reader) (*State, error) {
-	// check for a nil file specifically, since that produces a platform
-	// specific error if we try to use it in a bufio.Reader.
-	if f, ok := src.(*os.File); ok && f == nil {
-		return nil, ErrNoState
-	}
-
 	buf := bufio.NewReader(src)
-
 	if _, err := buf.Peek(1); err != nil {
-		if err == io.EOF {
-			return nil, ErrNoState
-		}
-		return nil, err
+		// the error is either io.EOF or "invalid argument", and both are from
+		// an empty state.
+		return nil, ErrNoState
 	}
 
 	if err := testForV0State(buf); err != nil {

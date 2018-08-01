@@ -492,12 +492,6 @@ func (r *Resource) Data(s *terraform.InstanceState) *ResourceData {
 		panic(err)
 	}
 
-	// load the Resource timeouts
-	result.timeouts = r.Timeouts
-	if result.timeouts == nil {
-		result.timeouts = &ResourceTimeout{}
-	}
-
 	// Set the schema version to latest by default
 	result.meta = map[string]interface{}{
 		"schema_version": strconv.Itoa(r.SchemaVersion),

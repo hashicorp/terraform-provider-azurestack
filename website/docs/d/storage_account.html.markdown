@@ -3,8 +3,7 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_storage_account"
 sidebar_current: "docs-azurestack-datasource-storage-account"
 description: |-
-  Gets information about the specified Storage Account.
-
+  Get information about the specified Storage Account.
 ---
 
 # Data Source: azurestack_storage_account

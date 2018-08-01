@@ -1,12 +1,12 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_virtual_machine_scale_set"
-sidebar_current: "docs-azurerm-resource-compute-virtualmachine-scale-set"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_virtual_machine_scale_set"
+sidebar_current: "docs-azurestack-resource-compute-virtualmachine-scale-set"
 description: |-
   Create a Virtual Machine scale set.
 ---
 
-# azurerm\_virtual\_machine\_scale\_set
+# azurestack\_virtual\_machine\_scale\_set
 
 Create a virtual machine scale set.
 
@@ -17,28 +17,28 @@ Create a virtual machine scale set.
 ## Example Usage with Unmanaged Disks
 
 ```hcl
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG"
   location = "West US"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
   name                = "acctvn"
   address_space       = ["10.0.0.0/16"]
   location            = "West US"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_subnet" "test" {
+resource "azurestack_subnet" "test" {
   name                 = "acctsub"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
-  virtual_network_name = "${azurerm_virtual_network.test.name}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
   address_prefix       = "10.0.2.0/24"
 }
 
-resource "azurerm_storage_account" "test" {
+resource "azurestack_storage_account" "test" {
   name                     = "accsa"
-  resource_group_name      = "${azurerm_resource_group.test.name}"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
   location                 = "westus"
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -48,17 +48,17 @@ resource "azurerm_storage_account" "test" {
   }
 }
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
   name                  = "vhds"
-  resource_group_name   = "${azurerm_resource_group.test.name}"
-  storage_account_name  = "${azurerm_storage_account.test.name}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
   container_access_type = "private"
 }
 
-resource "azurerm_virtual_machine_scale_set" "test" {
+resource "azurestack_virtual_machine_scale_set" "test" {
   name                = "mytestscaleset-1"
   location            = "West US"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
@@ -88,7 +88,7 @@ resource "azurerm_virtual_machine_scale_set" "test" {
 
     ip_configuration {
       name      = "TestIPConfiguration"
-      subnet_id = "${azurerm_subnet.test.id}"
+      subnet_id = "${azurestack_subnet.test.id}"
     }
   }
 
@@ -96,7 +96,7 @@ resource "azurerm_virtual_machine_scale_set" "test" {
     name           = "osDiskProfile"
     caching        = "ReadWrite"
     create_option  = "FromImage"
-    vhd_containers = ["${azurerm_storage_account.test.primary_blob_endpoint}${azurerm_storage_container.test.name}"]
+    vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
   }
 
   storage_profile_image_reference {
@@ -127,7 +127,6 @@ The following arguments are supported:
 * `storage_profile_os_disk` - (Required) A storage profile os disk block as documented below
 * `storage_profile_image_reference` - (Optional) A storage profile image reference block as documented below.
 * `extension` - (Optional) Can be specified multiple times to add extension profiles to the scale set. Each `extension` block supports the fields documented below.
-* `boot_diagnostics` - (Optional) A boot diagnostics profile block as referenced below.
 * `plan` - (Optional) A plan block as documented below.
 * `priority` - (Optional) Specifies the priority for the virtual machines in the scale set, defaults to `Regular`. Possible values are `Low` and `Regular`.
 * `tags` - (Optional) A mapping of tags to assign to the resource.
@@ -145,10 +144,10 @@ The following arguments are supported:
 * `type` - (Required) Specifies the identity type to be assigned to the scale set. The only allowable value is `SystemAssigned`. To enable Managed Service Identity (MSI) on all machines in the scale set, an extension with the type "ManagedIdentityExtensionForWindows" or "ManagedIdentityExtensionForLinux" must also be added. The scale set's Service Principal ID (SPN) can be retrieved after the scale set has been created.
 
 ```hcl
-resource "azurerm_virtual_machine_scale_set" "test" {
+resource "azurestack_virtual_machine_scale_set" "test" {
   name                = "vm-scaleset"
-  resource_group_name = "${azurerm_resource_group.test.name}"
-  location            = "${azurerm_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
 
   sku {
     name     = "${var.vm_sku}"
@@ -169,7 +168,7 @@ resource "azurerm_virtual_machine_scale_set" "test" {
   }
 
   output "principal_id" {
-    value = "${lookup(azurerm_virtual_machine.test.identity[0], "principal_id")}"
+    value = "${lookup(azurestack_virtual_machine.test.identity[0], "principal_id")}"
   }
 ```
 
@@ -283,17 +282,17 @@ machine scale set, as in the [example below](#example-of-storage_profile_image_r
 
 ```hcl
 
-resource "azurerm_image" "test" {
+resource "azurestack_image" "test" {
 	name = "test"
   ...
 }
 
-resource "azurerm_virtual_machine_scale_set" "test" {
+resource "azurestack_virtual_machine_scale_set" "test" {
 	name = "test"
   ...
 
 	storage_profile_image_reference {
-		id = "${azurerm_image.test.id}"
+		id = "${azurestack_image.test.id}"
 	}
 
 ...
@@ -304,11 +303,12 @@ resource "azurerm_virtual_machine_scale_set" "test" {
 The following attributes are exported:
 
 * `id` - The virtual machine scale set ID.
+* `boot_diagnostics` - A boot diagnostics profile block as referenced below.
 
 ## Import
 
 Virtual Machine Scale Sets can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_virtual_machine_scale_set.scaleset1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Compute/virtualMachineScaleSets/scaleset1
+terraform import azurestack_virtual_machine_scale_set.scaleset1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Compute/virtualMachineScaleSets/scaleset1
 ```

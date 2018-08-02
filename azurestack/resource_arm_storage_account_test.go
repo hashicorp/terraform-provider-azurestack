@@ -291,7 +291,7 @@ func TestAccAzureStackStorageAccount_blobStorageWithUpdate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
 					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "account_kind", "BlobStorage"),
-					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "access_tier", "Hot"),
+					//  resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "access_tier", "Hot"),
 				),
 			},
 
@@ -299,7 +299,7 @@ func TestAccAzureStackStorageAccount_blobStorageWithUpdate(t *testing.T) {
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "access_tier", "Cool"),
+					// resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "access_tier", "Cool"),
 				),
 			},
 		},
@@ -327,7 +327,7 @@ func TestAccAzureStackStorageAccount_storageV2WithUpdate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
 					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "account_kind", "StorageV2"),
-					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "access_tier", "Hot"),
+					// resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "access_tier", "Hot"),
 				),
 			},
 
@@ -335,7 +335,7 @@ func TestAccAzureStackStorageAccount_storageV2WithUpdate(t *testing.T) {
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "access_tier", "Cool"),
+					// resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "access_tier", "Cool"),
 				),
 			},
 		},
@@ -687,7 +687,6 @@ resource "azurestack_storage_account" "testsa" {
     account_kind = "BlobStorage"
     account_tier = "Standard"
     account_replication_type = "LRS"
-    access_tier = "Cool"
 
     tags {
         environment = "production"
@@ -734,7 +733,6 @@ resource "azurestack_storage_account" "testsa" {
     account_kind = "StorageV2"
     account_tier = "Standard"
     account_replication_type = "LRS"
-    access_tier = "Cool"
 
     tags {
         environment = "production"

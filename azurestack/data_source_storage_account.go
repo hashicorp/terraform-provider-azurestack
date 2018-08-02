@@ -36,11 +36,11 @@ func dataSourceArmStorageAccount() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-
-			"access_tier": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
+			// currently not supported on Azure Stack
+			// "access_tier": {
+			// 	Type:     schema.TypeString,
+			// 	Computed: true,
+			// },
 
 			"account_encryption_source": {
 				Type:     schema.TypeString,
@@ -197,7 +197,8 @@ func dataSourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) e
 	}
 
 	if props := resp.AccountProperties; props != nil {
-		d.Set("access_tier", props.AccessTier)
+		// Currently not supported on Azure Stack
+		// d.Set("access_tier", props.AccessTier)
 
 		// Not supported for 2017-03-09 profile
 		// d.Set("enable_https_traffic_only", props.EnableHTTPSTrafficOnly)

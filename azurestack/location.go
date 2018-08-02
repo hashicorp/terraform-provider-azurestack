@@ -35,3 +35,14 @@ func azureStackNormalizeLocation(location interface{}) string {
 func azureStackSuppressLocationDiff(k, old, new string, d *schema.ResourceData) bool {
 	return azureStackNormalizeLocation(old) == azureStackNormalizeLocation(new)
 }
+
+func deprecatedLocationSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:             schema.TypeString,
+		ForceNew:         true,
+		Optional:         true,
+		StateFunc:        azureStackNormalizeLocation,
+		DiffSuppressFunc: azureStackSuppressLocationDiff,
+		Deprecated:       "location is no longer used",
+	}
+}

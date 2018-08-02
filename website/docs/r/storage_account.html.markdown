@@ -3,12 +3,12 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_storage_account"
 sidebar_current: "docs-azurestack-resource-storage-account"
 description: |-
-  Create a Azure Storage Account.
+  Manages a Azure Storage Account.
 ---
 
 # azurestack_storage_account
 
-Create an Azure Storage Account.
+Manages an Azure Storage Account.
 
 ## Example Usage
 

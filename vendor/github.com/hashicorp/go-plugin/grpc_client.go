@@ -1,10 +1,7 @@
 package plugin
 
 import (
-	"crypto/tls"
 	"fmt"
-	"net"
-	"time"
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -12,12 +9,14 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
-func dialGRPCConn(tls *tls.Config, dialer func(string, time.Duration) (net.Conn, error)) (*grpc.ClientConn, error) {
+// newGRPCClient creates a new GRPCClient. The Client argument is expected
+// to be successfully started already with a lock held.
+func newGRPCClient(c *Client) (*GRPCClient, error) {
 	// Build dialing options.
 	opts := make([]grpc.DialOption, 0, 5)
 
 	// We use a custom dialer so that we can connect over unix domain sockets
-	opts = append(opts, grpc.WithDialer(dialer))
+	opts = append(opts, grpc.WithDialer(c.dialer))
 
 	// go-plugin expects to block the connection
 	opts = append(opts, grpc.WithBlock())
@@ -27,11 +26,11 @@ func dialGRPCConn(tls *tls.Config, dialer func(string, time.Duration) (net.Conn,
 
 	// If we have no TLS configuration set, we need to explicitly tell grpc
 	// that we're connecting with an insecure connection.
-	if tls == nil {
+	if c.config.TLSConfig == nil {
 		opts = append(opts, grpc.WithInsecure())
 	} else {
 		opts = append(opts, grpc.WithTransportCredentials(
-			credentials.NewTLS(tls)))
+			credentials.NewTLS(c.config.TLSConfig)))
 	}
 
 	// Connect. Note the first parameter is unused because we use a custom
@@ -41,28 +40,9 @@ func dialGRPCConn(tls *tls.Config, dialer func(string, time.Duration) (net.Conn,
 		return nil, err
 	}
 
-	return conn, nil
-}
-
-// newGRPCClient creates a new GRPCClient. The Client argument is expected
-// to be successfully started already with a lock held.
-func newGRPCClient(doneCtx context.Context, c *Client) (*GRPCClient, error) {
-	conn, err := dialGRPCConn(c.config.TLSConfig, c.dialer)
-	if err != nil {
-		return nil, err
-	}
-
-	// Start the broker.
-	brokerGRPCClient := newGRPCBrokerClient(conn)
-	broker := newGRPCBroker(brokerGRPCClient, c.config.TLSConfig)
-	go broker.Run()
-	go brokerGRPCClient.StartStream()
-
 	return &GRPCClient{
 		Conn:    conn,
 		Plugins: c.config.Plugins,
-		doneCtx: doneCtx,
-		broker:  broker,
 	}, nil
 }
 
@@ -70,14 +50,10 @@ func newGRPCClient(doneCtx context.Context, c *Client) (*GRPCClient, error) {
 type GRPCClient struct {
 	Conn    *grpc.ClientConn
 	Plugins map[string]Plugin
-
-	doneCtx context.Context
-	broker  *GRPCBroker
 }
 
 // ClientProtocol impl.
 func (c *GRPCClient) Close() error {
-	c.broker.Close()
 	return c.Conn.Close()
 }
 
@@ -93,7 +69,7 @@ func (c *GRPCClient) Dispense(name string) (interface{}, error) {
 		return nil, fmt.Errorf("plugin %q doesn't support gRPC", name)
 	}
 
-	return p.GRPCClient(c.doneCtx, c.broker, c.Conn)
+	return p.GRPCClient(c.Conn)
 }
 
 // ClientProtocol impl.

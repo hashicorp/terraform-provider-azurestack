@@ -33,7 +33,7 @@ $ git clone git@github.com:terraform-providers/terraform-provider-azurestack
 Enter the provider directory and build the provider
 
 ```sh
-$ cd $GOPATH/src/github.com/terraform-providers/terraform-provider-azurerm
+$ cd $GOPATH/src/github.com/terraform-providers/terraform-provider-azurestack
 $ make build
 ```
 

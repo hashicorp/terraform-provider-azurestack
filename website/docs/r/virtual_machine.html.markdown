@@ -3,12 +3,12 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_virtual_machine"
 sidebar_current: "docs-azurestack-resource-compute-virtual-machine"
 description: |-
-  Create a Virtual Machine.
+  Manages a Virtual Machine.
 ---
 
-# azurestack\_virtual\_machine
+# azurestack_virtual_machine
 
-Create a virtual machine.
+Manages a virtual machine.
 
 ## Example Usage with Unmanaged Disks
 
@@ -115,6 +115,124 @@ resource "azurestack_virtual_machine" "test" {
 }
 ```
 
+## Example Usage with Unmanaged Disks and Public IP
+
+```hcl
+resource "azurestack_resource_group" "test" {
+  name     = "acctestrg"
+  # This is Azure Stack Region so it will be different per Azure Stack and should not be in the format of "West US" etc... those are not the same values
+  location = "region1"
+}
+
+resource "azurestack_public_ip" "test" {
+  name                         = "acceptanceTestPublicIp1"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
+  public_ip_address_allocation = "static"
+
+  tags {
+    environment = "Production"
+  }
+}
+
+resource "azurestack_virtual_network" "test" {
+  name                = "acctvn"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+}
+
+resource "azurestack_subnet" "test" {
+  name                 = "acctsub"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
+}
+
+resource "azurestack_network_interface" "test" {
+  name                = "acctni"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+
+  ip_configuration {
+    name                          = "testconfiguration1"
+    subnet_id                     = "${azurestack_subnet.test.id}"
+    private_ip_address_allocation = "dynamic"
+    public_ip_address_id          = "${azurestack_public_ip.test.id}"
+  }
+}
+
+resource "azurestack_storage_account" "test" {
+  name                     = "accsa"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  tags {
+    environment = "staging"
+  }
+}
+
+resource "azurestack_storage_container" "test" {
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
+}
+
+resource "azurestack_virtual_machine" "test" {
+  name                  = "acctvm"
+  location              = "${azurestack_resource_group.test.location}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  network_interface_ids = ["${azurestack_network_interface.test.id}"]
+  vm_size               = "Standard_D2_v2"
+
+  # Uncomment this line to delete the OS disk automatically when deleting the VM
+  # delete_os_disk_on_termination = true
+
+  # Uncomment this line to delete the data disks automatically when deleting the VM
+  # delete_data_disks_on_termination = true
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "16.04-LTS"
+    version   = "latest"
+  }
+
+  storage_os_disk {
+    name          = "myosdisk1"
+    vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
+    caching       = "ReadWrite"
+    create_option = "FromImage"
+  }
+
+  # Optional data disks
+  storage_data_disk {
+    name          = "datadisk0"
+    vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/datadisk0.vhd"
+    disk_size_gb  = "1023"
+    create_option = "Empty"
+    lun           = 0
+  }
+
+  os_profile {
+    computer_name  = "hostname"
+    admin_username = "testadmin"
+    admin_password = "Password1234!"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+
+  tags {
+    environment = "staging"
+  }
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -123,7 +241,7 @@ The following arguments are supported:
     new resource to be created.
 * `resource_group_name` - (Required) The name of the resource group in which to
     create the virtual machine.
-* `location` - (Required) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created.
+* `location` - (Required) Specifies the supported Azure Stack Region where the resource exists. Changing this forces a new resource to be created.
 * `plan` - (Optional) A plan block as documented below.
 * `availability_set_id` - (Optional) The Id of the Availability Set in which to create the virtual machine
 * `boot_diagnostics` - (Optional) A boot diagnostics profile block as referenced below.

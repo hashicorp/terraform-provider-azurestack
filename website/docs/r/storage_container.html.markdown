@@ -3,12 +3,12 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_storage_container"
 sidebar_current: "docs-azurestack-resource-storage-container"
 description: |-
-  Create a Azure Storage Container.
+  Manages a Azure Storage Container.
 ---
 
-# azurestack\_storage\_container
+# azurestack_storage_container
 
-Create an Azure Storage Container.
+Manages an Azure Storage Container.
 
 ## Example Usage
 

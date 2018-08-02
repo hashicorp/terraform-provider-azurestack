@@ -82,15 +82,17 @@ func resourceArmStorageAccount() *schema.Resource {
 			},
 
 			// Only valid for BlobStorage accounts, defaults to "Hot" in create function
-			"access_tier": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-				ValidateFunc: validation.StringInSlice([]string{
-					string(storage.Cool),
-					string(storage.Hot),
-				}, true),
-			},
+			// Currently not supported in Azure Stack to create anything but "Storage" v1
+			// This type does not allow you to select Hot or Cold storage options
+			// "access_tier": {
+			//	 Type:     schema.TypeString,
+			//	 Optional: true,
+			//	 Computed: true,
+			//	 ValidateFunc: validation.StringInSlice([]string{
+			//		 string(storage.Cool),
+			//		 string(storage.Hot),
+			//	 }, true),
+			// },
 
 			// Constants not in 2017-03-09 profile
 			"account_encryption_source": {
@@ -351,22 +353,22 @@ func resourceArmStorageAccountUpdate(d *schema.ResourceData, meta interface{}) e
 		d.SetPartial("account_replication_type")
 	}
 
-	if d.HasChange("access_tier") {
-		accessTier := d.Get("access_tier").(string)
+	// if d.HasChange("access_tier") {
+	// 	accessTier := d.Get("access_tier").(string)
 
-		opts := storage.AccountUpdateParameters{
-			AccountPropertiesUpdateParameters: &storage.AccountPropertiesUpdateParameters{
-				AccessTier: storage.AccessTier(accessTier),
-			},
-		}
+	// 	opts := storage.AccountUpdateParameters{
+	// 		AccountPropertiesUpdateParameters: &storage.AccountPropertiesUpdateParameters{
+	// 			AccessTier: storage.AccessTier(accessTier),
+	// 		},
+	// 	}
 
-		_, err := client.Update(ctx, resourceGroupName, storageAccountName, opts)
-		if err != nil {
-			return fmt.Errorf("Error updating Azure Storage Account access_tier %q: %+v", storageAccountName, err)
-		}
+	// 	_, err := client.Update(ctx, resourceGroupName, storageAccountName, opts)
+	// 	if err != nil {
+	// 		return fmt.Errorf("Error updating Azure Storage Account access_tier %q: %+v", storageAccountName, err)
+	// 	}
 
-		d.SetPartial("access_tier")
-	}
+	// 	d.SetPartial("access_tier")
+	// }
 
 	if d.HasChange("tags") {
 		tags := d.Get("tags").(map[string]interface{})
@@ -468,7 +470,8 @@ func resourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) err
 	}
 
 	if props := resp.AccountProperties; props != nil {
-		d.Set("access_tier", props.AccessTier)
+		// Currently not supported on Azure Stack
+		// d.Set("access_tier", props.AccessTier)
 
 		if customDomain := props.CustomDomain; customDomain != nil {
 			if err := d.Set("custom_domain", flattenStorageAccountCustomDomain(customDomain)); err != nil {

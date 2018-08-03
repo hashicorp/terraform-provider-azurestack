@@ -1,12 +1,12 @@
 ---
-layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_lb_backend_address_pool"
-sidebar_current: "docs-azurerm-resource-loadbalancer-backend-address-pool"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_lb_backend_address_pool"
+sidebar_current: "docs-azurestack-resource-loadbalancer-backend-address-pool"
 description: |-
   Create a LoadBalancer Backend Address Pool.
 ---
 
-# azurerm_lb_backend_address_pool
+# azurestack_lb_backend_address_pool
 
 Create a LoadBalancer Backend Address Pool.
 
@@ -15,32 +15,32 @@ Create a LoadBalancer Backend Address Pool.
 ## Example Usage
 
 ```hcl
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "LoadBalancerRG"
   location = "West US"
 }
 
-resource "azurerm_public_ip" "test" {
+resource "azurestack_public_ip" "test" {
   name                         = "PublicIPForLB"
   location                     = "West US"
-  resource_group_name          = "${azurerm_resource_group.test.name}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "static"
 }
 
-resource "azurerm_lb" "test" {
+resource "azurestack_lb" "test" {
   name                = "TestLoadBalancer"
   location            = "West US"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
-    public_ip_address_id = "${azurerm_public_ip.test.id}"
+    public_ip_address_id = "${azurestack_public_ip.test.id}"
   }
 }
 
-resource "azurerm_lb_backend_address_pool" "test" {
-  resource_group_name = "${azurerm_resource_group.test.name}"
-  loadbalancer_id     = "${azurerm_lb.test.id}"
+resource "azurestack_lb_backend_address_pool" "test" {
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  loadbalancer_id     = "${azurestack_lb.test.id}"
   name                = "BackEndAddressPool"
 }
 ```
@@ -64,6 +64,6 @@ The following attributes are exported:
 Load Balancer Backend Address Pools can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_lb_backend_address_pool.test /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group1/providers/Microsoft.Network/loadBalancers/lb1/backendAddressPools/pool1
+terraform import azurestack_lb_backend_address_pool.test /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group1/providers/Microsoft.Network/loadBalancers/lb1/backendAddressPools/pool1
 ```
 

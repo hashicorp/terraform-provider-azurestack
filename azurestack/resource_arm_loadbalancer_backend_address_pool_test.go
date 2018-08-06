@@ -35,6 +35,11 @@ func TestAccAzureStackLoadBalancerBackEndAddressPool_basic(t *testing.T) {
 						"azurestack_lb_backend_address_pool.test", "id", backendAddressPoolId),
 				),
 			},
+			{
+				ResourceName:      addressPoolName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -199,7 +204,6 @@ resource "azurestack_lb" "test" {
 }
 
 resource "azurestack_lb_backend_address_pool" "test" {
-  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   loadbalancer_id     = "${azurestack_lb.test.id}"
   name                = "%s"

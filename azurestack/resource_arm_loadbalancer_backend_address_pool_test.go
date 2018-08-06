@@ -36,7 +36,7 @@ func TestAccAzureStackLoadBalancerBackEndAddressPool_basic(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      addressPoolName,
+				ResourceName:      "azurestack_lb_backend_address_pool.test",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},

@@ -28,8 +28,6 @@ func resourceArmLoadBalancerBackendAddressPool() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"location": deprecatedLocationSchema(),
-
 			"resource_group_name": resourceGroupNameSchema(),
 
 			"loadbalancer_id": {
@@ -104,6 +102,10 @@ func resourceArmLoadBalancerBackendAddressPoolCreate(d *schema.ResourceData, met
 	}
 	if read.ID == nil {
 		return fmt.Errorf("Cannot read LoadBalancer %q (Resource Group %q) ID", loadBalancerName, resGroup)
+	}
+
+	if read.LoadBalancerPropertiesFormat == nil {
+		return fmt.Errorf("Error creating LoadBalancer (%q Resource Group %q)", loadBalancerName, resGroup, err)
 	}
 
 	var poolId string

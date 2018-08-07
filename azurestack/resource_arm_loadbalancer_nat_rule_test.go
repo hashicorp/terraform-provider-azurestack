@@ -35,6 +35,11 @@ func TestAccAzureStackLoadBalancerNatRule_basic(t *testing.T) {
 						"azurestack_lb_nat_rule.test", "id", natRuleId),
 				),
 			},
+			{
+				ResourceName:      "azurestack_lb_nat_rule.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

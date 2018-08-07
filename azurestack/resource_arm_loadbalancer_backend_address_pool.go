@@ -105,7 +105,7 @@ func resourceArmLoadBalancerBackendAddressPoolCreate(d *schema.ResourceData, met
 	}
 
 	if read.LoadBalancerPropertiesFormat == nil {
-		return fmt.Errorf("Error creating LoadBalancer (%q Resource Group %q)", loadBalancerName, resGroup, err)
+		return fmt.Errorf("Error creating LoadBalancer (%q Resource Group %q)", loadBalancerName, resGroup)
 	}
 
 	var poolId string

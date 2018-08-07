@@ -29,8 +29,6 @@ func resourceArmLoadBalancerNatRule() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"location": deprecatedLocationSchema(),
-
 			"resource_group_name": resourceGroupNameSchema(),
 
 			"loadbalancer_id": {

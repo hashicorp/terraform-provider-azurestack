@@ -299,7 +299,6 @@ resource "azurestack_lb" "test" {
 }
 
 resource "azurestack_lb_nat_rule" "test" {
-  location                       = "${azurestack_resource_group.test.location}"
   resource_group_name            = "${azurestack_resource_group.test.name}"
   loadbalancer_id                = "${azurestack_lb.test.id}"
   name                           = "%s"
@@ -364,7 +363,6 @@ resource "azurestack_lb" "test" {
 }
 
 resource "azurestack_lb_nat_rule" "test" {
-  location                       = "${azurestack_resource_group.test.location}"
   resource_group_name            = "${azurestack_resource_group.test.name}"
   loadbalancer_id                = "${azurestack_lb.test.id}"
   name                           = "%s"
@@ -375,7 +373,6 @@ resource "azurestack_lb_nat_rule" "test" {
 }
 
 resource "azurestack_lb_nat_rule" "test2" {
-  location                       = "${azurestack_resource_group.test.location}"
   resource_group_name            = "${azurestack_resource_group.test.name}"
   loadbalancer_id                = "${azurestack_lb.test.id}"
   name                           = "%s"
@@ -413,7 +410,6 @@ resource "azurestack_lb" "test" {
 }
 
 resource "azurestack_lb_nat_rule" "test" {
-  location                       = "${azurestack_resource_group.test.location}"
   resource_group_name            = "${azurestack_resource_group.test.name}"
   loadbalancer_id                = "${azurestack_lb.test.id}"
   name                           = "%s"
@@ -424,7 +420,6 @@ resource "azurestack_lb_nat_rule" "test" {
 }
 
 resource "azurestack_lb_nat_rule" "test2" {
-  location                       = "${azurestack_resource_group.test.location}"
   resource_group_name            = "${azurestack_resource_group.test.name}"
   loadbalancer_id                = "${azurestack_lb.test.id}"
   name                           = "%s"
@@ -462,7 +457,6 @@ resource "azurestack_lb" "test" {
 }
 
 resource "azurestack_lb_nat_rule" "test" {
-  location                       = "${azurestack_resource_group.test.location}"
   resource_group_name            = "${azurestack_resource_group.test.name}"
   loadbalancer_id                = "${azurestack_lb.test.id}"
   name                           = "%s"

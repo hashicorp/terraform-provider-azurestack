@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func TestResourceAzureRMLoadBalancerPrivateIpAddressAllocation_validation(t *testing.T) {
+func TestResourceAzureStackLoadBalancerPrivateIpAddressAllocation_validation(t *testing.T) {
 	cases := []struct {
 		Value    string
 		ErrCount int
@@ -47,45 +47,45 @@ func TestResourceAzureRMLoadBalancerPrivateIpAddressAllocation_validation(t *tes
 	}
 }
 
-func TestAccAzureRMLoadBalancer_basic(t *testing.T) {
+func TestAccAzureStackLoadBalancer_basic(t *testing.T) {
 	var lb network.LoadBalancer
 	ri := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMLoadBalancerDestroy,
+		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMLoadBalancer_basic(ri, testLocation()),
+				Config: testAccAzureStackLoadBalancer_basic(ri, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMLoadBalancerExists("azurestack_lb.test", &lb),
+					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
 				),
 			},
 		},
 	})
 }
 
-func TestAccAzureRMLoadBalancer_standard(t *testing.T) {
+func TestAccAzureStackLoadBalancer_standard(t *testing.T) {
 	var lb network.LoadBalancer
 	ri := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMLoadBalancerDestroy,
+		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMLoadBalancer_standard(ri, testLocation()),
+				Config: testAccAzureStackLoadBalancer_standard(ri, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMLoadBalancerExists("azurestack_lb.test", &lb),
+					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
 				),
 			},
 		},
 	})
 }
 
-func TestAccAzureRMLoadBalancer_frontEndConfig(t *testing.T) {
+func TestAccAzureStackLoadBalancer_frontEndConfig(t *testing.T) {
 	var lb network.LoadBalancer
 	resourceName := "azurestack_lb.test"
 	ri := acctest.RandInt()
@@ -94,26 +94,26 @@ func TestAccAzureRMLoadBalancer_frontEndConfig(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMLoadBalancerDestroy,
+		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMLoadBalancer_frontEndConfig(ri, location),
+				Config: testAccAzureStackLoadBalancer_frontEndConfig(ri, location),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMLoadBalancerExists(resourceName, &lb),
+					testCheckAzureStackLoadBalancerExists(resourceName, &lb),
 					resource.TestCheckResourceAttr(resourceName, "frontend_ip_configuration.#", "2"),
 				),
 			},
 			{
-				Config: testAccAzureRMLoadBalancer_frontEndConfigRemovalWithIP(ri, location),
+				Config: testAccAzureStackLoadBalancer_frontEndConfigRemovalWithIP(ri, location),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMLoadBalancerExists(resourceName, &lb),
+					testCheckAzureStackLoadBalancerExists(resourceName, &lb),
 					resource.TestCheckResourceAttr(resourceName, "frontend_ip_configuration.#", "1"),
 				),
 			},
 			{
-				Config: testAccAzureRMLoadBalancer_frontEndConfigRemoval(ri, location),
+				Config: testAccAzureStackLoadBalancer_frontEndConfigRemoval(ri, location),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMLoadBalancerExists(resourceName, &lb),
+					testCheckAzureStackLoadBalancerExists(resourceName, &lb),
 					resource.TestCheckResourceAttr(resourceName, "frontend_ip_configuration.#", "1"),
 				),
 			},
@@ -121,7 +121,7 @@ func TestAccAzureRMLoadBalancer_frontEndConfig(t *testing.T) {
 	})
 }
 
-func TestAccAzureRMLoadBalancer_tags(t *testing.T) {
+func TestAccAzureStackLoadBalancer_tags(t *testing.T) {
 	var lb network.LoadBalancer
 	resourceName := "azurestack_lb.test"
 	ri := acctest.RandInt()
@@ -130,21 +130,21 @@ func TestAccAzureRMLoadBalancer_tags(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureRMLoadBalancerDestroy,
+		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccAzureRMLoadBalancer_basic(ri, location),
+				Config: testAccAzureStackLoadBalancer_basic(ri, location),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMLoadBalancerExists(resourceName, &lb),
+					testCheckAzureStackLoadBalancerExists(resourceName, &lb),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "2"),
 					resource.TestCheckResourceAttr(resourceName, "tags.Environment", "production"),
 					resource.TestCheckResourceAttr(resourceName, "tags.Purpose", "AcceptanceTests"),
 				),
 			},
 			{
-				Config: testAccAzureRMLoadBalancer_updatedTags(ri, location),
+				Config: testAccAzureStackLoadBalancer_updatedTags(ri, location),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMLoadBalancerExists(resourceName, &lb),
+					testCheckAzureStackLoadBalancerExists(resourceName, &lb),
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.Purpose", "AcceptanceTests"),
 				),
@@ -153,7 +153,7 @@ func TestAccAzureRMLoadBalancer_tags(t *testing.T) {
 	})
 }
 
-func testCheckAzureRMLoadBalancerExists(name string, lb *network.LoadBalancer) resource.TestCheckFunc {
+func testCheckAzureStackLoadBalancerExists(name string, lb *network.LoadBalancer) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
@@ -184,7 +184,7 @@ func testCheckAzureRMLoadBalancerExists(name string, lb *network.LoadBalancer) r
 	}
 }
 
-func testCheckAzureRMLoadBalancerDestroy(s *terraform.State) error {
+func testCheckAzureStackLoadBalancerDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*ArmClient).loadBalancerClient
 	ctx := testAccProvider.Meta().(*ArmClient).StopContext
 
@@ -210,7 +210,7 @@ func testCheckAzureRMLoadBalancerDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testAccAzureRMLoadBalancer_basic(rInt int, location string) string {
+func testAccAzureStackLoadBalancer_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
     name = "acctestRG-%d"
@@ -230,7 +230,7 @@ resource "azurestack_lb" "test" {
 }`, rInt, location, rInt)
 }
 
-func testAccAzureRMLoadBalancer_standard(rInt int, location string) string {
+func testAccAzureStackLoadBalancer_standard(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
     name = "acctestRG-%d"
@@ -250,7 +250,7 @@ resource "azurestack_lb" "test" {
 }`, rInt, location, rInt)
 }
 
-func testAccAzureRMLoadBalancer_updatedTags(rInt int, location string) string {
+func testAccAzureStackLoadBalancer_updatedTags(rInt int, location string) string {
 	return fmt.Sprintf(`
 
 resource "azurestack_resource_group" "test" {
@@ -270,7 +270,7 @@ resource "azurestack_lb" "test" {
 }`, rInt, location, rInt)
 }
 
-func testAccAzureRMLoadBalancer_frontEndConfig(rInt int, location string) string {
+func testAccAzureStackLoadBalancer_frontEndConfig(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
     name = "acctestRG-%d"
@@ -308,7 +308,7 @@ resource "azurestack_lb" "test" {
 }`, rInt, location, rInt, rInt, rInt, rInt, rInt)
 }
 
-func testAccAzureRMLoadBalancer_frontEndConfig_withZone(rInt int, location string) string {
+func testAccAzureStackLoadBalancer_frontEndConfig_withZone(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
     name = "acctestRG-%d"
@@ -348,7 +348,7 @@ resource "azurestack_lb" "test" {
 }`, rInt, location, rInt, rInt, rInt, rInt, rInt)
 }
 
-func testAccAzureRMLoadBalancer_frontEndConfigRemovalWithIP(rInt int, location string) string {
+func testAccAzureStackLoadBalancer_frontEndConfigRemovalWithIP(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
     name = "acctestRG-%d"
@@ -381,7 +381,7 @@ resource "azurestack_lb" "test" {
 }`, rInt, location, rInt, rInt, rInt, rInt)
 }
 
-func testAccAzureRMLoadBalancer_frontEndConfigRemoval(rInt int, location string) string {
+func testAccAzureStackLoadBalancer_frontEndConfigRemoval(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
     name = "acctestRG-%d"

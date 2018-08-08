@@ -276,8 +276,7 @@ func expandAzureRmLoadBalancerNatRule(d *schema.ResourceData, lb *network.LoadBa
 	}
 
 	if v, ok := d.GetOk("enable_floating_ip"); ok {
-		enableFloatingIP := v.(bool)
-		properties.EnableFloatingIP = utils.Bool(enableFloatingIP)
+		properties.EnableFloatingIP = utils.Bool(v.(bool))
 	}
 
 	if v := d.Get("frontend_ip_configuration_name").(string); v != "" {
@@ -286,11 +285,9 @@ func expandAzureRmLoadBalancerNatRule(d *schema.ResourceData, lb *network.LoadBa
 			return nil, fmt.Errorf("[ERROR] Cannot find FrontEnd IP Configuration with the name %s", v)
 		}
 
-		feip := network.SubResource{
+		properties.FrontendIPConfiguration = &network.SubResource{
 			ID: rule.ID,
 		}
-
-		properties.FrontendIPConfiguration = &feip
 	}
 
 	natRule := network.InboundNatRule{

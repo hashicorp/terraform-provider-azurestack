@@ -14,9 +14,9 @@ import (
 
 func resourceArmLoadBalancerNatRule() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceArmLoadBalancerNatRuleCreate,
+		Create: resourceArmLoadBalancerNatRuleCreateUpdate,
 		Read:   resourceArmLoadBalancerNatRuleRead,
-		Update: resourceArmLoadBalancerNatRuleCreate,
+		Update: resourceArmLoadBalancerNatRuleCreateUpdate,
 		Delete: resourceArmLoadBalancerNatRuleDelete,
 		Importer: &schema.ResourceImporter{
 			State: loadBalancerSubResourceStateImporter,
@@ -78,7 +78,7 @@ func resourceArmLoadBalancerNatRule() *schema.Resource {
 	}
 }
 
-func resourceArmLoadBalancerNatRuleCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceArmLoadBalancerNatRuleCreateUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*ArmClient).loadBalancerClient
 	ctx := meta.(*ArmClient).StopContext
 
@@ -106,7 +106,7 @@ func resourceArmLoadBalancerNatRuleCreate(d *schema.ResourceData, meta interface
 	existingNatRule, existingNatRuleIndex, exists := findLoadBalancerNatRuleByName(loadBalancer, d.Get("name").(string))
 	if exists {
 		if d.Get("name").(string) == *existingNatRule.Name {
-			// this probe is being updated/reapplied remove old copy from the slice
+			// this nat rule is being updated/reapplied remove old copy from the slice
 			natRules = append(natRules[:existingNatRuleIndex], natRules[existingNatRuleIndex+1:]...)
 		}
 	}

@@ -3,12 +3,12 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_lb_backend_address_pool"
 sidebar_current: "docs-azurestack-resource-loadbalancer-backend-address-pool"
 description: |-
-  Create a LoadBalancer Backend Address Pool.
+  Manages a LoadBalancer Backend Address Pool.
 ---
 
 # azurestack_lb_backend_address_pool
 
-Create a LoadBalancer Backend Address Pool.
+Manages a LoadBalancer Backend Address Pool.
 
 ~> **NOTE:** When using this resource, the LoadBalancer needs to have a FrontEnd IP Configuration Attached
 

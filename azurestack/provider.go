@@ -83,6 +83,7 @@ func Provider() terraform.ResourceProvider {
 			"azurestack_local_network_gateway":     resourceArmLocalNetworkGateway(),
 			"azurestack_lb":                        resourceArmLoadBalancer(),
 			"azurestack_lb_backend_address_pool":   resourceArmLoadBalancerBackendAddressPool(),
+			"azurestack_lb_nat_pool":               resourceArmLoadBalancerNatPool(),
 			"azurestack_public_ip":                 resourceArmPublicIp(),
 			"azurestack_resource_group":            resourceArmResourceGroup(),
 			"azurestack_storage_account":           resourceArmStorageAccount(),

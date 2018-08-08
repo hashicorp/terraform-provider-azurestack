@@ -3,12 +3,12 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_lb_nat_rule"
 sidebar_current: "docs-azurestack-resource-loadbalancer-nat-rule"
 description: |-
-  Create a LoadBalancer NAT Rule.
+  Manages a LoadBalancer NAT Rule.
 ---
 
 # azurestack_lb_nat_rule
 
-Create a LoadBalancer NAT Rule.
+Manages a LoadBalancer NAT Rule.
 
 ~> **NOTE** When using this resource, the LoadBalancer needs to have a FrontEnd IP Configuration Attached
 

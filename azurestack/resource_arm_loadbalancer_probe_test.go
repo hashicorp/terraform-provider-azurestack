@@ -35,6 +35,11 @@ func TestAccAzureStackLoadBalancerProbe_basic(t *testing.T) {
 						"azurestack_lb_probe.test", "id", probe_id),
 				),
 			},
+			{
+				ResourceName:      "azurestack_lb_probe.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -270,7 +275,6 @@ resource "azurestack_lb" "test" {
 }
 
 resource "azurestack_lb_probe" "test" {
-  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   loadbalancer_id     = "${azurestack_lb.test.id}"
   name                = "%s"
@@ -332,7 +336,6 @@ resource "azurestack_lb" "test" {
 }
 
 resource "azurestack_lb_probe" "test" {
-  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   loadbalancer_id     = "${azurestack_lb.test.id}"
   name                = "%s"
@@ -340,7 +343,6 @@ resource "azurestack_lb_probe" "test" {
 }
 
 resource "azurestack_lb_probe" "test2" {
-  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   loadbalancer_id     = "${azurestack_lb.test.id}"
   name                = "%s"
@@ -375,7 +377,6 @@ resource "azurestack_lb" "test" {
 }
 
 resource "azurestack_lb_probe" "test" {
-  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   loadbalancer_id     = "${azurestack_lb.test.id}"
   name                = "%s"
@@ -383,7 +384,6 @@ resource "azurestack_lb_probe" "test" {
 }
 
 resource "azurestack_lb_probe" "test2" {
-  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   loadbalancer_id     = "${azurestack_lb.test.id}"
   name                = "%s"
@@ -419,7 +419,6 @@ resource "azurestack_lb" "test" {
 }
 
 resource "azurestack_lb_probe" "test" {
-  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   loadbalancer_id     = "${azurestack_lb.test.id}"
   name                = "%s"
@@ -456,7 +455,6 @@ resource "azurestack_lb" "test" {
 }
 
 resource "azurestack_lb_probe" "test" {
-  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   loadbalancer_id     = "${azurestack_lb.test.id}"
   name                = "%s"

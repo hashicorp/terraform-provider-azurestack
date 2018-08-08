@@ -3,12 +3,12 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_lb_probe"
 sidebar_current: "docs-azurestack-resource-loadbalancer-probe"
 description: |-
-  Create a LoadBalancer Probe Resource.
+  Manages a LoadBalancer Probe Resource.
 ---
 
 # azurestack_lb_probe
 
-Create a LoadBalancer Probe Resource.
+Manages a LoadBalancer Probe Resource.
 
 ~> **NOTE** When using this resource, the LoadBalancer needs to have a FrontEnd IP Configuration Attached
 

@@ -48,8 +48,8 @@ func resourceArmLoadBalancerProbe() *schema.Resource {
 				StateFunc:        ignoreCaseStateFunc,
 				DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
 				ValidateFunc: validation.StringInSlice([]string{
-					"Tcp",
-					"Http",
+					string(network.ProbeProtocolHTTP),
+					string(network.ProbeProtocolTCP),
 				}, true),
 			},
 

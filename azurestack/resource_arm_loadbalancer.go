@@ -61,7 +61,7 @@ func resourceArmLoadBalancer() *schema.Resource {
 							Type:         schema.TypeString,
 							Optional:     true,
 							Computed:     true,
-							ValidateFunc: validate.Ip4Address,
+							ValidateFunc: validate.IPv4Address,
 						},
 
 						"public_ip_address_id": {

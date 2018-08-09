@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/validate"
 	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
@@ -44,8 +45,8 @@ func resourceArmLoadBalancerNatRule() *schema.Resource {
 				StateFunc:        ignoreCaseStateFunc,
 				DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
 				ValidateFunc: validation.StringInSlice([]string{
-					"Tcp",
-					"Udp",
+					string(network.TransportProtocolTCP),
+					string(network.TransportProtocolUDP),
 				}, true),
 			},
 
@@ -56,13 +57,15 @@ func resourceArmLoadBalancerNatRule() *schema.Resource {
 			},
 
 			"frontend_port": {
-				Type:     schema.TypeInt,
-				Required: true,
+				Type:         schema.TypeInt,
+				Required:     true,
+				ValidateFunc: validate.PortNumber,
 			},
 
 			"backend_port": {
-				Type:     schema.TypeInt,
-				Required: true,
+				Type:         schema.TypeInt,
+				Required:     true,
+				ValidateFunc: validate.PortNumber,
 			},
 
 			"frontend_ip_configuration_name": {

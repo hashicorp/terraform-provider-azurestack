@@ -46,8 +46,8 @@ func resourceArmLoadBalancerNatPool() *schema.Resource {
 				StateFunc:        ignoreCaseStateFunc,
 				DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
 				ValidateFunc: validation.StringInSlice([]string{
-					"Tcp",
-					"Udp",
+					string(network.TransportProtocolTCP),
+					string(network.TransportProtocolUDP),
 				}, true),
 			},
 

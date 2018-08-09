@@ -3,6 +3,7 @@
 * **New Resource:** `azurestack_lb` [GH-16]
 * **New Resource:** `azurestack_lb_backend_address_pool` [GH-21]
 * **New Resource:** `azurestack_lb_nat_rule` [GH-22]
+* **New Resource:** `azurestack_lb_nat_pool` [GH-24]
 * **New Resource:** `azurestack_lb_probe` [GH-23]
 
 ## 0.2.0 (July 26, 2018)

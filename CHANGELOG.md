@@ -2,8 +2,8 @@
 
 * **New Resource:** `azurestack_lb` [GH-16]
 * **New Resource:** `azurestack_lb_backend_address_pool` [GH-21]
+* **New Resource:** `azurestack_lb_probe` [GH-23]
 
-Merge pull request #21 from thetonymaster/loadbalancer-backend-address-pool
 ## 0.2.0 (July 26, 2018)
 
 * **New Resource:** `azurestack_local_network_gateway` ([#13](https://github.com/terraform-providers/terraform-provider-azurestack/issues/13))

@@ -287,47 +287,47 @@ func testAccAzureStackLoadBalancerNatPool_multiplePools(rInt int, natPoolName, n
 	return fmt.Sprintf(`
 
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
+    name     = "acctestRG-%d"
     location = "%s"
 }
 
 resource "azurestack_public_ip" "test" {
-    name = "test-ip-%d"
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+    name                         = "test-ip-%d"
+    location                     = "${azurestack_resource_group.test.location}"
+    resource_group_name          = "${azurestack_resource_group.test.name}"
     public_ip_address_allocation = "static"
 }
 
 resource "azurestack_lb" "test" {
-    name = "arm-test-loadbalancer-%d"
-    location = "${azurestack_resource_group.test.location}"
+    name                = "arm-test-loadbalancer-%d"
+    location            = "${azurestack_resource_group.test.location}"
     resource_group_name = "${azurestack_resource_group.test.name}"
 
     frontend_ip_configuration {
-      name = "one-%d"
+      name                 = "one-%d"
       public_ip_address_id = "${azurestack_public_ip.test.id}"
     }
 }
 
 resource "azurestack_lb_nat_pool" "test" {
-  resource_group_name = "${azurestack_resource_group.test.name}"
-  loadbalancer_id = "${azurestack_lb.test.id}"
-  name = "%s"
-  protocol = "Tcp"
-  frontend_port_start = 80
-  frontend_port_end = 81
-  backend_port = 3389
+  resource_group_name            = "${azurestack_resource_group.test.name}"
+  loadbalancer_id                = "${azurestack_lb.test.id}"
+  name                           = "%s"
+  protocol                       = "Tcp"
+  frontend_port_start            = 80
+  frontend_port_end              = 81
+  backend_port                   = 3389
   frontend_ip_configuration_name = "one-%d"
 }
 
 resource "azurestack_lb_nat_pool" "test2" {
-  resource_group_name = "${azurestack_resource_group.test.name}"
-  loadbalancer_id = "${azurestack_lb.test.id}"
-  name = "%s"
-  protocol = "Tcp"
-  frontend_port_start = 82
-  frontend_port_end = 83
-  backend_port = 3390
+  resource_group_name            = "${azurestack_resource_group.test.name}"
+  loadbalancer_id                = "${azurestack_lb.test.id}"
+  name                           = "%s"
+  protocol                       = "Tcp"
+  frontend_port_start            = 82
+  frontend_port_end              = 83
+  backend_port                   = 3390
   frontend_ip_configuration_name = "one-%d"
 }
 `, rInt, location, rInt, rInt, rInt, natPoolName, rInt, natPool2Name, rInt)

@@ -9,14 +9,16 @@ import (
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/validate"
 	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
 func resourceArmLoadBalancerNatPool() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceArmLoadBalancerNatPoolCreate,
+		Create: resourceArmLoadBalancerNatPoolCreateUpdate,
 		Read:   resourceArmLoadBalancerNatPoolRead,
-		Update: resourceArmLoadBalancerNatPoolCreate,
+		Update: resourceArmLoadBalancerNatPoolCreateUpdate,
 		Delete: resourceArmLoadBalancerNatPoolDelete,
 		Importer: &schema.ResourceImporter{
 			State: loadBalancerSubResourceStateImporter,
@@ -24,9 +26,10 @@ func resourceArmLoadBalancerNatPool() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.NoZeroValues,
 			},
 
 			"resource_group_name": resourceGroupNameSchema(),
@@ -42,26 +45,34 @@ func resourceArmLoadBalancerNatPool() *schema.Resource {
 				Required:         true,
 				StateFunc:        ignoreCaseStateFunc,
 				DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
+				ValidateFunc: validation.StringInSlice([]string{
+					"Tcp",
+					"Udp",
+				}, true),
 			},
 
 			"frontend_port_start": {
-				Type:     schema.TypeInt,
-				Required: true,
+				Type:         schema.TypeInt,
+				Required:     true,
+				ValidateFunc: validate.PortNumber,
 			},
 
 			"frontend_port_end": {
-				Type:     schema.TypeInt,
-				Required: true,
+				Type:         schema.TypeInt,
+				Required:     true,
+				ValidateFunc: validate.PortNumber,
 			},
 
 			"backend_port": {
-				Type:     schema.TypeInt,
-				Required: true,
+				Type:         schema.TypeInt,
+				Required:     true,
+				ValidateFunc: validate.PortNumber,
 			},
 
 			"frontend_ip_configuration_name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.NoZeroValues,
 			},
 
 			"frontend_ip_configuration_id": {
@@ -72,7 +83,7 @@ func resourceArmLoadBalancerNatPool() *schema.Resource {
 	}
 }
 
-func resourceArmLoadBalancerNatPoolCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceArmLoadBalancerNatPoolCreateUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*ArmClient).loadBalancerClient
 	ctx := meta.(*ArmClient).StopContext
 
@@ -271,17 +282,13 @@ func expandAzureRmLoadBalancerNatPool(d *schema.ResourceData, lb *network.LoadBa
 			return nil, fmt.Errorf("[ERROR] Cannot find FrontEnd IP Configuration with the name %s", v)
 		}
 
-		feip := network.SubResource{
+		properties.FrontendIPConfiguration = &network.SubResource{
 			ID: rule.ID,
 		}
-
-		properties.FrontendIPConfiguration = &feip
 	}
 
-	natPool := network.InboundNatPool{
+	return &network.InboundNatPool{
 		Name: utils.String(d.Get("name").(string)),
 		InboundNatPoolPropertiesFormat: &properties,
-	}
-
-	return &natPool, nil
+	}, nil
 }

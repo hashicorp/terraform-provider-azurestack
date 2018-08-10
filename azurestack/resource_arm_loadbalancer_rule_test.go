@@ -73,7 +73,7 @@ func TestAccAzureStackLoadBalancerRule_basic(t *testing.T) {
 	lbRuleName := fmt.Sprintf("LbRule-%s", acctest.RandStringFromCharSet(8, acctest.CharSetAlpha))
 
 	subscriptionID := os.Getenv("ARM_SUBSCRIPTION_ID")
-	lbRule_id := fmt.Sprintf(
+	lbRuleID := fmt.Sprintf(
 		"/subscriptions/%s/resourceGroups/acctestRG-%d/providers/Microsoft.Network/loadBalancers/arm-test-loadbalancer-%d/loadBalancingRules/%s",
 		subscriptionID, ri, ri, lbRuleName)
 
@@ -88,8 +88,13 @@ func TestAccAzureStackLoadBalancerRule_basic(t *testing.T) {
 					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
 					testCheckAzureStackLoadBalancerRuleExists(lbRuleName, &lb),
 					resource.TestCheckResourceAttr(
-						"azurestack_lb_rule.test", "id", lbRule_id),
+						"azurestack_lb_rule.test", "id", lbRuleID),
 				),
+			},
+			{
+				ResourceName:      "azurestack_lb_rule.test",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -336,7 +341,6 @@ resource "azurestack_lb" "test" {
 }
 
 resource "azurestack_lb_rule" "test" {
-  location                       = "${azurestack_resource_group.test.location}"
   resource_group_name            = "${azurestack_resource_group.test.name}"
   loadbalancer_id                = "${azurestack_lb.test.id}"
   name                           = "%s"
@@ -404,14 +408,12 @@ resource "azurestack_lb" "test" {
 
 resource "azurestack_lb_backend_address_pool" "teset" {
   name                = "%s"
-  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   loadbalancer_id     = "${azurestack_lb.test.id}"
 }
 
 resource "azurestack_lb_probe" "test" {
   name                = "%s"
-  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   loadbalancer_id     = "${azurestack_lb.test.id}"
   protocol            = "Tcp"
@@ -420,7 +422,6 @@ resource "azurestack_lb_probe" "test" {
 
 resource "azurestack_lb_rule" "test" {
   name                           = "%s"
-  location                       = "${azurestack_resource_group.test.location}"
   resource_group_name            = "${azurestack_resource_group.test.name}"
   loadbalancer_id                = "${azurestack_lb.test.id}"
   protocol                       = "Tcp"
@@ -458,7 +459,6 @@ resource "azurestack_lb" "test" {
 }
 
 resource "azurestack_lb_rule" "test" {
-  location                       = "${azurestack_resource_group.test.location}"
   resource_group_name            = "${azurestack_resource_group.test.name}"
   loadbalancer_id                = "${azurestack_lb.test.id}"
   name                           = "%s"
@@ -469,7 +469,6 @@ resource "azurestack_lb_rule" "test" {
 }
 
 resource "azurestack_lb_rule" "test2" {
-  location                       = "${azurestack_resource_group.test.location}"
   resource_group_name            = "${azurestack_resource_group.test.name}"
   loadbalancer_id                = "${azurestack_lb.test.id}"
   name                           = "%s"
@@ -508,7 +507,6 @@ resource "azurestack_lb" "test" {
 }
 
 resource "azurestack_lb_rule" "test" {
-  location                       = "${azurestack_resource_group.test.location}"
   resource_group_name            = "${azurestack_resource_group.test.name}"
   loadbalancer_id                = "${azurestack_lb.test.id}"
   name                           = "%s"
@@ -519,7 +517,6 @@ resource "azurestack_lb_rule" "test" {
 }
 
 resource "azurestack_lb_rule" "test2" {
-  location                       = "${azurestack_resource_group.test.location}"
   resource_group_name            = "${azurestack_resource_group.test.name}"
   loadbalancer_id                = "${azurestack_lb.test.id}"
   name                           = "%s"

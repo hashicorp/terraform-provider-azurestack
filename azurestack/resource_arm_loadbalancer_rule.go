@@ -350,11 +350,9 @@ func expandAzureRmLoadBalancerRule(d *schema.ResourceData, lb *network.LoadBalan
 	}
 
 	if v := d.Get("probe_id").(string); v != "" {
-		pid := network.SubResource{
+		properties.Probe = &network.SubResource{
 			ID: &v,
 		}
-
-		properties.Probe = &pid
 	}
 
 	return &network.LoadBalancingRule{

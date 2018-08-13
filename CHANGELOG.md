@@ -1,3 +1,4 @@
+## 0.4.0 (Unreleased)
 ## 0.3.0 (August 13, 2018)
 
 * **New Resource:** `azurestack_lb` ([#16](https://github.com/terraform-providers/terraform-provider-azurestack/issues/16))

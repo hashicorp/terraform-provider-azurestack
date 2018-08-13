@@ -5,6 +5,7 @@
 * **New Resource:** `azurestack_lb_nat_rule` [GH-22]
 * **New Resource:** `azurestack_lb_nat_pool` [GH-24]
 * **New Resource:** `azurestack_lb_probe` [GH-23]
+* **New Resource:** `azurestack_lb_rule` [GH-25]
 
 ## 0.2.0 (July 26, 2018)
 

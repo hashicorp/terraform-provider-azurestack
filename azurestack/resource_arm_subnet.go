@@ -10,7 +10,6 @@ import (
 )
 
 var subnetResourceName = "azurestack_subnet"
-var routeTableResourceName = "azurestack_route_table"
 
 func resourceArmSubnet() *schema.Resource {
 	return &schema.Resource{

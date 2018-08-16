@@ -237,6 +237,30 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 
 		azureStackLockByName(routeTableName, routeTableResourceName)
 		defer azureStackUnlockByName(routeTableName, routeTableResourceName)
+
+		resp, err := client.Get(ctx, resGroup, vnetName, name, "")
+		if err != nil {
+			if utils.ResponseWasNotFound(resp.Response) {
+				d.SetId("")
+				return nil
+			}
+			return fmt.Errorf("Error making Read request on Azure Subnet %q: %+v", name, err)
+		}
+
+		resp.SubnetPropertiesFormat.RouteTable = nil
+
+		log.Printf("[DEBUG] Dissasociating Subnet %q (VN %q / Resource Group %q)", name, vnetName, resGroup)
+
+		future, err := client.CreateOrUpdate(ctx, resGroup, vnetName, name, resp)
+		if err != nil {
+			return fmt.Errorf("Error Creating/Updating Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
+		}
+
+		err = future.WaitForCompletion(ctx, client.Client)
+		if err != nil {
+			return fmt.Errorf("Error waiting for completion of Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
+		}
+
 	}
 
 	azureStackLockByName(vnetName, virtualNetworkResourceName)

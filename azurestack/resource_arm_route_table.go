@@ -77,12 +77,6 @@ func resourceArmRouteTable() *schema.Resource {
 				},
 			},
 
-			"disable_bgp_route_propagation": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  false,
-			},
-
 			"subnets": {
 				Type:     schema.TypeSet,
 				Computed: true,
@@ -116,7 +110,6 @@ func resourceArmRouteTableCreate(d *schema.ResourceData, meta interface{}) error
 		Location: &location,
 		RouteTablePropertiesFormat: &network.RouteTablePropertiesFormat{
 			Routes: &routes,
-			// DisableBgpRoutePropagation: utils.Bool(d.Get("disable_bgp_route_propagation").(bool)),
 		},
 		Tags: *expandTags(tags),
 	}
@@ -171,7 +164,6 @@ func resourceArmRouteTableRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if props := resp.RouteTablePropertiesFormat; props != nil {
-		// d.Set("disable_bgp_route_propagation", props.DisableBgpRoutePropagation)
 		if err := d.Set("route", flattenRouteTableRoutes(props.Routes)); err != nil {
 			return err
 		}

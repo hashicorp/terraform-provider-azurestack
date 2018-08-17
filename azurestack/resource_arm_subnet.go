@@ -10,7 +10,6 @@ import (
 )
 
 var subnetResourceName = "azurestack_subnet"
-var routeTableResourceName = "azurestack_route_table"
 
 func resourceArmSubnet() *schema.Resource {
 	return &schema.Resource{
@@ -238,6 +237,35 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 
 		azureStackLockByName(routeTableName, routeTableResourceName)
 		defer azureStackUnlockByName(routeTableName, routeTableResourceName)
+
+		// Get the subnet to dissasociate the route table, if we don't do this
+		// the subnet cannot be deleted
+
+		resp, err := client.Get(ctx, resGroup, vnetName, name, "")
+		if err != nil {
+			if utils.ResponseWasNotFound(resp.Response) {
+				d.SetId("")
+				return nil
+			}
+			return fmt.Errorf("Error making Read request on Azure Subnet %q: %+v", name, err)
+		}
+
+		// Set the route table to nil
+		resp.SubnetPropertiesFormat.RouteTable = nil
+
+		log.Printf("[DEBUG] Dissasociating Subnet %q (VN %q / Resource Group %q)", name, vnetName, resGroup)
+
+		// Dissasociate the subnet
+		future, err := client.CreateOrUpdate(ctx, resGroup, vnetName, name, resp)
+		if err != nil {
+			return fmt.Errorf("Error Creating/Updating Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
+		}
+
+		err = future.WaitForCompletion(ctx, client.Client)
+		if err != nil {
+			return fmt.Errorf("Error waiting for completion of Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
+		}
+
 	}
 
 	azureStackLockByName(vnetName, virtualNetworkResourceName)

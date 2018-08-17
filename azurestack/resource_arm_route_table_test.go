@@ -28,6 +28,11 @@ func TestAccAzureStackRouteTable_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "route.#", "0"),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

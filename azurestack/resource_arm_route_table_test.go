@@ -29,7 +29,7 @@ func TestAccAzureStackRouteTable_basic(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceName,
+				ResourceName:      "azurestack_route_table.test",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},

@@ -24,7 +24,6 @@ func TestAccAzureStackRouteTable_basic(t *testing.T) {
 				Config: testAccAzureStackRouteTable_basic(ri, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackRouteTableExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "disable_bgp_route_propagation", "false"),
 					resource.TestCheckResourceAttr(resourceName, "route.#", "0"),
 				),
 			},
@@ -50,7 +49,6 @@ func TestAccAzureStackRouteTable_complete(t *testing.T) {
 				Config: testAccAzureStackRouteTable_complete(ri, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackRouteTableExists("azurestack_route_table.test"),
-					resource.TestCheckResourceAttr(resourceName, "disable_bgp_route_propagation", "true"),
 					resource.TestCheckResourceAttr(resourceName, "route.#", "1"),
 				),
 			},
@@ -71,7 +69,6 @@ func TestAccAzureStackRouteTable_update(t *testing.T) {
 				Config: testAccAzureStackRouteTable_basic(ri, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackRouteTableExists("azurestack_route_table.test"),
-					resource.TestCheckResourceAttr(resourceName, "disable_bgp_route_propagation", "false"),
 					resource.TestCheckResourceAttr(resourceName, "route.#", "0"),
 				),
 			},
@@ -79,7 +76,6 @@ func TestAccAzureStackRouteTable_update(t *testing.T) {
 				Config: testAccAzureStackRouteTable_complete(ri, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackRouteTableExists("azurestack_route_table.test"),
-					resource.TestCheckResourceAttr(resourceName, "disable_bgp_route_propagation", "true"),
 					resource.TestCheckResourceAttr(resourceName, "route.#", "1"),
 				),
 			},
@@ -379,7 +375,6 @@ resource "azurestack_route_table" "test" {
 		next_hop_type  = "vnetlocal"
     }
 
-    disable_bgp_route_propagation = true
 }
 `, rInt, location, rInt)
 }

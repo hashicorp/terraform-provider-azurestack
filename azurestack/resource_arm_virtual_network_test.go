@@ -94,6 +94,11 @@ func TestAccAzureStackVirtualNetwork_basic(t *testing.T) {
 					testCheckAzureStackVirtualNetworkExists(resourceName),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -152,6 +157,11 @@ func TestAccAzureStackVirtualNetwork_withTags(t *testing.T) {
 					resource.TestCheckResourceAttr(
 						resourceName, "tags.environment", "staging"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

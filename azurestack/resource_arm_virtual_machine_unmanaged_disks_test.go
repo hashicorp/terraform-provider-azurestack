@@ -12,6 +12,7 @@ import (
 )
 
 func TestAccAzureStackVirtualMachine_basicLinuxMachine(t *testing.T) {
+	resourceName := "azurestack_virtual_machine.test"
 	var vm compute.VirtualMachine
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachine_basicLinuxMachine(ri, testLocation())
@@ -23,8 +24,17 @@ func TestAccAzureStackVirtualMachine_basicLinuxMachine(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackVirtualMachineExists("azurestack_virtual_machine.test", &vm),
+					testCheckAzureStackVirtualMachineExists(resourceName, &vm),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"delete_data_disks_on_termination",
+					"delete_os_disk_on_termination",
+				},
 			},
 		},
 	})

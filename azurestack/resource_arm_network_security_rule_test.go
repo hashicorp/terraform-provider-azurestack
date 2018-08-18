@@ -13,6 +13,7 @@ import (
 )
 
 func TestAccAzureStackNetworkSecurityRule_basic(t *testing.T) {
+	resourceGroup := "azurestack_network_security_rule.test"
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -22,8 +23,13 @@ func TestAccAzureStackNetworkSecurityRule_basic(t *testing.T) {
 			{
 				Config: testAccAzureStackNetworkSecurityRule_basic(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackNetworkSecurityRuleExists("azurestack_network_security_rule.test"),
+					testCheckAzureStackNetworkSecurityRuleExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

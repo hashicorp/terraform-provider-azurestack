@@ -24,6 +24,11 @@ func TestAccAzureStackNetworkSecurityGroup_basic(t *testing.T) {
 					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -41,6 +46,11 @@ func TestAccAzureStackNetworkSecurityGroup_singleRule(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -117,6 +127,12 @@ func TestAccAzureStackNetworkSecurityGroup_withTags(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.environment", "staging"),
 				),
 			},
+
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -143,6 +159,12 @@ func TestAccAzureStackNetworkSecurityGroup_addingExtraRules(t *testing.T) {
 					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "security_rule.#", "2"),
 				),
+			},
+
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

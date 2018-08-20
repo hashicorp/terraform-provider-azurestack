@@ -15,9 +15,9 @@ var routeTableResourceName = "azurestack_route_table"
 
 func resourceArmRouteTable() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceArmRouteTableCreate,
+		Create: resourceArmRouteTableCreateUpdate,
 		Read:   resourceArmRouteTableRead,
-		Update: resourceArmRouteTableCreate,
+		Update: resourceArmRouteTableCreateUpdate,
 		Delete: resourceArmRouteTableDelete,
 
 		Importer: &schema.ResourceImporter{
@@ -89,7 +89,7 @@ func resourceArmRouteTable() *schema.Resource {
 	}
 }
 
-func resourceArmRouteTableCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceArmRouteTableCreateUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*ArmClient).routeTablesClient
 	ctx := meta.(*ArmClient).StopContext
 
@@ -100,10 +100,7 @@ func resourceArmRouteTableCreate(d *schema.ResourceData, meta interface{}) error
 	resGroup := d.Get("resource_group_name").(string)
 	tags := d.Get("tags").(map[string]interface{})
 
-	routes, err := expandRouteTableRoutes(d)
-	if err != nil {
-		return fmt.Errorf("Error Expanding list of Route Table Routes: %+v", err)
-	}
+	routes := expandRouteTableRoutes(d)
 
 	routeSet := network.RouteTable{
 		Name:     &name,
@@ -119,8 +116,7 @@ func resourceArmRouteTableCreate(d *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("Error Creating/Updating Route Table %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
-	err = future.WaitForCompletionRef(ctx, client.Client)
-	if err != nil {
+	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
 		return fmt.Errorf("Error waiting for completion of Route Table %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
@@ -196,43 +192,37 @@ func resourceArmRouteTableDelete(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 
-	err = future.WaitForCompletionRef(ctx, client.Client)
-	if err != nil {
+	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
 		return fmt.Errorf("Error waiting for deletion of Route Table %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	return nil
 }
 
-func expandRouteTableRoutes(d *schema.ResourceData) ([]network.Route, error) {
+func expandRouteTableRoutes(d *schema.ResourceData) []network.Route {
 	configs := d.Get("route").([]interface{})
 	routes := make([]network.Route, 0, len(configs))
 
 	for _, configRaw := range configs {
 		data := configRaw.(map[string]interface{})
 
-		addressPrefix := data["address_prefix"].(string)
-		nextHopType := data["next_hop_type"].(string)
-
-		properties := network.RoutePropertiesFormat{
-			AddressPrefix: &addressPrefix,
-			NextHopType:   network.RouteNextHopType(nextHopType),
-		}
-
-		if v := data["next_hop_in_ip_address"].(string); v != "" {
-			properties.NextHopIPAddress = &v
-		}
-
 		name := data["name"].(string)
 		route := network.Route{
 			Name: &name,
-			RoutePropertiesFormat: &properties,
+			RoutePropertiesFormat: &network.RoutePropertiesFormat{
+				AddressPrefix: utils.String(data["address_prefix"].(string)),
+				NextHopType:   network.RouteNextHopType(data["next_hop_type"].(string)),
+			},
+		}
+
+		if v := data["next_hop_in_ip_address"].(string); v != "" {
+			route.RoutePropertiesFormat.NextHopIPAddress = &v
 		}
 
 		routes = append(routes, route)
 	}
 
-	return routes, nil
+	return routes
 }
 
 func flattenRouteTableRoutes(input *[]network.Route) []interface{} {

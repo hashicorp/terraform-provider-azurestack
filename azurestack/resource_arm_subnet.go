@@ -228,6 +228,12 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 		defer azureStackUnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
 	}
 
+	azureStackLockByName(vnetName, virtualNetworkResourceName)
+	defer azureStackUnlockByName(vnetName, virtualNetworkResourceName)
+
+	azureStackLockByName(name, subnetResourceName)
+	defer azureStackUnlockByName(name, subnetResourceName)
+
 	if v, ok := d.GetOk("route_table_id"); ok {
 		rtId := v.(string)
 		routeTableName, err := parseRouteTableName(rtId)
@@ -237,6 +243,10 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 
 		azureStackLockByName(routeTableName, routeTableResourceName)
 		defer azureStackUnlockByName(routeTableName, routeTableResourceName)
+
+		// This behaviour is only for AzureStack
+		// If the route table is not dissasociated from the subnet prior to deletion
+		// it will fail.
 
 		// Get the subnet to dissasociate the route table, if we don't do this
 		// the subnet cannot be deleted
@@ -258,7 +268,7 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 		// Dissasociate the subnet
 		future, err := client.CreateOrUpdate(ctx, resGroup, vnetName, name, resp)
 		if err != nil {
-			return fmt.Errorf("Error Creating/Updating Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
+			return fmt.Errorf("Error Dissasociating Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
 		}
 
 		err = future.WaitForCompletion(ctx, client.Client)
@@ -267,12 +277,6 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 		}
 
 	}
-
-	azureStackLockByName(vnetName, virtualNetworkResourceName)
-	defer azureStackUnlockByName(vnetName, virtualNetworkResourceName)
-
-	azureStackLockByName(name, subnetResourceName)
-	defer azureStackUnlockByName(name, subnetResourceName)
 
 	future, err := client.Delete(ctx, resGroup, vnetName, name)
 	if err != nil {

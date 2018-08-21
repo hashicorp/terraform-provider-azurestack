@@ -66,6 +66,7 @@ type ArmClient struct {
 	subnetClient       network.SubnetsClient
 	nicClient          network.InterfacesClient
 	loadBalancerClient network.LoadBalancersClient
+	routeTablesClient  network.RouteTablesClient
 
 	resourceGroupsClient resources.GroupsClient
 }
@@ -246,6 +247,10 @@ func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, a
 	subnetsClient := network.NewSubnetsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&subnetsClient.Client, auth)
 	c.subnetClient = subnetsClient
+
+	routeTablesClient := network.NewRouteTablesClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&routeTablesClient.Client, auth)
+	c.routeTablesClient = routeTablesClient
 }
 
 func (c *ArmClient) registerResourcesClients(endpoint, subscriptionId string, auth autorest.Authorizer) {

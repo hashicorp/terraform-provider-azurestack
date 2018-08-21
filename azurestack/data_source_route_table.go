@@ -6,6 +6,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2015-06-15/network"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 func dataSourceArmRouteTable() *schema.Resource {
@@ -14,8 +15,9 @@ func dataSourceArmRouteTable() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.NoZeroValues,
 			},
 
 			"resource_group_name": resourceGroupNameForDataSourceSchema(),
@@ -124,10 +126,10 @@ func flattenRouteTableDataSourceRoutes(input *[]network.Route) []interface{} {
 	return results
 }
 
-func flattenRouteTableDataSourceSubnets(input *[]network.Subnet) []string {
+func flattenRouteTableDataSourceSubnets(subnets *[]network.Subnet) []string {
 	output := make([]string, 0)
 
-	if subnets := input; subnets != nil {
+	if subnets != nil {
 		for _, subnet := range *subnets {
 			output = append(output, *subnet.ID)
 		}

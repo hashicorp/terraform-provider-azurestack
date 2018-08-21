@@ -34,13 +34,17 @@ output "storage_account_tier" {
 
 * `location` - The Azure location where the Storage Account exists
 
-* `account_kind` - Defines the Kind of account, either `BlobStorage` or `Storage`.
+* `account_kind` - (Optional) Defines the Kind of account. Valid option is `Storage`.
+   . Changing this forces a new resource to be created.
+    Defaults to `Storage` currently as per [Azure Stack Storage Differences](https://docs.microsoft.com/en-us/azure/azure-stack/user/azure-stack-acs-differences)
 
 * `account_tier` - Defines the Tier of this storage account.
 
 * `account_replication_type` - Defines the type of replication used for this storage account.
 
-* `access_tier` - Defines the access tier for `BlobStorage` accounts.
+* `access_tier` - (Required for `BlobStorage` accounts) Defines the access tier
+    for `BlobStorage` accounts. Valid options are `Hot` and `Cold`, defaults to
+    `Hot`. - **`Currently Not Supported on Azure Stack`**
 
 * `account_encryption_source` - The Encryption Source for this Storage Account.
 

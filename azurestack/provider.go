@@ -90,6 +90,7 @@ func Provider() terraform.ResourceProvider {
 			"azurestack_lb_rule":                   resourceArmLoadBalancerRule(),
 			"azurestack_public_ip":                 resourceArmPublicIp(),
 			"azurestack_resource_group":            resourceArmResourceGroup(),
+			"azurestack_route":                     resourceArmRoute(),
 			"azurestack_route_table":               resourceArmRouteTable(),
 			"azurestack_storage_account":           resourceArmStorageAccount(),
 			"azurestack_storage_blob":              resourceArmStorageBlob(),

@@ -58,7 +58,9 @@ func TestAccAzureStackVirtualMachineScaleSet_basicPublicIP(t *testing.T) {
 	})
 }
 
+//Not supported accelerated networking
 func TestAccAzureStackVirtualMachineScaleSet_basicAcceleratedNetworking(t *testing.T) {
+	t.Skip()
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_basicAcceleratedNetworking(ri, testLocation())
@@ -251,7 +253,9 @@ func TestAccAzureStackVirtualMachineScaleSet_linuxUpdated(t *testing.T) {
 	})
 }
 
+//Update customData is not allowed by the backend
 func TestAccAzureStackVirtualMachineScaleSet_customDataUpdated(t *testing.T) {
+	t.Skip()
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	location := testLocation()
@@ -423,7 +427,9 @@ func TestAccAzureStackVirtualMachineScaleSet_planManagedDisk(t *testing.T) {
 	})
 }
 
+//Not supported yet.
 func TestAccAzureStackVirtualMachineScaleSet_customImage(t *testing.T) {
+	t.Skip()
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	resourceGroup := fmt.Sprintf("acctestRG-%d", ri)
@@ -459,7 +465,9 @@ func TestAccAzureStackVirtualMachineScaleSet_customImage(t *testing.T) {
 	})
 }
 
+//Provider doesn't not supported application gateway
 func TestAccAzureStackVirtualMachineScaleSet_applicationGateway(t *testing.T) {
+	t.Skip()
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSetApplicationGatewayTemplate(ri, testLocation())
@@ -501,7 +509,6 @@ func TestAccAzureStackVirtualMachineScaleSet_loadBalancer(t *testing.T) {
 
 // Managed disks not supported yet
 func TestAccAzureStackVirtualMachineScaleSet_loadBalancerManagedDataDisks(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_virtual_machine_scale_set.test"
@@ -563,7 +570,9 @@ func TestAccAzureStackVirtualMachineScaleSet_priority(t *testing.T) {
 	})
 }
 
+//Backend doesn't support identity field
 func TestAccAzureStackVirtualMachineScaleSet_MSI(t *testing.T) {
+	t.Skip()
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSetMSITemplate(ri, testLocation())
@@ -649,7 +658,9 @@ func TestAccAzureStackVirtualMachineScaleSet_multipleExtensions(t *testing.T) {
 	})
 }
 
+//osDiskTypeConflict must work when managed disk be supported.
 func TestAccAzureStackVirtualMachineScaleSet_osDiskTypeConflict(t *testing.T) {
+	t.Skip()
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_osDiskTypeConflict(ri, testLocation())
 	resource.Test(t, resource.TestCase{
@@ -690,6 +701,7 @@ func TestAccAzureStackVirtualMachineScaleSet_NonStandardCasing(t *testing.T) {
 }
 
 func TestAccAzureStackVirtualMachineScaleSet_multipleNetworkProfiles(t *testing.T) {
+	t.Skip()
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_multipleNetworkProfiles(ri, testLocation())
@@ -2692,7 +2704,7 @@ resource "azurestack_lb" "test" {
 resource "azurestack_lb_backend_address_pool" "test" {
   name                = "test"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  location            = "${azurestack_resource_group.test.location}"
+  #location            = "${azurestack_resource_group.test.location}"
   loadbalancer_id     = "${azurestack_lb.test.id}"
 }
 
@@ -3922,50 +3934,50 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 
 func testAccAzureStackImage_standaloneImage_setup(rInt int, userName string, password string, hostName string, location string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
   name                = "acctvn-%d"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
-resource "azurerm_subnet" "test" {
+resource "azurestack_subnet" "test" {
   name                 = "acctsub-%d"
-  resource_group_name  = "${azurerm_resource_group.test.name}"
-  virtual_network_name = "${azurerm_virtual_network.test.name}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
   address_prefix       = "10.0.2.0/24"
 }
 
-resource "azurerm_public_ip" "test" {
+resource "azurestack_public_ip" "test" {
   name                         = "acctpip-%d"
-  location                     = "${azurerm_resource_group.test.location}"
-  resource_group_name          = "${azurerm_resource_group.test.name}"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "Dynamic"
   domain_name_label            = "%s"
 }
 
-resource "azurerm_network_interface" "testsource" {
+resource "azurestack_network_interface" "testsource" {
   name                = "acctnicsource-%d"
-  location            = "${azurerm_resource_group.test.location}"
-  resource_group_name = "${azurerm_resource_group.test.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   ip_configuration {
     name                          = "testconfigurationsource"
-    subnet_id                     = "${azurerm_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
     private_ip_address_allocation = "dynamic"
-    public_ip_address_id          = "${azurerm_public_ip.test.id}"
+    public_ip_address_id          = "${azurestack_public_ip.test.id}"
   }
 }
 
-resource "azurerm_storage_account" "test" {
+resource "azurestack_storage_account" "test" {
   name                     = "accsa%d"
-  resource_group_name      = "${azurerm_resource_group.test.name}"
-  location                 = "${azurerm_resource_group.test.location}"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
@@ -3974,18 +3986,18 @@ resource "azurerm_storage_account" "test" {
   }
 }
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
   name                  = "vhds"
-  resource_group_name   = "${azurerm_resource_group.test.name}"
-  storage_account_name  = "${azurerm_storage_account.test.name}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
   container_access_type = "blob"
 }
 
-resource "azurerm_virtual_machine" "testsource" {
+resource "azurestack_virtual_machine" "testsource" {
   name                  = "testsource"
-  location              = "${azurerm_resource_group.test.location}"
-  resource_group_name   = "${azurerm_resource_group.test.name}"
-  network_interface_ids = ["${azurerm_network_interface.testsource.id}"]
+  location              = "${azurestack_resource_group.test.location}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  network_interface_ids = ["${azurestack_network_interface.testsource.id}"]
   vm_size               = "Standard_D1_v2"
 
   storage_image_reference {
@@ -3997,7 +4009,7 @@ resource "azurerm_virtual_machine" "testsource" {
 
   storage_os_disk {
     name          = "myosdisk1"
-    vhd_uri       = "${azurerm_storage_account.test.primary_blob_endpoint}${azurerm_storage_container.test.name}/myosdisk1.vhd"
+    vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
     caching       = "ReadWrite"
     create_option = "FromImage"
     disk_size_gb  = "30"

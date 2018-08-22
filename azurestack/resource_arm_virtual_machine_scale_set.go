@@ -34,7 +34,7 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 			"location": locationSchema(),
 
 			"resource_group_name": resourceGroupNameSchema(),
-
+			// Not supported on profile: 2017-03-09
 			// "zones": zonesSchema(),
 
 			"identity": {
@@ -376,25 +376,25 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 				},
 				Set: resourceArmVirtualMachineScaleSetNetworkConfigurationHash,
 			},
-
-			"boot_diagnostics": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"enabled": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  true,
-						},
-						"storage_uri": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-					},
-				},
-			},
+			//Not supported on profile: 2017-03-09
+			// "boot_diagnostics": {
+			// 	Type:     schema.TypeList,
+			// 	Optional: true,
+			// 	MaxItems: 1,
+			// 	Elem: &schema.Resource{
+			// 		Schema: map[string]*schema.Schema{
+			// 			"enabled": {
+			// 				Type:     schema.TypeBool,
+			// 				Optional: true,
+			// 				Default:  true,
+			// 			},
+			// 			"storage_uri": {
+			// 				Type:     schema.TypeString,
+			// 				Required: true,
+			// 			},
+			// 		},
+			// 	},
+			// },
 
 			"storage_profile_os_disk": {
 				Type:     schema.TypeSet,
@@ -608,6 +608,7 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 	}
 	storageProfile.OsDisk = osDisk
 
+	// Not supported
 	// if _, ok := d.GetOk("storage_profile_data_disk"); ok {
 	// 	dataDisks, err := expandAzureRMVirtualMachineScaleSetsStorageProfileDataDisk(d)
 	// 	if err != nil {
@@ -938,6 +939,7 @@ func flattenAzureRmVirtualMachineScaleSetOsProfileSecrets(secrets *[]compute.Vau
 	return result
 }
 
+//To be prepared when this field works
 func flattenAzureRmVirtualMachineScaleSetBootDiagnostics(bootDiagnostic *compute.BootDiagnostics) []interface{} {
 	b := map[string]interface{}{
 		"enabled":     *bootDiagnostic.Enabled,
@@ -1236,6 +1238,27 @@ func resourceArmVirtualMachineScaleSetExtensionHash(v interface{}) int {
 	}
 
 	return hashcode.String(buf.String())
+}
+
+//To be prepared when this field works
+func expandAzureRMVirtualMachineScaleSetBootDiagnostics(d *schema.ResourceData) *compute.DiagnosticsProfile {
+	bootDiagnostics := d.Get("boot_diagnostics").([]interface{})
+
+	bd := bootDiagnostics[0].(map[string]interface{})
+
+	enabled := bd["enabled"].(bool)
+	storageURI := bd["storage_uri"].(string)
+
+	if storageURI != "" && enabled == false {
+		enabled = true
+	}
+
+	return &compute.DiagnosticsProfile{
+		BootDiagnostics: &compute.BootDiagnostics{
+			Enabled:    &enabled,
+			StorageURI: &storageURI,
+		},
+	}
 }
 
 func expandVirtualMachineScaleSetSku(d *schema.ResourceData) (*compute.Sku, error) {

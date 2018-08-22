@@ -21,17 +21,19 @@ func resourceArmRoute() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.NoZeroValues,
 			},
 
 			"resource_group_name": resourceGroupNameSchema(),
 
 			"route_table_name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.NoZeroValues,
 			},
 
 			"address_prefix": {
@@ -75,19 +77,16 @@ func resourceArmRouteCreateUpdate(d *schema.ResourceData, meta interface{}) erro
 	azureStackLockByName(rtName, routeTableResourceName)
 	defer azureStackUnlockByName(rtName, routeTableResourceName)
 
-	properties := network.RoutePropertiesFormat{
-		AddressPrefix: &addressPrefix,
-		NextHopType:   network.RouteNextHopType(nextHopType),
+	route := network.Route{
+		Name: &name,
+		RoutePropertiesFormat: &network.RoutePropertiesFormat{
+			AddressPrefix: &addressPrefix,
+			NextHopType:   network.RouteNextHopType(nextHopType),
+		},
 	}
 
 	if v, ok := d.GetOk("next_hop_in_ip_address"); ok {
-		nextHopInIpAddress := v.(string)
-		properties.NextHopIPAddress = &nextHopInIpAddress
-	}
-
-	route := network.Route{
-		Name: &name,
-		RoutePropertiesFormat: &properties,
+		route.RoutePropertiesFormat.NextHopIPAddress = utils.String(v.(string))
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, rtName, name, route)
@@ -95,8 +94,7 @@ func resourceArmRouteCreateUpdate(d *schema.ResourceData, meta interface{}) erro
 		return fmt.Errorf("Error Creating/Updating Route %q (Route Table %q / Resource Group %q): %+v", name, rtName, resGroup, err)
 	}
 
-	err = future.WaitForCompletionRef(ctx, client.Client)
-	if err != nil {
+	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
 		return fmt.Errorf("Error waiting for completion for Route %q (Route Table %q / Resource Group %q): %+v", name, rtName, resGroup, err)
 	}
 
@@ -169,8 +167,7 @@ func resourceArmRouteDelete(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error deleting Route %q (Route Table %q / Resource Group %q): %+v", routeName, rtName, resGroup, err)
 	}
 
-	err = future.WaitForCompletionRef(ctx, client.Client)
-	if err != nil {
+	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
 		return fmt.Errorf("Error waiting for deletion of Route %q (Route Table %q / Resource Group %q): %+v", routeName, rtName, resGroup, err)
 	}
 

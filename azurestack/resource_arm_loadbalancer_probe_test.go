@@ -17,7 +17,7 @@ func TestAccAzureStackLoadBalancerProbe_basic(t *testing.T) {
 	probeName := fmt.Sprintf("probe-%d", ri)
 
 	subscriptionID := os.Getenv("ARM_SUBSCRIPTION_ID")
-	probe_id := fmt.Sprintf(
+	probeID := fmt.Sprintf(
 		"/subscriptions/%s/resourceGroups/acctestRG-%d/providers/Microsoft.Network/loadBalancers/arm-test-loadbalancer-%d/probes/%s",
 		subscriptionID, ri, ri, probeName)
 
@@ -32,7 +32,7 @@ func TestAccAzureStackLoadBalancerProbe_basic(t *testing.T) {
 					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
 					testCheckAzureStackLoadBalancerProbeExists(probeName, &lb),
 					resource.TestCheckResourceAttr(
-						"azurestack_lb_probe.test", "id", probe_id),
+						"azurestack_lb_probe.test", "id", probeID),
 				),
 			},
 			{

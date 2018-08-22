@@ -939,6 +939,12 @@
 			"revisionTime": "2016-09-27T10:08:44Z"
 		},
 		{
+			"checksumSHA1": "DZkYNX2w0P8kfM5fZcqltuA2x5Q=",
+			"path": "github.com/satori/uuid",
+			"revision": "36e9d2ebbde5e3f13ab2e25625fd453271d6522e",
+			"revisionTime": "2018-01-03T17:44:51Z"
+		},
+		{
 			"checksumSHA1": "qgMa75aMGbkFY0jIqqqgVnCUoNA=",
 			"origin": "github.com/hashicorp/terraform/vendor/github.com/ulikunitz/xz",
 			"path": "github.com/ulikunitz/xz",

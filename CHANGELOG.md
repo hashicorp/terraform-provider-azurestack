@@ -1,7 +1,8 @@
 ## 0.4.0 (Unreleased)
 
-* **New Resource:** `azurestack_route_table` [GH-26]]
-* **New Data Source:** `azurestack_route_table` [GH-26]]
+* **New Resource:** `azurestack_route_table` [GH-26]
+* **New Resource:** `azurestack_route` [GH-27]
+* **New Data Source:** `azurestack_route_table` [GH-26]
 
 ## 0.3.0 (August 13, 2018)
 

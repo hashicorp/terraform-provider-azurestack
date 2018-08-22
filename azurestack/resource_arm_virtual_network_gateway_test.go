@@ -52,7 +52,9 @@ func TestAccAzureStackVirtualNetworkGateway_lowerCaseSubnetName(t *testing.T) {
 	})
 }
 
+//VpnGw1 sku is not supported yet.
 func TestAccAzureStackVirtualNetworkGateway_vpnGw1(t *testing.T) {
+	t.Skip()
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualNetworkGateway_vpnGw1(ri, testLocation())
 
@@ -71,6 +73,7 @@ func TestAccAzureStackVirtualNetworkGateway_vpnGw1(t *testing.T) {
 	})
 }
 
+//VpnGw1 sku an activeActive are not supported yet.
 func TestAccAzureStackVirtualNetworkGateway_activeActive(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualNetworkGateway_activeActive(ri, testLocation())
@@ -111,6 +114,7 @@ func TestAccAzureStackVirtualNetworkGateway_standard(t *testing.T) {
 	})
 }
 
+//VpnGw2 sku is not supported yet.
 func TestAccAzureStackVirtualNetworkGateway_vpnGw2(t *testing.T) {
 	resourceName := "azurestack_virtual_network_gateway.test"
 	ri := acctest.RandInt()
@@ -132,6 +136,7 @@ func TestAccAzureStackVirtualNetworkGateway_vpnGw2(t *testing.T) {
 	})
 }
 
+//VpnGw3 sku is not supported yet.
 func TestAccAzureStackVirtualNetworkGateway_vpnGw3(t *testing.T) {
 	resourceName := "azurestack_virtual_network_gateway.test"
 	ri := acctest.RandInt()
@@ -167,8 +172,9 @@ func TestAccAzureStackVirtualNetworkGateway_vpnClientConfig(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackVirtualNetworkGatewayExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "vpn_client_configuration.0.radius_server_address", "1.2.3.4"),
-					resource.TestCheckResourceAttr(resourceName, "vpn_client_configuration.0.vpn_client_protocols.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "vpn_client_configuration.0.address_space.0", "10.2.0.0/24"),
+					//resource.TestCheckResourceAttr(resourceName, "vpn_client_configuration.0.radius_server_address", "1.2.3.4"),
+					//resource.TestCheckResourceAttr(resourceName, "vpn_client_configuration.0.vpn_client_protocols.#", "2"),
 				),
 			},
 		},
@@ -473,7 +479,8 @@ resource "azurestack_virtual_network_gateway" "test" {
 
   type = "Vpn"
   vpn_type = "RouteBased"
-  sku = "VpnGw1"
+	sku  = "Basic"
+	#sku = "VpnGw1"
 
   ip_configuration {
     public_ip_address_id = "${azurestack_public_ip.test.id}"
@@ -483,10 +490,11 @@ resource "azurestack_virtual_network_gateway" "test" {
 
   vpn_client_configuration {
 	address_space = ["10.2.0.0/24"]
-	vpn_client_protocols = ["SSTP", "IkeV2"]
+	#vpn_client_protocols, radius_server_address and radius_server_certificate are not supported yet.
+	#vpn_client_protocols = ["SSTP", "IkeV2"]
 
-	radius_server_address = "1.2.3.4"
-    radius_server_secret = "1234"
+	#radius_server_address = "1.2.3.4"
+  #  radius_server_secret = "1234"
   }
 }
 `, rInt, location, rInt, rInt, rInt)

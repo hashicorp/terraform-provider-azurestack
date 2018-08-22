@@ -84,10 +84,6 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 					string(network.VirtualNetworkGatewaySkuTierBasic),
 					string(network.VirtualNetworkGatewaySkuTierStandard),
 					string(network.VirtualNetworkGatewaySkuTierHighPerformance),
-					string("VirtualNetworkGatewaySkuTierUltraPerformance"),
-					string("VirtualNetworkGatewaySkuNameVpnGw1"),
-					string("VirtualNetworkGatewaySkuNameVpnGw2"),
-					string("VirtualNetworkGatewaySkuNameVpnGw3"),
 				}, true),
 			},
 
@@ -131,6 +127,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 			"vpn_client_configuration": {
 				Type:     schema.TypeList,
 				Optional: true,
+				Computed: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -546,8 +543,8 @@ func expandArmVirtualNetworkGatewayVpnClientConfig(d *schema.ResourceData) *netw
 		VpnClientRootCertificates:    &rootCerts,
 		VpnClientRevokedCertificates: &revokedCerts,
 		// VpnClientProtocols:           &vpnClientProtocols,
-		// RadiusServerAddress: &confRadiusServerAddress,
-		// RadiusServerSecret:  &confRadiusServerSecret,
+		//RadiusServerAddress: &confRadiusServerAddress,
+		//RadiusServerSecret:  &confRadiusServerSecret,
 	}
 }
 
@@ -742,9 +739,6 @@ func validateArmVirtualNetworkGatewayRouteBasedVpnSku() schema.SchemaValidateFun
 		string(network.VirtualNetworkGatewaySkuTierBasic),
 		string(network.VirtualNetworkGatewaySkuTierStandard),
 		string(network.VirtualNetworkGatewaySkuTierHighPerformance),
-		string("VirtualNetworkGatewaySkuNameVpnGw1"),
-		string("VirtualNetworkGatewaySkuNameVpnGw2"),
-		string("VirtualNetworkGatewaySkuNameVpnGw3"),
 	}, true)
 }
 

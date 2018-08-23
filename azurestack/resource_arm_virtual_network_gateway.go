@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/validate"
 	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
@@ -28,15 +27,17 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.NoZeroValues,
 			},
 
 			"resource_group_name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.NoZeroValues,
 			},
 
 			"location": locationSchema(),
@@ -70,11 +71,12 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 				Computed: true,
 			},
 
-			"active_active": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Computed: true,
-			},
+			// Not Supported by AzureStack
+			// "active_active": {
+			// 	Type:     schema.TypeBool,
+			// 	Optional: true,
+			// 	Computed: true,
+			// },
 
 			"sku": {
 				Type:             schema.TypeString,
@@ -142,10 +144,10 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 							Type:     schema.TypeSet,
 							Optional: true,
 
-							ConflictsWith: []string{
-								"vpn_client_configuration.0.radius_server_address",
-								"vpn_client_configuration.0.radius_server_secret",
-							},
+							// ConflictsWith: []string{
+							// 	"vpn_client_configuration.0.radius_server_address",
+							// 	"vpn_client_configuration.0.radius_server_secret",
+							// },
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -163,10 +165,12 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 						"revoked_certificate": {
 							Type:     schema.TypeSet,
 							Optional: true,
-							ConflictsWith: []string{
-								"vpn_client_configuration.0.radius_server_address",
-								"vpn_client_configuration.0.radius_server_secret",
-							},
+
+							// Not supported by AzureStack
+							// ConflictsWith: []string{
+							// 	"vpn_client_configuration.0.radius_server_address",
+							// 	"vpn_client_configuration.0.radius_server_secret",
+							// },
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -181,23 +185,23 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 							},
 							Set: hashVirtualNetworkGatewayRevokedCert,
 						},
-						"radius_server_address": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ConflictsWith: []string{
-								"vpn_client_configuration.0.root_certificate",
-								"vpn_client_configuration.0.revoked_certificate",
-							},
-							ValidateFunc: validate.IPv4Address,
-						},
-						"radius_server_secret": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ConflictsWith: []string{
-								"vpn_client_configuration.0.root_certificate",
-								"vpn_client_configuration.0.revoked_certificate",
-							},
-						},
+						// "radius_server_address": {
+						// 	Type:     schema.TypeString,
+						// 	Optional: true,
+						// 	ConflictsWith: []string{
+						// 		"vpn_client_configuration.0.root_certificate",
+						// 		"vpn_client_configuration.0.revoked_certificate",
+						// 	},
+						// 	ValidateFunc: validate.IPv4Address,
+						// },
+						// "radius_server_secret": {
+						// 	Type:     schema.TypeString,
+						// 	Optional: true,
+						// 	ConflictsWith: []string{
+						// 		"vpn_client_configuration.0.root_certificate",
+						// 		"vpn_client_configuration.0.revoked_certificate",
+						// 	},
+						// },
 						"vpn_client_protocols": {
 							Type:     schema.TypeSet,
 							Optional: true,
@@ -276,8 +280,7 @@ func resourceArmVirtualNetworkGatewayCreateUpdate(d *schema.ResourceData, meta i
 		return fmt.Errorf("Error Creating/Updating AzureRM Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
-	err = future.WaitForCompletionRef(ctx, client.Client)
-	if err != nil {
+	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
 		return fmt.Errorf("Error waiting for completion of AzureRM Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
@@ -321,10 +324,11 @@ func resourceArmVirtualNetworkGatewayRead(d *schema.ResourceData, meta interface
 	if gw := resp.VirtualNetworkGatewayPropertiesFormat; gw != nil {
 		d.Set("type", string(gw.GatewayType))
 		d.Set("enable_bgp", gw.EnableBgp)
+		// ActiveActive is not supported by AzureStack
 		// d.Set("active_active", gw.ActiveActive)
 
-		if string(gw.VpnType) != "" {
-			d.Set("vpn_type", string(gw.VpnType))
+		if vpnType := string(gw.VpnType); vpnType != "" {
+			d.Set("vpn_type", vpnType)
 		}
 
 		if gw.GatewayDefaultSite != nil {
@@ -370,8 +374,7 @@ func resourceArmVirtualNetworkGatewayDelete(d *schema.ResourceData, meta interfa
 		return fmt.Errorf("Error deleting Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
-	err = future.WaitForCompletionRef(ctx, client.Client)
-	if err != nil {
+	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
 		return fmt.Errorf("Error waiting for deletion of Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
@@ -382,13 +385,18 @@ func getArmVirtualNetworkGatewayProperties(d *schema.ResourceData) (*network.Vir
 	gatewayType := network.VirtualNetworkGatewayType(d.Get("type").(string))
 	vpnType := network.VpnType(d.Get("vpn_type").(string))
 	enableBgp := d.Get("enable_bgp").(bool)
+
+	// ActiveActive is not supported by AzureStack
 	// activeActive := d.Get("active_active").(bool)
 
 	props := &network.VirtualNetworkGatewayPropertiesFormat{
 		GatewayType: gatewayType,
 		VpnType:     vpnType,
 		EnableBgp:   &enableBgp,
+
+		// ActiveActive is not supported by AzureStack
 		// ActiveActive:     &activeActive,
+
 		Sku:              expandArmVirtualNetworkGatewaySku(d),
 		IPConfigurations: expandArmVirtualNetworkGatewayIPConfigurations(d),
 	}
@@ -441,12 +449,11 @@ func expandArmVirtualNetworkGatewayBgpSettings(d *schema.ResourceData) *network.
 	bgpSets := d.Get("bgp_settings").([]interface{})
 	bgp := bgpSets[0].(map[string]interface{})
 
-	asn := int64(bgp["asn"].(int))
 	peeringAddress := bgp["peering_address"].(string)
 	peerWeight := int32(bgp["peer_weight"].(int))
 
 	return &network.BgpSettings{
-		Asn:               &asn,
+		Asn:               utils.Int64(int64(bgp["asn"].(int))),
 		BgpPeeringAddress: &peeringAddress,
 		PeerWeight:        &peerWeight,
 	}

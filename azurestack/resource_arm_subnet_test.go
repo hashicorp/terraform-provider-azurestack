@@ -33,10 +33,7 @@ func TestAccAzureStackSubnet_basic(t *testing.T) {
 	})
 }
 
-// TODO: Add route table
 func TestAccAzureStackSubnet_routeTableUpdate(t *testing.T) {
-
-	t.Skip()
 
 	ri := acctest.RandInt()
 	location := testLocation()
@@ -65,10 +62,7 @@ func TestAccAzureStackSubnet_routeTableUpdate(t *testing.T) {
 	})
 }
 
-// TODO: Remove route table
 func TestAccAzureStackSubnet_routeTableRemove(t *testing.T) {
-
-	t.Skip()
 
 	resourceName := "azurestack_subnet.test"
 	ri := acctest.RandInt()
@@ -131,10 +125,7 @@ func TestAccAzureStackSubnet_removeNetworkSecurityGroup(t *testing.T) {
 	})
 }
 
-// Route table not supported yet
 func TestAccAzureStackSubnet_bug7986(t *testing.T) {
-
-	t.Skip()
 
 	ri := acctest.RandInt()
 	initConfig := testAccAzureStackSubnet_bug7986(ri, testLocation())
@@ -155,10 +146,7 @@ func TestAccAzureStackSubnet_bug7986(t *testing.T) {
 	})
 }
 
-// Route table not supported for now
 func TestAccAzureStackSubnet_bug15204(t *testing.T) {
-
-	t.Skip()
 
 	ri := acctest.RandInt()
 	initConfig := testAccAzureStackSubnet_bug15204(ri, testLocation())

@@ -1,4 +1,9 @@
 ## 0.4.0 (Unreleased)
+
+* **New Resource:** `azurestack_route_table` [GH-26]
+* **New Resource:** `azurestack_route` [GH-27]
+* **New Data Source:** `azurestack_route_table` [GH-26]
+
 ## 0.3.0 (August 13, 2018)
 
 * **New Resource:** `azurestack_lb` ([#16](https://github.com/terraform-providers/terraform-provider-azurestack/issues/16))

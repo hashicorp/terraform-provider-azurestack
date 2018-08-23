@@ -71,6 +71,7 @@ func Provider() terraform.ResourceProvider {
 			"azurestack_resource_group":          dataSourceArmResourceGroup(),
 			"azurestack_storage_account":         dataSourceArmStorageAccount(),
 			"azurestack_virtual_network":         dataSourceArmVirtualNetwork(),
+			"azurestack_route_table":             dataSourceArmRouteTable(),
 			"azurestack_virtual_network_gateway": dataSourceArmVirtualNetworkGateway(),
 		},
 
@@ -90,6 +91,8 @@ func Provider() terraform.ResourceProvider {
 			"azurestack_lb_rule":                   resourceArmLoadBalancerRule(),
 			"azurestack_public_ip":                 resourceArmPublicIp(),
 			"azurestack_resource_group":            resourceArmResourceGroup(),
+			"azurestack_route":                     resourceArmRoute(),
+			"azurestack_route_table":               resourceArmRouteTable(),
 			"azurestack_storage_account":           resourceArmStorageAccount(),
 			"azurestack_storage_blob":              resourceArmStorageBlob(),
 			"azurestack_storage_container":         resourceArmStorageContainer(),

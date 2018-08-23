@@ -75,6 +75,9 @@ func TestAccAzureStackVirtualNetworkGateway_vpnGw1(t *testing.T) {
 
 //VpnGw1 sku an activeActive are not supported yet.
 func TestAccAzureStackVirtualNetworkGateway_activeActive(t *testing.T) {
+
+	t.Skip()
+
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualNetworkGateway_activeActive(ri, testLocation())
 
@@ -116,6 +119,9 @@ func TestAccAzureStackVirtualNetworkGateway_standard(t *testing.T) {
 
 //VpnGw2 sku is not supported yet.
 func TestAccAzureStackVirtualNetworkGateway_vpnGw2(t *testing.T) {
+
+	t.Skip()
+
 	resourceName := "azurestack_virtual_network_gateway.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualNetworkGateway_sku(ri, testLocation(), "VpnGw2")
@@ -138,6 +144,9 @@ func TestAccAzureStackVirtualNetworkGateway_vpnGw2(t *testing.T) {
 
 //VpnGw3 sku is not supported yet.
 func TestAccAzureStackVirtualNetworkGateway_vpnGw3(t *testing.T) {
+
+	t.Skip()
+
 	resourceName := "azurestack_virtual_network_gateway.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualNetworkGateway_sku(ri, testLocation(), "VpnGw3")

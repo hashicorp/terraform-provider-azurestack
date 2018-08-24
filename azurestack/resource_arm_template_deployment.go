@@ -25,9 +25,10 @@ func resourceArmTemplateDeployment() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.NoZeroValues,
 			},
 
 			"resource_group_name": resourceGroupNameSchema(),
@@ -50,6 +51,7 @@ func resourceArmTemplateDeployment() *schema.Resource {
 				Optional:      true,
 				StateFunc:     normalizeJson,
 				ConflictsWith: []string{"parameters"},
+				ValidateFunc:  validation.NoZeroValues,
 			},
 
 			"deployment_mode": {

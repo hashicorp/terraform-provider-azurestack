@@ -72,6 +72,7 @@ func Provider() terraform.ResourceProvider {
 			"azurestack_storage_account":        dataSourceArmStorageAccount(),
 			"azurestack_virtual_network":        dataSourceArmVirtualNetwork(),
 			"azurestack_route_table":            dataSourceArmRouteTable(),
+			"azurestack_subnet":                 dataSourceArmSubnet(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{

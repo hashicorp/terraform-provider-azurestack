@@ -73,6 +73,7 @@ func Provider() terraform.ResourceProvider {
 			"azurestack_virtual_network":        dataSourceArmVirtualNetwork(),
 			"azurestack_route_table":            dataSourceArmRouteTable(),
 			"azurestack_subnet":                 dataSourceArmSubnet(),
+			"azurestack_public_ip":              dataSourceArmPublicIP(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{

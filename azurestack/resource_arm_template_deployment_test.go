@@ -96,7 +96,6 @@ func TestAccAzureStackTemplateDeployment_withParamsBody(t *testing.T) {
 
 }
 
-
 // Storage account type is not supported
 func TestAccAzureStackTemplateDeployment_withOutputs(t *testing.T) {
 

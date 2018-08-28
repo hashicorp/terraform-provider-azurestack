@@ -53,6 +53,10 @@ func testLocation() string {
 	return os.Getenv("ARM_TEST_LOCATION")
 }
 
+func testAltLocation() string {
+	return os.Getenv("ARM_TEST_LOCATION_ALT")
+}
+
 func testGetAzureConfig(t *testing.T) *authentication.Config {
 	if os.Getenv(resource.TestEnvVar) == "" {
 		t.Skip(fmt.Sprintf("Integration test skipped unless env '%s' set", resource.TestEnvVar))

@@ -25,6 +25,11 @@ func TestAccAzureStackVirtualNetworkGatewayConnection_sitetosite(t *testing.T) {
 					testCheckAzureStackVirtualNetworkGatewayConnectionExists("azurestack_virtual_network_gateway_connection.test"),
 				),
 			},
+			{
+				ResourceName:      "azurestack_virtual_network_gateway_connection.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }

@@ -128,14 +128,13 @@ func resourceArmTemplateDeploymentCreate(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error creating deployment: %+v", err)
 	}
 
-	err = future.WaitForCompletionRef(ctx, deployClient.Client)
-	if err != nil {
-		return fmt.Errorf("Error creating deployment: %+v", err)
+	if err = future.WaitForCompletionRef(ctx, deployClient.Client); err != nil {
+		return fmt.Errorf("Error creating Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
 	}
 
 	read, err := deployClient.Get(ctx, resourceGroup, name)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error retrieving Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
 	}
 	if read.ID == nil {
 		return fmt.Errorf("Cannot read Template Deployment %s (resource group %s) ID", name, resourceGroup)
@@ -221,9 +220,8 @@ func resourceArmTemplateDeploymentDelete(d *schema.ResourceData, meta interface{
 	resourceGroup := id.ResourceGroup
 	name := id.Path["deployments"]
 
-	_, err = deployClient.Delete(ctx, resourceGroup, name)
-	if err != nil {
-		return err
+	if _, err = deployClient.Delete(ctx, resourceGroup, name); err != nil {
+		return fmt.Errorf("Error deleting Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
 	}
 
 	return waitForTemplateDeploymentToBeDeleted(ctx, deployClient, resourceGroup, name)

@@ -125,7 +125,7 @@ func resourceArmTemplateDeploymentCreate(d *schema.ResourceData, meta interface{
 
 	future, err := deployClient.CreateOrUpdate(ctx, resourceGroup, name, deployment)
 	if err != nil {
-		return fmt.Errorf("Error creating deployment: %+v", err)
+		return fmt.Errorf("Error creating Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
 	}
 
 	if err = future.WaitForCompletionRef(ctx, deployClient.Client); err != nil {

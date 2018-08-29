@@ -33,6 +33,12 @@ func TestAccAzureStackVirtualMachineScaleSet_basic(t *testing.T) {
 					testCheckAzureStackVirtualMachineScaleSetSinglePlacementGroup(resourceName, true),
 				),
 			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"os_profile.0.admin_password", "priority", "single_placement_group"},
+			},
 		},
 	})
 }

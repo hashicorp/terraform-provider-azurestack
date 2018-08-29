@@ -114,11 +114,6 @@ func TestAccAzureStackTemplateDeployment_withOutputs(t *testing.T) {
 					testCheckAzureStackTemplateDeploymentExists("azurestack_template_deployment.test"),
 					resource.TestCheckOutput("tfIntOutput", "-123"),
 					resource.TestCheckOutput("tfStringOutput", "Standard_GRS"),
-
-					// these values *should* be 'true' and 'false' but,
-					// due to a bug in the way terraform represents bools at various times these are for now 0 and 1
-					// see https://github.com/hashicorp/terraform/issues/13512#issuecomment-295389523
-					// at a later date these may return the expected 'true' / 'false' and should be changed back
 					resource.TestCheckOutput("tfFalseOutput", "0"),
 					resource.TestCheckOutput("tfTrueOutput", "1"),
 					resource.TestCheckResourceAttr("azurestack_template_deployment.test", "outputs.stringOutput", "Standard_GRS"),

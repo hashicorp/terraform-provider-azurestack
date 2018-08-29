@@ -157,9 +157,6 @@ func resourceArmTemplateDeploymentRead(d *schema.ResourceData, meta interface{})
 	}
 	resourceGroup := id.ResourceGroup
 	name := id.Path["deployments"]
-	if name == "" {
-		name = id.Path["Deployments"]
-	}
 
 	resp, err := deployClient.Get(ctx, resourceGroup, name)
 	if err != nil {
@@ -223,9 +220,6 @@ func resourceArmTemplateDeploymentDelete(d *schema.ResourceData, meta interface{
 	}
 	resourceGroup := id.ResourceGroup
 	name := id.Path["deployments"]
-	if name == "" {
-		name = id.Path["Deployments"]
-	}
 
 	_, err = deployClient.Delete(ctx, resourceGroup, name)
 	if err != nil {

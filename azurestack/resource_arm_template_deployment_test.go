@@ -52,8 +52,6 @@ func TestAccAzureStackTemplateDeployment_disappears(t *testing.T) {
 // Storage Account type is not supported
 func TestAccAzureStackTemplateDeployment_withParams(t *testing.T) {
 
-	t.Skip()
-
 	ri := acctest.RandInt()
 	config := testAccAzureStackTemplateDeployment_withParams(ri, testLocation())
 	resource.Test(t, resource.TestCase{
@@ -74,8 +72,6 @@ func TestAccAzureStackTemplateDeployment_withParams(t *testing.T) {
 
 // Provider doesn't support resource: azurestack_key_vault_secret
 func TestAccAzureStackTemplateDeployment_withParamsBody(t *testing.T) {
-
-	t.Skip()
 
 	ri := acctest.RandInt()
 	config := testaccAzureStackTemplateDeployment_withParamsBody(ri, testLocation())
@@ -99,8 +95,6 @@ func TestAccAzureStackTemplateDeployment_withParamsBody(t *testing.T) {
 // Storage account type is not supported
 func TestAccAzureStackTemplateDeployment_withOutputs(t *testing.T) {
 
-	t.Skip()
-
 	ri := acctest.RandInt()
 	config := testAccAzureStackTemplateDeployment_withOutputs(ri, testLocation())
 	resource.Test(t, resource.TestCase{
@@ -113,10 +107,10 @@ func TestAccAzureStackTemplateDeployment_withOutputs(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackTemplateDeploymentExists("azurestack_template_deployment.test"),
 					resource.TestCheckOutput("tfIntOutput", "-123"),
-					resource.TestCheckOutput("tfStringOutput", "Standard_GRS"),
+					resource.TestCheckOutput("tfStringOutput", "Standard_LRS"),
 					resource.TestCheckOutput("tfFalseOutput", "0"),
 					resource.TestCheckOutput("tfTrueOutput", "1"),
-					resource.TestCheckResourceAttr("azurestack_template_deployment.test", "outputs.stringOutput", "Standard_GRS"),
+					resource.TestCheckResourceAttr("azurestack_template_deployment.test", "outputs.stringOutput", "Standard_LRS"),
 				),
 			},
 		},
@@ -348,44 +342,14 @@ resource "azurestack_storage_container" "using-outputs" {
 
 data "azurestack_client_config" "current" {}
 
-resource "azurestack_key_vault" "test-kv" {
-  location = "%s"
-  name = "vault%d"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-  "sku" {
-    name = "standard"
-  }
-  tenant_id = "${data.azurestack_client_config.current.tenant_id}"
-  enabled_for_template_deployment = true
-
-  access_policy {
-    key_permissions = []
-    object_id = "${data.azurestack_client_config.current.service_principal_object_id}"
-    secret_permissions = [
-      "get","list","set","purge"]
-    tenant_id = "${data.azurestack_client_config.current.tenant_id}"
-  }
-}
-
-resource "azurestack_key_vault_secret" "test-secret" {
-  name = "acctestsecret-%d"
-  value = "terraform-test-%d"
-  vault_uri = "${azurestack_key_vault.test-kv.vault_uri}"
-}
-
 locals {
 	"templated-file" = <<TPL
 {
 "dnsLabelPrefix": {
-    "reference": {
-      "keyvault": {
-        "id": "${azurestack_key_vault.test-kv.id}"
-      },
-      "secretName": "${azurestack_key_vault_secret.test-secret.name}"
-    }
+	"value": "terraform-test-%d"
   },
 "storageAccountType": {
-   "value": "Standard_GRS"
+   "value": "Standard_LRS"
   }
 }
 TPL
@@ -463,9 +427,8 @@ DEPLOY
 
   parameters_body = "${local.templated-file}"
   deployment_mode = "Complete"
-  depends_on = ["azurestack_key_vault_secret.test-secret"]
 }
-`, rInt, location, location, rInt, rInt, rInt, rInt)
+`, rInt, location, rInt, rInt)
 
 }
 
@@ -558,7 +521,7 @@ func testAccAzureStackTemplateDeployment_withParams(rInt int, location string) s
 DEPLOY
     parameters {
 	dnsLabelPrefix = "terraform-test-%d"
-	storageAccountType = "Standard_GRS"
+	storageAccountType = "Standard_LRS"
     }
     deployment_mode = "Complete"
   }
@@ -679,7 +642,7 @@ func testAccAzureStackTemplateDeployment_withOutputs(rInt int, location string) 
 DEPLOY
     parameters {
       dnsLabelPrefix = "terraform-test-%d"
-      storageAccountType = "Standard_GRS"
+      storageAccountType = "Standard_LRS"
     }
     deployment_mode = "Incremental"
   }

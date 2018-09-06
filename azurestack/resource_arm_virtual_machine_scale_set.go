@@ -11,6 +11,8 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/structure"
 	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/suppress"
 	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
@@ -26,9 +28,10 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.NoZeroValues,
 			},
 
 			"location": locationSchema(),
@@ -47,7 +50,7 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 						"type": {
 							Type:             schema.TypeString,
 							Required:         true,
-							DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
+							DiffSuppressFunc: suppress.CaseDifference,
 							ValidateFunc: validation.StringInSlice([]string{
 								"SystemAssigned",
 							}, true),
@@ -67,20 +70,22 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
-							Type:     schema.TypeString,
-							Required: true,
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.NoZeroValues,
 						},
 
 						"tier": {
 							Type:             schema.TypeString,
 							Optional:         true,
 							Computed:         true,
-							DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
+							DiffSuppressFunc: suppress.CaseDifference,
 						},
 
 						"capacity": {
-							Type:     schema.TypeInt,
-							Required: true,
+							Type:         schema.TypeInt,
+							Required:     true,
+							ValidateFunc: validation.IntAtLeast(0),
 						},
 					},
 				},
@@ -91,7 +96,7 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Computed:         true,
-				DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
+				DiffSuppressFunc: suppress.CaseDifference,
 				ValidateFunc: validation.StringInSlice([]string{
 					"Windows_Client",
 					"Windows_Server",
@@ -101,6 +106,11 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 			"upgrade_policy_mode": {
 				Type:     schema.TypeString,
 				Required: true,
+				ValidateFunc: validation.StringInSlice([]string{
+					string(compute.Automatic),
+					string(compute.Manual),
+					// string(compute.Rolling),
+				}, true),
 			},
 
 			"overprovision": {
@@ -140,14 +150,16 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 						},
 
 						"admin_username": {
-							Type:     schema.TypeString,
-							Required: true,
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.NoZeroValues,
 						},
 
 						"admin_password": {
-							Type:      schema.TypeString,
-							Required:  true,
-							Sensitive: true,
+							Type:         schema.TypeString,
+							Required:     true,
+							Sensitive:    true,
+							ValidateFunc: validation.NoZeroValues,
 						},
 
 						"custom_data": {
@@ -289,8 +301,9 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
-							Type:     schema.TypeString,
-							Required: true,
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.NoZeroValues,
 						},
 
 						"primary": {
@@ -299,8 +312,9 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 						},
 
 						"network_security_group_id": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: azure.ValidateResourceID,
 						},
 
 						"ip_configuration": {
@@ -309,13 +323,15 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
-										Type:     schema.TypeString,
-										Required: true,
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: validation.NoZeroValues,
 									},
 
 									"subnet_id": {
-										Type:     schema.TypeString,
-										Required: true,
+										Type:         schema.TypeString,
+										Required:     true,
+										ValidateFunc: azure.ValidateResourceID,
 									},
 
 									"application_gateway_backend_address_pool_ids": {
@@ -668,9 +684,8 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
-	if err != nil {
-		return err
+	if err = future.WaitForCompletion(ctx, client.Client); err != nil {
+		return fmt.Errorf("Error Creating/Updating Virtual Machine Scale Set %s (resource group %s) ID: %+v", name, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, name)
@@ -818,9 +833,9 @@ func resourceArmVirtualMachineScaleSetDelete(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
-	if err != nil {
-		return err
+	if err = future.WaitForCompletion(ctx, client.Client); err != nil {
+		return fmt.Errorf("Error Deleting Virtual Machine Scale Set %s (resource group %s) ID: %+v", name, resGroup, err)
+
 	}
 
 	return nil

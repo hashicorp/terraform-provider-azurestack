@@ -3,12 +3,12 @@ layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_virtual_machine_scale_set"
 sidebar_current: "docs-azurestack-resource-compute-virtualmachine-scale-set"
 description: |-
-  Create a Virtual Machine scale set.
+  Manages a Virtual Machine scale set.
 ---
 
-# azurestack\_virtual\_machine\_scale\_set
+# azurestack_virtual_machine_scale_set
 
-Create a virtual machine scale set.
+Manages a virtual machine scale set.
 
 ~> **Note:** All arguments including the administrator login and password will be stored in the raw state as plain-text.
 [Read more about sensitive data in state](/docs/state/sensitive-data.html).

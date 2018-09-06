@@ -56,6 +56,7 @@ func testSweepResourceGroups(region string) error {
 }
 
 func TestAccAzureStackResourceGroup_basic(t *testing.T) {
+	resourceName := "azurestack_resource_group.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackResourceGroup_basic(ri, testLocation())
 
@@ -67,8 +68,13 @@ func TestAccAzureStackResourceGroup_basic(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackResourceGroupExists("azurestack_resource_group.test"),
+					testCheckAzureStackResourceGroupExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -124,6 +130,11 @@ func TestAccAzureStackResourceGroup_withTags(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.environment", "staging"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

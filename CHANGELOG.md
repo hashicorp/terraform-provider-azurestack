@@ -1,10 +1,17 @@
-## 0.3.0 (Unreleased)
+## 0.4.0 (Unreleased)
 
-* **New Resource:** `azurestack_lb` [GH-16]
-* **New Resource:** `azurestack_lb_backend_address_pool` [GH-21]
-* **New Resource:** `azurestack_lb_nat_rule` [GH-22]
-* **New Resource:** `azurestack_lb_nat_pool` [GH-24]
-* **New Resource:** `azurestack_lb_probe` [GH-23]
+* **New Resource:** `azurestack_route_table` [GH-26]
+* **New Resource:** `azurestack_route` [GH-27]
+* **New Data Source:** `azurestack_route_table` [GH-26]
+
+## 0.3.0 (August 13, 2018)
+
+* **New Resource:** `azurestack_lb` ([#16](https://github.com/terraform-providers/terraform-provider-azurestack/issues/16))
+* **New Resource:** `azurestack_lb_backend_address_pool` ([#21](https://github.com/terraform-providers/terraform-provider-azurestack/issues/21))
+* **New Resource:** `azurestack_lb_nat_rule` ([#22](https://github.com/terraform-providers/terraform-provider-azurestack/issues/22))
+* **New Resource:** `azurestack_lb_nat_pool` ([#24](https://github.com/terraform-providers/terraform-provider-azurestack/issues/24))
+* **New Resource:** `azurestack_lb_probe` ([#23](https://github.com/terraform-providers/terraform-provider-azurestack/issues/23))
+* **New Resource:** `azurestack_lb_rule` ([#25](https://github.com/terraform-providers/terraform-provider-azurestack/issues/25))
 
 ## 0.2.0 (July 26, 2018)
 

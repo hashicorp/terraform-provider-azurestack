@@ -28,6 +28,11 @@ func TestAccAzureStackAvailabilitySet_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "platform_fault_domain_count", "3"),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -85,6 +90,11 @@ func TestAccAzureStackAvailabilitySet_withTags(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.environment", "staging"),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -106,6 +116,11 @@ func TestAccAzureStackAvailabilitySet_withDomainCounts(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "platform_update_domain_count", "3"),
 					resource.TestCheckResourceAttr(resourceName, "platform_fault_domain_count", "3"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -131,6 +146,11 @@ func TestAccAzureStackAvailabilitySet_managed(t *testing.T) {
 					testCheckAzureStackAvailabilitySetExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "managed", "true"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

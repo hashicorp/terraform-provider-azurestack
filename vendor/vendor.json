@@ -39,12 +39,6 @@
 			"revisionTime": "2018-06-08T21:25:51Z"
 		},
 		{
-			"checksumSHA1": "FF+JJRL14lbAx8c2s4pixvIulCA=",
-			"path": "github.com/Azure/azure-sdk-for-go/services/eventhub/mgmt/2017-04-01/eventhub",
-			"revision": "2935c0241c74bd8549b843978dd6fc1be6f48b4a",
-			"revisionTime": "2018-08-31T14:25:13Z"
-		},
-		{
 			"checksumSHA1": "kqX9EOAGsHR0qvCihj/NUoKGUOw=",
 			"path": "github.com/Azure/azure-sdk-for-go/services/network/mgmt/2015-06-15/network",
 			"revision": "cd93ccfe0395e70031704ca68f14606588eec120",
@@ -55,12 +49,6 @@
 			"path": "github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2016-02-01/resources",
 			"revision": "cd93ccfe0395e70031704ca68f14606588eec120",
 			"revisionTime": "2018-06-08T21:25:51Z"
-		},
-		{
-			"checksumSHA1": "/zjoJNfxpxVj22QUxBdBjQcsbHY=",
-			"path": "github.com/Azure/azure-sdk-for-go/services/servicebus/mgmt/2017-04-01/servicebus",
-			"revision": "2935c0241c74bd8549b843978dd6fc1be6f48b4a",
-			"revisionTime": "2018-08-31T14:25:13Z"
 		},
 		{
 			"checksumSHA1": "bb7nLryTfKPwVi+1fb1bwzcWYKw=",

@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
 	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
@@ -33,12 +35,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 				ValidateFunc: validation.NoZeroValues,
 			},
 
-			"resource_group_name": {
-				Type:         schema.TypeString,
-				Required:     true,
-				ForceNew:     true,
-				ValidateFunc: validation.NoZeroValues,
-			},
+			"resource_group_name": resourceGroupNameSchema(),
 
 			"location": locationSchema(),
 
@@ -50,7 +47,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 					string(network.VirtualNetworkGatewayTypeExpressRoute),
 					string(network.VirtualNetworkGatewayTypeVpn),
 				}, true),
-				DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
+				DiffSuppressFunc: suppress.CaseDifference,
 			},
 
 			"vpn_type": {
@@ -62,7 +59,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 					string(network.RouteBased),
 					string(network.PolicyBased),
 				}, true),
-				DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
+				DiffSuppressFunc: suppress.CaseDifference,
 			},
 
 			"enable_bgp": {
@@ -81,7 +78,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 			"sku": {
 				Type:             schema.TypeString,
 				Required:         true,
-				DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
+				DiffSuppressFunc: suppress.CaseDifference,
 				ValidateFunc: validation.StringInSlice([]string{
 					string(network.VirtualNetworkGatewaySkuTierBasic),
 					string(network.VirtualNetworkGatewaySkuTierStandard),
@@ -103,6 +100,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 							// Azure portal.
 							Default: "vnetGatewayConfig",
 						},
+
 						"private_ip_address_allocation": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -112,15 +110,18 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 							}, false),
 							Default: string(network.Dynamic),
 						},
+
 						"subnet_id": {
 							Type:             schema.TypeString,
 							Required:         true,
 							ValidateFunc:     validateArmVirtualNetworkGatewaySubnetId,
-							DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
+							DiffSuppressFunc: suppress.CaseDifference,
 						},
+
 						"public_ip_address_id": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:         schema.TypeString,
+							Optional:     true,
+							ValidateFunc: azure.ValidateResourceId,
 						},
 					},
 				},
@@ -140,6 +141,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 								Type: schema.TypeString,
 							},
 						},
+
 						"root_certificate": {
 							Type:     schema.TypeSet,
 							Optional: true,
@@ -156,6 +158,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 										Type:     schema.TypeString,
 										Required: true,
 									},
+
 									"public_cert_data": {
 										Type:     schema.TypeString,
 										Required: true,
@@ -164,6 +167,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 							},
 							Set: hashVirtualNetworkGatewayRootCert,
 						},
+
 						"revoked_certificate": {
 							Type:     schema.TypeSet,
 							Optional: true,
@@ -180,6 +184,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 										Type:     schema.TypeString,
 										Required: true,
 									},
+
 									"thumbprint": {
 										Type:     schema.TypeString,
 										Required: true,
@@ -238,12 +243,14 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 							Type:     schema.TypeInt,
 							Optional: true,
 						},
+
 						"peering_address": {
 							Type:     schema.TypeString,
 							Optional: true,
 							Computed: true,
 							ForceNew: true,
 						},
+
 						"peer_weight": {
 							Type:     schema.TypeInt,
 							Optional: true,
@@ -253,8 +260,9 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 			},
 
 			"default_local_network_gateway_id": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: azure.ValidateResourceId,
 			},
 
 			"tags": tagsSchema(),
@@ -428,27 +436,21 @@ func getArmVirtualNetworkGatewayProperties(d *schema.ResourceData) (*network.Vir
 
 	// Sku validation for policy-based VPN gateways
 	if props.GatewayType == network.VirtualNetworkGatewayTypeVpn && props.VpnType == network.PolicyBased {
-		ok, err := evaluateSchemaValidateFunc(string(props.Sku.Name), "sku", validateArmVirtualNetworkGatewayPolicyBasedVpnSku())
-
-		if !ok {
+		if ok, err := evaluateSchemaValidateFunc(string(props.Sku.Name), "sku", validateArmVirtualNetworkGatewayPolicyBasedVpnSku()); !ok {
 			return nil, err
 		}
 	}
 
 	// Sku validation for route-based VPN gateways
 	if props.GatewayType == network.VirtualNetworkGatewayTypeVpn && props.VpnType == network.RouteBased {
-		ok, err := evaluateSchemaValidateFunc(string(props.Sku.Name), "sku", validateArmVirtualNetworkGatewayRouteBasedVpnSku())
-
-		if !ok {
+		if ok, err := evaluateSchemaValidateFunc(string(props.Sku.Name), "sku", validateArmVirtualNetworkGatewayRouteBasedVpnSku()); !ok {
 			return nil, err
 		}
 	}
 
 	// Sku validation for ExpressRoute gateways
 	if props.GatewayType == network.VirtualNetworkGatewayTypeExpressRoute {
-		ok, err := evaluateSchemaValidateFunc(string(props.Sku.Name), "sku", validateArmVirtualNetworkGatewayExpressRouteSku())
-
-		if !ok {
+		if ok, err := evaluateSchemaValidateFunc(string(props.Sku.Name), "sku", validateArmVirtualNetworkGatewayExpressRouteSku()); !ok {
 			return nil, err
 		}
 	}

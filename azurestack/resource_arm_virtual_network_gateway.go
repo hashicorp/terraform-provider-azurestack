@@ -71,7 +71,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 				Computed: true,
 			},
 
-			// Not Supported by AzureStack
+			// ActiveActive not yet supported on 2017-03-09 service
 			// "active_active": {
 			// 	Type:     schema.TypeBool,
 			// 	Optional: true,
@@ -144,6 +144,8 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 							Type:     schema.TypeSet,
 							Optional: true,
 
+							// Both radius_server_address and radius_server_secret are not yet supported on 2017-03-09 service
+							// and cause an error if left uncommented
 							// ConflictsWith: []string{
 							// 	"vpn_client_configuration.0.radius_server_address",
 							// 	"vpn_client_configuration.0.radius_server_secret",
@@ -166,7 +168,8 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 							Type:     schema.TypeSet,
 							Optional: true,
 
-							// Not supported by AzureStack
+							// Both radius_server_address and radius_server_secret are not yet supported on 2017-03-09 service
+							// and cause an error if left uncommented
 							// ConflictsWith: []string{
 							// 	"vpn_client_configuration.0.radius_server_address",
 							// 	"vpn_client_configuration.0.radius_server_secret",
@@ -185,6 +188,8 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 							},
 							Set: hashVirtualNetworkGatewayRevokedCert,
 						},
+
+						// RadiusServerAddress not yet supported on 2017-03-09 service
 						// "radius_server_address": {
 						// 	Type:     schema.TypeString,
 						// 	Optional: true,
@@ -194,6 +199,8 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 						// 	},
 						// 	ValidateFunc: validate.IPv4Address,
 						// },
+
+						// RadiusServerSecret not yet supported on 2017-03-09 service
 						// "radius_server_secret": {
 						// 	Type:     schema.TypeString,
 						// 	Optional: true,
@@ -208,8 +215,11 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 								ValidateFunc: validation.StringInSlice([]string{
-									string("IkeV2"),
-									string("SSTP"),
+
+									// Enums are not defined on 2017-03-09 service, using simple
+									// strings
+									"IkeV2",
+									"SSTP",
 								}, true),
 							},
 						},
@@ -324,7 +334,8 @@ func resourceArmVirtualNetworkGatewayRead(d *schema.ResourceData, meta interface
 	if gw := resp.VirtualNetworkGatewayPropertiesFormat; gw != nil {
 		d.Set("type", string(gw.GatewayType))
 		d.Set("enable_bgp", gw.EnableBgp)
-		// ActiveActive is not supported by AzureStack
+
+		// ActiveActive not yet supported on 2017-03-09 service
 		// d.Set("active_active", gw.ActiveActive)
 
 		if vpnType := string(gw.VpnType); vpnType != "" {
@@ -386,7 +397,7 @@ func getArmVirtualNetworkGatewayProperties(d *schema.ResourceData) (*network.Vir
 	vpnType := network.VpnType(d.Get("vpn_type").(string))
 	enableBgp := d.Get("enable_bgp").(bool)
 
-	// ActiveActive is not supported by AzureStack
+	// ActiveActive not yet supported on 2017-03-09 service
 	// activeActive := d.Get("active_active").(bool)
 
 	props := &network.VirtualNetworkGatewayPropertiesFormat{
@@ -394,7 +405,7 @@ func getArmVirtualNetworkGatewayProperties(d *schema.ResourceData) (*network.Vir
 		VpnType:     vpnType,
 		EnableBgp:   &enableBgp,
 
-		// ActiveActive is not supported by AzureStack
+		// ActiveActive not yet supported on 2017-03-09 service
 		// ActiveActive:     &activeActive,
 
 		Sku:              expandArmVirtualNetworkGatewaySku(d),
@@ -534,12 +545,15 @@ func expandArmVirtualNetworkGatewayVpnClientConfig(d *schema.ResourceData) *netw
 		revokedCerts = append(revokedCerts, r)
 	}
 
+	// VpnClientProtocols not yet supported on 2017-03-09 service
 	// var vpnClientProtocols []network.VpnClientProtocol
 	// for _, vpnClientProtocol := range conf["vpn_client_protocols"].(*schema.Set).List() {
 	// 	p := network.VpnClientProtocol(vpnClientProtocol.(string))
 	// 	vpnClientProtocols = append(vpnClientProtocols, p)
 	// }
 
+	// RadiusServerAddress and RadiusServerSecret not yet supported for 2017-03-09
+	// service
 	// confRadiusServerAddress := conf["radius_server_address"].(string)
 	// confRadiusServerSecret := conf["radius_server_secret"].(string)
 
@@ -549,9 +563,12 @@ func expandArmVirtualNetworkGatewayVpnClientConfig(d *schema.ResourceData) *netw
 		},
 		VpnClientRootCertificates:    &rootCerts,
 		VpnClientRevokedCertificates: &revokedCerts,
+
+		// RadiusServerAddress, RadiusServerSecret and VpnClientProtocols
+		// not yet supported for 2017-03-09 service
 		// VpnClientProtocols:           &vpnClientProtocols,
-		//RadiusServerAddress: &confRadiusServerAddress,
-		//RadiusServerSecret:  &confRadiusServerSecret,
+		// RadiusServerAddress: &confRadiusServerAddress,
+		// RadiusServerSecret:  &confRadiusServerSecret,
 	}
 }
 
@@ -659,6 +676,8 @@ func flattenArmVirtualNetworkGatewayVpnClientConfig(cfg *network.VpnClientConfig
 	}
 	flat["revoked_certificate"] = schema.NewSet(hashVirtualNetworkGatewayRevokedCert, revokedCerts)
 
+	// RadiusServerAddress, RadiusServerSecret and VpnClientProtocols
+	// not yet supported for 2017-03-09 service
 	// vpnClientProtocols := &schema.Set{F: schema.HashString}
 	// if vpnProtocols := cfg.VpnClientProtocols; vpnProtocols != nil {
 	// 	for _, protocol := range *vpnProtocols {

@@ -109,7 +109,9 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{
 					string(compute.Automatic),
 					string(compute.Manual),
-					// string(compute.Rolling),
+					// This Enum is not defined on the 2016-03-30 service
+					// Using a regular string instead
+					"Rolling",
 				}, true),
 			},
 
@@ -130,10 +132,12 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
-				Default:  string("Regular"),
+				Default:  "Regular",
 				ValidateFunc: validation.StringInSlice([]string{
-					string("Low"),
-					string("Regular"),
+					// The Enums are not defined on the 2016-03-30 service
+					// Using a regular string instead
+					"Low",
+					"Regular",
 				}, true),
 			},
 

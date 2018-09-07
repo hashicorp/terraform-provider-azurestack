@@ -2,6 +2,7 @@
 
 * **New Resource:** `azurestack_route_table` [GH-26]
 * **New Resource:** `azurestack_route` [GH-27]
+* **New Resource:** `azurestack_template_deployment` [GH-33]
 * **New Data Source:** `azurestack_route_table` [GH-26]
 
 ## 0.3.0 (August 13, 2018)

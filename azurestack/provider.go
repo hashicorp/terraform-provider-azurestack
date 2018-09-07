@@ -65,13 +65,14 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"azurestack_client_config":          dataSourceArmClientConfig(),
-			"azurestack_network_interface":      dataSourceArmNetworkInterface(),
-			"azurestack_network_security_group": dataSourceArmNetworkSecurityGroup(),
-			"azurestack_resource_group":         dataSourceArmResourceGroup(),
-			"azurestack_storage_account":        dataSourceArmStorageAccount(),
-			"azurestack_virtual_network":        dataSourceArmVirtualNetwork(),
-			"azurestack_route_table":            dataSourceArmRouteTable(),
+			"azurestack_client_config":           dataSourceArmClientConfig(),
+			"azurestack_network_interface":       dataSourceArmNetworkInterface(),
+			"azurestack_network_security_group":  dataSourceArmNetworkSecurityGroup(),
+			"azurestack_resource_group":          dataSourceArmResourceGroup(),
+			"azurestack_storage_account":         dataSourceArmStorageAccount(),
+			"azurestack_virtual_network":         dataSourceArmVirtualNetwork(),
+			"azurestack_route_table":             dataSourceArmRouteTable(),
+			"azurestack_virtual_network_gateway": dataSourceArmVirtualNetworkGateway(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -98,6 +99,7 @@ func Provider() terraform.ResourceProvider {
 			"azurestack_subnet":                    resourceArmSubnet(),
 			"azurestack_template_deployment":       resourceArmTemplateDeployment(),
 			"azurestack_virtual_network":           resourceArmVirtualNetwork(),
+			"azurestack_virtual_network_gateway":   resourceArmVirtualNetworkGateway(),
 			"azurestack_virtual_machine":           resourceArmVirtualMachine(),
 			"azurestack_virtual_machine_extension": resourceArmVirtualMachineExtensions(),
 		},

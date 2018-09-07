@@ -77,6 +77,11 @@ func TestAccAzureStackStorageAccount_basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.environment", "production"),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 
 			// {
 			// 	Config: postConfig,
@@ -114,6 +119,11 @@ func TestAccAzureStackStorageAccount_premium(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.environment", "production"),
 				),
 			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -146,6 +156,7 @@ func TestAccAzureStackStorageAccount_disappears(t *testing.T) {
 }
 
 func TestAccAzureStackStorageAccount_blobConnectionString(t *testing.T) {
+	resourceName := "azurestack_storage_account.testsa"
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
 	preConfig := testAccAzureStackStorageAccount_basic(ri, rs, testLocation())
@@ -158,9 +169,14 @@ func TestAccAzureStackStorageAccount_blobConnectionString(t *testing.T) {
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
-					resource.TestCheckResourceAttrSet("azurestack_storage_account.testsa", "primary_blob_connection_string"),
+					testCheckAzureStackStorageAccountExists(resourceName),
+					resource.TestCheckResourceAttrSet(resourceName, "primary_blob_connection_string"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -171,6 +187,7 @@ func TestAccAzureStackStorageAccount_blobConnectionString(t *testing.T) {
 
 func TestAccAzureStackStorageAccount_blobEncryption(t *testing.T) {
 	t.Skip()
+	resourceName := "azurestack_storage_account.testsa"
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
 	location := testLocation()
@@ -185,17 +202,23 @@ func TestAccAzureStackStorageAccount_blobEncryption(t *testing.T) {
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "enable_blob_encryption", "true"),
+					testCheckAzureStackStorageAccountExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "enable_blob_encryption", "true"),
 				),
 			},
 
 			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "enable_blob_encryption", "false"),
+					testCheckAzureStackStorageAccountExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "enable_blob_encryption", "false"),
 				),
+			},
+
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -205,6 +228,7 @@ func TestAccAzureStackStorageAccount_blobEncryption(t *testing.T) {
 func TestAccAzureStackStorageAccount_fileEncryption(t *testing.T) {
 	t.Skip()
 
+	resourceName := "azurestack_storage_account.testsa"
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
 	location := testLocation()
@@ -219,17 +243,27 @@ func TestAccAzureStackStorageAccount_fileEncryption(t *testing.T) {
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "enable_file_encryption", "true"),
+					testCheckAzureStackStorageAccountExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "enable_file_encryption", "true"),
 				),
 			},
 
 			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
-					resource.TestCheckResourceAttr("azurestack_storage_account.testsa", "enable_file_encryption", "false"),
+					testCheckAzureStackStorageAccountExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "enable_file_encryption", "false"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -343,6 +377,7 @@ func TestAccAzureStackStorageAccount_storageV2WithUpdate(t *testing.T) {
 }
 
 func TestAccAzureStackStorageAccount_NonStandardCasing(t *testing.T) {
+	resourceName := "azurestack_storage_account.testsa"
 	ri := acctest.RandInt()
 	rs := acctest.RandString(4)
 	preConfig := testAccAzureStackStorageAccount_nonStandardCasing(ri, rs, testLocation())
@@ -355,7 +390,7 @@ func TestAccAzureStackStorageAccount_NonStandardCasing(t *testing.T) {
 			{
 				Config: preConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackStorageAccountExists("azurestack_storage_account.testsa"),
+					testCheckAzureStackStorageAccountExists(resourceName),
 				),
 			},
 
@@ -363,6 +398,12 @@ func TestAccAzureStackStorageAccount_NonStandardCasing(t *testing.T) {
 				Config:             preConfig,
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: false,
+			},
+
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

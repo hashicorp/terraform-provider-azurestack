@@ -15,6 +15,7 @@ import (
 
 func TestAccAzureStackSubnet_basic(t *testing.T) {
 
+	resourceName := "azurestack_subnet.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackSubnet_basic(ri, testLocation())
 
@@ -26,8 +27,13 @@ func TestAccAzureStackSubnet_basic(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackSubnetExists("azurestack_subnet.test"),
+					testCheckAzureStackSubnetExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -35,6 +41,7 @@ func TestAccAzureStackSubnet_basic(t *testing.T) {
 
 func TestAccAzureStackSubnet_routeTableUpdate(t *testing.T) {
 
+	resourceName := "azurestack_subnet.test"
 	ri := acctest.RandInt()
 	location := testLocation()
 	initConfig := testAccAzureStackSubnet_routeTable(ri, location)
@@ -48,7 +55,7 @@ func TestAccAzureStackSubnet_routeTableUpdate(t *testing.T) {
 			{
 				Config: initConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackSubnetExists("azurestack_subnet.test"),
+					testCheckAzureStackSubnetExists(resourceName),
 				),
 			},
 
@@ -57,6 +64,12 @@ func TestAccAzureStackSubnet_routeTableUpdate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackSubnetRouteTableExists("azurestack_subnet.test", fmt.Sprintf("acctest-%d", ri)),
 				),
+			},
+
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -112,6 +125,12 @@ func TestAccAzureStackSubnet_removeNetworkSecurityGroup(t *testing.T) {
 					testCheckAzureStackSubnetExists(resourceName),
 					resource.TestCheckResourceAttrSet(resourceName, "network_security_group_id"),
 				),
+			},
+
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 
 			{

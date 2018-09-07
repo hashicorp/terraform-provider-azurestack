@@ -97,6 +97,7 @@ func Provider() terraform.ResourceProvider {
 			"azurestack_storage_blob":                       resourceArmStorageBlob(),
 			"azurestack_storage_container":                  resourceArmStorageContainer(),
 			"azurestack_subnet":                             resourceArmSubnet(),
+			"azurestack_template_deployment":       resourceArmTemplateDeployment(),
 			"azurestack_virtual_network":                    resourceArmVirtualNetwork(),
 			"azurestack_virtual_network_gateway":            resourceArmVirtualNetworkGateway(),
 			"azurestack_virtual_machine":                    resourceArmVirtualMachine(),

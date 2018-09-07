@@ -72,6 +72,7 @@ type ArmClient struct {
 	routeTablesClient  network.RouteTablesClient
 
 	resourceGroupsClient resources.GroupsClient
+	deploymentsClient    resources.DeploymentsClient
 }
 
 func (c *ArmClient) configureClient(client *autorest.Client, auth autorest.Authorizer) {
@@ -272,6 +273,10 @@ func (c *ArmClient) registerResourcesClients(endpoint, subscriptionId string, au
 	resourcesClient := resources.NewClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&resourcesClient.Client, auth)
 	c.resourcesClient = resourcesClient
+
+	deploymentsClient := resources.NewDeploymentsClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&deploymentsClient.Client, auth)
+	c.deploymentsClient = deploymentsClient
 
 	resourceGroupsClient := resources.NewGroupsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&resourceGroupsClient.Client, auth)

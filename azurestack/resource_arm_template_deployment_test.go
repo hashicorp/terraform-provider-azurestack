@@ -49,7 +49,6 @@ func TestAccAzureStackTemplateDeployment_disappears(t *testing.T) {
 	})
 }
 
-// Storage Account type is not supported
 func TestAccAzureStackTemplateDeployment_withParams(t *testing.T) {
 
 	ri := acctest.RandInt()
@@ -70,7 +69,6 @@ func TestAccAzureStackTemplateDeployment_withParams(t *testing.T) {
 	})
 }
 
-// Provider doesn't support resource: azurestack_key_vault_secret
 func TestAccAzureStackTemplateDeployment_withParamsBody(t *testing.T) {
 
 	ri := acctest.RandInt()
@@ -92,7 +90,6 @@ func TestAccAzureStackTemplateDeployment_withParamsBody(t *testing.T) {
 
 }
 
-// Storage account type is not supported
 func TestAccAzureStackTemplateDeployment_withOutputs(t *testing.T) {
 
 	ri := acctest.RandInt()

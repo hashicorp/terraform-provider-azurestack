@@ -8,6 +8,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
@@ -17,8 +18,9 @@ func dataSourceArmVirtualNetworkGateway() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.NoZeroValues,
 			},
 
 			"resource_group_name": resourceGroupNameForDataSourceSchema(),
@@ -40,10 +42,11 @@ func dataSourceArmVirtualNetworkGateway() *schema.Resource {
 				Computed: true,
 			},
 
-			"active_active": {
-				Type:     schema.TypeBool,
-				Computed: true,
-			},
+			// Not yet supported on service 2017-03-09
+			// "active_active": {
+			// 	Type:     schema.TypeBool,
+			// 	Computed: true,
+			// },
 
 			"sku": {
 				Type:     schema.TypeString,
@@ -59,14 +62,17 @@ func dataSourceArmVirtualNetworkGateway() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+
 						"private_ip_address_allocation": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+
 						"subnet_id": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+
 						"public_ip_address_id": {
 							Type:     schema.TypeString,
 							Computed: true,
@@ -87,6 +93,7 @@ func dataSourceArmVirtualNetworkGateway() *schema.Resource {
 								Type: schema.TypeString,
 							},
 						},
+
 						"root_certificate": {
 							Type:     schema.TypeSet,
 							Computed: true,
@@ -96,6 +103,7 @@ func dataSourceArmVirtualNetworkGateway() *schema.Resource {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
+
 									"public_cert_data": {
 										Type:     schema.TypeString,
 										Computed: true,
@@ -104,6 +112,7 @@ func dataSourceArmVirtualNetworkGateway() *schema.Resource {
 							},
 							Set: hashVirtualNetworkGatewayDataSourceRootCert,
 						},
+
 						"revoked_certificate": {
 							Type:     schema.TypeSet,
 							Computed: true,
@@ -113,6 +122,7 @@ func dataSourceArmVirtualNetworkGateway() *schema.Resource {
 										Type:     schema.TypeString,
 										Computed: true,
 									},
+
 									"thumbprint": {
 										Type:     schema.TypeString,
 										Computed: true,
@@ -121,14 +131,17 @@ func dataSourceArmVirtualNetworkGateway() *schema.Resource {
 							},
 							Set: hashVirtualNetworkGatewayDataSourceRevokedCert,
 						},
+
 						"radius_server_address": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+
 						"radius_server_secret": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+
 						"vpn_client_protocols": {
 							Type:     schema.TypeSet,
 							Computed: true,
@@ -149,10 +162,12 @@ func dataSourceArmVirtualNetworkGateway() *schema.Resource {
 							Type:     schema.TypeInt,
 							Computed: true,
 						},
+
 						"peering_address": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+
 						"peer_weight": {
 							Type:     schema.TypeInt,
 							Computed: true,
@@ -200,6 +215,8 @@ func dataSourceArmVirtualNetworkGatewayRead(d *schema.ResourceData, meta interfa
 
 		d.Set("type", string(gw.GatewayType))
 		d.Set("enable_bgp", gw.EnableBgp)
+
+		// ActiveActive not yet supported on 2017-03-09 service
 		//d.Set("active_active", gw.ActiveActive)
 
 		if string(gw.VpnType) != "" {
@@ -307,6 +324,7 @@ func flattenArmVirtualNetworkGatewayDataSourceVpnClientConfig(cfg *network.VpnCl
 	}
 	flat["revoked_certificate"] = schema.NewSet(hashVirtualNetworkGatewayDataSourceRevokedCert, revokedCerts)
 
+	// VpnClientProtocols not yet supported on 2017-03-09 service
 	// vpnClientProtocols := &schema.Set{F: schema.HashString}
 	// if vpnProtocols := cfg.VpnClientProtocols; vpnProtocols != nil {
 	// 	for _, protocol := range *vpnProtocols {
@@ -315,10 +333,14 @@ func flattenArmVirtualNetworkGatewayDataSourceVpnClientConfig(cfg *network.VpnCl
 	// }
 	// flat["vpn_client_protocols"] = vpnClientProtocols
 
+	// RadiusServerAddress not yet supported on 2017-03-09 service
+	// VpnClientProtocols not yet supported on 2017-03-09 service
 	// if v := cfg.RadiusServerAddress; v != nil {
 	// 	flat["radius_server_address"] = *v
 	// }
 
+	// RadiusServerSecret not yet supported on 2017-03-09 service
+	// VpnClientProtocols not yet supported on 2017-03-09 service
 	// if v := cfg.RadiusServerSecret; v != nil {
 	// 	flat["radius_server_secret"] = *v
 	// }

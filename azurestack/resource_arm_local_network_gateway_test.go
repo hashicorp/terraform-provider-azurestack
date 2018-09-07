@@ -12,7 +12,7 @@ import (
 )
 
 func TestAccAzureStackLocalNetworkGateway_basic(t *testing.T) {
-	name := "azurestack_local_network_gateway.test"
+	resourceName := "azurestack_local_network_gateway.test"
 
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
@@ -23,10 +23,15 @@ func TestAccAzureStackLocalNetworkGateway_basic(t *testing.T) {
 			{
 				Config: testAccAzureStackLocalNetworkGatewayConfig_basic(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLocalNetworkGatewayExists(name),
-					resource.TestCheckResourceAttr(name, "gateway_address", "127.0.0.1"),
-					resource.TestCheckResourceAttr(name, "address_space.0", "127.0.0.0/8"),
+					testCheckAzureStackLocalNetworkGatewayExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "gateway_address", "127.0.0.1"),
+					resource.TestCheckResourceAttr(resourceName, "address_space.0", "127.0.0.0/8"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -168,7 +173,7 @@ func TestAccAzureStackLocalNetworkGateway_bgpSettingsEnable(t *testing.T) {
 }
 
 func TestAccAzureStackLocalNetworkGateway_bgpSettingsComplete(t *testing.T) {
-	name := "azurestack_local_network_gateway.test"
+	resourceName := "azurestack_local_network_gateway.test"
 	rInt := acctest.RandInt()
 	location := testLocation()
 
@@ -180,14 +185,19 @@ func TestAccAzureStackLocalNetworkGateway_bgpSettingsComplete(t *testing.T) {
 			{
 				Config: testAccAzureStackLocalNetworkGatewayConfig_bgpSettingsComplete(rInt, location),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLocalNetworkGatewayExists(name),
-					resource.TestCheckResourceAttr(name, "gateway_address", "127.0.0.1"),
-					resource.TestCheckResourceAttr(name, "address_space.0", "127.0.0.0/8"),
-					resource.TestCheckResourceAttr(name, "bgp_settings.#", "1"),
-					resource.TestCheckResourceAttr(name, "bgp_settings.0.asn", "2468"),
-					resource.TestCheckResourceAttr(name, "bgp_settings.0.bgp_peering_address", "10.104.1.1"),
-					resource.TestCheckResourceAttr(name, "bgp_settings.0.peer_weight", "15"),
+					testCheckAzureStackLocalNetworkGatewayExists(resourceName),
+					resource.TestCheckResourceAttr(resourceName, "gateway_address", "127.0.0.1"),
+					resource.TestCheckResourceAttr(resourceName, "address_space.0", "127.0.0.0/8"),
+					resource.TestCheckResourceAttr(resourceName, "bgp_settings.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "bgp_settings.0.asn", "2468"),
+					resource.TestCheckResourceAttr(resourceName, "bgp_settings.0.bgp_peering_address", "10.104.1.1"),
+					resource.TestCheckResourceAttr(resourceName, "bgp_settings.0.peer_weight", "15"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

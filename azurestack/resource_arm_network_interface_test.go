@@ -77,6 +77,7 @@ func testSweepNetworkInterfaces(region string) error {
 }
 
 func TestAccAzureStackNetworkInterface_basic(t *testing.T) {
+	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -86,8 +87,13 @@ func TestAccAzureStackNetworkInterface_basic(t *testing.T) {
 			{
 				Config: testAccAzureStackNetworkInterface_basic(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackNetworkInterfaceExists("azurestack_network_interface.test"),
+					testCheckAzureStackNetworkInterfaceExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -256,6 +262,12 @@ func TestAccAzureStackNetworkInterface_enableIPForwarding(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enable_ip_forwarding", "true"),
 				),
 			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"enable_accelerated_networking"},
+			},
 		},
 	})
 }
@@ -278,6 +290,12 @@ func TestAccAzureStackNetworkInterface_enableAcceleratedNetworking(t *testing.T)
 					testCheckAzureStackNetworkInterfaceExists(resourceName),
 				),
 			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"enable_accelerated_networking"},
+			},
 		},
 	})
 }
@@ -288,6 +306,7 @@ func TestAccAzureStackNetworkInterface_multipleLoadBalancers(t *testing.T) {
 
 	t.Skip()
 
+	resourceName := "azurestack_network_interface.test"
 	rInt := acctest.RandInt()
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -297,9 +316,14 @@ func TestAccAzureStackNetworkInterface_multipleLoadBalancers(t *testing.T) {
 			{
 				Config: testAccAzureStackNetworkInterface_multipleLoadBalancers(rInt, testLocation()),
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackNetworkInterfaceExists("azurestack_network_interface.test1"),
-					testCheckAzureStackNetworkInterfaceExists("azurestack_network_interface.test2"),
+					testCheckAzureStackNetworkInterfaceExists(resourceName),
+					testCheckAzureStackNetworkInterfaceExists(resourceName),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -322,6 +346,11 @@ func TestAccAzureStackNetworkInterface_applicationGateway(t *testing.T) {
 					testCheckAzureStackNetworkInterfaceExists("azurestack_network_interface.test"),
 					resource.TestCheckResourceAttr(resourceName, "ip_configuration.0.application_gateway_backend_address_pools_ids.#", "1"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -351,6 +380,11 @@ func TestAccAzureStackNetworkInterface_withTags(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "tags.%", "1"),
 					resource.TestCheckResourceAttr(resourceName, "tags.environment", "staging"),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

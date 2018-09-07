@@ -123,18 +123,6 @@
 			"revisionTime": "2018-06-11T17:15:57Z"
 		},
 		{
-			"checksumSHA1": "b2lrPJRxf+MEfmMafN40wepi5WM=",
-			"path": "github.com/Azure/go-autorest/logger",
-			"revision": "a35eae345f69bbfbe3b8fa0b1d3fe98f8430b21a",
-			"revisionTime": "2018-08-30T19:44:05Z"
-		},
-		{
-			"checksumSHA1": "scpSozMdk4sqSpkbQqupLKUfLiM=",
-			"path": "github.com/Azure/go-autorest/version",
-			"revision": "a35eae345f69bbfbe3b8fa0b1d3fe98f8430b21a",
-			"revisionTime": "2018-08-30T19:44:05Z"
-		},
-		{
 			"checksumSHA1": "jQh1fnoKPKMURvKkpdRjN695nAQ=",
 			"origin": "github.com/hashicorp/terraform/vendor/github.com/agext/levenshtein",
 			"path": "github.com/agext/levenshtein",

@@ -12,10 +12,14 @@ func getArmResourceNameAndGroup(s *terraform.State, name string) (string, string
 		return "", "", fmt.Errorf("Not found: %s", name)
 	}
 
-	armName := rs.Primary.Attributes["name"]
+	armName, hasName := rs.Primary.Attributes["name"]
 	armResourceGroup, hasResourceGroup := rs.Primary.Attributes["resource_group_name"]
 	if !hasResourceGroup {
-		return "", "", fmt.Errorf("Bad: no resource group found in state for virtual network gateway: %s", name)
+		return "", "", fmt.Errorf("Error: no resource group found in state for resource: %s", name)
+	}
+
+	if !hasName {
+		return "", "", fmt.Errorf("Error: no name found in state for resource: %s", name)
 	}
 
 	return armName, armResourceGroup, nil

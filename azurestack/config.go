@@ -52,6 +52,7 @@ type ArmClient struct {
 	ifaceClient        network.InterfacesClient
 	localNetConnClient network.LocalNetworkGatewaysClient
 	secRuleClient      network.SecurityRulesClient
+	vnetGatewayClient  network.VirtualNetworkGatewaysClient
 
 	// Resources
 	providersClient resources.ProvidersClient
@@ -71,6 +72,7 @@ type ArmClient struct {
 	routeTablesClient  network.RouteTablesClient
 
 	resourceGroupsClient resources.GroupsClient
+	deploymentsClient    resources.DeploymentsClient
 }
 
 func (c *ArmClient) configureClient(client *autorest.Client, auth autorest.Authorizer) {
@@ -226,6 +228,10 @@ func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, a
 	c.configureClient(&interfacesClient.Client, auth)
 	c.ifaceClient = interfacesClient
 
+	gatewaysClient := network.NewVirtualNetworkGatewaysClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&gatewaysClient.Client, auth)
+	c.vnetGatewayClient = gatewaysClient
+
 	localNetworkGatewaysClient := network.NewLocalNetworkGatewaysClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&localNetworkGatewaysClient.Client, auth)
 	c.localNetConnClient = localNetworkGatewaysClient
@@ -267,6 +273,10 @@ func (c *ArmClient) registerResourcesClients(endpoint, subscriptionId string, au
 	resourcesClient := resources.NewClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&resourcesClient.Client, auth)
 	c.resourcesClient = resourcesClient
+
+	deploymentsClient := resources.NewDeploymentsClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&deploymentsClient.Client, auth)
+	c.deploymentsClient = deploymentsClient
 
 	resourceGroupsClient := resources.NewGroupsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&resourceGroupsClient.Client, auth)

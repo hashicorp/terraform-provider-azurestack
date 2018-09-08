@@ -351,7 +351,7 @@ func testCheckAzureStackPublicIpDisappears(name string) resource.TestCheckFunc {
 			return fmt.Errorf("Error deleting Public IP %q (Resource Group %q): %+v", publicIpName, resourceGroup, err)
 		}
 
-		err = future.WaitForCompletion(ctx, client.Client)
+		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
 			return fmt.Errorf("Error waiting for deletion of Public IP %q (Resource Group %q): %+v", publicIpName, resourceGroup, err)
 		}

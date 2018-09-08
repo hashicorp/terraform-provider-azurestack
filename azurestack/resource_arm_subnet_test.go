@@ -314,7 +314,7 @@ func testCheckAzureStackSubnetDisappears(name string) resource.TestCheckFunc {
 			}
 		}
 
-		err = future.WaitForCompletion(ctx, client.Client)
+		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
 			return fmt.Errorf("Error waiting for completion of Subnet %q (Network %q / Resource Group %q): %+v", name, vnetName, resourceGroup, err)
 		}

@@ -305,7 +305,7 @@ func testCheckAzureStackLoadBalancerRuleDisappears(ruleName string, lb *network.
 			return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q): %+v", lb.Name, id.ResourceGroup, err)
 		}
 
-		err = future.WaitForCompletion(ctx, client.Client)
+		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
 			return fmt.Errorf("Error waiting for completion of LoadBalancer %q (Resource Group %q): %+v", lb.Name, id.ResourceGroup, err)
 		}

@@ -91,7 +91,7 @@ func resourceArmLoadBalancerBackendAddressPoolCreate(d *schema.ResourceData, met
 		return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
+	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
 		return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
@@ -222,7 +222,7 @@ func resourceArmLoadBalancerBackendAddressPoolDelete(d *schema.ResourceData, met
 		return fmt.Errorf("Error Creating/Updating LoadBalancer: %+v", err)
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
+	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
 		return fmt.Errorf("Error waiting for the completion for the LoadBalancer: %+v", err)
 	}

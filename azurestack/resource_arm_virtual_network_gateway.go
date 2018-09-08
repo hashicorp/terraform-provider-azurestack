@@ -121,7 +121,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 						"public_ip_address_id": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: azure.ValidateResourceId,
+							ValidateFunc: azure.ValidateResourceID,
 						},
 					},
 				},
@@ -262,7 +262,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 			"default_local_network_gateway_id": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: azure.ValidateResourceId,
+				ValidateFunc: azure.ValidateResourceID,
 			},
 
 			"tags": tagsSchema(),

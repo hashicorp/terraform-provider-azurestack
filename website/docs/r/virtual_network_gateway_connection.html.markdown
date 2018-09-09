@@ -19,66 +19,66 @@ and an on-premises VPN device and network.
 
 ```hcl
 resource "azurestack_resource_group" "test" {
-  name = "test"
+  name     = "test"
   location = "West US"
 }
 
 resource "azurestack_virtual_network" "test" {
-  name = "test"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "test"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  address_space = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "test" {
-  name = "GatewaySubnet"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                 = "GatewaySubnet"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
   virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix = "10.0.1.0/24"
+  address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_local_network_gateway" "onpremise" {
-  name = "onpremise"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "onpremise"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  gateway_address = "168.62.225.23"
-  address_space = ["10.1.1.0/24"]
+  gateway_address     = "168.62.225.23"
+  address_space       = ["10.1.1.0/24"]
 }
 
 resource "azurestack_public_ip" "test" {
-  name = "test"
-  location = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                         = "test"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "test" {
-  name = "test"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "test"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type = "Vpn"
+  type     = "Vpn"
   vpn_type = "RouteBased"
 
   active_active = false
-  enable_bgp = false
-	sku = "Basic"
+  enable_bgp    = false
+	sku           = "Basic"
 
   ip_configuration {
-    public_ip_address_id = "${azurestack_public_ip.test.id}"
+    public_ip_address_id          = "${azurestack_public_ip.test.id}"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
   }
 }
 
 resource "azurestack_virtual_network_gateway_connection" "onpremise" {
-  name = "onpremise"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "onpremise"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type = "IPsec"
+  type                       = "IPsec"
   virtual_network_gateway_id = "${azurestack_virtual_network_gateway.test.id}"
-  local_network_gateway_id = "${azurestack_local_network_gateway.onpremise.id}"
+  local_network_gateway_id   = "${azurestack_local_network_gateway.onpremise.id}"
 
   shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
 }

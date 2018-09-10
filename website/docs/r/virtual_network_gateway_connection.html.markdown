@@ -91,108 +91,108 @@ in different locations/regions.
 
 ```hcl
 resource "azurestack_resource_group" "us" {
-    name = "us"
+    name     = "us"
     location = "East US"
 }
 
 resource "azurestack_virtual_network" "us" {
-  name = "us"
-  location = "${azurestack_resource_group.us.location}"
+  name                = "us"
+  location            = "${azurestack_resource_group.us.location}"
   resource_group_name = "${azurestack_resource_group.us.name}"
-  address_space = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "us_gateway" {
-  name = "GatewaySubnet"
-  resource_group_name = "${azurestack_resource_group.us.name}"
+  name                 = "GatewaySubnet"
+  resource_group_name  = "${azurestack_resource_group.us.name}"
   virtual_network_name = "${azurestack_virtual_network.us.name}"
-  address_prefix = "10.0.1.0/24"
+  address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_public_ip" "us" {
-  name = "us"
-  location = "${azurestack_resource_group.us.location}"
-  resource_group_name = "${azurestack_resource_group.us.name}"
+  name                         = "us"
+  location                     = "${azurestack_resource_group.us.location}"
+  resource_group_name          = "${azurestack_resource_group.us.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "us" {
-  name = "us-gateway"
-  location = "${azurestack_resource_group.us.location}"
+  name                = "us-gateway"
+  location            = "${azurestack_resource_group.us.location}"
   resource_group_name = "${azurestack_resource_group.us.name}"
 
-  type = "Vpn"
+  type     = "Vpn"
   vpn_type = "RouteBased"
-	sku = "Basic"
+	sku      = "Basic"
 
   ip_configuration {
-    public_ip_address_id = "${azurestack_public_ip.us.id}"
+    public_ip_address_id          = "${azurestack_public_ip.us.id}"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.us_gateway.id}"
+    subnet_id                     = "${azurestack_subnet.us_gateway.id}"
   }
 }
 
 resource "azurestack_resource_group" "europe" {
-  name = "europe"
+  name     = "europe"
   location = "West Europe"
 }
 
 resource "azurestack_virtual_network" "europe" {
-  name = "europe"
-  location = "${azurestack_resource_group.europe.location}"
+  name                = "europe"
+  location            = "${azurestack_resource_group.europe.location}"
   resource_group_name = "${azurestack_resource_group.europe.name}"
-  address_space = ["10.1.0.0/16"]
+  address_space       = ["10.1.0.0/16"]
 }
 
 resource "azurestack_subnet" "europe_gateway" {
-  name = "GatewaySubnet"
-  resource_group_name = "${azurestack_resource_group.europe.name}"
+  name                 = "GatewaySubnet"
+  resource_group_name  = "${azurestack_resource_group.europe.name}"
   virtual_network_name = "${azurestack_virtual_network.europe.name}"
-  address_prefix = "10.1.1.0/24"
+  address_prefix       = "10.1.1.0/24"
 }
 
 resource "azurestack_public_ip" "europe" {
-  name = "europe"
-  location = "${azurestack_resource_group.europe.location}"
-  resource_group_name = "${azurestack_resource_group.europe.name}"
+  name                         = "europe"
+  location                     = "${azurestack_resource_group.europe.location}"
+  resource_group_name          = "${azurestack_resource_group.europe.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "europe" {
-  name = "europe-gateway"
-  location = "${azurestack_resource_group.europe.location}"
+  name                = "europe-gateway"
+  location            = "${azurestack_resource_group.europe.location}"
   resource_group_name = "${azurestack_resource_group.europe.name}"
 
-  type = "Vpn"
+  type     = "Vpn"
   vpn_type = "RouteBased"
-  sku = "Basic"
+  sku      = "Basic"
 
   ip_configuration {
-    public_ip_address_id = "${azurestack_public_ip.europe.id}"
+    public_ip_address_id          = "${azurestack_public_ip.europe.id}"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.europe_gateway.id}"
+    subnet_id                     = "${azurestack_subnet.europe_gateway.id}"
   }
 }
 
 resource "azurestack_virtual_network_gateway_connection" "us_to_europe" {
-  name = "us-to-europe"
-  location = "${azurestack_resource_group.us.location}"
+  name                = "us-to-europe"
+  location            = "${azurestack_resource_group.us.location}"
   resource_group_name = "${azurestack_resource_group.us.name}"
 
-  type = "Vnet2Vnet"
-  virtual_network_gateway_id = "${azurestack_virtual_network_gateway.us.id}"
+  type                            = "Vnet2Vnet"
+  virtual_network_gateway_id      = "${azurestack_virtual_network_gateway.us.id}"
   peer_virtual_network_gateway_id = "${azurestack_virtual_network_gateway.europe.id}"
 
   shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
 }
 
 resource "azurestack_virtual_network_gateway_connection" "europe_to_us" {
-  name = "europe-to-us"
-  location = "${azurestack_resource_group.europe.location}"
+  name                = "europe-to-us"
+  location            = "${azurestack_resource_group.europe.location}"
   resource_group_name = "${azurestack_resource_group.europe.name}"
 
-  type = "Vnet2Vnet"
-  virtual_network_gateway_id = "${azurestack_virtual_network_gateway.europe.id}"
+  type                            = "Vnet2Vnet"
+  virtual_network_gateway_id      = "${azurestack_virtual_network_gateway.europe.id}"
   peer_virtual_network_gateway_id = "${azurestack_virtual_network_gateway.us.id}"
 
   shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"

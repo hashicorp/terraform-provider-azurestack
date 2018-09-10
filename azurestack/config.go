@@ -49,10 +49,11 @@ type ArmClient struct {
 	zonesClient dns.ZonesClient
 
 	// Networking
-	ifaceClient        network.InterfacesClient
-	localNetConnClient network.LocalNetworkGatewaysClient
-	secRuleClient      network.SecurityRulesClient
-	vnetGatewayClient  network.VirtualNetworkGatewaysClient
+	ifaceClient                  network.InterfacesClient
+	localNetConnClient           network.LocalNetworkGatewaysClient
+	secRuleClient                network.SecurityRulesClient
+	vnetGatewayClient            network.VirtualNetworkGatewaysClient
+	vnetGatewayConnectionsClient network.VirtualNetworkGatewayConnectionsClient
 
 	// Resources
 	providersClient resources.ProvidersClient
@@ -226,6 +227,10 @@ func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, a
 	gatewaysClient := network.NewVirtualNetworkGatewaysClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&gatewaysClient.Client, auth)
 	c.vnetGatewayClient = gatewaysClient
+
+	gatewayConnectionsClient := network.NewVirtualNetworkGatewayConnectionsClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&gatewayConnectionsClient.Client, auth)
+	c.vnetGatewayConnectionsClient = gatewayConnectionsClient
 
 	localNetworkGatewaysClient := network.NewLocalNetworkGatewaysClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&localNetworkGatewaysClient.Client, auth)

@@ -124,8 +124,7 @@ func resourceArmVirtualMachineExtensionsCreate(d *schema.ResourceData, meta inte
 		return err
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
-	if err != nil {
+	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
 		return err
 	}
 
@@ -156,7 +155,6 @@ func resourceArmVirtualMachineExtensionsRead(d *schema.ResourceData, meta interf
 	name := id.Path["extensions"]
 
 	resp, err := client.Get(ctx, resGroup, vmName, name, "")
-
 	if err != nil {
 		if utils.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
@@ -188,9 +186,6 @@ func resourceArmVirtualMachineExtensionsRead(d *schema.ResourceData, meta interf
 		}
 	}
 
-	if resp.VirtualMachineExtensionProperties.Settings != nil {
-	}
-
 	flattenAndSetTags(d, &resp.Tags)
 
 	return nil
@@ -213,7 +208,7 @@ func resourceArmVirtualMachineExtensionsDelete(d *schema.ResourceData, meta inte
 		return err
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
+	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
 		return err
 	}

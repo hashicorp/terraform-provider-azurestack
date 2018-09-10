@@ -180,7 +180,7 @@ func validateDiskSizeGB(v interface{}, k string) (ws []string, errors []error) {
 // 		return err
 // 	}
 //
-// 	err = future.WaitForCompletion(ctx, client.Client)
+// 	err = future.WaitForCompletionRef(ctx, client.Client)
 // 	if err != nil {
 // 		return err
 // 	}
@@ -273,7 +273,7 @@ func validateDiskSizeGB(v interface{}, k string) (ws []string, errors []error) {
 // 		}
 // 	}
 //
-// 	err = future.WaitForCompletion(ctx, client.Client)
+// 	err = future.WaitForCompletionRef(ctx, client.Client)
 // 	if err != nil {
 // 		if !response.WasNotFound(future.Response()) {
 // 			return err

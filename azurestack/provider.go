@@ -105,7 +105,7 @@ func Provider() terraform.ResourceProvider {
 			"azurestack_virtual_machine":                    resourceArmVirtualMachine(),
 			"azurestack_virtual_machine_extension":          resourceArmVirtualMachineExtensions(),
 			"azurestack_virtual_network_gateway_connection": resourceArmVirtualNetworkGatewayConnection(),
-			"azurestack_virtual_machine_scale_set": resourceArmVirtualMachineScaleSet(),
+			"azurestack_virtual_machine_scale_set":          resourceArmVirtualMachineScaleSet(),
 		},
 	}
 

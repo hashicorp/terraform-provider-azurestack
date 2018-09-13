@@ -3,6 +3,7 @@
 * **New Resource:** `azurestack_route_table` [GH-26]
 * **New Resource:** `azurestack_route` [GH-27]
 * **New Resource:** `azurestack_template_deployment` [GH-33]
+* **New Resource:** `azurestack_virtual_machine_scale_set` [GH-15]
 * **New Resource:** `azurestack_virtual_network_gateway` [GH-31]
 * **New Resource:** `azurestack_virtual_network_gateway_connection` [GH-35]
 * **New Data Source:** `azurestack_public_ip` [GH-34]

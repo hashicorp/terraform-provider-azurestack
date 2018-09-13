@@ -66,7 +66,6 @@ type ArmClient struct {
 	secGroupClient     network.SecurityGroupsClient
 	publicIPClient     network.PublicIPAddressesClient
 	subnetClient       network.SubnetsClient
-	nicClient          network.InterfacesClient
 	loadBalancerClient network.LoadBalancersClient
 	routesClient       network.RoutesClient
 	routeTablesClient  network.RouteTablesClient

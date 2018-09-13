@@ -10,7 +10,7 @@
   "EnableGC": true,
   "Linters": {
     "errcheck": {
-      "Command": "errcheck -abspath {not_tests=-ignoretests} -ignore github.com/hashicorp/terraform/helper/schema:ForceNew|Set -ignore io:Close"
+      "Command": "errcheck -abspath  -ignore github.com/hashicorp/terraform/helper/schema:ForceNew|Set -ignore io:Close"
     }
   },
   "Sort": [

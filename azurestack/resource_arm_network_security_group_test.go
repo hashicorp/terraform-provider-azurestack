@@ -266,7 +266,7 @@ func testCheckAzureStackNetworkSecurityGroupDisappears(name string) resource.Tes
 		if err != nil {
 			return fmt.Errorf("Error deleting NSG %q (Resource Group %q): %+v", sgName, resourceGroup, err)
 		}
-		err = future.WaitForCompletion(ctx, client.Client)
+		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
 			return fmt.Errorf("Error deleting NSG %q (Resource Group %q): %+v", sgName, resourceGroup, err)
 		}

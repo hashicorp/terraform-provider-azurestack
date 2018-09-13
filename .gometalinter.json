@@ -5,6 +5,7 @@
     "unconvert",
     "gofmt",
     "interfacer",
+    "misspell",
     "structcheck",
     "vet"
   ],

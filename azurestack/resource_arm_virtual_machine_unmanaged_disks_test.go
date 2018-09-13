@@ -480,7 +480,7 @@ func TestAccAzureStackVirtualMachine_changeOSDiskVhdUri(t *testing.T) {
 	})
 }
 
-// This test fails and succeds mostly because of a timeout
+// This test fails and succeeds mostly because of a timeout
 // Error code Code="VmProvisioningTimeout" Message="VM failed to provision with
 // timeout."
 func TestAccAzureStackVirtualMachine_plan(t *testing.T) {

@@ -11,6 +11,7 @@
 * **New Data Source:** `azurestack_virtual_network_gateway` [GH-31]
 
 IMPROVEMENTS:
+
 dependencies: upgrading to `v20.1.0` of `github.com/Azure/azure-sdk-for-go` [GH-38]
 dependencies: upgrading to `v10.15.4` of `github.com/Azure/go-autorest` [GH-38]
 

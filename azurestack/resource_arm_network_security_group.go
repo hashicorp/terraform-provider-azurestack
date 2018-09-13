@@ -451,13 +451,13 @@ func flattenNetworkSecurityRules(rules *[]network.SecurityRule) []map[string]int
 	return result
 }
 
-func sliceToSet(slice []string) *schema.Set {
-	set := &schema.Set{F: schema.HashString}
-	for _, v := range slice {
-		set.Add(v)
-	}
-	return set
-}
+//func sliceToSet(slice []string) *schema.Set {
+//	set := &schema.Set{F: schema.HashString}
+//	for _, v := range slice {
+//		set.Add(v)
+//	}
+//	return set
+//}
 
 // func validateSecurityRule(sgRule map[string]interface{}) error {
 // 	var err *multierror.Error

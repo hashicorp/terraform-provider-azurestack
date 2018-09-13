@@ -8,6 +8,7 @@
     "interfacer",
     "misspell",
     "structcheck",
+    "unused",
     "varcheck",
     "vet"
   ],

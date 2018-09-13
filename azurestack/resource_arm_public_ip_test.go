@@ -402,23 +402,6 @@ resource "azurestack_public_ip" "test" {
 `, rInt, location, rInt)
 }
 
-func testAccAzureStackPublicIPStatic_basic_withZone(rInt int, location string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
-}
-
-resource "azurestack_public_ip" "test" {
-    name = "acctestpublicip-%d"
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    public_ip_address_allocation = "static"
-    zones = ["1"]
-}
-`, rInt, location, rInt)
-}
-
 func testAccAzureStackPublicIPStatic_standard(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {

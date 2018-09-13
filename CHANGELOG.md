@@ -10,6 +10,10 @@
 * **New Data Source:** `azurestack_subnet` [GH-34]
 * **New Data Source:** `azurestack_virtual_network_gateway` [GH-31]
 
+IMPROVEMENTS:
+dependencies: upgrading to `v20.1.0` of `github.com/Azure/azure-sdk-for-go` [GH-38]
+dependencies: upgrading to `v10.15.4` of `github.com/Azure/go-autorest` [GH-38]
+
 ## 0.3.0 (August 13, 2018)
 
 * **New Resource:** `azurestack_lb` ([#16](https://github.com/terraform-providers/terraform-provider-azurestack/issues/16))

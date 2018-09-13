@@ -3,13 +3,13 @@ package azurestack
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"os"
-	"regexp"
 )
 
 func TestResourceAzureStackPublicIpAllocation_validation(t *testing.T) {

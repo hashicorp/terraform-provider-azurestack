@@ -796,7 +796,7 @@ func resourceArmVirtualNetworkGatewayCustomizeDiff(diff *schema.ResourceDiff, v 
 	return nil
 }
 
-func evaluateSchemaValidateFunc(i interface{}, k string, validateFunc schema.SchemaValidateFunc) (bool, error) {
+func evaluateSchemaValidateFunc(i interface{}, k string, validateFunc schema.SchemaValidateFunc) (bool, error) { // nolint unparam
 	_, es := validateFunc(i, k)
 
 	if len(es) > 0 {

@@ -63,6 +63,7 @@ func resourceArmPublicIp() *schema.Resource {
 			"idle_timeout_in_minutes": {
 				Type:         schema.TypeInt,
 				Optional:     true,
+				Default:      4,
 				ValidateFunc: validation.IntBetween(4, 30),
 			},
 
@@ -131,12 +132,14 @@ func resourceArmPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
 	// }
 
 	ipAllocationMethod := d.Get("public_ip_address_allocation").(string)
+	idleTimeout := d.Get("idle_timeout_in_minutes").(int)
 
 	publicIp := network.PublicIPAddress{
 		Name:     &name,
 		Location: &location,
 		PublicIPAddressPropertiesFormat: &network.PublicIPAddressPropertiesFormat{
 			PublicIPAllocationMethod: network.IPAllocationMethod(ipAllocationMethod),
+			IdleTimeoutInMinutes:     utils.Int32(int32(idleTimeout)),
 		},
 		Tags: *expandTags(tags),
 		// Not supported for 2017-03-09 profile
@@ -161,10 +164,6 @@ func resourceArmPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 
 		publicIp.PublicIPAddressPropertiesFormat.DNSSettings = &dnsSettings
-	}
-
-	if v, ok := d.GetOk("idle_timeout_in_minutes"); ok {
-		publicIp.PublicIPAddressPropertiesFormat.IdleTimeoutInMinutes = utils.Int32(int32(v.(int)))
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, publicIp)

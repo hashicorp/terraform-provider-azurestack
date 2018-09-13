@@ -50,7 +50,7 @@ func resourceArmVirtualNetworkGatewayConnection() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: azure.ValidateResourceId,
+				ValidateFunc: azure.ValidateResourceID,
 			},
 
 			"authorization_key": {

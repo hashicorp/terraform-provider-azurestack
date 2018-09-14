@@ -217,7 +217,7 @@ func resourceArmStorageBlobPageUploadFromSource(container, name, source string, 
 	if err != nil {
 		return fmt.Errorf("Error opening source file for upload %q: %s", source, err)
 	}
-	defer deferredCloseLogError(file, fmt.Sprintf("Error closing file `%s` after upload", source))
+	defer deferredCloseLogError(file, fmt.Sprintf("[ERROR] Unable to close file `%s` after upload", source))
 
 	blobSize, pageList, err := resourceArmStorageBlobPageSplit(file)
 	if err != nil {
@@ -394,7 +394,7 @@ func resourceArmStorageBlobBlockUploadFromSource(container, name, source string,
 	if err != nil {
 		return fmt.Errorf("Error opening source file for upload %q: %s", source, err)
 	}
-	defer deferredCloseLogError(file, fmt.Sprintf("Error closing file `%s` after upload", source))
+	defer deferredCloseLogError(file, fmt.Sprintf("[ERROR] Unable to close file `%s` after upload", source))
 
 	blockList, parts, err := resourceArmStorageBlobBlockSplit(file)
 	if err != nil {

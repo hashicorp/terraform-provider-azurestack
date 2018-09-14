@@ -2,9 +2,18 @@
   "Deadline": "10m",
   "Enable": [
     "errcheck",
+    "unconvert",
     "gofmt",
+    "goimports",
+    "gotype",
+    "ineffassign",
     "interfacer",
+    "misspell",
     "structcheck",
+    "staticcheck",
+    "unparam",
+    "unused",
+    "varcheck",
     "vet"
   ],
   "EnableGC": true,

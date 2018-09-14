@@ -219,7 +219,7 @@ func dataSourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) e
 				// 	d.Set("enable_file_encryption", file.Enabled)
 				// }
 			}
-			d.Set("account_encryption_source", string(*encryption.KeySource))
+			d.Set("account_encryption_source", *encryption.KeySource)
 		}
 
 		// Computed

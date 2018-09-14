@@ -338,11 +338,6 @@ func getExistingSubnet(ctx context.Context, resGroup string, vnetName string, su
 	}
 
 	if resp.SubnetPropertiesFormat.IPConfigurations != nil {
-		ips := make([]string, 0, len(*resp.SubnetPropertiesFormat.IPConfigurations))
-		for _, ip := range *resp.SubnetPropertiesFormat.IPConfigurations {
-			ips = append(ips, *ip.ID)
-		}
-
 		existingSubnet.SubnetPropertiesFormat.IPConfigurations = resp.SubnetPropertiesFormat.IPConfigurations
 	}
 

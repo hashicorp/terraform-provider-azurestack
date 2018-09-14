@@ -485,7 +485,7 @@ func resourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) err
 					d.Set("enable_blob_encryption", blob.Enabled)
 				}
 			}
-			d.Set("account_encryption_source", string(*encryption.KeySource))
+			d.Set("account_encryption_source", *encryption.KeySource)
 		}
 
 		// Computed

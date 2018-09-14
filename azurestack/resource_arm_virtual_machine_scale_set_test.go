@@ -975,27 +975,6 @@ func testCheckAzureStackVirtualMachineScaleSetSinglePlacementGroup(name string, 
 	}
 }
 
-func testCheckAzureStackVirtualMachineScaleSetMSI(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		resp, err := testGetAzureStackVirtualMachineScaleSet(s, name)
-		if err != nil {
-			return err
-		}
-
-		identityType := resp.Identity.Type
-		if identityType != "systemAssigned" {
-			return fmt.Errorf("Bad: Identity Type is not systemAssigned for scale set %v", name)
-		}
-
-		principalID := *resp.Identity.PrincipalID
-		if len(principalID) == 0 {
-			return fmt.Errorf("Bad: Could not get principal_id for scale set %v", name)
-		}
-
-		return nil
-	}
-}
-
 func testCheckAzureStackVirtualMachineScaleSetExtension(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resp, err := testGetAzureStackVirtualMachineScaleSet(s, name)
@@ -2247,71 +2226,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
     sku       = "16.04-LTS"
     version   = "latest"
   }
-}
-`, rInt, location)
-}
-
-func testAccAzureStackVirtualMachineScaleSet_basicLinux_managedDisk_withZones(rInt int, location string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
-}
-
-resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
-}
-
-resource "azurestack_virtual_machine_scale_set" "test" {
-    name = "acctvmss-%[1]d"
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    upgrade_policy_mode = "Manual"
-    zones = ["1", "2"]
-
-    sku {
-        name = "Standard_D1_v2"
-        tier = "Standard"
-        capacity = 2
-    }
-
-    os_profile {
-        computer_name_prefix = "testvm-%[1]d"
-        admin_username = "myadmin"
-        admin_password = "Passwword1234"
-    }
-
-    network_profile {
-        name = "TestNetworkProfile-%[1]d"
-        primary = true
-        ip_configuration {
-            name = "TestIPConfiguration"
-            subnet_id = "${azurestack_subnet.test.id}"
-        }
-    }
-
-    storage_profile_os_disk {
-        caching = "ReadWrite"
-        create_option = "FromImage"
-        managed_disk_type = "Standard_LRS"
-    }
-
-    storage_profile_image_reference {
-        publisher = "Canonical"
-        offer = "UbuntuServer"
-        sku = "16.04-LTS"
-        version = "latest"
-    }
 }
 `, rInt, location)
 }

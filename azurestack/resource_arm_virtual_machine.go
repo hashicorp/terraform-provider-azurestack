@@ -698,7 +698,7 @@ func resourceArmVirtualMachineRead(d *schema.ResourceData, meta interface{}) err
 		// 	}
 		// 	disksInfo[i] = diskInfo
 		// }
-		if err := d.Set("storage_data_disk", flattenAzureStackVirtualMachineDataDisk(dataDisks, dataDisks)); err != nil {
+		if err := d.Set("storage_data_disk", flattenAzureStackVirtualMachineDataDisk(dataDisks)); err != nil {
 			return fmt.Errorf("[DEBUG] Error setting Virtual Machine Storage Data Disks error: %#v", err)
 		}
 	}
@@ -986,7 +986,7 @@ func flattenAzureStackVirtualMachineOsProfileSecrets(secrets *[]compute.VaultSec
 	return result
 }
 
-func flattenAzureStackVirtualMachineDataDisk(disks *[]compute.DataDisk, disksInfo *[]compute.DataDisk) interface{} {
+func flattenAzureStackVirtualMachineDataDisk(disks *[]compute.DataDisk) interface{} {
 	// ds := *disksInfo
 	result := make([]interface{}, len(*disks))
 	for i, disk := range *disks {

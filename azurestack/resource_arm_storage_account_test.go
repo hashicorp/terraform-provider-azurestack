@@ -530,28 +530,6 @@ resource "azurestack_storage_account" "testsa" {
 `, rInt, location, rString)
 }
 
-func testAccAzureStackStorageAccount_update(rInt int, rString string, location string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "testrg" {
-    name = "testAccAzureStackSA-%d"
-    location = "%s"
-}
-
-resource "azurestack_storage_account" "testsa" {
-    name = "unlikely23exst2acct%s"
-    resource_group_name = "${azurestack_resource_group.testrg.name}"
-
-    location = "${azurestack_resource_group.testrg.location}"
-    account_tier = "Standard"
-    account_replication_type = "GRS"
-
-    tags {
-        environment = "staging"
-    }
-}
-`, rInt, location, rString)
-}
-
 func testAccAzureStackStorageAccount_blobEncryption(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "testrg" {

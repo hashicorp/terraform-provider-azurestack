@@ -60,6 +60,7 @@ type ArmClient struct {
 	resourcesClient resources.Client
 
 	vmClient             compute.VirtualMachinesClient
+	vmScaleSetClient     compute.VirtualMachineScaleSetsClient
 	storageServiceClient storage.AccountsClient
 
 	vnetClient         network.VirtualNetworksClient
@@ -202,6 +203,10 @@ func (c *ArmClient) registerComputeClients(endpoint, subscriptionId string, auth
 	extensionsClient := compute.NewVirtualMachineExtensionsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&extensionsClient.Client, auth)
 	c.vmExtensionClient = extensionsClient
+
+	scaleSetsClient := compute.NewVirtualMachineScaleSetsClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&scaleSetsClient.Client, auth)
+	c.vmScaleSetClient = scaleSetsClient
 
 	virtualMachinesClient := compute.NewVirtualMachinesClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&virtualMachinesClient.Client, auth)

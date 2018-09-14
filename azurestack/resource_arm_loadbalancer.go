@@ -54,7 +54,7 @@ func resourceArmLoadBalancer() *schema.Resource {
 							Type:         schema.TypeString,
 							Optional:     true,
 							Computed:     true,
-							ValidateFunc: azure.ValidateResourceId,
+							ValidateFunc: azure.ValidateResourceID,
 						},
 
 						"private_ip_address": {

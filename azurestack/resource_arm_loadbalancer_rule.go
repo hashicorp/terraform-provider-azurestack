@@ -40,7 +40,7 @@ func resourceArmLoadBalancerRule() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: azure.ValidateResourceId,
+				ValidateFunc: azure.ValidateResourceID,
 			},
 
 			"frontend_ip_configuration_name": {
@@ -88,7 +88,7 @@ func resourceArmLoadBalancerRule() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Computed:     true,
-				ValidateFunc: azure.ValidateResourceId,
+				ValidateFunc: azure.ValidateResourceID,
 			},
 
 			"enable_floating_ip": {

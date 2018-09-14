@@ -958,16 +958,6 @@ func flattenAzureRmVirtualMachineScaleSetOsProfileSecrets(secrets *[]compute.Vau
 	return result
 }
 
-//To be prepared when this field works
-func flattenAzureRmVirtualMachineScaleSetBootDiagnostics(bootDiagnostic *compute.BootDiagnostics) []interface{} {
-	b := map[string]interface{}{
-		"enabled":     *bootDiagnostic.Enabled,
-		"storage_uri": *bootDiagnostic.StorageURI,
-	}
-
-	return []interface{}{b}
-}
-
 func flattenAzureRmVirtualMachineScaleSetNetworkProfile(profile *compute.VirtualMachineScaleSetNetworkProfile) []map[string]interface{} {
 	networkConfigurations := profile.NetworkInterfaceConfigurations
 	result := make([]map[string]interface{}, 0, len(*networkConfigurations))
@@ -1257,27 +1247,6 @@ func resourceArmVirtualMachineScaleSetExtensionHash(v interface{}) int {
 	}
 
 	return hashcode.String(buf.String())
-}
-
-//To be prepared when this field works
-func expandAzureRMVirtualMachineScaleSetBootDiagnostics(d *schema.ResourceData) *compute.DiagnosticsProfile {
-	bootDiagnostics := d.Get("boot_diagnostics").([]interface{})
-
-	bd := bootDiagnostics[0].(map[string]interface{})
-
-	enabled := bd["enabled"].(bool)
-	storageURI := bd["storage_uri"].(string)
-
-	if storageURI != "" && enabled == false {
-		enabled = true
-	}
-
-	return &compute.DiagnosticsProfile{
-		BootDiagnostics: &compute.BootDiagnostics{
-			Enabled:    &enabled,
-			StorageURI: &storageURI,
-		},
-	}
 }
 
 func expandVirtualMachineScaleSetSku(d *schema.ResourceData) (*compute.Sku, error) {

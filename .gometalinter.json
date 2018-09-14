@@ -5,6 +5,7 @@
     "unconvert",
     "gofmt",
     "goimports",
+    "gotype",
     "ineffassign",
     "interfacer",
     "misspell",

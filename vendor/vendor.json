@@ -1015,6 +1015,14 @@
 			"versionExact": "v1.15.0"
 		},
 		{
+			"checksumSHA1": "K1YsBm4r3xOsdl/EhCUU3MOx+sQ=",
+			"path": "github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils",
+			"revision": "4f7a9e8cef2cd90866192756d907071a102f1e00",
+			"revisionTime": "2018-09-14T07:45:51Z",
+			"version": "=v1.15.0",
+			"versionExact": "v1.15.0"
+		},
+		{
 			"checksumSHA1": "qgMa75aMGbkFY0jIqqqgVnCUoNA=",
 			"origin": "github.com/hashicorp/terraform/vendor/github.com/ulikunitz/xz",
 			"path": "github.com/ulikunitz/xz",

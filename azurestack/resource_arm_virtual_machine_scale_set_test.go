@@ -4166,7 +4166,11 @@ func deprovisionVM(userName string, password string, hostName string, port strin
 	if err != nil {
 		return fmt.Errorf("Bad: deprovisioning error, failure creating session %+v", err)
 	}
-	defer session.Close()
+	defer func() {
+		if err := session.Close(); err != nil {
+			log.Printf("[WARNING] Unable to close session: %v", err)
+		}
+	}()
 
 	session.Stdout = &b
 	if err := session.Run(cmd); err != nil {

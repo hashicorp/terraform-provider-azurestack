@@ -120,8 +120,8 @@ func validateArmStorageBlobSize(v interface{}, k string) (ws []string, errors []
 func validateArmStorageBlobType(v interface{}, k string) (ws []string, errors []error) {
 	value := strings.ToLower(v.(string))
 	validTypes := map[string]struct{}{
-		"block": struct{}{},
-		"page":  struct{}{},
+		"block": {},
+		"page":  {},
 	}
 
 	if _, ok := validTypes[value]; !ok {
@@ -217,7 +217,7 @@ func resourceArmStorageBlobPageUploadFromSource(container, name, source string, 
 	if err != nil {
 		return fmt.Errorf("Error opening source file for upload %q: %s", source, err)
 	}
-	defer file.Close()
+	defer deferredCloseLogError(file, fmt.Sprintf("[ERROR] Unable to close file `%s` after upload", source))
 
 	blobSize, pageList, err := resourceArmStorageBlobPageSplit(file)
 	if err != nil {
@@ -394,7 +394,7 @@ func resourceArmStorageBlobBlockUploadFromSource(container, name, source string,
 	if err != nil {
 		return fmt.Errorf("Error opening source file for upload %q: %s", source, err)
 	}
-	defer file.Close()
+	defer deferredCloseLogError(file, fmt.Sprintf("[ERROR] Unable to close file `%s` after upload", source))
 
 	blockList, parts, err := resourceArmStorageBlobBlockSplit(file)
 	if err != nil {
@@ -631,4 +631,10 @@ func resourceArmStorageBlobDelete(d *schema.ResourceData, meta interface{}) erro
 
 	d.SetId("")
 	return nil
+}
+
+func deferredCloseLogError(c io.Closer, message string) {
+	if err := c.Close(); err != nil {
+		log.Printf("%s: %v", message, err)
+	}
 }

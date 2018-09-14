@@ -226,18 +226,11 @@ func resourceArmPublicIpRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("public_ip_address_allocation", strings.ToLower(string(props.PublicIPAllocationMethod)))
 
 		if settings := props.DNSSettings; settings != nil {
-			if fqdn := settings.Fqdn; fqdn != nil {
-				d.Set("fqdn", fqdn)
-			}
+			d.Set("fqdn", settings.Fqdn)
 		}
 
-		if ip := props.IPAddress; ip != nil {
-			d.Set("ip_address", ip)
-		}
-
-		if idleTimeout := props.IdleTimeoutInMinutes; idleTimeout != nil {
-			d.Set("idle_timeout_in_minutes", idleTimeout)
-		}
+		d.Set("ip_address", props.IPAddress)
+		d.Set("idle_timeout_in_minutes", props.IdleTimeoutInMinutes)
 	}
 
 	flattenAndSetTags(d, &resp.Tags)

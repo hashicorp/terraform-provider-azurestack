@@ -999,6 +999,14 @@
 			"revisionTime": "2016-09-27T10:08:44Z"
 		},
 		{
+			"checksumSHA1": "mRk+gm+E3yYDMBnTRkx8IxbOho8=",
+			"path": "github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response",
+			"revision": "4f7a9e8cef2cd90866192756d907071a102f1e00",
+			"revisionTime": "2018-09-14T07:45:51Z",
+			"version": "=v1.15.0",
+			"versionExact": "v1.15.0"
+		},
+		{
 			"checksumSHA1": "iWqEq0BpOtDozH23rMiDJf7ODD8=",
 			"path": "github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress",
 			"revision": "4f7a9e8cef2cd90866192756d907071a102f1e00",

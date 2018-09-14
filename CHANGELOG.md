@@ -16,6 +16,10 @@ IMPROVEMENTS:
 * dependencies: upgrading to `v20.1.0` of `github.com/Azure/azure-sdk-for-go` [GH-38]
 * dependencies: upgrading to `v10.15.4` of `github.com/Azure/go-autorest` [GH-38]
 
+BUG FIXES:
+
+* `azurestack_public_ip` - now correctly reading and importing the `idle_timeout_in_minutes` property [GH-42]
+
 ## 0.3.0 (August 13, 2018)
 
 * **New Resource:** `azurestack_lb` ([#16](https://github.com/terraform-providers/terraform-provider-azurestack/issues/16))

@@ -2,9 +2,11 @@ package azurestack
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform/helper/resource"
 	"log"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/storage/mgmt/storage"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -557,9 +559,30 @@ func resourceArmStorageAccountDelete(d *schema.ResourceData, meta interface{}) e
 	name := id.Path["storageaccounts"]
 	resGroup := id.ResourceGroup
 
-	_, err = client.Delete(ctx, resGroup, name)
-	if err != nil {
-		return fmt.Errorf("Error issuing AzureStack delete request for storage account %q: %+v", name, err)
+	//sometimes it fails to delete, so lets keep trying
+	//if a replication location is added or removed it can take some time to provision
+	stateConf := &resource.StateChangeConf{
+		Pending:    []string{"error"},
+		Target:     []string{"deleted"},
+		Timeout:    10 * time.Minute,
+		MinTimeout: 30 * time.Second,
+		Delay:      30 * time.Second, // required because it takes some time before the 'creating' location shows up
+		Refresh: func() (interface{}, string, error) {
+
+			resp, err := client.Delete(ctx, resGroup, name)
+			if err != nil {
+				if utils.ResponseWasNotFound(resp) {
+					return nil, "deleted", nil
+				}
+				return err, "error", nil
+			}
+
+			return err, "deleted", nil
+		},
+	}
+
+	if actualErr, err := stateConf.WaitForState(); err != nil {
+		return fmt.Errorf("Error retrying storage account %q deletion: %+v", name, actualErr)
 	}
 
 	return nil

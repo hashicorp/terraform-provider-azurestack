@@ -8,6 +8,8 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress"
 	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
@@ -17,6 +19,7 @@ func resourceArmPublicIp() *schema.Resource {
 		Read:   resourceArmPublicIpRead,
 		Update: resourceArmPublicIpCreate,
 		Delete: resourceArmPublicIpDelete,
+
 		Importer: &schema.ResourceImporter{
 			State: func(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 				id, err := parseAzureResourceID(d.Id())
@@ -33,9 +36,10 @@ func resourceArmPublicIp() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.NoZeroValues,
 			},
 
 			"location": locationSchema(),
@@ -48,22 +52,19 @@ func resourceArmPublicIp() *schema.Resource {
 			"public_ip_address_allocation": {
 				Type:             schema.TypeString,
 				Required:         true,
-				ValidateFunc:     validatePublicIpAllocation,
 				StateFunc:        ignoreCaseStateFunc,
-				DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
+				DiffSuppressFunc: suppress.CaseDifference,
+				ValidateFunc: validation.StringInSlice([]string{
+					string(network.Dynamic),
+					string(network.Static),
+				}, true),
 			},
 
 			"idle_timeout_in_minutes": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				ValidateFunc: func(v interface{}, k string) (ws []string, errors []error) {
-					value := v.(int)
-					if value < 4 || value > 30 {
-						errors = append(errors, fmt.Errorf(
-							"The idle timeout must be between 4 and 30 minutes"))
-					}
-					return
-				},
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Default:      4,
+				ValidateFunc: validation.IntBetween(4, 30),
 			},
 
 			"domain_name_label": {
@@ -123,8 +124,6 @@ func resourceArmPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
 	// Not supported for 2017-03-09 profile
 	// zones := expandZones(d.Get("zones").([]interface{}))
 
-	ipAllocationMethod := network.IPAllocationMethod(d.Get("public_ip_address_allocation").(string))
-
 	// Not supported for 2017-03-09 profile
 	// if strings.ToLower(string(sku.Name)) == "standard" {
 	// 	if strings.ToLower(string(ipAllocationMethod)) != "static" {
@@ -132,8 +131,20 @@ func resourceArmPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
 	// 	}
 	// }
 
-	properties := network.PublicIPAddressPropertiesFormat{
-		PublicIPAllocationMethod: ipAllocationMethod,
+	ipAllocationMethod := d.Get("public_ip_address_allocation").(string)
+	idleTimeout := d.Get("idle_timeout_in_minutes").(int)
+
+	publicIp := network.PublicIPAddress{
+		Name:     &name,
+		Location: &location,
+		PublicIPAddressPropertiesFormat: &network.PublicIPAddressPropertiesFormat{
+			PublicIPAllocationMethod: network.IPAllocationMethod(ipAllocationMethod),
+			IdleTimeoutInMinutes:     utils.Int32(int32(idleTimeout)),
+		},
+		Tags: *expandTags(tags),
+		// Not supported for 2017-03-09 profile
+		// Sku:      &sku,
+		// Zones: zones,
 	}
 
 	dnl, hasDnl := d.GetOk("domain_name_label")
@@ -152,22 +163,7 @@ func resourceArmPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
 			dnsSettings.DomainNameLabel = &domainNameLabel
 		}
 
-		properties.DNSSettings = &dnsSettings
-	}
-
-	if v, ok := d.GetOk("idle_timeout_in_minutes"); ok {
-		idleTimeout := int32(v.(int))
-		properties.IdleTimeoutInMinutes = &idleTimeout
-	}
-
-	publicIp := network.PublicIPAddress{
-		Name:                            &name,
-		Location:                        &location,
-		PublicIPAddressPropertiesFormat: &properties,
-		Tags: *expandTags(tags),
-		// Not supported for 2017-03-09 profile
-		// Sku:      &sku,
-		// Zones: zones,
+		publicIp.PublicIPAddressPropertiesFormat.DNSSettings = &dnsSettings
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, publicIp)
@@ -175,8 +171,7 @@ func resourceArmPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error Creating/Updating Public IP %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
-	if err != nil {
+	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
 		return fmt.Errorf("Error waiting for completion of Public IP %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
@@ -231,14 +226,11 @@ func resourceArmPublicIpRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("public_ip_address_allocation", strings.ToLower(string(props.PublicIPAllocationMethod)))
 
 		if settings := props.DNSSettings; settings != nil {
-			if fqdn := settings.Fqdn; fqdn != nil {
-				d.Set("fqdn", fqdn)
-			}
+			d.Set("fqdn", settings.Fqdn)
 		}
 
-		if ip := props.IPAddress; ip != nil {
-			d.Set("ip_address", ip)
-		}
+		d.Set("ip_address", props.IPAddress)
+		d.Set("idle_timeout_in_minutes", props.IdleTimeoutInMinutes)
 	}
 
 	flattenAndSetTags(d, &resp.Tags)
@@ -262,25 +254,11 @@ func resourceArmPublicIpDelete(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error deleting Public IP %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
-	if err != nil {
+	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
 		return fmt.Errorf("Error waiting for deletion of Public IP %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	return nil
-}
-
-func validatePublicIpAllocation(v interface{}, k string) (ws []string, errors []error) {
-	value := strings.ToLower(v.(string))
-	allocations := map[string]bool{
-		"static":  true,
-		"dynamic": true,
-	}
-
-	if !allocations[value] {
-		errors = append(errors, fmt.Errorf("Public IP Allocation must be an accepted value: Static, Dynamic"))
-	}
-	return
 }
 
 func validatePublicIpDomainNameLabel(v interface{}, k string) (ws []string, errors []error) {

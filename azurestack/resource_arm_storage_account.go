@@ -289,7 +289,7 @@ func resourceArmStorageAccountCreate(d *schema.ResourceData, meta interface{}) e
 			storageAccountName, err)
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
+	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
 		return fmt.Errorf(
 			"Error while waiting for Azure Storage Account %q: %+v",
@@ -485,7 +485,7 @@ func resourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) err
 					d.Set("enable_blob_encryption", blob.Enabled)
 				}
 			}
-			d.Set("account_encryption_source", string(*encryption.KeySource))
+			d.Set("account_encryption_source", *encryption.KeySource)
 		}
 
 		// Computed

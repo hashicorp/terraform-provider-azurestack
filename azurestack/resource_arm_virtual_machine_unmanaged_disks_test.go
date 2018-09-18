@@ -480,7 +480,7 @@ func TestAccAzureStackVirtualMachine_changeOSDiskVhdUri(t *testing.T) {
 	})
 }
 
-// This test fails and succeds mostly because of a timeout
+// This test fails and succeeds mostly because of a timeout
 // Error code Code="VmProvisioningTimeout" Message="VM failed to provision with
 // timeout."
 func TestAccAzureStackVirtualMachine_plan(t *testing.T) {
@@ -555,8 +555,7 @@ func TestAccAzureStackVirtualMachine_optionalOSProfile(t *testing.T) {
 				Destroy: false,
 				Config:  prepConfig,
 				Check: func(s *terraform.State) error {
-					testCheckAzureStackVirtualMachineDestroy(s)
-					return nil
+					return testCheckAzureStackVirtualMachineDestroy(s)
 				},
 			},
 			{
@@ -3004,7 +3003,7 @@ func testCheckAzureStackVirtualMachineDisappears(name string) resource.TestCheck
 			return fmt.Errorf("Bad: Delete on vmClient: %+v", err)
 		}
 
-		err = future.WaitForCompletion(ctx, client.Client)
+		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
 			return fmt.Errorf("Bad: Delete on vmClient: %+v", err)
 		}

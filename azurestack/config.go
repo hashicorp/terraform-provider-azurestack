@@ -49,23 +49,24 @@ type ArmClient struct {
 	zonesClient dns.ZonesClient
 
 	// Networking
-	ifaceClient        network.InterfacesClient
-	localNetConnClient network.LocalNetworkGatewaysClient
-	secRuleClient      network.SecurityRulesClient
-	vnetGatewayClient  network.VirtualNetworkGatewaysClient
+	ifaceClient                  network.InterfacesClient
+	localNetConnClient           network.LocalNetworkGatewaysClient
+	secRuleClient                network.SecurityRulesClient
+	vnetGatewayClient            network.VirtualNetworkGatewaysClient
+	vnetGatewayConnectionsClient network.VirtualNetworkGatewayConnectionsClient
 
 	// Resources
 	providersClient resources.ProvidersClient
 	resourcesClient resources.Client
 
 	vmClient             compute.VirtualMachinesClient
+	vmScaleSetClient     compute.VirtualMachineScaleSetsClient
 	storageServiceClient storage.AccountsClient
 
 	vnetClient         network.VirtualNetworksClient
 	secGroupClient     network.SecurityGroupsClient
 	publicIPClient     network.PublicIPAddressesClient
 	subnetClient       network.SubnetsClient
-	nicClient          network.InterfacesClient
 	loadBalancerClient network.LoadBalancersClient
 	routesClient       network.RoutesClient
 	routeTablesClient  network.RouteTablesClient
@@ -184,17 +185,17 @@ func getArmClient(c *authentication.Config) (*ArmClient, error) {
 		return nil, err
 	}
 
-	client.registerAuthentication(endpoint, graphEndpoint, c.SubscriptionID, c.TenantID, auth, graphAuth, sender)
-	client.registerComputeClients(endpoint, c.SubscriptionID, auth, sender)
-	client.registerDNSClients(endpoint, c.SubscriptionID, auth, sender)
-	client.registerNetworkingClients(endpoint, c.SubscriptionID, auth, sender)
+	client.registerAuthentication(graphEndpoint, c.TenantID, graphAuth, sender)
+	client.registerComputeClients(endpoint, c.SubscriptionID, auth)
+	client.registerDNSClients(endpoint, c.SubscriptionID, auth)
+	client.registerNetworkingClients(endpoint, c.SubscriptionID, auth)
 	client.registerResourcesClients(endpoint, c.SubscriptionID, auth)
 	client.registerStorageClients(endpoint, c.SubscriptionID, auth)
 
 	return &client, nil
 }
 
-func (c *ArmClient) registerComputeClients(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {
+func (c *ArmClient) registerComputeClients(endpoint, subscriptionId string, auth autorest.Authorizer) {
 	availabilitySetsClient := compute.NewAvailabilitySetsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&availabilitySetsClient.Client, auth)
 	c.availSetClient = availabilitySetsClient
@@ -203,12 +204,16 @@ func (c *ArmClient) registerComputeClients(endpoint, subscriptionId string, auth
 	c.configureClient(&extensionsClient.Client, auth)
 	c.vmExtensionClient = extensionsClient
 
+	scaleSetsClient := compute.NewVirtualMachineScaleSetsClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&scaleSetsClient.Client, auth)
+	c.vmScaleSetClient = scaleSetsClient
+
 	virtualMachinesClient := compute.NewVirtualMachinesClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&virtualMachinesClient.Client, auth)
 	c.vmClient = virtualMachinesClient
 }
 
-func (c *ArmClient) registerDNSClients(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {
+func (c *ArmClient) registerDNSClients(endpoint, subscriptionId string, auth autorest.Authorizer) {
 	dn := dns.NewRecordSetsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&dn.Client, auth)
 	c.dnsClient = dn
@@ -218,7 +223,7 @@ func (c *ArmClient) registerDNSClients(endpoint, subscriptionId string, auth aut
 	c.zonesClient = zo
 }
 
-func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {
+func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, auth autorest.Authorizer) {
 	interfacesClient := network.NewInterfacesClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&interfacesClient.Client, auth)
 	c.ifaceClient = interfacesClient
@@ -226,6 +231,10 @@ func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, a
 	gatewaysClient := network.NewVirtualNetworkGatewaysClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&gatewaysClient.Client, auth)
 	c.vnetGatewayClient = gatewaysClient
+
+	gatewayConnectionsClient := network.NewVirtualNetworkGatewayConnectionsClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&gatewayConnectionsClient.Client, auth)
+	c.vnetGatewayConnectionsClient = gatewayConnectionsClient
 
 	localNetworkGatewaysClient := network.NewLocalNetworkGatewaysClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&localNetworkGatewaysClient.Client, auth)
@@ -357,7 +366,7 @@ func (armClient *ArmClient) getBlobStorageClientForStorageAccount(ctx context.Co
 	return &blobClient, true, nil
 }
 
-func (c *ArmClient) registerAuthentication(endpoint, graphEndpoint, subscriptionId, tenantId string, auth, graphAuth autorest.Authorizer, sender autorest.Sender) {
+func (c *ArmClient) registerAuthentication(graphEndpoint, tenantId string, graphAuth autorest.Authorizer, sender autorest.Sender) {
 	servicePrincipalsClient := graphrbac.NewServicePrincipalsClientWithBaseURI(graphEndpoint, tenantId)
 	setUserAgent(&servicePrincipalsClient.Client)
 	servicePrincipalsClient.Authorizer = graphAuth

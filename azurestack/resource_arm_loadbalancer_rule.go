@@ -40,7 +40,7 @@ func resourceArmLoadBalancerRule() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: azure.ValidateResourceId,
+				ValidateFunc: azure.ValidateResourceID,
 			},
 
 			"frontend_ip_configuration_name": {
@@ -88,7 +88,7 @@ func resourceArmLoadBalancerRule() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Computed:     true,
-				ValidateFunc: azure.ValidateResourceId,
+				ValidateFunc: azure.ValidateResourceID,
 			},
 
 			"enable_floating_ip": {
@@ -157,7 +157,7 @@ func resourceArmLoadBalancerRuleCreateUpdate(d *schema.ResourceData, meta interf
 		return errwrap.Wrapf("Error Creating/Updating LoadBalancer {{err}}", err)
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
+	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
 		return fmt.Errorf("Error waiting for completion for LoadBalancer updates: %+v", err)
 	}
@@ -299,7 +299,7 @@ func resourceArmLoadBalancerRuleDelete(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
+	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
 		return fmt.Errorf("Error waiting for completion of LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
@@ -333,7 +333,7 @@ func expandAzureRmLoadBalancerRule(d *schema.ResourceData, lb *network.LoadBalan
 	}
 
 	if v := d.Get("frontend_ip_configuration_name").(string); v != "" {
-		rule, _, exists := findLoadBalancerFrontEndIpConfigurationByName(lb, v)
+		rule, exists := findLoadBalancerFrontEndIpConfigurationByName(lb, v)
 		if !exists {
 			return nil, fmt.Errorf("[ERROR] Cannot find FrontEnd IP Configuration with the name %s", v)
 		}

@@ -197,7 +197,7 @@ func resourceArmNetworkSecurityGroupCreate(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Error creating/updating NSG %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
+	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
 		return fmt.Errorf("Error waiting for the completion of NSG %q (Resource Group %q): %+v", name, resGroup, err)
 	}
@@ -269,7 +269,7 @@ func resourceArmNetworkSecurityGroupDelete(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Error deleting Network Security Group %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
+	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
 		return fmt.Errorf("Error deleting Network Security Group %q (Resource Group %q): %+v", name, resGroup, err)
 	}
@@ -450,43 +450,3 @@ func flattenNetworkSecurityRules(rules *[]network.SecurityRule) []map[string]int
 
 	return result
 }
-
-func sliceToSet(slice []string) *schema.Set {
-	set := &schema.Set{F: schema.HashString}
-	for _, v := range slice {
-		set.Add(v)
-	}
-	return set
-}
-
-// func validateSecurityRule(sgRule map[string]interface{}) error {
-// 	var err *multierror.Error
-//
-// 	sourcePortRange := sgRule["source_port_range"].(string)
-// 	sourcePortRanges := sgRule["source_port_ranges"].(*schema.Set)
-// 	destinationPortRange := sgRule["destination_port_range"].(string)
-// 	destinationPortRanges := sgRule["destination_port_ranges"].(*schema.Set)
-// 	sourceAddressPrefix := sgRule["source_address_prefix"].(string)
-// 	sourceAddressPrefixes := sgRule["source_address_prefixes"].(*schema.Set)
-// 	destinationAddressPrefix := sgRule["destination_address_prefix"].(string)
-// 	destinationAddressPrefixes := sgRule["destination_address_prefixes"].(*schema.Set)
-//
-// 	if sourcePortRange != "" && sourcePortRanges.Len() > 0 {
-// 		err = multierror.Append(err, fmt.Errorf(
-// 			"only one of \"source_port_range\" and \"source_port_ranges\" can be used per security rule"))
-// 	}
-// 	if destinationPortRange != "" && destinationPortRanges.Len() > 0 {
-// 		err = multierror.Append(err, fmt.Errorf(
-// 			"only one of \"destination_port_range\" and \"destination_port_ranges\" can be used per security rule"))
-// 	}
-// 	if sourceAddressPrefix != "" && sourceAddressPrefixes.Len() > 0 {
-// 		err = multierror.Append(err, fmt.Errorf(
-// 			"only one of \"source_address_prefix\" and \"source_address_prefixes\" can be used per security rule"))
-// 	}
-// 	if destinationAddressPrefix != "" && destinationAddressPrefixes.Len() > 0 {
-// 		err = multierror.Append(err, fmt.Errorf(
-// 			"only one of \"destination_address_prefix\" and \"destination_address_prefixes\" can be used per security rule"))
-// 	}
-//
-// 	return err.ErrorOrNil()
-// }

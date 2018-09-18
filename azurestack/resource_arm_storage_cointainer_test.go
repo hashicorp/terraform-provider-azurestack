@@ -106,7 +106,7 @@ func testCheckAzureStackStorageContainerExists(name string, c *storage.Container
 			return fmt.Errorf("Bad: Storage Account %q does not exist", storageAccountName)
 		}
 
-		containers, err := blobClient.ListContainers(storage.ListContainersParameters{
+		containers, _ := blobClient.ListContainers(storage.ListContainersParameters{
 			Prefix:  name,
 			Timeout: 90,
 		})

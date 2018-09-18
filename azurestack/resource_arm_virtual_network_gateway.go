@@ -121,7 +121,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 						"public_ip_address_id": {
 							Type:         schema.TypeString,
 							Optional:     true,
-							ValidateFunc: azure.ValidateResourceId,
+							ValidateFunc: azure.ValidateResourceIDOrEmpty,
 						},
 					},
 				},
@@ -262,7 +262,7 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 			"default_local_network_gateway_id": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: azure.ValidateResourceId,
+				ValidateFunc: azure.ValidateResourceIDOrEmpty,
 			},
 
 			"tags": tagsSchema(),
@@ -298,7 +298,7 @@ func resourceArmVirtualNetworkGatewayCreateUpdate(d *schema.ResourceData, meta i
 		return fmt.Errorf("Error Creating/Updating AzureRM Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
-	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
+	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
 		return fmt.Errorf("Error waiting for completion of AzureRM Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
@@ -393,7 +393,7 @@ func resourceArmVirtualNetworkGatewayDelete(d *schema.ResourceData, meta interfa
 		return fmt.Errorf("Error deleting Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
-	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
+	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
 		return fmt.Errorf("Error waiting for deletion of Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
@@ -796,7 +796,7 @@ func resourceArmVirtualNetworkGatewayCustomizeDiff(diff *schema.ResourceDiff, v 
 	return nil
 }
 
-func evaluateSchemaValidateFunc(i interface{}, k string, validateFunc schema.SchemaValidateFunc) (bool, error) {
+func evaluateSchemaValidateFunc(i interface{}, k string, validateFunc schema.SchemaValidateFunc) (bool, error) { // nolint unparam
 	_, es := validateFunc(i, k)
 
 	if len(es) > 0 {

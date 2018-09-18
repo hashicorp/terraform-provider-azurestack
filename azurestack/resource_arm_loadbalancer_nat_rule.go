@@ -130,7 +130,7 @@ func resourceArmLoadBalancerNatRuleCreateUpdate(d *schema.ResourceData, meta int
 		return fmt.Errorf("Error Creating / Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
+	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
 		return fmt.Errorf("Error waiting for completion of Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
@@ -259,7 +259,7 @@ func resourceArmLoadBalancerNatRuleDelete(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q) %+v", loadBalancerName, resGroup, err)
 	}
 
-	err = future.WaitForCompletion(ctx, client.Client)
+	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
 		return fmt.Errorf("Error waiting for the completion of LoadBalancer updates for %q (Resource Group %q) %+v", loadBalancerName, resGroup, err)
 	}
@@ -288,7 +288,7 @@ func expandAzureRmLoadBalancerNatRule(d *schema.ResourceData, lb *network.LoadBa
 	}
 
 	if v := d.Get("frontend_ip_configuration_name").(string); v != "" {
-		rule, _, exists := findLoadBalancerFrontEndIpConfigurationByName(lb, v)
+		rule, exists := findLoadBalancerFrontEndIpConfigurationByName(lb, v)
 		if !exists {
 			return nil, fmt.Errorf("[ERROR] Cannot find FrontEnd IP Configuration with the name %s", v)
 		}

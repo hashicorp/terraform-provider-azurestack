@@ -1,11 +1,25 @@
-## 0.4.0 (Unreleased)
+## 0.5.0 (Unreleased)
+## 0.4.0 (September 18, 2018)
 
-* **New Resource:** `azurestack_route_table` [GH-26]
-* **New Resource:** `azurestack_route` [GH-27]
-* **New Resource:** `azurestack_template_deployment` [GH-33]
-* **New Resource:** `azurestack_virtual_network_gateway` [GH-31]
-* **New Data Source:** `azurestack_route_table` [GH-26]
-* **New Data Source:** `azurestack_virtual_network_gateway` [GH-31]
+* **New Resource:** `azurestack_route_table` ([#26](https://github.com/terraform-providers/terraform-provider-azurestack/issues/26))
+* **New Resource:** `azurestack_route` ([#27](https://github.com/terraform-providers/terraform-provider-azurestack/issues/27))
+* **New Resource:** `azurestack_template_deployment` ([#33](https://github.com/terraform-providers/terraform-provider-azurestack/issues/33))
+* **New Resource:** `azurestack_virtual_machine_scale_set` ([#15](https://github.com/terraform-providers/terraform-provider-azurestack/issues/15))
+* **New Resource:** `azurestack_virtual_network_gateway` ([#31](https://github.com/terraform-providers/terraform-provider-azurestack/issues/31))
+* **New Resource:** `azurestack_virtual_network_gateway_connection` ([#35](https://github.com/terraform-providers/terraform-provider-azurestack/issues/35))
+* **New Data Source:** `azurestack_public_ip` ([#34](https://github.com/terraform-providers/terraform-provider-azurestack/issues/34))
+* **New Data Source:** `azurestack_route_table` ([#26](https://github.com/terraform-providers/terraform-provider-azurestack/issues/26))
+* **New Data Source:** `azurestack_subnet` ([#34](https://github.com/terraform-providers/terraform-provider-azurestack/issues/34))
+* **New Data Source:** `azurestack_virtual_network_gateway` ([#31](https://github.com/terraform-providers/terraform-provider-azurestack/issues/31))
+
+IMPROVEMENTS:
+
+* dependencies: upgrading to `v20.1.0` of `github.com/Azure/azure-sdk-for-go` ([#38](https://github.com/terraform-providers/terraform-provider-azurestack/issues/38))
+* dependencies: upgrading to `v10.15.4` of `github.com/Azure/go-autorest` ([#38](https://github.com/terraform-providers/terraform-provider-azurestack/issues/38))
+
+BUG FIXES:
+
+* `azurestack_public_ip` - now correctly reading and importing the `idle_timeout_in_minutes` property ([#42](https://github.com/terraform-providers/terraform-provider-azurestack/issues/42))
 
 ## 0.3.0 (August 13, 2018)
 

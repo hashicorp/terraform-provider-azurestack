@@ -1,3 +1,4 @@
+## 0.5.0 (Unreleased)
 ## 0.4.0 (September 18, 2018)
 
 * **New Resource:** `azurestack_route_table` ([#26](https://github.com/terraform-providers/terraform-provider-azurestack/issues/26))

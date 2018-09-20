@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func dataSourceArmVirtualNetworkGateway() *schema.Resource {

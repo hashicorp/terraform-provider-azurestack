@@ -5,8 +5,8 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func resourceArmLocalNetworkGateway() *schema.Resource {

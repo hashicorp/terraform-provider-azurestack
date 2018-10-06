@@ -42,6 +42,7 @@ type ArmClient struct {
 
 	// Compute
 	availSetClient    compute.AvailabilitySetsClient
+	diskClient        compute.DisksClient
 	vmExtensionClient compute.VirtualMachineExtensionsClient
 
 	// DNS
@@ -196,6 +197,10 @@ func (c *ArmClient) registerComputeClients(endpoint, subscriptionId string, auth
 	availabilitySetsClient := compute.NewAvailabilitySetsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&availabilitySetsClient.Client, auth)
 	c.availSetClient = availabilitySetsClient
+
+	diskClient := compute.NewDisksClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&diskClient.Client, auth)
+	c.diskClient = diskClient
 
 	extensionsClient := compute.NewVirtualMachineExtensionsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&extensionsClient.Client, auth)

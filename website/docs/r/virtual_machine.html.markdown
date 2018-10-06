@@ -10,12 +10,187 @@ description: |-
 
 Manages a virtual machine.
 
+## Example Usage with Managed Disks
+
+```hcl
+resource "azurestack_resource_group" "test" {
+  name = "acctestrg"
+
+  # This is Azure Stack Region so it will be different per Azure Stack and should not be in the format of "West US" etc... those are not the same values
+  location = "region1"
+}
+
+resource "azurestack_virtual_network" "test" {
+  name                = "acctvn"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+}
+
+resource "azurestack_subnet" "test" {
+  name                 = "acctsub"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
+}
+
+resource "azurestack_network_interface" "test" {
+  name                = "acctni"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+
+  ip_configuration {
+    name                          = "testconfiguration1"
+    subnet_id                     = "${azurestack_subnet.test.id}"
+    private_ip_address_allocation = "dynamic"
+  }
+}
+
+resource "azurestack_virtual_machine" "test" {
+  name                  = "acctvm"
+  location              = "${azurestack_resource_group.test.location}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  network_interface_ids = ["${azurestack_network_interface.test.id}"]
+  vm_size               = "Standard_F2"
+
+  # Uncomment this line to delete the OS disk automatically when deleting the VM
+  # delete_os_disk_on_termination = true
+
+
+  # Uncomment this line to delete the data disks automatically when deleting the VM
+  # delete_data_disks_on_termination = true
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "16.04-LTS"
+    version   = "latest"
+  }
+
+  storage_os_disk {
+    name              = "myosdisk1"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+
+  os_profile {
+    computer_name  = "hostname"
+    admin_username = "testadmin"
+    admin_password = "Password1234!"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+
+  tags {
+    environment = "staging"
+  }
+}
+```
+
+## Example Usage with Managed Disks and Public IP
+
+```hcl
+resource "azurestack_resource_group" "test" {
+  name = "acctestrg"
+
+  # This is Azure Stack Region so it will be different per Azure Stack and should not be in the format of "West US" etc... those are not the same values
+  location = "region1"
+}
+
+resource "azurestack_public_ip" "test" {
+  name                         = "acceptanceTestPublicIp1"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
+  public_ip_address_allocation = "static"
+
+  tags {
+    environment = "Production"
+  }
+}
+
+resource "azurestack_virtual_network" "test" {
+  name                = "acctvn"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+}
+
+resource "azurestack_subnet" "test" {
+  name                 = "acctsub"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
+}
+
+resource "azurestack_network_interface" "test" {
+  name                = "acctni"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+
+  ip_configuration {
+    name                          = "testconfiguration1"
+    subnet_id                     = "${azurestack_subnet.test.id}"
+    private_ip_address_allocation = "dynamic"
+    public_ip_address_id          = "${azurestack_public_ip.test.id}"
+  }
+}
+
+
+resource "azurestack_virtual_machine" "test" {
+  name                  = "acctvm"
+  location              = "${azurestack_resource_group.test.location}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  network_interface_ids = ["${azurestack_network_interface.test.id}"]
+  vm_size               = "Standard_D2_v2"
+
+  # Uncomment this line to delete the OS disk automatically when deleting the VM
+  # delete_os_disk_on_termination = true
+
+
+  # Uncomment this line to delete the data disks automatically when deleting the VM
+  # delete_data_disks_on_termination = true
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "16.04-LTS"
+    version   = "latest"
+  }
+
+  storage_os_disk {
+    name              = "myosdisk1"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+
+  os_profile {
+    computer_name  = "hostname"
+    admin_username = "testadmin"
+    admin_password = "Password1234!"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+
+  tags {
+    environment = "staging"
+  }
+}
+```
+
 ## Example Usage with Unmanaged Disks
 
 ```hcl
 resource "azurestack_resource_group" "test" {
-  name     = "acctestrg"
-  location = "West US"
+  name = "acctestrg"
+
+  # This is Azure Stack Region so it will be different per Azure Stack and should not be in the format of "West US" etc... those are not the same values
+  location = "region1"
 }
 
 resource "azurestack_virtual_network" "test" {
@@ -242,6 +417,7 @@ The following arguments are supported:
 * `storage_image_reference` - (Optional) A Storage Image Reference block as documented below.
 * `storage_os_disk` - (Required) A `storage_os_disk` block.
 * `storage_data_disk` - (Optional) A list of Storage Data disk blocks as referenced below.
+* `delete_os_disk_on_termination` - (Optional) Should the OS Disk be deleted when the Virtual Machine is destroyed? Defaults to `false`.
 * `delete_data_disks_on_termination` - (Optional) Flag to enable deletion of storage data disk VHD blobs when the VM is deleted, defaults to `false`.
 * `os_profile` - (Optional) An OS Profile block as documented below. Required when `create_option` in the `storage_os_disk` block is set to `FromImage`.
 * `identity` - (Optional) An identity block as documented below.
@@ -298,21 +474,39 @@ resource "azurestack_virtual_machine" "test" {
 `storage_os_disk` block supports the following:
 
 * `name` - (Required) Specifies the disk name.
-* `vhd_uri` - (Optional) Specifies the vhd uri. Changing this forces a new resource to be created.
-* `create_option` - (Required) Specifies how the virtual machine should be created. Possible value is`FromImage`.
-* `caching` - (Optional) Specifies the caching requirements.
+* `create_option` - (Required) Specifies how the OS Disk should be created. Possible values are `Attach` (managed disks only) and `FromImage`.
+* `caching` - (Optional) Specifies the caching requirements for the OS Disk. Possible values include `None`, `ReadOnly` and `ReadWrite`.
 * `image_uri` - (Optional) Specifies the image_uri in the form publisherName:offer:skus:version. `image_uri` can also specify the [VHD uri](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-cli-deploy-templates/#create-a-custom-vm-image) of a custom VM image to clone. When cloning a custom disk image the `os_type` documented below becomes required.
-* `os_type` - (Optional) Specifies the operating system Type, valid values are windows, linux.
+* `os_type` - (Optional) Specifies the Operating System on the OS Disk. Possible values are `Linux` and `Windows`.
 * `disk_size_gb` - (Optional) Specifies the size of the os disk in gigabytes.
+
+The following properties apply when using Managed Disks:
+
+* `managed_disk_id` - (Optional) Specifies the ID of an existing Managed Disk which should be attached as the OS Disk of this Virtual Machine. If this is set then the `create_option` must be set to `Attach`.
+
+* `managed_disk_type` - (Optional) Specifies the type of Managed Disk which should be created. Possible values are `Standard_LRS` or `Premium_LRS`.
+
+The following properties apply when using Unmanaged Disks:
+
+* `vhd_uri` - (Optional) Specifies the URI of the VHD file backing this Unmanaged OS Disk. Changing this forces a new resource to be created.
 
 `storage_data_disk` supports the following:
 
 * `name` - (Required) Specifies the name of the data disk.
-* `vhd_uri` - (Optional) Specifies the uri of the location in storage where the vhd for the virtual machine should be placed.
 * `create_option` - (Required) Specifies how the data disk should be created. Possible values are `Attach`, `FromImage` and `Empty`.
 * `disk_size_gb` - (Required) Specifies the size of the data disk in gigabytes.
 * `caching` - (Optional) Specifies the caching requirements.
 * `lun` - (Required) Specifies the logical unit number of the data disk.
+
+The following properties apply when using Managed Disks:
+
+* `managed_disk_type` - (Optional) Specifies the type of managed disk to create. Possible values are either `Standard_LRS` or `Premium_LRS`.
+
+* `managed_disk_id` - (Optional) Specifies the ID of an Existing Managed Disk which should be attached to this Virtual Machine. When this field is set `create_option` must be set to `Attach`.
+
+The following properties apply when using Unmanaged Disks:
+
+* `vhd_uri` - (Optional) Specifies the URI of the VHD file backing this Unmanaged Data Disk. Changing this forces a new resource to be created.
 
 `os_profile` supports the following:
 

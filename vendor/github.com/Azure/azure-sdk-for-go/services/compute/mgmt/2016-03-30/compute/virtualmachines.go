@@ -19,10 +19,11 @@ package compute
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/Azure/go-autorest/autorest/validation"
-	"net/http"
 )
 
 // VirtualMachinesClient is the compute Client
@@ -123,6 +124,77 @@ func (client VirtualMachinesClient) CaptureResponder(resp *http.Response) (resul
 	return
 }
 
+// ConvertToManagedDisks converts virtual machine disks from blob-based to managed disks. Virtual machine must be
+// stop-deallocated before invoking this operation.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// VMName - the name of the virtual machine.
+func (client VirtualMachinesClient) ConvertToManagedDisks(ctx context.Context, resourceGroupName string, VMName string) (result VirtualMachinesConvertToManagedDisksFuture, err error) {
+	req, err := client.ConvertToManagedDisksPreparer(ctx, resourceGroupName, VMName)
+	if err != nil {
+		err = autorest.NewErrorWithError(err, "compute.VirtualMachinesClient", "ConvertToManagedDisks", nil, "Failure preparing request")
+		return
+	}
+
+	result, err = client.ConvertToManagedDisksSender(req)
+	if err != nil {
+		err = autorest.NewErrorWithError(err, "compute.VirtualMachinesClient", "ConvertToManagedDisks", result.Response(), "Failure sending request")
+		return
+	}
+
+	return
+}
+
+// ConvertToManagedDisksPreparer prepares the ConvertToManagedDisks request.
+func (client VirtualMachinesClient) ConvertToManagedDisksPreparer(ctx context.Context, resourceGroupName string, VMName string) (*http.Request, error) {
+	pathParameters := map[string]interface{}{
+		"resourceGroupName": autorest.Encode("path", resourceGroupName),
+		"subscriptionId":    autorest.Encode("path", client.SubscriptionID),
+		"vmName":            autorest.Encode("path", VMName),
+	}
+
+	const APIVersion = "2018-06-01"
+	queryParameters := map[string]interface{}{
+		"api-version": APIVersion,
+	}
+
+	preparer := autorest.CreatePreparer(
+		autorest.AsPost(),
+		autorest.WithBaseURL(client.BaseURI),
+		autorest.WithPathParameters("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/convertToManagedDisks", pathParameters),
+		autorest.WithQueryParameters(queryParameters))
+	return preparer.Prepare((&http.Request{}).WithContext(ctx))
+}
+
+// ConvertToManagedDisksSender sends the ConvertToManagedDisks request. The method will close the
+// http.Response Body if it receives an error.
+func (client VirtualMachinesClient) ConvertToManagedDisksSender(req *http.Request) (future VirtualMachinesConvertToManagedDisksFuture, err error) {
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req,
+		azure.DoRetryWithRegistration(client.Client))
+	if err != nil {
+		return
+	}
+	err = autorest.Respond(resp, azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted))
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
+	return
+}
+
+// ConvertToManagedDisksResponder handles the response to the ConvertToManagedDisks request. The method always
+// closes the http.Response Body.
+func (client VirtualMachinesClient) ConvertToManagedDisksResponder(resp *http.Response) (result autorest.Response, err error) {
+	err = autorest.Respond(
+		resp,
+		client.ByInspecting(),
+		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted),
+		autorest.ByClosing())
+	result.Response = resp
+	return
+}
+
 // CreateOrUpdate the operation to create or update a virtual machine.
 // Parameters:
 // resourceGroupName - the name of the resource group.
@@ -144,8 +216,6 @@ func (client VirtualMachinesClient) CreateOrUpdate(ctx context.Context, resource
 										{Target: "parameters.VirtualMachineProperties.StorageProfile.OsDisk.EncryptionSettings.KeyEncryptionKey.SourceVault", Name: validation.Null, Rule: true, Chain: nil},
 									}},
 							}},
-							{Target: "parameters.VirtualMachineProperties.StorageProfile.OsDisk.Name", Name: validation.Null, Rule: true, Chain: nil},
-							{Target: "parameters.VirtualMachineProperties.StorageProfile.OsDisk.Vhd", Name: validation.Null, Rule: true, Chain: nil},
 						}},
 					}},
 				}}}}}); err != nil {

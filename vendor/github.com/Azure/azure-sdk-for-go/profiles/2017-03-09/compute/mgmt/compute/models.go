@@ -21,6 +21,13 @@ package compute
 
 import original "github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2016-03-30/compute"
 
+type AccessLevel = original.AccessLevel
+
+const (
+	AccessLevelNone AccessLevel = original.AccessLevelNone
+	AccessLevelRead AccessLevel = original.AccessLevelRead
+)
+
 type AvailabilitySetsClient = original.AvailabilitySetsClient
 
 const (
@@ -42,12 +49,30 @@ const (
 	MicrosoftWindowsShellSetup ComponentNames = original.MicrosoftWindowsShellSetup
 )
 
+type DiskCreateOption = original.DiskCreateOption
+
+const (
+	DiskCreateOptionAttach    DiskCreateOption = original.DiskCreateOptionAttach
+	DiskCreateOptionCopy      DiskCreateOption = original.DiskCreateOptionCopy
+	DiskCreateOptionEmpty     DiskCreateOption = original.DiskCreateOptionEmpty
+	DiskCreateOptionFromImage DiskCreateOption = original.DiskCreateOptionFromImage
+	DiskCreateOptionImport    DiskCreateOption = original.DiskCreateOptionImport
+	DiskCreateOptionRestore   DiskCreateOption = original.DiskCreateOptionRestore
+)
+
 type DiskCreateOptionTypes = original.DiskCreateOptionTypes
 
 const (
 	Attach    DiskCreateOptionTypes = original.Attach
 	Empty     DiskCreateOptionTypes = original.Empty
 	FromImage DiskCreateOptionTypes = original.FromImage
+)
+
+type DiskStorageAccountTypes = original.DiskStorageAccountTypes
+
+const (
+	PremiumLRS  DiskStorageAccountTypes = "Premium_LRS"
+	StandardLRS DiskStorageAccountTypes = "Standard_LRS"
 )
 
 type InstanceViewTypes = original.InstanceViewTypes
@@ -95,6 +120,13 @@ const (
 	Error   StatusLevelTypes = original.Error
 	Info    StatusLevelTypes = original.Info
 	Warning StatusLevelTypes = original.Warning
+)
+
+type StorageAccountTypes = original.StorageAccountTypes
+
+const (
+	StorageAccountTypesPremiumLRS  = original.StorageAccountTypesPremiumLRS
+	StorageAccountTypesStandardLRS = original.StorageAccountTypesStandardLRS
 )
 
 type UpgradeMode = original.UpgradeMode
@@ -179,6 +211,7 @@ const (
 	StandardGS5    VirtualMachineSizeTypes = original.StandardGS5
 )
 
+type AccessURI = original.AccessURI
 type AdditionalUnattendContent = original.AdditionalUnattendContent
 type APIEntityReference = original.APIEntityReference
 type APIError = original.APIError
@@ -190,15 +223,34 @@ type AvailabilitySetListResultPage = original.AvailabilitySetListResultPage
 type AvailabilitySetProperties = original.AvailabilitySetProperties
 type BootDiagnostics = original.BootDiagnostics
 type BootDiagnosticsInstanceView = original.BootDiagnosticsInstanceView
+type CreationData = original.CreationData
 type DataDisk = original.DataDisk
 type DataDiskImage = original.DataDiskImage
 type DiagnosticsProfile = original.DiagnosticsProfile
+type Disk = original.Disk
+type DisksClient = original.DisksClient
 type DiskEncryptionSettings = original.DiskEncryptionSettings
 type DiskInstanceView = original.DiskInstanceView
+type DiskList = original.DiskList
+type DiskListIterator = original.DiskListIterator
+type DiskListPage = original.DiskListPage
+type DiskProperties = original.DiskProperties
+type DisksCreateOrUpdateFuture = original.DisksCreateOrUpdateFuture
+type DisksDeleteFuture = original.DisksDeleteFuture
+type DisksGrantAccessFuture = original.DisksGrantAccessFuture
+type DiskSku = original.DiskSku
+type DisksRevokeAccessFuture = original.DisksRevokeAccessFuture
+type DisksUpdateFuture = original.DisksUpdateFuture
+type DiskUpdate = original.DiskUpdate
+type DiskUpdateProperties = original.DiskUpdateProperties
+type EncryptionSettings = original.EncryptionSettings
+type GrantAccessData = original.GrantAccessData
 type HardwareProfile = original.HardwareProfile
 type ImageReference = original.ImageReference
 type InnerError = original.InnerError
 type InstanceViewStatus = original.InstanceViewStatus
+type KeyVaultAndKeyReference = original.KeyVaultAndKeyReference
+type KeyVaultAndSecretReference = original.KeyVaultAndSecretReference
 type KeyVaultKeyReference = original.KeyVaultKeyReference
 type KeyVaultSecretReference = original.KeyVaultSecretReference
 type LinuxConfiguration = original.LinuxConfiguration
@@ -211,6 +263,8 @@ type LongRunningOperationProperties = original.LongRunningOperationProperties
 type NetworkInterfaceReference = original.NetworkInterfaceReference
 type NetworkInterfaceReferenceProperties = original.NetworkInterfaceReferenceProperties
 type NetworkProfile = original.NetworkProfile
+type ManagedArtifact = original.ManagedArtifact
+type ManagedDiskParameters = original.ManagedDiskParameters
 type OperationStatusResponse = original.OperationStatusResponse
 type OSDisk = original.OSDisk
 type OSDiskImage = original.OSDiskImage
@@ -219,6 +273,7 @@ type Plan = original.Plan
 type PurchasePlan = original.PurchasePlan
 type Resource = original.Resource
 type Sku = original.Sku
+type SourceVault = original.SourceVault
 type SSHConfiguration = original.SSHConfiguration
 type SSHPublicKey = original.SSHPublicKey
 type StorageProfile = original.StorageProfile
@@ -256,6 +311,7 @@ type VirtualMachineListResult = original.VirtualMachineListResult
 type VirtualMachineListResultIterator = original.VirtualMachineListResultIterator
 type VirtualMachineListResultPage = original.VirtualMachineListResultPage
 type VirtualMachineProperties = original.VirtualMachineProperties
+type VirtualMachinesConvertToManagedDisksFuture = original.VirtualMachinesConvertToManagedDisksFuture
 type VirtualMachineScaleSet = original.VirtualMachineScaleSet
 type VirtualMachineScaleSetExtension = original.VirtualMachineScaleSetExtension
 type VirtualMachineScaleSetExtensionProfile = original.VirtualMachineScaleSetExtensionProfile
@@ -349,9 +405,13 @@ func PossibleCachingTypesValues() []CachingTypes {
 func PossibleComponentNamesValues() []ComponentNames {
 	return original.PossibleComponentNamesValues()
 }
+func PossibleDiskCreateOptionValues() []DiskCreateOption {
+	return original.PossibleDiskCreateOptionValues()
+}
 func PossibleDiskCreateOptionTypesValues() []DiskCreateOptionTypes {
 	return original.PossibleDiskCreateOptionTypesValues()
 }
+
 func PossibleInstanceViewTypesValues() []InstanceViewTypes {
 	return original.PossibleInstanceViewTypesValues()
 }
@@ -370,6 +430,9 @@ func PossibleResourceIdentityTypeValues() []ResourceIdentityType {
 func PossibleSettingNamesValues() []SettingNames {
 	return original.PossibleSettingNamesValues()
 }
+func PossibleStorageAccountTypesValues() []StorageAccountTypes {
+	return original.PossibleStorageAccountTypesValues()
+}
 func PossibleStatusLevelTypesValues() []StatusLevelTypes {
 	return original.PossibleStatusLevelTypesValues()
 }
@@ -387,6 +450,12 @@ func NewUsageClient(subscriptionID string) UsageClient {
 }
 func NewUsageClientWithBaseURI(baseURI string, subscriptionID string) UsageClient {
 	return original.NewUsageClientWithBaseURI(baseURI, subscriptionID)
+}
+func NewDisksClient(subscriptionID string) DisksClient {
+	return original.NewDisksClient(subscriptionID)
+}
+func NewDisksClientWithBaseURI(baseURI string, subscriptionID string) DisksClient {
+	return original.NewDisksClientWithBaseURI(baseURI, subscriptionID)
 }
 func UserAgent() string {
 	return original.UserAgent() + " profiles/2017-03-09"

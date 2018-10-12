@@ -109,7 +109,7 @@ func resourceArmDnsZoneRead(d *schema.ResourceData, meta interface{}) error {
 
 	if nameServers := resp.NameServers; nameServers != nil {
 		if err := d.Set("name_servers", *nameServers); err != nil {
-			return err
+			return fmt.Errorf("Error setting `name_servers`: %+v", err)
 		}
 	}
 

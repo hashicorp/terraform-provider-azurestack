@@ -342,7 +342,7 @@ func resourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{}) e
 
 			if configs[0].InterfaceIPConfigurationPropertiesFormat != nil {
 				privateIPAddress := configs[0].InterfaceIPConfigurationPropertiesFormat.PrivateIPAddress
-				d.Set("private_ip_address", *privateIPAddress)
+				d.Set("private_ip_address", privateIPAddress)
 			}
 
 			addresses := make([]interface{}, 0)
@@ -353,7 +353,7 @@ func resourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{}) e
 			}
 
 			if err := d.Set("private_ip_addresses", addresses); err != nil {
-				return err
+				return fmt.Errorf("Error setting `private_ip_addresses`: %+v", err)
 			}
 		}
 

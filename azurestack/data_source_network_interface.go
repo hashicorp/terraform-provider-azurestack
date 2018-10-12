@@ -181,77 +181,61 @@ func dataSourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{})
 
 	d.SetId(*resp.ID)
 
-	iface := *resp.InterfacePropertiesFormat
-
-	d.Set("mac_address", iface.MacAddress)
-
-	if iface.IPConfigurations != nil && len(*iface.IPConfigurations) > 0 {
-		configs := *iface.IPConfigurations
-
-		if configs[0].InterfaceIPConfigurationPropertiesFormat != nil {
-			privateIPAddress := configs[0].InterfaceIPConfigurationPropertiesFormat.PrivateIPAddress
-			d.Set("private_ip_address", *privateIPAddress)
-		}
-
-		addresses := make([]interface{}, 0)
-		for _, config := range configs {
-			if config.InterfaceIPConfigurationPropertiesFormat != nil {
-				addresses = append(addresses, *config.InterfaceIPConfigurationPropertiesFormat.PrivateIPAddress)
-			}
-		}
-
-		if err := d.Set("private_ip_addresses", addresses); err != nil {
-			return err
-		}
-	}
-
-	if iface.IPConfigurations != nil {
-		d.Set("ip_configuration", flattenNetworkInterfaceIPConfigurations(iface.IPConfigurations))
-	}
-
-	if iface.VirtualMachine != nil {
-		d.Set("virtual_machine_id", *iface.VirtualMachine.ID)
-	} else {
-		d.Set("virtual_machine_id", "")
-	}
-
-	var appliedDNSServers []string
-	var dnsServers []string
-	if iface.DNSSettings != nil {
-		if iface.DNSSettings.AppliedDNSServers != nil && len(*iface.DNSSettings.AppliedDNSServers) > 0 {
-			for _, applied := range *iface.DNSSettings.AppliedDNSServers {
-				appliedDNSServers = append(appliedDNSServers, applied)
-			}
-		}
-
-		if iface.DNSSettings.DNSServers != nil && len(*iface.DNSSettings.DNSServers) > 0 {
-			for _, dns := range *iface.DNSSettings.DNSServers {
-				dnsServers = append(dnsServers, dns)
-			}
-		}
-
-		if iface.DNSSettings.InternalFqdn != nil && *iface.DNSSettings.InternalFqdn != "" {
-			d.Set("internal_fqdn", iface.DNSSettings.InternalFqdn)
-		}
-
-		d.Set("internal_dns_name_label", iface.DNSSettings.InternalDNSNameLabel)
-	}
-
-	if iface.NetworkSecurityGroup != nil {
-		d.Set("network_security_group_id", resp.NetworkSecurityGroup.ID)
-	} else {
-		d.Set("network_security_group_id", "")
-	}
-
 	d.Set("name", resp.Name)
 	d.Set("resource_group_name", resGroup)
 	if location := resp.Location; location != nil {
 		d.Set("location", azureStackNormalizeLocation(*location))
 	}
 
-	d.Set("applied_dns_servers", appliedDNSServers)
-	d.Set("dns_servers", dnsServers)
-	d.Set("enable_ip_forwarding", resp.EnableIPForwarding)
+	if iface := resp.InterfacePropertiesFormat; iface != nil {
+		d.Set("mac_address", iface.MacAddress)
+		d.Set("enable_ip_forwarding", iface.EnableIPForwarding)
+
+		if iface.IPConfigurations != nil && len(*iface.IPConfigurations) > 0 {
+			configs := *iface.IPConfigurations
+
+			if configs[0].InterfaceIPConfigurationPropertiesFormat != nil {
+				privateIPAddress := configs[0].InterfaceIPConfigurationPropertiesFormat.PrivateIPAddress
+				d.Set("private_ip_address", privateIPAddress)
+			}
+
+			addresses := make([]interface{}, 0)
+			for _, config := range configs {
+				if config.InterfaceIPConfigurationPropertiesFormat != nil {
+					addresses = append(addresses, *config.InterfaceIPConfigurationPropertiesFormat.PrivateIPAddress)
+				}
+			}
+
+			if err := d.Set("private_ip_addresses", addresses); err != nil {
+				return fmt.Errorf("Error setting `private_ip_addresses`: %+v", err)
+			}
+		}
+
+		if iface.IPConfigurations != nil {
+			if err := d.Set("ip_configuration", flattenNetworkInterfaceIPConfigurations(iface.IPConfigurations)); err != nil {
+				return fmt.Errorf("Error setting `ip_configuration`: %+v", err)
+			}
+		}
+
+		if iface.VirtualMachine != nil {
+			d.Set("virtual_machine_id", iface.VirtualMachine.ID)
+		} else {
+			d.Set("virtual_machine_id", "")
+		}
+
+		if dnsSettings := iface.DNSSettings; dnsSettings != nil {
+			d.Set("applied_dns_servers", dnsSettings.AppliedDNSServers)
+			d.Set("dns_servers", dnsSettings.DNSServers)
+			d.Set("internal_fqdn", dnsSettings.InternalFqdn)
+			d.Set("internal_dns_name_label", dnsSettings.InternalDNSNameLabel)
+		}
+
+		if iface.NetworkSecurityGroup != nil {
+			d.Set("network_security_group_id", resp.NetworkSecurityGroup.ID)
+		} else {
+			d.Set("network_security_group_id", "")
+		}
+	}
 
 	// enable_accelerated_networking is not supported in the profile used for
 	// AzureStack

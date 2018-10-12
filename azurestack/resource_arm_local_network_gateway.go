@@ -241,15 +241,23 @@ func expandLocalNetworkGatewayAddressSpaces(d *schema.ResourceData) []string {
 }
 
 func flattenLocalNetworkGatewayBGPSettings(input *network.BgpSettings) []interface{} {
-	output := make(map[string]interface{}, 0)
+	output := make(map[string]interface{})
 
 	if input == nil {
 		return []interface{}{}
 	}
 
-	output["asn"] = int(*input.Asn)
-	output["bgp_peering_address"] = *input.BgpPeeringAddress
-	output["peer_weight"] = int(*input.PeerWeight)
+	if v := input.Asn; v != nil {
+		output["asn"] = int(*v)
+	}
+
+	if v := input.BgpPeeringAddress; v != nil {
+		output["bgp_peering_address"] = *v
+	}
+
+	if v := input.PeerWeight; v != nil {
+		output["peer_weight"] = int(*v)
+	}
 
 	return []interface{}{output}
 }

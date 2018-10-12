@@ -107,12 +107,10 @@ func resourceArmDnsZoneRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("number_of_record_sets", resp.NumberOfRecordSets)
 	d.Set("max_number_of_record_sets", resp.MaxNumberOfRecordSets)
 
-	nameServers := make([]string, 0, len(*resp.NameServers))
-	for _, ns := range *resp.NameServers {
-		nameServers = append(nameServers, ns)
-	}
-	if err := d.Set("name_servers", nameServers); err != nil {
-		return err
+	if nameServers := resp.NameServers; nameServers != nil {
+		if err := d.Set("name_servers", *nameServers); err != nil {
+			return fmt.Errorf("Error setting `name_servers`: %+v", err)
+		}
 	}
 
 	flattenAndSetTags(d, &resp.Tags)

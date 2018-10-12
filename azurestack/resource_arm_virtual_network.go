@@ -190,11 +190,7 @@ func resourceArmVirtualNetworkRead(d *schema.ResourceData, meta interface{}) err
 	d.Set("subnet", subnets)
 
 	if vnet.DhcpOptions != nil && vnet.DhcpOptions.DNSServers != nil {
-		dnses := []string{}
-		for _, dns := range *vnet.DhcpOptions.DNSServers {
-			dnses = append(dnses, dns)
-		}
-		d.Set("dns_servers", dnses)
+		d.Set("dns_servers", *vnet.DhcpOptions.DNSServers)
 	}
 
 	flattenAndSetTags(d, &resp.Tags)
@@ -304,8 +300,8 @@ func getVirtualNetworkProperties(ctx context.Context, d *schema.ResourceData, me
 func resourceAzureSubnetHash(v interface{}) int {
 	var buf bytes.Buffer
 	m := v.(map[string]interface{})
-	buf.WriteString(fmt.Sprintf("%s", m["name"].(string)))
-	buf.WriteString(fmt.Sprintf("%s", m["address_prefix"].(string)))
+	buf.WriteString(m["name"].(string))
+	buf.WriteString(m["address_prefix"].(string))
 	if v, ok := m["security_group"]; ok {
 		buf.WriteString(v.(string))
 	}

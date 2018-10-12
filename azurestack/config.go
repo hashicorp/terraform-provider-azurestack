@@ -352,7 +352,7 @@ func (armClient *ArmClient) getBlobStorageClientForStorageAccount(ctx context.Co
 	if err != nil {
 		return nil, accountExists, err
 	}
-	if accountExists == false {
+	if !accountExists {
 		return nil, false, nil
 	}
 

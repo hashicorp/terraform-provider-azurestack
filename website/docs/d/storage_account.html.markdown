@@ -14,8 +14,8 @@ Gets information about the specified Storage Account.
 
 ```hcl
 data "azurestack_storage_account" "test" {
-  name                 = "packerimages"
-  resource_group_name  = "packer-storage"
+  name                = "packerimages"
+  resource_group_name = "packer-storage"
 }
 
 output "storage_account_tier" {

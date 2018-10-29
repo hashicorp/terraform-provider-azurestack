@@ -57,34 +57,38 @@ Service Principals can be configured in Terraform in one of two ways, either as 
 - `variables.tf`
 
   ```hcl
-  variable "arm_endpoint" {}
-  variable "subscription_id" {}
-  variable "client_id" {}
-  variable "client_secret" {}
-  variable "tenant_id" {}
+variable "arm_endpoint" {}
+variable "subscription_id" {}
+variable "client_id" {}
+variable "client_secret" {}
+variable "tenant_id" {}
   ```
 
 - `example.tf`
 
   ```hcl
-  provider "azurestack" {
-    arm_endpoint    = "${var.arm_endpoint}"
-    subscription_id = "${var.subscription_id}"
-    client_id       = "${var.client_id}"
-    client_secret   = "${var.client_secret}"
-    tenant_id       = "${var.tenant_id}"
-  }
+provider "azurestack" {
+  arm_endpoint    = "${var.arm_endpoint}"
+  subscription_id = "${var.subscription_id}"
+  client_id       = "${var.client_id}"
+  client_secret   = "${var.client_secret}"
+  tenant_id       = "${var.tenant_id}"
+}
   ```
 
 - `terraform.tfvars`
 
   ```hcl
-  # Configure the Azure Stack Provider
-  arm_endpoint    = "https://management.{region}.{domain}"
-  subscription_id = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
-  client_id       = "{applicationId}@{tenantDomain}"
-  client_secret   = "{applicationPassword}"
-  tenant_id       = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
+# Configure the Azure Stack Provider
+arm_endpoint = "https://management.{region}.{domain}"
+
+subscription_id = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
+
+client_id = "{applicationId}@{tenantDomain}"
+
+client_secret = "{applicationPassword}"
+
+tenant_id = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
   ```
 
 ### Example of Provider Block
@@ -92,12 +96,12 @@ Service Principals can be configured in Terraform in one of two ways, either as 
 - `example.tf`
 
   ```hcl
-  # Configure the Azure Stack Provider
-  provider "azurestack" {
-    arm_endpoint    = "https://management.{region}.{domain}"
-    subscription_id = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
-    client_id       = "{applicationId}@{tenantDomain}"
-    client_secret   = "{applicationPassword}"
-    tenant_id       = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
-  }
+# Configure the Azure Stack Provider
+provider "azurestack" {
+  arm_endpoint    = "https://management.{region}.{domain}"
+  subscription_id = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
+  client_id       = "{applicationId}@{tenantDomain}"
+  client_secret   = "{applicationPassword}"
+  tenant_id       = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
+}
   ```

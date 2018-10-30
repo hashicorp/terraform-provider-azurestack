@@ -24,7 +24,7 @@ resource "azurestack_route_table" "test" {
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-disable_bgp_route_propagation = false
+  disable_bgp_route_propagation = false
 
   route {
     name           = "route1"

@@ -14,8 +14,8 @@ Use this data source to access the properties of an Azure Virtual Network.
 
 ```hcl
 data "azurestack_virtual_network" "test" {
-  name                 = "production"
-  resource_group_name  = "networking"
+  name                = "production"
+  resource_group_name = "networking"
 }
 
 output "virtual_network_id" {

@@ -14,8 +14,8 @@ Use this data source to access the properties of an Azure Network Interface.
 
 ```hcl
 data "azurestack_network_interface" "test" {
-  name                 = "acctest-nic"
-  resource_group_name  = "networking"
+  name                = "acctest-nic"
+  resource_group_name = "networking"
 }
 
 output "network_interface_id" {

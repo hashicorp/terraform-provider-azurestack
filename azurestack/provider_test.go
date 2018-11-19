@@ -5,7 +5,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -71,6 +70,9 @@ func testGetAzureConfig(t *testing.T) *authentication.Config {
 		ClientSecret:                  os.Getenv("ARM_CLIENT_SECRET"),
 		CustomResourceManagerEndpoint: os.Getenv("ARM_ENDPOINT"),
 		Environment:                   "AZURESTACKCLOUD",
+
+		// Feature Toggles
+		SupportsClientSecretAuth: true,
 	}
 
 	config, err := builder.Build()
@@ -80,35 +82,4 @@ func testGetAzureConfig(t *testing.T) *authentication.Config {
 	}
 
 	return config
-}
-
-func TestAccAzureStackResourceProviderRegistration(t *testing.T) {
-	config := testGetAzureConfig(t)
-	if config == nil {
-		return
-	}
-
-	armClient, err := getArmClient(config, false)
-	if err != nil {
-		t.Fatalf("Error building ARM Client: %+v", err)
-	}
-
-	client := armClient.providersClient
-	ctx := testAccProvider.StopContext()
-	providerList, err := client.List(ctx, nil, "")
-	if err != nil {
-		t.Fatalf("Unable to list provider registration status, it is possible that this is due to invalid "+
-			"credentials or the service principal does not have permission to use the Resource Manager API, Azure "+
-			"error: %s", err)
-	}
-
-	err = registerAzureResourceProvidersWithSubscription(ctx, providerList.Values(), client)
-	if err != nil {
-		t.Fatalf("Error registering Resource Providers: %+v", err)
-	}
-
-	needingRegistration := determineAzureResourceProvidersToRegister(providerList.Values())
-	if len(needingRegistration) > 0 {
-		t.Fatalf("'%d' Resource Providers are still Pending Registration: %s", len(needingRegistration), spew.Sprint(needingRegistration))
-	}
 }

@@ -36,6 +36,9 @@ func buildConfigForSweepers() (*ArmClient, error) {
 		ClientSecret:   clientSecret,
 		TenantID:       tenantID,
 		Environment:    environment,
+
+		// Feature Toggles
+		SupportsClientSecretAuth: true,
 	}
 	config, err := builder.Build()
 	if err != nil {

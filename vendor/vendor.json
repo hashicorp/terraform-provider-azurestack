@@ -471,6 +471,30 @@
 			"revisionTime": "2017-11-15T17:09:47Z"
 		},
 		{
+			"checksumSHA1": "b8kc0RV3AFzddaIfqE68Q4aNegQ=",
+			"path": "github.com/hashicorp/go-azure-helpers/authentication",
+			"revision": "40eea1fb498b6898bde0f88df6af174453493da2",
+			"revisionTime": "2018-11-13T22:08:27Z",
+			"version": "0.1.0",
+			"versionExact": "0.1.0"
+		},
+		{
+			"checksumSHA1": "WnMb/nCF2kPWu4o52XgmBMExDQY=",
+			"path": "github.com/hashicorp/go-azure-helpers/resourceproviders",
+			"revision": "40eea1fb498b6898bde0f88df6af174453493da2",
+			"revisionTime": "2018-11-13T22:08:27Z",
+			"version": "0.1.0",
+			"versionExact": "0.1.0"
+		},
+		{
+			"checksumSHA1": "ip//Px6kdSuCH6OKEJUSMIgI3ng=",
+			"path": "github.com/hashicorp/go-azure-helpers/response",
+			"revision": "40eea1fb498b6898bde0f88df6af174453493da2",
+			"revisionTime": "2018-11-13T22:08:27Z",
+			"version": "0.1.0",
+			"versionExact": "0.1.0"
+		},
+		{
 			"checksumSHA1": "b8F628srIitj5p7Y130xc9k0QWs=",
 			"origin": "github.com/hashicorp/terraform/vendor/github.com/hashicorp/go-cleanhttp",
 			"path": "github.com/hashicorp/go-cleanhttp",
@@ -1210,6 +1234,18 @@
 			"path": "golang.org/x/crypto/openpgp/s2k",
 			"revision": "15ad2e4f9ef87905fa6330349940afa8ed669aa1",
 			"revisionTime": "2018-07-31T16:30:02Z"
+		},
+		{
+			"checksumSHA1": "PJY7uCr3UnX4/Mf/RoWnbieSZ8o=",
+			"path": "golang.org/x/crypto/pkcs12",
+			"revision": "3d3f9f413869b949e48070b5bc593aa22cc2b8f2",
+			"revisionTime": "2018-11-10T06:03:37Z"
+		},
+		{
+			"checksumSHA1": "p0GC51McIdA7JygoP223twJ1s0E=",
+			"path": "golang.org/x/crypto/pkcs12/internal/rc2",
+			"revision": "3d3f9f413869b949e48070b5bc593aa22cc2b8f2",
+			"revisionTime": "2018-11-10T06:03:37Z"
 		},
 		{
 			"checksumSHA1": "vKbPb9fpjCdzuoOvajOJnYfHG2g=",

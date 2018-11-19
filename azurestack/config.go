@@ -20,9 +20,10 @@ import (
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest/azure"
+	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/authentication"
+	authenticationold "github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/authentication"
 )
 
 // ArmClient contains the handles to all the specific Azure Resource Manager
@@ -127,7 +128,7 @@ func setUserAgent(client *autorest.Client) {
 	}
 }
 
-func getAuthorizationToken(c *authentication.Config, oauthConfig *adal.OAuthConfig, endpoint string) (*autorest.BearerAuthorizer, error) {
+func getAuthorizationToken(c *authenticationold.Config, oauthConfig *adal.OAuthConfig, endpoint string) (*autorest.BearerAuthorizer, error) {
 	// TODO: support Azure CLI auth / Service Principal Certificate auth
 	spt, err := adal.NewServicePrincipalToken(*oauthConfig, c.ClientID, c.ClientSecret, endpoint)
 	if err != nil {
@@ -140,11 +141,10 @@ func getAuthorizationToken(c *authentication.Config, oauthConfig *adal.OAuthConf
 
 // getArmClient is a helper method which returns a fully instantiated
 // *ArmClient based on the Config's current settings.
-func getArmClient(c *authentication.Config) (*ArmClient, error) {
-
-	env, err := azure.EnvironmentFromURL(c.ARMEndpoint)
+func getArmClient(c *authenticationold.Config) (*ArmClient, error) {
+	env, err := authentication.LoadEnvironmentFromUrl(c.ARMEndpoint)
 	if err != nil {
-		return nil, fmt.Errorf("Cannot load environment, reason: %s", err)
+		return nil, err
 	}
 
 	// client declarations:
@@ -152,7 +152,7 @@ func getArmClient(c *authentication.Config) (*ArmClient, error) {
 		clientId:                 c.ClientID,
 		tenantId:                 c.TenantID,
 		subscriptionId:           c.SubscriptionID,
-		environment:              env,
+		environment:              *env,
 		usingServicePrincipal:    c.ClientSecret != "",
 		skipProviderRegistration: c.SkipProviderRegistration,
 	}
@@ -172,7 +172,7 @@ func getArmClient(c *authentication.Config) (*ArmClient, error) {
 	// Resource Manager endpoints
 	endpoint := env.ResourceManagerEndpoint
 
-	// Instead of the same enpoint use token audience to get the correct token.
+	// Instead of the same endpoint use token audience to get the correct token.
 	auth, err := getAuthorizationToken(c, oauthConfig, env.TokenAudience)
 	if err != nil {
 		return nil, err
@@ -193,6 +193,15 @@ func getArmClient(c *authentication.Config) (*ArmClient, error) {
 	client.registerStorageClients(endpoint, c.SubscriptionID, auth)
 
 	return &client, nil
+}
+
+func (c *ArmClient) registerAuthentication(graphEndpoint, tenantId string, graphAuth autorest.Authorizer, sender autorest.Sender) {
+	servicePrincipalsClient := graphrbac.NewServicePrincipalsClientWithBaseURI(graphEndpoint, tenantId)
+	setUserAgent(&servicePrincipalsClient.Client)
+	servicePrincipalsClient.Authorizer = graphAuth
+	servicePrincipalsClient.Sender = sender
+	servicePrincipalsClient.SkipResourceProviderRegistration = c.skipProviderRegistration
+	c.servicePrincipalsClient = servicePrincipalsClient
 }
 
 func (c *ArmClient) registerComputeClients(endpoint, subscriptionId string, auth autorest.Authorizer) {
@@ -364,13 +373,4 @@ func (armClient *ArmClient) getBlobStorageClientForStorageAccount(ctx context.Co
 
 	blobClient := storageClient.GetBlobService()
 	return &blobClient, true, nil
-}
-
-func (c *ArmClient) registerAuthentication(graphEndpoint, tenantId string, graphAuth autorest.Authorizer, sender autorest.Sender) {
-	servicePrincipalsClient := graphrbac.NewServicePrincipalsClientWithBaseURI(graphEndpoint, tenantId)
-	setUserAgent(&servicePrincipalsClient.Client)
-	servicePrincipalsClient.Authorizer = graphAuth
-	servicePrincipalsClient.Sender = sender
-	servicePrincipalsClient.SkipResourceProviderRegistration = c.skipProviderRegistration
-	c.servicePrincipalsClient = servicePrincipalsClient
 }

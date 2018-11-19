@@ -116,15 +116,16 @@ func Provider() terraform.ResourceProvider {
 func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 	return func(d *schema.ResourceData) (interface{}, error) {
 		config := &authentication.Config{
-			SubscriptionID:            d.Get("subscription_id").(string),
-			ClientID:                  d.Get("client_id").(string),
-			ClientSecret:              d.Get("client_secret").(string),
-			TenantID:                  d.Get("tenant_id").(string),
-			Environment:               "AZURESTACKCLOUD",
-			SkipCredentialsValidation: d.Get("skip_credentials_validation").(bool),
-			SkipProviderRegistration:  d.Get("skip_provider_registration").(bool),
-			ARMEndpoint:               d.Get("arm_endpoint").(string),
+			SubscriptionID:           d.Get("subscription_id").(string),
+			ClientID:                 d.Get("client_id").(string),
+			ClientSecret:             d.Get("client_secret").(string),
+			TenantID:                 d.Get("tenant_id").(string),
+			Environment:              "AZURESTACKCLOUD",
+			SkipProviderRegistration: d.Get("skip_provider_registration").(bool),
+			ARMEndpoint:              d.Get("arm_endpoint").(string),
 		}
+
+		skipCredentialsValidation := d.Get("skip_credentials_validation").(bool)
 
 		if config.ARMEndpoint == "" {
 			return nil, fmt.Errorf("The Azure Resource Manager endpoint must be specified either" +
@@ -149,7 +150,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 			return nil
 		}
 
-		if !config.SkipCredentialsValidation {
+		if !skipCredentialsValidation {
 			// List all the available providers and their registration state to avoid unnecessary
 			// requests. This also lets us check if the provider credentials are correct.
 			ctx := client.StopContext

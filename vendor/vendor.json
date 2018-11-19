@@ -471,12 +471,10 @@
 			"revisionTime": "2017-11-15T17:09:47Z"
 		},
 		{
-			"checksumSHA1": "b8kc0RV3AFzddaIfqE68Q4aNegQ=",
+			"checksumSHA1": "fbP2puPYHUMuT8jr4xgc5NaDMxI=",
 			"path": "github.com/hashicorp/go-azure-helpers/authentication",
-			"revision": "40eea1fb498b6898bde0f88df6af174453493da2",
-			"revisionTime": "2018-11-13T22:08:27Z",
-			"version": "0.1.0",
-			"versionExact": "0.1.0"
+			"revision": "2c6075c7f4058091cf194012da3420326b8d62f4",
+			"revisionTime": "2018-11-19T15:32:52Z"
 		},
 		{
 			"checksumSHA1": "WnMb/nCF2kPWu4o52XgmBMExDQY=",

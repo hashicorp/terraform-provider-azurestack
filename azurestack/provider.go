@@ -11,10 +11,10 @@ import (
 	"sync"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
+	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/terraform/helper/mutexkv"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/authentication"
 )
 
 // Provider returns a terraform.ResourceProvider.
@@ -115,28 +115,24 @@ func Provider() terraform.ResourceProvider {
 
 func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 	return func(d *schema.ResourceData) (interface{}, error) {
-		config := &authentication.Config{
-			SubscriptionID: d.Get("subscription_id").(string),
-			ClientID:       d.Get("client_id").(string),
-			ClientSecret:   d.Get("client_secret").(string),
-			TenantID:       d.Get("tenant_id").(string),
-			Environment:    "AZURESTACKCLOUD",
-			ARMEndpoint:    d.Get("arm_endpoint").(string),
+		builder := authentication.Builder{
+			SubscriptionID:                d.Get("subscription_id").(string),
+			ClientID:                      d.Get("client_id").(string),
+			ClientSecret:                  d.Get("client_secret").(string),
+			TenantID:                      d.Get("tenant_id").(string),
+			Environment:                   "AZURESTACKCLOUD",
+			CustomResourceManagerEndpoint: d.Get("arm_endpoint").(string),
+
+			// Feature Toggles
+			SupportsClientSecretAuth: true,
+		}
+		config, err := builder.Build()
+		if err != nil {
+			return nil, fmt.Errorf("Error building ARM Client: %+v", err)
 		}
 
 		skipCredentialsValidation := d.Get("skip_credentials_validation").(bool)
 		skipProviderRegistration := d.Get("skip_provider_registration").(bool)
-
-		if config.ARMEndpoint == "" {
-			return nil, fmt.Errorf("The Azure Resource Manager endpoint must be specified either" +
-				" via `arm_endpoint` in the Provider Block or the `ARM_ENDPOINT` Environment Variable.")
-		}
-
-		log.Printf("[DEBUG] Using Service Principal for Authentication")
-		if err := config.ValidateServicePrincipal(); err != nil {
-			return nil, err
-		}
-
 		client, err := getArmClient(config, skipProviderRegistration)
 		if err != nil {
 			return nil, err

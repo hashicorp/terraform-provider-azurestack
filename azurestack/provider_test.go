@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
+	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/authentication"
 )
 
 var testAccProviders map[string]terraform.ResourceProvider
@@ -64,15 +64,22 @@ func testGetAzureConfig(t *testing.T) *authentication.Config {
 	}
 
 	// we deliberately don't use the main config - since we care about
-	config := authentication.Config{
-		SubscriptionID: os.Getenv("ARM_SUBSCRIPTION_ID"),
-		ClientID:       os.Getenv("ARM_CLIENT_ID"),
-		TenantID:       os.Getenv("ARM_TENANT_ID"),
-		ClientSecret:   os.Getenv("ARM_CLIENT_SECRET"),
-		ARMEndpoint:    os.Getenv("ARM_ENDPOINT"),
-		Environment:    "AZURESTACKCLOUD",
+	builder := authentication.Builder{
+		SubscriptionID:                os.Getenv("ARM_SUBSCRIPTION_ID"),
+		ClientID:                      os.Getenv("ARM_CLIENT_ID"),
+		TenantID:                      os.Getenv("ARM_TENANT_ID"),
+		ClientSecret:                  os.Getenv("ARM_CLIENT_SECRET"),
+		CustomResourceManagerEndpoint: os.Getenv("ARM_ENDPOINT"),
+		Environment:                   "AZURESTACKCLOUD",
 	}
-	return &config
+
+	config, err := builder.Build()
+	if err != nil {
+		t.Fatalf("Error building ARM Client: %+v", err)
+		return nil
+	}
+
+	return config
 }
 
 func TestAccAzureStackResourceProviderRegistration(t *testing.T) {

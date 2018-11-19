@@ -141,7 +141,7 @@ func getAuthorizationToken(c *authenticationold.Config, oauthConfig *adal.OAuthC
 
 // getArmClient is a helper method which returns a fully instantiated
 // *ArmClient based on the Config's current settings.
-func getArmClient(c *authenticationold.Config) (*ArmClient, error) {
+func getArmClient(c *authenticationold.Config, skipProviderRegistration bool) (*ArmClient, error) {
 	env, err := authentication.LoadEnvironmentFromUrl(c.ARMEndpoint)
 	if err != nil {
 		return nil, err
@@ -154,7 +154,7 @@ func getArmClient(c *authenticationold.Config) (*ArmClient, error) {
 		subscriptionId:           c.SubscriptionID,
 		environment:              *env,
 		usingServicePrincipal:    c.ClientSecret != "",
-		skipProviderRegistration: c.SkipProviderRegistration,
+		skipProviderRegistration: skipProviderRegistration,
 	}
 
 	oauthConfig, err := adal.NewOAuthConfig(env.ActiveDirectoryEndpoint, c.TenantID)

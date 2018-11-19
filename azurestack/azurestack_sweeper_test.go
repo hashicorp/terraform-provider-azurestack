@@ -31,15 +31,14 @@ func buildConfigForSweepers() (*ArmClient, error) {
 	}
 
 	config := &authentication.Config{
-		SubscriptionID:           subscriptionID,
-		ClientID:                 clientID,
-		ClientSecret:             clientSecret,
-		TenantID:                 tenantID,
-		Environment:              environment,
-		SkipProviderRegistration: false,
+		SubscriptionID: subscriptionID,
+		ClientID:       clientID,
+		ClientSecret:   clientSecret,
+		TenantID:       tenantID,
+		Environment:    environment,
 	}
 
-	return getArmClient(config)
+	return getArmClient(config, false)
 }
 
 func shouldSweepAcceptanceTestResource(name string, resourceLocation string, region string) bool {

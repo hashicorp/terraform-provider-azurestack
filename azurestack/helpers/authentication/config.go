@@ -15,11 +15,10 @@ type Config struct {
 	ManagementURL string
 
 	// Core
-	ClientID                 string
-	SubscriptionID           string
-	TenantID                 string
-	Environment              string
-	SkipProviderRegistration bool
+	ClientID       string
+	SubscriptionID string
+	TenantID       string
+	Environment    string
 
 	// Service Principal Auth
 	ClientSecret string

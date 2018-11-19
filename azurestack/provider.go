@@ -116,16 +116,16 @@ func Provider() terraform.ResourceProvider {
 func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 	return func(d *schema.ResourceData) (interface{}, error) {
 		config := &authentication.Config{
-			SubscriptionID:           d.Get("subscription_id").(string),
-			ClientID:                 d.Get("client_id").(string),
-			ClientSecret:             d.Get("client_secret").(string),
-			TenantID:                 d.Get("tenant_id").(string),
-			Environment:              "AZURESTACKCLOUD",
-			SkipProviderRegistration: d.Get("skip_provider_registration").(bool),
-			ARMEndpoint:              d.Get("arm_endpoint").(string),
+			SubscriptionID: d.Get("subscription_id").(string),
+			ClientID:       d.Get("client_id").(string),
+			ClientSecret:   d.Get("client_secret").(string),
+			TenantID:       d.Get("tenant_id").(string),
+			Environment:    "AZURESTACKCLOUD",
+			ARMEndpoint:    d.Get("arm_endpoint").(string),
 		}
 
 		skipCredentialsValidation := d.Get("skip_credentials_validation").(bool)
+		skipProviderRegistration := d.Get("skip_provider_registration").(bool)
 
 		if config.ARMEndpoint == "" {
 			return nil, fmt.Errorf("The Azure Resource Manager endpoint must be specified either" +
@@ -137,7 +137,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 			return nil, err
 		}
 
-		client, err := getArmClient(config)
+		client, err := getArmClient(config, skipProviderRegistration)
 		if err != nil {
 			return nil, err
 		}
@@ -161,7 +161,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 					"error: %s", err)
 			}
 
-			if !config.SkipProviderRegistration {
+			if !skipProviderRegistration {
 				err = registerAzureResourceProvidersWithSubscription(ctx, providerList.Values(), client.providersClient)
 				if err != nil {
 					return nil, err

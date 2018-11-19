@@ -477,12 +477,10 @@
 			"revisionTime": "2018-11-19T16:15:48Z"
 		},
 		{
-			"checksumSHA1": "WnMb/nCF2kPWu4o52XgmBMExDQY=",
+			"checksumSHA1": "QwsnT5sLpT2jJ/1qJQRvqU8xl14=",
 			"path": "github.com/hashicorp/go-azure-helpers/resourceproviders",
-			"revision": "40eea1fb498b6898bde0f88df6af174453493da2",
-			"revisionTime": "2018-11-13T22:08:27Z",
-			"version": "0.1.0",
-			"versionExact": "0.1.0"
+			"revision": "3763571bea0f1cd5c7e2afb123b056b31d766e67",
+			"revisionTime": "2018-11-19T16:35:56Z"
 		},
 		{
 			"checksumSHA1": "ip//Px6kdSuCH6OKEJUSMIgI3ng=",

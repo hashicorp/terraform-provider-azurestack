@@ -585,7 +585,7 @@ func resourceArmVirtualMachineCreate(d *schema.ResourceData, meta interface{}) e
 		Name:                     &name,
 		Location:                 &location,
 		VirtualMachineProperties: &properties,
-		Tags: *expandedTags,
+		Tags:                     *expandedTags,
 
 		// The attribute zones is missing in the virtual machin struct for 2017-03-09 profile
 		// Zones: zones,

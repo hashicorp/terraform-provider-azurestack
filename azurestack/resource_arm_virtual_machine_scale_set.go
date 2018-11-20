@@ -672,10 +672,10 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 	}
 
 	properties := compute.VirtualMachineScaleSet{
-		Name:     &name,
-		Location: &location,
-		Tags:     *expandTags(tags),
-		Sku:      sku,
+		Name:                             &name,
+		Location:                         &location,
+		Tags:                             *expandTags(tags),
+		Sku:                              sku,
 		VirtualMachineScaleSetProperties: &scaleSetProps,
 	}
 

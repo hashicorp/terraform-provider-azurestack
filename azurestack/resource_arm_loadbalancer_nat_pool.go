@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/validate"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func resourceArmLoadBalancerNatPool() *schema.Resource {
@@ -288,7 +288,7 @@ func expandAzureRmLoadBalancerNatPool(d *schema.ResourceData, lb *network.LoadBa
 	}
 
 	return &network.InboundNatPool{
-		Name: utils.String(d.Get("name").(string)),
+		Name:                           utils.String(d.Get("name").(string)),
 		InboundNatPoolPropertiesFormat: &properties,
 	}, nil
 }

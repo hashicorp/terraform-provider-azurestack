@@ -12,8 +12,8 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/validate"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
 func resourceArmLoadBalancerRule() *schema.Resource {
@@ -356,7 +356,7 @@ func expandAzureRmLoadBalancerRule(d *schema.ResourceData, lb *network.LoadBalan
 	}
 
 	return &network.LoadBalancingRule{
-		Name: utils.String(d.Get("name").(string)),
+		Name:                              utils.String(d.Get("name").(string)),
 		LoadBalancingRulePropertiesFormat: &properties,
 	}, nil
 }

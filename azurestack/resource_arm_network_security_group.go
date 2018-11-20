@@ -6,7 +6,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 var networkSecurityGroupResourceName = "azurestack_network_security_group"
@@ -374,7 +374,7 @@ func expandAzureStackSecurityRules(d *schema.ResourceData) ([]network.SecurityRu
 		// }
 
 		rules = append(rules, network.SecurityRule{
-			Name: &name,
+			Name:                         &name,
 			SecurityRulePropertiesFormat: &properties,
 		})
 	}

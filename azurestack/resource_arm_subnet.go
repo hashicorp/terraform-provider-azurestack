@@ -6,7 +6,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 var subnetResourceName = "azurestack_subnet"
@@ -126,7 +126,7 @@ func resourceArmSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 	// properties.ServiceEndpoints = &serviceEndpoints
 
 	subnet := network.Subnet{
-		Name: &name,
+		Name:                   &name,
 		SubnetPropertiesFormat: &properties,
 	}
 

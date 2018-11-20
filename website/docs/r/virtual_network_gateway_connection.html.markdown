@@ -62,7 +62,7 @@ resource "azurestack_virtual_network_gateway" "test" {
 
   active_active = false
   enable_bgp    = false
-	sku           = "Basic"
+  sku           = "Basic"
 
   ip_configuration {
     public_ip_address_id          = "${azurestack_public_ip.test.id}"
@@ -91,8 +91,8 @@ in different locations/regions.
 
 ```hcl
 resource "azurestack_resource_group" "us" {
-    name     = "us"
-    location = "East US"
+  name     = "us"
+  location = "East US"
 }
 
 resource "azurestack_virtual_network" "us" {
@@ -123,7 +123,7 @@ resource "azurestack_virtual_network_gateway" "us" {
 
   type     = "Vpn"
   vpn_type = "RouteBased"
-	sku      = "Basic"
+  sku      = "Basic"
 
   ip_configuration {
     public_ip_address_id          = "${azurestack_public_ip.us.id}"

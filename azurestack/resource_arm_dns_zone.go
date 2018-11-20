@@ -5,8 +5,8 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/services/dns/mgmt/2016-04-01/dns"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func resourceArmDnsZone() *schema.Resource {
@@ -107,12 +107,10 @@ func resourceArmDnsZoneRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("number_of_record_sets", resp.NumberOfRecordSets)
 	d.Set("max_number_of_record_sets", resp.MaxNumberOfRecordSets)
 
-	nameServers := make([]string, 0, len(*resp.NameServers))
-	for _, ns := range *resp.NameServers {
-		nameServers = append(nameServers, ns)
-	}
-	if err := d.Set("name_servers", nameServers); err != nil {
-		return err
+	if nameServers := resp.NameServers; nameServers != nil {
+		if err := d.Set("name_servers", *nameServers); err != nil {
+			return fmt.Errorf("Error setting `name_servers`: %+v", err)
+		}
 	}
 
 	flattenAndSetTags(d, &resp.Tags)

@@ -73,6 +73,7 @@ resource "azurestack_virtual_machine" "test" {
   # Uncomment this line to delete the OS disk automatically when deleting the VM
   # delete_os_disk_on_termination = true
 
+
   # Uncomment this line to delete the data disks automatically when deleting the VM
   # delete_data_disks_on_termination = true
 
@@ -82,14 +83,12 @@ resource "azurestack_virtual_machine" "test" {
     sku       = "16.04-LTS"
     version   = "latest"
   }
-
   storage_os_disk {
     name          = "myosdisk1"
     vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
     caching       = "ReadWrite"
     create_option = "FromImage"
   }
-
   # Optional data disks
   storage_data_disk {
     name          = "datadisk0"
@@ -98,17 +97,14 @@ resource "azurestack_virtual_machine" "test" {
     create_option = "Empty"
     lun           = 0
   }
-
   os_profile {
     computer_name  = "hostname"
     admin_username = "testadmin"
     admin_password = "Password1234!"
   }
-
   os_profile_linux_config {
     disable_password_authentication = false
   }
-
   tags {
     environment = "staging"
   }
@@ -119,7 +115,8 @@ resource "azurestack_virtual_machine" "test" {
 
 ```hcl
 resource "azurestack_resource_group" "test" {
-  name     = "acctestrg"
+  name = "acctestrg"
+
   # This is Azure Stack Region so it will be different per Azure Stack and should not be in the format of "West US" etc... those are not the same values
   location = "region1"
 }
@@ -191,6 +188,7 @@ resource "azurestack_virtual_machine" "test" {
   # Uncomment this line to delete the OS disk automatically when deleting the VM
   # delete_os_disk_on_termination = true
 
+
   # Uncomment this line to delete the data disks automatically when deleting the VM
   # delete_data_disks_on_termination = true
 
@@ -200,14 +198,12 @@ resource "azurestack_virtual_machine" "test" {
     sku       = "16.04-LTS"
     version   = "latest"
   }
-
   storage_os_disk {
     name          = "myosdisk1"
     vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
     caching       = "ReadWrite"
     create_option = "FromImage"
   }
-
   # Optional data disks
   storage_data_disk {
     name          = "datadisk0"
@@ -216,17 +212,14 @@ resource "azurestack_virtual_machine" "test" {
     create_option = "Empty"
     lun           = 0
   }
-
   os_profile {
     computer_name  = "hostname"
     admin_username = "testadmin"
     admin_password = "Password1234!"
   }
-
   os_profile_linux_config {
     disable_password_authentication = false
   }
-
   tags {
     environment = "staging"
   }
@@ -340,12 +333,13 @@ resource "azurestack_virtual_machine" "test" {
 
 ```hcl
 resource "azurestack_virtual_machine" "test" {
-  name                = "test"
+  name = "test"
 
   identity = {
     type = "SystemAssigned"
   }
 }
+
 resource "azurestack_virtual_machine_extension" "test" {
   name                 = "test"
   resource_group_name  = "${azurestack_resource_group.test.name}"
@@ -361,6 +355,7 @@ resource "azurestack_virtual_machine_extension" "test" {
     }
 SETTINGS
 }
+
 output "principal_id" {
   value = "${lookup(azurestack_virtual_machine.test.identity[0], "principal_id")}"
 }

@@ -10,8 +10,8 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
 func resourceArmLoadBalancerProbe() *schema.Resource {
@@ -286,7 +286,7 @@ func expandAzureRmLoadBalancerProbe(d *schema.ResourceData) *network.Probe {
 	}
 
 	return &network.Probe{
-		Name: utils.String(d.Get("name").(string)),
+		Name:                  utils.String(d.Get("name").(string)),
 		ProbePropertiesFormat: &properties,
 	}
 }

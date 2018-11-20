@@ -9,7 +9,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/storage/mgmt/storage"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 const blobStorageAccountDefaultAccessTier = "Hot"
@@ -567,7 +567,7 @@ func resourceArmStorageAccountDelete(d *schema.ResourceData, meta interface{}) e
 
 func expandStorageAccountCustomDomain(d *schema.ResourceData) *storage.CustomDomain {
 	domains := d.Get("custom_domain").([]interface{})
-	if domains == nil || len(domains) == 0 {
+	if len(domains) == 0 {
 		return &storage.CustomDomain{
 			Name: utils.String(""),
 		}
@@ -583,7 +583,7 @@ func expandStorageAccountCustomDomain(d *schema.ResourceData) *storage.CustomDom
 }
 
 func flattenStorageAccountCustomDomain(input *storage.CustomDomain) []interface{} {
-	domain := make(map[string]interface{}, 0)
+	domain := make(map[string]interface{})
 
 	domain["name"] = *input.Name
 	// use_subdomain isn't returned

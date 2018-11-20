@@ -6,7 +6,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2015-06-15/network"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func resourceArmRoute() *schema.Resource {

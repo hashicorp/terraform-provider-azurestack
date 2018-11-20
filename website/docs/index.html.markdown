@@ -21,7 +21,7 @@ Terraform supports authenticating to Azure Stack through a Service Principal - [
 
 ```hcl
 # Configure the Azure Provider
-provider "azurestack" { }
+provider "azurestack" {}
 
 # Create a resource group
 resource "azurestack_resource_group" "network" {

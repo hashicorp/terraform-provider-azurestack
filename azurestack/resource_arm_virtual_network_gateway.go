@@ -11,8 +11,8 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
 func resourceArmVirtualNetworkGateway() *schema.Resource {
@@ -287,9 +287,9 @@ func resourceArmVirtualNetworkGatewayCreateUpdate(d *schema.ResourceData, meta i
 	}
 
 	gateway := network.VirtualNetworkGateway{
-		Name:     &name,
-		Location: &location,
-		Tags:     *expandTags(tags),
+		Name:                                  &name,
+		Location:                              &location,
+		Tags:                                  *expandTags(tags),
 		VirtualNetworkGatewayPropertiesFormat: properties,
 	}
 

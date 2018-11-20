@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/validate"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func resourceArmLoadBalancerNatRule() *schema.Resource {
@@ -299,7 +299,7 @@ func expandAzureRmLoadBalancerNatRule(d *schema.ResourceData, lb *network.LoadBa
 	}
 
 	natRule := network.InboundNatRule{
-		Name: utils.String(d.Get("name").(string)),
+		Name:                           utils.String(d.Get("name").(string)),
 		InboundNatRulePropertiesFormat: &properties,
 	}
 

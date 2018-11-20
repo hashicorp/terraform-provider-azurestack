@@ -385,11 +385,7 @@ func testCheckAzureStackStorageBlobDisappears(name string) resource.TestCheckFun
 		blob := container.GetBlobReference(name)
 		options := &storage.DeleteBlobOptions{}
 		_, err = blob.DeleteIfExists(options)
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return err
 	}
 }
 

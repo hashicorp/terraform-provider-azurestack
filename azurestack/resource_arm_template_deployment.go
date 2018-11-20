@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func resourceArmTemplateDeployment() *schema.Resource {
@@ -166,7 +166,7 @@ func resourceArmTemplateDeploymentRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error making Read request on Azure RM Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
 	}
 
-	outputs := make(map[string]string, 0)
+	outputs := make(map[string]string)
 	if outs := resp.Properties.Outputs; outs != nil {
 		outsVal := outs.(map[string]interface{})
 		if len(outsVal) > 0 {

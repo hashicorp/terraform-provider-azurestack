@@ -12,8 +12,8 @@ import (
 	"github.com/hashicorp/terraform/helper/structure"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
 )
 
 func resourceArmVirtualMachineScaleSet() *schema.Resource {
@@ -161,7 +161,7 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 
 						"admin_password": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
 							Sensitive:    true,
 							ValidateFunc: validation.NoZeroValues,
 						},
@@ -861,22 +861,28 @@ func flattenAzureRmVirtualMachineScaleSetIdentity(identity *compute.VirtualMachi
 
 func flattenAzureRmVirtualMachineScaleSetOsProfileLinuxConfig(config *compute.LinuxConfiguration) []interface{} {
 	result := make(map[string]interface{})
-	result["disable_password_authentication"] = *config.DisablePasswordAuthentication
 
-	if config.SSH != nil && len(*config.SSH.PublicKeys) > 0 {
-		ssh_keys := make([]map[string]interface{}, 0, len(*config.SSH.PublicKeys))
-		for _, i := range *config.SSH.PublicKeys {
-			key := make(map[string]interface{})
-			key["path"] = *i.Path
+	if v := config.DisablePasswordAuthentication; v != nil {
+		result["disable_password_authentication"] = *v
+	}
 
-			if i.KeyData != nil {
-				key["key_data"] = *i.KeyData
+	if ssh := config.SSH; ssh != nil {
+		if keys := ssh.PublicKeys; keys != nil {
+			ssh_keys := make([]map[string]interface{}, 0, len(*keys))
+
+			for _, i := range *keys {
+				key := make(map[string]interface{})
+				if i.Path != nil {
+					key["path"] = *i.Path
+				}
+				if i.KeyData != nil {
+					key["key_data"] = *i.KeyData
+				}
+				ssh_keys = append(ssh_keys, key)
 			}
 
-			ssh_keys = append(ssh_keys, key)
+			result["ssh_keys"] = ssh_keys
 		}
-
-		result["ssh_keys"] = ssh_keys
 	}
 
 	return []interface{}{result}

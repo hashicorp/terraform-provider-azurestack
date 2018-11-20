@@ -9,7 +9,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/utils"
+	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func resourceArmNetworkInterface() *schema.Resource {
@@ -327,74 +327,64 @@ func resourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error making Read request on Azure Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
-	props := *resp.InterfacePropertiesFormat
-
-	d.Set("mac_address", props.MacAddress)
-	if props.IPConfigurations != nil && len(*props.IPConfigurations) > 0 {
-		configs := *props.IPConfigurations
-
-		if configs[0].InterfaceIPConfigurationPropertiesFormat != nil {
-			privateIPAddress := configs[0].InterfaceIPConfigurationPropertiesFormat.PrivateIPAddress
-			d.Set("private_ip_address", *privateIPAddress)
-		}
-
-		addresses := make([]interface{}, 0)
-		for _, config := range configs {
-			if config.InterfaceIPConfigurationPropertiesFormat != nil {
-				addresses = append(addresses, *config.InterfaceIPConfigurationPropertiesFormat.PrivateIPAddress)
-			}
-		}
-
-		if err := d.Set("private_ip_addresses", addresses); err != nil {
-			return err
-		}
-	}
-
-	if props.IPConfigurations != nil {
-		configs := flattenNetworkInterfaceIPConfigurations(props.IPConfigurations)
-		if err := d.Set("ip_configuration", configs); err != nil {
-			return fmt.Errorf("Error setting `ip_configuration`: %+v", err)
-		}
-	}
-
-	if vm := props.VirtualMachine; vm != nil {
-		d.Set("virtual_machine_id", *vm.ID)
-	}
-
-	var appliedDNSServers []string
-	var dnsServers []string
-	if dns := props.DNSSettings; dns != nil {
-		if appliedServers := dns.AppliedDNSServers; appliedServers != nil && len(appliedDNSServers) > 0 {
-			for _, applied := range appliedDNSServers {
-				appliedDNSServers = append(appliedDNSServers, applied)
-			}
-		}
-
-		if servers := dns.DNSServers; servers != nil && len(*servers) > 0 {
-			for _, dns := range *servers {
-				dnsServers = append(dnsServers, dns)
-			}
-		}
-
-		d.Set("internal_fqdn", props.DNSSettings.InternalFqdn)
-		d.Set("internal_dns_name_label", props.DNSSettings.InternalDNSNameLabel)
-	}
-
-	if nsg := props.NetworkSecurityGroup; nsg != nil {
-		d.Set("network_security_group_id", nsg.ID)
-	} else {
-		d.Set("network_security_group_id", "")
-	}
-
 	d.Set("name", resp.Name)
 	d.Set("resource_group_name", resGroup)
 	if location := resp.Location; location != nil {
 		d.Set("location", azureStackNormalizeLocation(*location))
 	}
 
-	d.Set("applied_dns_servers", appliedDNSServers)
-	d.Set("dns_servers", dnsServers)
-	d.Set("enable_ip_forwarding", resp.EnableIPForwarding)
+	if iface := resp.InterfacePropertiesFormat; iface != nil {
+		d.Set("mac_address", iface.MacAddress)
+		d.Set("enable_ip_forwarding", iface.EnableIPForwarding)
+
+		if iface.IPConfigurations != nil && len(*iface.IPConfigurations) > 0 {
+			configs := *iface.IPConfigurations
+
+			if configs[0].InterfaceIPConfigurationPropertiesFormat != nil {
+				privateIPAddress := configs[0].InterfaceIPConfigurationPropertiesFormat.PrivateIPAddress
+				d.Set("private_ip_address", privateIPAddress)
+			}
+
+			addresses := make([]interface{}, 0)
+			for _, config := range configs {
+				if config.InterfaceIPConfigurationPropertiesFormat != nil {
+					addresses = append(addresses, *config.InterfaceIPConfigurationPropertiesFormat.PrivateIPAddress)
+				}
+			}
+
+			if err := d.Set("private_ip_addresses", addresses); err != nil {
+				return fmt.Errorf("Error setting `private_ip_addresses`: %+v", err)
+			}
+		}
+
+		if iface.IPConfigurations != nil {
+			if err := d.Set("ip_configuration", flattenNetworkInterfaceIPConfigurations(iface.IPConfigurations)); err != nil {
+				return fmt.Errorf("Error setting `ip_configuration`: %+v", err)
+			}
+		}
+
+		if iface.VirtualMachine != nil {
+			d.Set("virtual_machine_id", iface.VirtualMachine.ID)
+		} else {
+			d.Set("virtual_machine_id", "")
+		}
+
+		if dnsSettings := iface.DNSSettings; dnsSettings != nil {
+			d.Set("applied_dns_servers", dnsSettings.AppliedDNSServers)
+			d.Set("dns_servers", dnsSettings.DNSServers)
+			d.Set("internal_fqdn", dnsSettings.InternalFqdn)
+			d.Set("internal_dns_name_label", dnsSettings.InternalDNSNameLabel)
+		}
+
+		if iface.NetworkSecurityGroup != nil {
+			d.Set("network_security_group_id", resp.NetworkSecurityGroup.ID)
+		} else {
+			d.Set("network_security_group_id", "")
+		}
+	}
+
+	// enable_accelerated_networking is not supported in the profile used for
+	// AzureStack
 	// d.Set("enable_accelerated_networking", resp.EnableAcceleratedNetworking)
 
 	flattenAndSetTags(d, &resp.Tags)

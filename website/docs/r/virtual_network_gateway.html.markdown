@@ -57,11 +57,11 @@ resource "azurestack_virtual_network_gateway" "test" {
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type                = "Vpn"
-  vpn_type            = "RouteBased"
+  type     = "Vpn"
+  vpn_type = "RouteBased"
 
-  enable_bgp          = false
-  sku                 = "Basic"
+  enable_bgp = false
+  sku        = "Basic"
 
   ip_configuration {
     public_ip_address_id          = "${azurestack_public_ip.test.id}"
@@ -75,11 +75,11 @@ resource "azurestack_virtual_network_gateway_connection" "onpremise" {
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type = "IPsec"
+  type                       = "IPsec"
   virtual_network_gateway_id = "${azurestack_virtual_network_gateway.test.id}"
   local_network_gateway_id   = "${azurestack_local_network_gateway.onpremise.id}"
 
-  shared_key                 = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
+  shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
 }
 ```
 
@@ -90,8 +90,8 @@ in different locations/regions.
 
 ```hcl
 resource "azurestack_resource_group" "us" {
-    name     = "us"
-    location = "East US"
+  name     = "us"
+  location = "East US"
 }
 
 resource "azurestack_virtual_network" "us" {
@@ -120,9 +120,9 @@ resource "azurestack_virtual_network_gateway" "us" {
   location            = "${azurestack_resource_group.us.location}"
   resource_group_name = "${azurestack_resource_group.us.name}"
 
-  type                = "Vpn"
-  vpn_type            = "RouteBased"
-  sku                 = "Basic"
+  type     = "Vpn"
+  vpn_type = "RouteBased"
+  sku      = "Basic"
 
   ip_configuration {
     public_ip_address_id          = "${azurestack_public_ip.us.id}"
@@ -162,9 +162,9 @@ resource "azurestack_virtual_network_gateway" "europe" {
   location            = "${azurestack_resource_group.europe.location}"
   resource_group_name = "${azurestack_resource_group.europe.name}"
 
-  type                = "Vpn"
-  vpn_type            = "RouteBased"
-  sku                 = "Basic"
+  type     = "Vpn"
+  vpn_type = "RouteBased"
+  sku      = "Basic"
 
   ip_configuration {
     public_ip_address_id          = "${azurestack_public_ip.europe.id}"

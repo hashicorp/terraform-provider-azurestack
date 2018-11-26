@@ -1,20 +1,16 @@
 package azurestack
 
 import (
-	"context"
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"log"
 	"strings"
-	"sync"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
+	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/terraform/helper/mutexkv"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/authentication"
 )
 
 // Provider returns a terraform.ResourceProvider.
@@ -115,28 +111,25 @@ func Provider() terraform.ResourceProvider {
 
 func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 	return func(d *schema.ResourceData) (interface{}, error) {
-		config := &authentication.Config{
-			SubscriptionID:            d.Get("subscription_id").(string),
-			ClientID:                  d.Get("client_id").(string),
-			ClientSecret:              d.Get("client_secret").(string),
-			TenantID:                  d.Get("tenant_id").(string),
-			Environment:               "AZURESTACKCLOUD",
-			SkipCredentialsValidation: d.Get("skip_credentials_validation").(bool),
-			SkipProviderRegistration:  d.Get("skip_provider_registration").(bool),
-			ARMEndpoint:               d.Get("arm_endpoint").(string),
+		builder := authentication.Builder{
+			SubscriptionID:                d.Get("subscription_id").(string),
+			ClientID:                      d.Get("client_id").(string),
+			ClientSecret:                  d.Get("client_secret").(string),
+			TenantID:                      d.Get("tenant_id").(string),
+			Environment:                   "AZURESTACKCLOUD",
+			CustomResourceManagerEndpoint: d.Get("arm_endpoint").(string),
+
+			// Feature Toggles
+			SupportsClientSecretAuth: true,
+		}
+		config, err := builder.Build()
+		if err != nil {
+			return nil, fmt.Errorf("Error building ARM Client: %+v", err)
 		}
 
-		if config.ARMEndpoint == "" {
-			return nil, fmt.Errorf("The Azure Resource Manager endpoint must be specified either" +
-				" via `arm_endpoint` in the Provider Block or the `ARM_ENDPOINT` Environment Variable.")
-		}
-
-		log.Printf("[DEBUG] Using Service Principal for Authentication")
-		if err := config.ValidateServicePrincipal(); err != nil {
-			return nil, err
-		}
-
-		client, err := getArmClient(config)
+		skipCredentialsValidation := d.Get("skip_credentials_validation").(bool)
+		skipProviderRegistration := d.Get("skip_provider_registration").(bool)
+		client, err := getArmClient(config, skipProviderRegistration)
 		if err != nil {
 			return nil, err
 		}
@@ -149,7 +142,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 			return nil
 		}
 
-		if !config.SkipCredentialsValidation {
+		if !skipCredentialsValidation {
 			// List all the available providers and their registration state to avoid unnecessary
 			// requests. This also lets us check if the provider credentials are correct.
 			ctx := client.StopContext
@@ -160,8 +153,8 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 					"error: %s", err)
 			}
 
-			if !config.SkipProviderRegistration {
-				err = registerAzureResourceProvidersWithSubscription(ctx, providerList.Values(), client.providersClient)
+			if !skipProviderRegistration {
+				err = ensureResourceProvidersAreRegistered(ctx, client.providersClient, providerList.Values(), requiredResourceProviders())
 				if err != nil {
 					return nil, err
 				}
@@ -170,82 +163,6 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 
 		return client, nil
 	}
-}
-
-func registerProviderWithSubscription(ctx context.Context, providerName string, client resources.ProvidersClient) error {
-	_, err := client.Register(ctx, providerName)
-	if err != nil {
-		return fmt.Errorf("Cannot register provider %s with Azure Resource Manager: %s.", providerName, err)
-	}
-
-	return nil
-}
-
-func determineAzureResourceProvidersToRegister(providerList []resources.Provider) map[string]struct{} {
-	providers := map[string]struct{}{
-		"Microsoft.Authorization": {},
-		// "Microsoft.Automation":          {},
-		// "Microsoft.Cache": {},
-		// "Microsoft.Cdn":                 {},
-		"Microsoft.Compute": {},
-		// "Microsoft.ContainerInstance": {},
-		// "Microsoft.ContainerRegistry":   {},
-		// "Microsoft.ContainerService":    {},
-		// "Microsoft.DBforMySQL":          {},
-		// "Microsoft.DBforPostgreSQL":     {},
-		// "Microsoft.DocumentDB":          {},
-		// "Microsoft.EventGrid":           {},
-		// "Microsoft.EventHub":            {},
-		"Microsoft.KeyVault": {},
-		// "microsoft.insights":            {},
-		"Microsoft.Network": {},
-		// "Microsoft.OperationalInsights": {},
-		// "Microsoft.Resources":           {},
-		// "Microsoft.Search":              {},
-		// "Microsoft.ServiceBus":          {},
-		// "Microsoft.Sql":                 {},
-		"Microsoft.Storage": {},
-	}
-
-	// filter out any providers already registered
-	for _, p := range providerList {
-		if _, ok := providers[*p.Namespace]; !ok {
-			continue
-		}
-
-		if strings.ToLower(*p.RegistrationState) == "registered" {
-			log.Printf("[DEBUG] Skipping provider registration for namespace %s\n", *p.Namespace)
-			delete(providers, *p.Namespace)
-		}
-	}
-
-	return providers
-}
-
-// registerAzureResourceProvidersWithSubscription uses the providers client to register
-// all Azure resource providers which the Terraform provider may require (regardless of
-// whether they are actually used by the configuration or not). It was confirmed by Microsoft
-// that this is the approach their own internal tools also take.
-func registerAzureResourceProvidersWithSubscription(ctx context.Context, providerList []resources.Provider, client resources.ProvidersClient) error {
-	providers := determineAzureResourceProvidersToRegister(providerList)
-
-	var err error
-	var wg sync.WaitGroup
-	wg.Add(len(providers))
-
-	for providerName := range providers {
-		go func(p string) {
-			defer wg.Done()
-			log.Printf("[DEBUG] Registering provider with namespace %s\n", p)
-			if innerErr := registerProviderWithSubscription(ctx, p, client); err != nil {
-				err = innerErr
-			}
-		}(providerName)
-	}
-
-	wg.Wait()
-
-	return err
 }
 
 // armMutexKV is the instance of MutexKV for ARM resources

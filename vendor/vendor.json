@@ -75,6 +75,14 @@
 			"versionExact": "v21.3.0"
 		},
 		{
+			"checksumSHA1": "a6pcr3i1EBmvSKpAb7BB1rnh2I8=",
+			"path": "github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2017-05-10/resources",
+			"revision": "da91af54816b4cf72949c225a2d0980f51fab01b",
+			"revisionTime": "2018-10-19T17:11:53Z",
+			"version": "v21.3.0",
+			"versionExact": "v21.3.0"
+		},
+		{
 			"checksumSHA1": "bb7nLryTfKPwVi+1fb1bwzcWYKw=",
 			"path": "github.com/Azure/azure-sdk-for-go/services/storage/mgmt/2016-01-01/storage",
 			"revision": "da91af54816b4cf72949c225a2d0980f51fab01b",
@@ -461,6 +469,30 @@
 			"path": "github.com/hashicorp/errwrap",
 			"revision": "31ee29050e14e48374e392ccd5c01dd50f3c5cd3",
 			"revisionTime": "2017-11-15T17:09:47Z"
+		},
+		{
+			"checksumSHA1": "YOs3XOIFl4xo5etkrYYdZgH7Kr0=",
+			"path": "github.com/hashicorp/go-azure-helpers/authentication",
+			"revision": "dd1e326c888870e63e89b057ab34711e0fe63dd8",
+			"revisionTime": "2018-11-20T09:40:08Z",
+			"version": "0.1.1",
+			"versionExact": "0.1.1"
+		},
+		{
+			"checksumSHA1": "QwsnT5sLpT2jJ/1qJQRvqU8xl14=",
+			"path": "github.com/hashicorp/go-azure-helpers/resourceproviders",
+			"revision": "dd1e326c888870e63e89b057ab34711e0fe63dd8",
+			"revisionTime": "2018-11-20T09:40:08Z",
+			"version": "0.1.1",
+			"versionExact": "0.1.1"
+		},
+		{
+			"checksumSHA1": "ip//Px6kdSuCH6OKEJUSMIgI3ng=",
+			"path": "github.com/hashicorp/go-azure-helpers/response",
+			"revision": "dd1e326c888870e63e89b057ab34711e0fe63dd8",
+			"revisionTime": "2018-11-20T09:40:08Z",
+			"version": "0.1.1",
+			"versionExact": "0.1.1"
 		},
 		{
 			"checksumSHA1": "b8F628srIitj5p7Y130xc9k0QWs=",
@@ -1202,6 +1234,18 @@
 			"path": "golang.org/x/crypto/openpgp/s2k",
 			"revision": "15ad2e4f9ef87905fa6330349940afa8ed669aa1",
 			"revisionTime": "2018-07-31T16:30:02Z"
+		},
+		{
+			"checksumSHA1": "PJY7uCr3UnX4/Mf/RoWnbieSZ8o=",
+			"path": "golang.org/x/crypto/pkcs12",
+			"revision": "3d3f9f413869b949e48070b5bc593aa22cc2b8f2",
+			"revisionTime": "2018-11-10T06:03:37Z"
+		},
+		{
+			"checksumSHA1": "p0GC51McIdA7JygoP223twJ1s0E=",
+			"path": "golang.org/x/crypto/pkcs12/internal/rc2",
+			"revision": "3d3f9f413869b949e48070b5bc593aa22cc2b8f2",
+			"revisionTime": "2018-11-10T06:03:37Z"
 		},
 		{
 			"checksumSHA1": "vKbPb9fpjCdzuoOvajOJnYfHG2g=",

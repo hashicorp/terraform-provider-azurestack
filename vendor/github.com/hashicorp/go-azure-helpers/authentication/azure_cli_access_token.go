@@ -10,12 +10,13 @@ import (
 	"github.com/Azure/go-autorest/autorest/azure/cli"
 )
 
-type AccessToken struct {
-	ClientID    string
-	AccessToken *adal.Token
+type azureCliAccessToken struct {
+	ClientID     string
+	AccessToken  *adal.Token
+	IsCloudShell bool
 }
 
-func findValidAccessTokenForTenant(tokens []cli.Token, tenantId string) (*AccessToken, error) {
+func findValidAccessTokenForTenant(tokens []cli.Token, tenantId string) (*azureCliAccessToken, error) {
 	for _, accessToken := range tokens {
 		token, err := accessToken.ToADALToken()
 		if err != nil {
@@ -42,9 +43,10 @@ func findValidAccessTokenForTenant(tokens []cli.Token, tenantId string) (*Access
 			continue
 		}
 
-		validAccessToken := AccessToken{
-			ClientID:    accessToken.ClientID,
-			AccessToken: &token,
+		validAccessToken := azureCliAccessToken{
+			ClientID:     accessToken.ClientID,
+			AccessToken:  &token,
+			IsCloudShell: accessToken.RefreshToken == "",
 		}
 		return &validAccessToken, nil
 	}

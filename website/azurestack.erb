@@ -9,17 +9,21 @@
 
             <li<%= sidebar_current("docs-azurestack-index") %>>
               <a href="/docs/providers/azurestack/index.html">Azure Stack Provider</a>
+            </li>
+
+            <li<%= sidebar_current("docs-azurestack-auth") %>>
+              <a href="/docs/providers/azurestack/auth/index.html">Authentication</a>
               <ul class="nav nav-visible">
-                <li<%= sidebar_current("docs-azurestack-index-authentication-service-principal") %>>
-                    <a href="/docs/providers/azurestack/authenticating_via_service_principal.html">Authenticating via a Service Principal (Shared Account)</a>
+                <li<%= sidebar_current("docs-azurestack-auth-service-principal-client-secret") %>>
+                    <a href="/docs/providers/azurestack/auth/service_principal_client_secret.html">via Service Principal (Client Secret)</a>
                 </li>
+
               </ul>
             </li>
 
             <li<%= sidebar_current("docs-azurestack-datasource") %>>
               <a href="#">Data Sources</a>
               <ul class="nav nav-visible">
-
                 <li<%= sidebar_current("docs-azurestack-datasource-network-interface") %>>
                     <a href="/docs/providers/azurestack/d/network_interface.html">azurestack_network_interface</a>
                 </li>
@@ -27,7 +31,7 @@
                 <li<%= sidebar_current("docs-azurestack-datasource-network-security-group") %>>
                     <a href="/docs/providers/azurestack/d/network_security_group.html">azurestack_network_security_group</a>
                 </li>
-                
+
                 <li<%= sidebar_current("docs-azurestack-datasource-public_ip") %>>
                     <a href="/docs/providers/azurestack/d/public_ip.html">azurestack_public_ip</a>
                 </li>
@@ -40,20 +44,21 @@
                   <a href="/docs/providers/azurestack/d/route_table.html">azurestack_route_table</a>
                 </li>
 
-
                 <li<%= sidebar_current("docs-azurestack-datasource-storage-account") %>>
                     <a href="/docs/providers/azurestack/d/storage_account.html">azurestack_storage_account</a>
                 </li>
+
                 <li<%= sidebar_current("docs-azurestack-datasource-subnet") %>>
                     <a href="/docs/providers/azurestack/d/subnet.html">azurestack_subnet</a>
                 </li>
+
                 <li<%= sidebar_current("docs-azurestack-datasource-virtual-network-x") %>>
                     <a href="/docs/providers/azurestack/d/virtual_network.html">azurestack_virtual_network</a>
                 </li>
+
                 <li<%= sidebar_current("docs-azurestack-datasource-virtual-network-gateway") %>>
                     <a href="/docs/providers/azurestack/d/virtual_network_gateway.html">azurestack_virtual_network_gateway</a>
                 </li>
-
               </ul>
             </li>
 
@@ -69,7 +74,6 @@
             <li<%= sidebar_current("docs-azurestack-resource-compute") %>>
               <a href="#">Compute Resources</a>
               <ul class="nav nav-visible">
-
                 <li<%= sidebar_current("docs-azurestack-resource-compute-availability-set") %>>
                   <a href="/docs/providers/azurestack/r/availability_set.html">azurestack_availability_set</a>
                 </li>
@@ -80,18 +84,17 @@
 
                 <li<%= sidebar_current("docs-azurestack-resource-compute-virtualmachine-extension") %>>
                   <a href="/docs/providers/azurestack/r/virtual_machine_extension.html">azurestack_virtual_machine_extension</a>
-                
-                </li><li<%= sidebar_current("docs-azurestack-resource-compute-virtualmachine-scale_set") %>>
-                  <a href="/docs/providers/azurestack/r/virtual_machine_scale_set.html">azurestack_virtual_machine_scale_set</a>
                 </li>
 
+                <li<%= sidebar_current("docs-azurestack-resource-compute-virtualmachine-scale_set") %>>
+                  <a href="/docs/providers/azurestack/r/virtual_machine_scale_set.html">azurestack_virtual_machine_scale_set</a>
+                </li>
               </ul>
             </li>
 
             <li<%= sidebar_current("docs-azurestack-resource-dns") %>>
                 <a href="#">DNS Resources</a>
                 <ul class="nav nav-visible">
-
                   <li<%= sidebar_current("docs-azurestack-resource-dns-a-record") %>>
                     <a href="/docs/providers/azurestack/r/dns_a_record.html">azurestack_dns_a_record</a>
                   </li>
@@ -99,14 +102,12 @@
                   <li<%= sidebar_current("docs-azurestack-resource-dns-zone") %>>
                       <a href="/docs/providers/azurestack/r/dns_zone.html">azurestack_dns_zone</a>
                   </li>
-
                 </ul>
             </li>
 
             <li<%= sidebar_current("docs-azurestack-resource-network") %>>
               <a href="#">Network Resources</a>
               <ul class="nav nav-visible">
-
                 <li<%= sidebar_current("docs-azurestack-resource-local-network-gateway") %>>
                   <a href="/docs/providers/azurestack/r/local_network_gateway.html">azurestack_local_network_gateway</a>
                 </li>
@@ -171,7 +172,6 @@
             <li<%= sidebar_current("docs-azurestack-resource-loadbalancer") %>>
               <a href="#">Load Balancer Resources</a>
               <ul class="nav nav-visible">
-
                   <li<%= sidebar_current("docs-azurestack-resource-loadbalancer-x") %>>
                     <a href="/docs/providers/azurestack/r/loadbalancer.html">azurestack_lb</a>
                   </li>
@@ -195,7 +195,6 @@
                   <li<%= sidebar_current("docs-azurestack-resource-loadbalancer-nat-pool") %>>
                     <a href="/docs/providers/azurestack/r/loadbalancer_nat_pool.html">azurestack_lb_nat_pool</a>
                   </li>
-
               </ul>
             </li>
 

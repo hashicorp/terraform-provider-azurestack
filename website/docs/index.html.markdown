@@ -15,7 +15,7 @@ Use the navigation to the left to read about the available resources.
 
 # Creating Credentials
 
-Terraform supports authenticating to Azure Stack using a Service Principal, either using [Client Secret](auth/service_principal_client_secret.html) or a [Client Certificate](auth/service_principal_client_certificate.html).
+Terraform supports authenticating to Azure Stack using [the Azure CLI](auth/azure_cli.html) or a Service Principal (either using a [Client Secret](auth/service_principal_client_secret.html) or a [Client Certificate](auth/service_principal_client_certificate.html)).
 
 ## Example Usage
 

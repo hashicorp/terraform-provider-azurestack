@@ -70,6 +70,16 @@ The following arguments are supported:
 
 ---
 
+When authenticating as a Service Principal using a Client Certificate, the following fields can be set:
+
+* `client_certificate_password` - (Optional) The password associated with the Client Certificate. This can also be sourced from the `ARM_CLIENT_CERTIFICATE_PASSWORD` Environment Variable.
+
+* `client_certificate_path` - (Optional) The path to the Client Certificate associated with the Service Principal which should be used. This can also be sourced from the `ARM_CLIENT_CERTIFICATE_PATH` Environment Variable.
+
+More information on [how to configure a Service Principal using a Client Certificate can be found in this guide](auth/service_principal_client_certificate.html).
+
+---
+
 When authenticating as a Service Principal using a Client Secret, the following fields can be set:
 
 * `client_secret` - (Optional) The Client Secret which should be used. This can also be sourced from the `ARM_CLIENT_SECRET` Environment Variable.

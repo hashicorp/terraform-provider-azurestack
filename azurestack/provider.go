@@ -13,10 +13,10 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-// Provider returns a terraform.ResourceProvider.
 func Provider() terraform.ResourceProvider {
 	p := &schema.Provider{
 		Schema: map[string]*schema.Schema{
+			// TODO: deprecate this local key in favour of `endpoint` in the futures
 			"arm_endpoint": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -32,6 +32,18 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("ARM_CLIENT_ID", ""),
+			},
+
+			"client_certificate_path": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ARM_CLIENT_CERTIFICATE_PATH", ""),
+			},
+
+			"client_certificate_password": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ARM_CLIENT_CERTIFICATE_PASSWORD", ""),
 			},
 
 			"client_secret": {
@@ -116,11 +128,14 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 			ClientID:                      d.Get("client_id").(string),
 			ClientSecret:                  d.Get("client_secret").(string),
 			TenantID:                      d.Get("tenant_id").(string),
-			Environment:                   "AZURESTACKCLOUD",
+			ClientCertPath:                d.Get("client_certificate_path").(string),
+			ClientCertPassword:            d.Get("client_certificate_password").(string),
 			CustomResourceManagerEndpoint: d.Get("arm_endpoint").(string),
+			Environment:                   "AZURESTACKCLOUD",
 
 			// Feature Toggles
 			SupportsClientSecretAuth: true,
+			SupportsClientCertAuth:   true,
 		}
 		config, err := builder.Build()
 		if err != nil {

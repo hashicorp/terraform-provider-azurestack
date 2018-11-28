@@ -15,7 +15,7 @@ Use the navigation to the left to read about the available resources.
 
 # Creating Credentials
 
-Terraform supports authenticating to Azure Stack using a Service Principal, either using [Client Secret](authenticating_via_service_principal.html) or a [Client Certificate](authenticating_via_service_principal.html).
+Terraform supports authenticating to Azure Stack using a Service Principal, either using [Client Secret](auth/service_principal_client_secret.html) or a [Client Certificate](auth/service_principal_client_certificate.html).
 
 ## Example Usage
 
@@ -23,7 +23,7 @@ Terraform supports authenticating to Azure Stack using a Service Principal, eith
 # Configure the Azure Stack Provider
 provider "azurestack" {
   # NOTE: we recommend pinning the version of the Provider which should be used in the Provider block
-  # version = "=1.2.3"
+  # version = "=0.5.0"
 }
 
 # Create a resource group

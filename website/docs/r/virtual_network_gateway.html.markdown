@@ -1,26 +1,21 @@
 ---
 layout: "azurestack"
-page_title: "Azure Stack: azurestack_virtual_network_gateway_connection"
-sidebar_current: "docs-azurestack-resource-network-virtual-network-gateway-connection"
+page_title: "Azure Stack: azurestack_virtual_network_gateway"
+sidebar_current: "docs-azurestack-resource-network-virtual-network-gateway"
 description: |-
-  Manages a connection in an existing Virtual Network Gateway.
+  Manages a Virtual Network Gateway to establish secure, cross-premises connectivity.
 ---
 
-# azurestack_virtual_network_gateway_connection
+# azurestack_virtual_network_gateway
 
-Manages a connection in an existing Virtual Network Gateway.
+Manages a Virtual Network Gateway to establish secure, cross-premises connectivity.
 
 ## Example Usage
-
-### Site-to-Site connection
-
-The following example shows a connection between an Azure virtual network
-and an on-premises VPN device and network.
 
 ```hcl
 resource "azurestack_resource_group" "test" {
   name     = "test"
-  location = "West US"
+  location = "Azure-stack-region"
 }
 
 resource "azurestack_virtual_network" "test" {
@@ -37,14 +32,6 @@ resource "azurestack_subnet" "test" {
   address_prefix       = "10.0.1.0/24"
 }
 
-resource "azurestack_local_network_gateway" "onpremise" {
-  name                = "onpremise"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-  gateway_address     = "168.62.225.23"
-  address_space       = ["10.1.1.0/24"]
-}
-
 resource "azurestack_public_ip" "test" {
   name                         = "test"
   location                     = "${azurestack_resource_group.test.location}"
@@ -59,9 +46,7 @@ resource "azurestack_virtual_network_gateway" "test" {
 
   type     = "Vpn"
   vpn_type = "RouteBased"
-
-  enable_bgp = false
-  sku        = "Basic"
+  sku      = "Basic"
 
   ip_configuration {
     public_ip_address_id          = "${azurestack_public_ip.test.id}"
@@ -69,231 +54,57 @@ resource "azurestack_virtual_network_gateway" "test" {
     subnet_id                     = "${azurestack_subnet.test.id}"
   }
 }
-
-resource "azurestack_virtual_network_gateway_connection" "onpremise" {
-  name                = "onpremise"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-
-  type                       = "IPsec"
-  virtual_network_gateway_id = "${azurestack_virtual_network_gateway.test.id}"
-  local_network_gateway_id   = "${azurestack_local_network_gateway.onpremise.id}"
-
-  shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
-}
-```
-
-### VNet-to-VNet connection
-
-The following example shows a connection between two Azure virtual network
-in different locations/regions.
-
-```hcl
-resource "azurestack_resource_group" "us" {
-  name     = "us"
-  location = "East US"
-}
-
-resource "azurestack_virtual_network" "us" {
-  name                = "us"
-  location            = "${azurestack_resource_group.us.location}"
-  resource_group_name = "${azurestack_resource_group.us.name}"
-  address_space       = ["10.0.0.0/16"]
-}
-
-resource "azurestack_subnet" "us_gateway" {
-  name                 = "GatewaySubnet"
-  resource_group_name  = "${azurestack_resource_group.us.name}"
-  virtual_network_name = "${azurestack_virtual_network.us.name}"
-  address_prefix       = "10.0.1.0/24"
-}
-
-resource "azurestack_public_ip" "us" {
-  name                         = "us"
-  location                     = "${azurestack_resource_group.us.location}"
-  resource_group_name          = "${azurestack_resource_group.us.name}"
-  public_ip_address_allocation = "Dynamic"
-}
-
-resource "azurestack_virtual_network_gateway" "us" {
-  name                = "us-gateway"
-  location            = "${azurestack_resource_group.us.location}"
-  resource_group_name = "${azurestack_resource_group.us.name}"
-
-  type     = "Vpn"
-  vpn_type = "RouteBased"
-  sku      = "Basic"
-
-  ip_configuration {
-    public_ip_address_id          = "${azurestack_public_ip.us.id}"
-    private_ip_address_allocation = "Dynamic"
-    subnet_id                     = "${azurestack_subnet.us_gateway.id}"
-  }
-}
-
-resource "azurestack_resource_group" "europe" {
-  name     = "europe"
-  location = "West Europe"
-}
-
-resource "azurestack_virtual_network" "europe" {
-  name                = "europe"
-  location            = "${azurestack_resource_group.europe.location}"
-  resource_group_name = "${azurestack_resource_group.europe.name}"
-  address_space       = ["10.1.0.0/16"]
-}
-
-resource "azurestack_subnet" "europe_gateway" {
-  name                 = "GatewaySubnet"
-  resource_group_name  = "${azurestack_resource_group.europe.name}"
-  virtual_network_name = "${azurestack_virtual_network.europe.name}"
-  address_prefix       = "10.1.1.0/24"
-}
-
-resource "azurestack_public_ip" "europe" {
-  name                         = "europe"
-  location                     = "${azurestack_resource_group.europe.location}"
-  resource_group_name          = "${azurestack_resource_group.europe.name}"
-  public_ip_address_allocation = "Dynamic"
-}
-
-resource "azurestack_virtual_network_gateway" "europe" {
-  name                = "europe-gateway"
-  location            = "${azurestack_resource_group.europe.location}"
-  resource_group_name = "${azurestack_resource_group.europe.name}"
-
-  type     = "Vpn"
-  vpn_type = "RouteBased"
-  sku      = "Basic"
-
-  ip_configuration {
-    public_ip_address_id          = "${azurestack_public_ip.europe.id}"
-    private_ip_address_allocation = "Dynamic"
-    subnet_id                     = "${azurestack_subnet.europe_gateway.id}"
-  }
-}
-
-resource "azurestack_virtual_network_gateway_connection" "us_to_europe" {
-  name                = "us-to-europe"
-  location            = "${azurestack_resource_group.us.location}"
-  resource_group_name = "${azurestack_resource_group.us.name}"
-
-  type                            = "Vnet2Vnet"
-  virtual_network_gateway_id      = "${azurestack_virtual_network_gateway.us.id}"
-  peer_virtual_network_gateway_id = "${azurestack_virtual_network_gateway.europe.id}"
-
-  shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
-}
-
-resource "azurestack_virtual_network_gateway_connection" "europe_to_us" {
-  name                = "europe-to-us"
-  location            = "${azurestack_resource_group.europe.location}"
-  resource_group_name = "${azurestack_resource_group.europe.name}"
-
-  type                            = "Vnet2Vnet"
-  virtual_network_gateway_id      = "${azurestack_virtual_network_gateway.europe.id}"
-  peer_virtual_network_gateway_id = "${azurestack_virtual_network_gateway.us.id}"
-
-  shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
-}
 ```
 
 ## Argument Reference
 
 The following arguments are supported:
 
-* `name` - (Required) The name of the connection. Changing the name forces a
-    new resource to be created.
+* `name` - (Required) The name of the connection. Changing the name forces a new resource to be created.
 
-* `resource_group_name` - (Required) The name of the resource group in which to
-    create the connection Changing the name forces a new resource to be created.
+* `resource_group_name` - (Required) The name of the resource group in which to create the connection Changing the name forces a new resource to be created.
 
-* `location` - (Required) The location/region where the connection is
-    located. Changing this forces a new resource to be created.
+* `location` - (Required) The location/region where the connection is located. Changing this forces a new resource to be created.
 
-* `type` - (Required) The type of connection. Valid options are `IPsec`
-    (Site-to-Site), `ExpressRoute` (ExpressRoute), and `Vnet2Vnet` (VNet-to-VNet).
-    Each connection type requires different mandatory arguments (refer to the
-    examples above). Changing the connection type will force a new connection
-    to be created.
+* `type` - (Required) The type of the Virtual Network Gateway. Valid options is `Vpn`
 
-* `virtual_network_gateway_id` - (Required) The ID of the Virtual Network Gateway
-    in which the connection will be created. Changing the gateway forces a new
-    resource to be created.
+* `vpn_type` - (Optional) The routing type of the Virtual Network Gateway. Only valid option is `RouteBased`.
 
-* `authorization_key` - (Optional) The authorization key associated with the
-    Express Route Circuit. This field is required only if the type is an
-    ExpressRoute connection.
+* `enable_bgp` - (Optional) If `true`, BGP (Border Gateway Protocol) is enabled for this connection. Defaults to `false`.
 
-* `express_route_circuit_id` - (Optional) The ID of the Express Route Circuit
-    when creating an ExpressRoute connection (i.e. when `type` is `ExpressRoute`).
-    The Express Route Circuit can be in the same or in a different subscription.
+* `sku` - (Required) Configuration of the size and capacity of the virtual network gateway. Valid options are `Basic`, `Standard` and `HighPerformance`.
 
-* `peer_virtual_network_gateway_id` - (Optional) The ID of the peer virtual
-    network gateway when creating a VNet-to-VNet connection (i.e. when `type`
-    is `Vnet2Vnet`). The peer Virtual Network Gateway can be in the same or
-    in a different subscription.
-
-* `local_network_gateway_id` - (Optional) The ID of the local network gateway
-    when creating Site-to-Site connection (i.e. when `type` is `IPsec`).
-
-* `routing_weight` - (Optional) The routing weight. Defaults to `10`.
-
-* `shared_key` - (Optional) The shared IPSec key. A key must be provided if a
-    Site-to-Site or VNet-to-VNet connection is created whereas ExpressRoute
-    connections do not need a shared key.
-
-* `enable_bgp` - (Optional) If `true`, BGP (Border Gateway Protocol) is enabled
-    for this connection. Defaults to `false`.
-
-* `use_policy_based_traffic_selectors` - (Optional) If `true`, policy-based traffic
-    selectors are enabled for this connection. Enabling policy-based traffic
-    selectors requires an `ipsec_policy` block. Defaults to `false`.
-
-* `ipsec_policy` (Optional) A `ipsec_policy` block which is documented below.
-    Only a single policy can be defined for a connection. For details on
-    custom policies refer to [the relevant section in the Azure documentation](https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-ipsecikepolicy-rm-powershell).
+* `ip_configuration` - (Required) One or two ip_configuration blocks documented below. An active-standby gateway requires exactly one ip_configuration block whereas an active-active gateway requires exactly two ip_configuration blocks.
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 
-The `ipsec_policy` block supports:
+The `ip_configuration` block supports:
 
-* `dh_group` - (Required) The DH group used in IKE phase 1 for initial SA. Valid
-    options are `DHGroup1`, `DHGroup14`, `DHGroup2`, `DHGroup2048`, `DHGroup24`,
-    `ECP256`, `ECP384`, or `None`.
+* `name` - (Optional) A user-defined name of the IP configuration. Defaults to vnetGatewayConfig.
 
-* `ike_encryption` - (Required) The IKE encryption algorithm. Valid
-    options are `AES128`, `AES192`, `AES256`, `DES`, or `DES3`.
+* `private_ip_address_allocation` - (Optional) Defines how the private IP address of the gateways virtual interface is assigned. Valid options are Static or Dynamic. Defaults to Dynamic.
 
-* `ike_integrity` - (Required) The IKE integrity algorithm. Valid
-    options are `MD5`, `SHA1`, `SHA256`, or `SHA384`.
+* `subnet_id` - (Required) The ID of the gateway subnet of a virtual network in which the virtual network gateway will be created. It is mandatory that the associated subnet is named `GatewaySubnet`. Therefore, each virtual network can contain at most a single Virtual Network Gateway.
 
-* `ipsec_encryption` - (Required) The IPSec encryption algorithm. Valid
-    options are `AES128`, `AES192`, `AES256`, `DES`, `DES3`, `GCMAES128`, `GCMAES192`, `GCMAES256`, or `None`.
+* `public_ip_address_id` - (Optional) The ID of the public ip address to associate with the Virtual Network Gateway.
 
-* `ipsec_integrity` - (Required) The IPSec integrity algorithm. Valid
-    options are `GCMAES128`, `GCMAES192`, `GCMAES256`, `MD5`, `SHA1`, or `SHA256`.
+The `bgp_settings` block supports:
 
-* `pfs_group` - (Required) The DH group used in IKE phase 2 for new child SA.
-    Valid options are `ECP256`, `ECP384`, `PFS1`, `PFS2`, `PFS2048`, `PFS24`,
-    or `None`.
+* `asn` - (Optional) The Autonomous System Number (ASN) to use as part of the BGP.
 
-* `sa_datasize` - (Optional) The IPSec SA payload size in KB. Must be at least
-    `1024` KB. Defaults to `102400000` KB.
+* `peering_address` - (Optional) The BGP peer IP address of the virtual network gateway. This address is needed to configure the created gateway as a BGP Peer on the on-premises VPN devices. The IP address must be part of the subnet of the Virtual Network Gateway. Changing this forces a new resource to be created
 
-* `sa_lifetime` - (Optional) The IPSec SA lifetime in seconds. Must be at least
-    `300` seconds. Defaults to `27000` seconds.
 
 ## Attributes Reference
 
 The following attributes are exported:
 
-* `id` - The connection ID.
+* `id` - The ID of the Virtual Network Gateway.
 
 ## Import
 
-Virtual Network Gateway Connections can be imported using their `resource id`, e.g.
+Virtual Network Gateways can be imported using the `resource id`, e.g.
 
 ```
-terraform import azurestack_virtual_network_gateway_connection.testConnection /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup1/providers/Microsoft.Network/connections/myConnection1
+terraform import azurestack_virtual_network_gateway.testGateway /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup1/providers/Microsoft.Network/virtualNetworkGateways/myGateway1
 ```

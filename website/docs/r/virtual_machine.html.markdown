@@ -240,7 +240,7 @@ The following arguments are supported:
 * `boot_diagnostics` - (Optional) A boot diagnostics profile block as referenced below.
 * `vm_size` - (Required) Specifies the [size of the virtual machine](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-size-specs/).
 * `storage_image_reference` - (Optional) A Storage Image Reference block as documented below.
-* `storage_os_disk` - (Required) A Storage OS DFlag to enable deletion of the OS disk VHD blob when the VM is deleted, defaults to `false` (not yet supported).
+* `storage_os_disk` - (Required) A `storage_os_disk` block.
 * `storage_data_disk` - (Optional) A list of Storage Data disk blocks as referenced below.
 * `delete_data_disks_on_termination` - (Optional) Flag to enable deletion of storage data disk VHD blobs when the VM is deleted, defaults to `false`.
 * `os_profile` - (Optional) An OS Profile block as documented below. Required when `create_option` in the `storage_os_disk` block is set to `FromImage`.
@@ -295,7 +295,7 @@ resource "azurestack_virtual_machine" "test" {
 * `sku` - (Required, when not using image resource) Specifies the SKU of the image used to create the virtual machine. Changing this forces a new resource to be created.
 * `version` - (Optional) Specifies the version of the image used to create the virtual machine. Changing this forces a new resource to be created.
 
-`storage_os_disk` supports the following:
+`storage_os_disk` block supports the following:
 
 * `name` - (Required) Specifies the disk name.
 * `vhd_uri` - (Optional) Specifies the vhd uri. Changing this forces a new resource to be created.

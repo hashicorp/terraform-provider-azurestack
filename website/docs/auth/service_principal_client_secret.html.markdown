@@ -1,15 +1,15 @@
 ---
 layout: "azurestack"
-page_title: "Azure Stack Provider: Authenticating via a Service Principal"
-sidebar_current: "docs-azurestack-index-authentication-service-principal"
+page_title: "Azure Stack Provider: Authenticating via a Service Principal using a Client Secret"
+sidebar_current: "docs-azurestack-auth-service-principal-client-secret"
 description: |-
-  This guide will cover how to use a Service Principal (Shared Account) as authentication for the Azure Stack Provider.
+  This guide explains how to use a Service Principal and a Client Secret to authenticate with the Azure Stack Provider.
 
 ---
 
-# Azure Stack Provider: Authenticating using a Service Principal
+# Azure Stack Provider: Authenticating using a Service Principal using a Client Secret
 
-Terraform supports authenticating to Azure Stack through a Service Principal. At this time this is the only supported authentication method for Azure Stack.
+Terraform supports authenticating to Azure Stack using a Service Principal, either using a Client Secret (which is detailed in this guide) or [using a Client Certificate](service_principal_client_certificate.html).
 
 ## Creating a Service Principal
 
@@ -34,9 +34,9 @@ Next, navigate back to [the **App Registration** blade](https://portal.azure.com
 - **Application Type** - this should be set to "Web app / API"
 - **Sign-on URL** - this can be anything, providing it's a valid URI (e.g. https://terra.form)
 
-Once that's done - select the Application you just created in [the **App Registration** blade](https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/RegisteredApps/RegisteredApps/Overview). At the top of this page, the "Application ID" GUID is the `client_id` you'll need.
+Finally need to create a Password for the Azure Active Directory Application - to do this select **Settings** and then **Keys**. This screen displays the Passwords (Client Secrets) and Public Keys (Client Certificates) which are associated with this Azure Active Directory Application.
 
-Finally, we can create the `client_secret` by selecting **Keys** and then generating a new key by entering a description, selecting how long the `client_secret` should be valid for - and finally pressing **Save**. This value will only be visible whilst on the page, so be sure to copy it now (otherwise you'll need to regenerate a new key).
+Enter a description for the Key and select when this password should expire - and then press **Save**. At this point the Password should be displayed - you'll need to copy it now, since it's only displayed once - which is the `client_secret`.
 
 ### 2. Granting the Application access to manage resources in your Azure and Azure Stack Subscriptions
 
@@ -48,60 +48,50 @@ Firstly, specify a Role which grants the appropriate permissions needed for the 
 
 Secondly, search for and select the name of the Application created in Azure Active Directory to assign it this role - then press **Save**.
 
-## Configuring your Service Principal
+### 3. Configuring the Service Principal in Terraform
 
-Service Principals can be configured in Terraform in one of two ways, either as Environment Variables or in the Provider block. Please see [this section](index.html#argument-reference) for an example of which fields are available and can be specified either through Environment Variables - or in the Provider Block.
+As we've obtained the credentials for this Service Principal - it's possible to configure it in a few different ways.
 
-### Example of Environment Variables
+When storing the credentials as Environment Variables, for example:
 
-- `variables.tf`
+```bash
+$ export ARM_ENDPOINT="00000000-0000-0000-0000-000000000000"
+$ export ARM_CLIENT_ID="00000000-0000-0000-0000-000000000000"
+$ export ARM_CLIENT_SECRET="00000000-0000-0000-0000-000000000000"
+$ export ARM_SUBSCRIPTION_ID="00000000-0000-0000-0000-000000000000"
+$ export ARM_TENANT_ID="00000000-0000-0000-0000-000000000000"
+```
 
-  ```hcl
-variable "arm_endpoint" {}
-variable "subscription_id" {}
-variable "client_id" {}
+The following Provider block can be specified - where `0.5.0` is the version of the Azure Stack Provider that you'd like to use:
+
+```
+provider "azurestack" {
+  # Whilst version is optional, we /strongly recommend/ using it to pin the version of the Provider being used
+  version = "=0.5.0"
+}
+```
+
+More information on [the fields supported in the Provider block can be found here](../index.html#argument-reference).
+
+---
+
+It's also possible to configure these variables either in-line or from using variables in Terraform (as the `client_secret` is in this example), like so:
+
+~> **NOTE:** We'd recommend not defining these variables in-line since they could easily be checked into Source Control.
+
+```
 variable "client_secret" {}
-variable "tenant_id" {}
-  ```
 
-- `example.tf`
-
-  ```hcl
 provider "azurestack" {
-  arm_endpoint    = "${var.arm_endpoint}"
-  subscription_id = "${var.subscription_id}"
-  client_id       = "${var.client_id}"
+  # Whilst version is optional, we /strongly recommend/ using it to pin the version of the Provider being used
+  version = "=0.5.0"
+
+  arm_endpoint    = "https://management.region.myazurestack.com"
+  subscription_id = "00000000-0000-0000-0000-000000000000"
+  client_id       = "00000000-0000-0000-0000-000000000000"
   client_secret   = "${var.client_secret}"
-  tenant_id       = "${var.tenant_id}"
+  tenant_id       = "00000000-0000-0000-0000-000000000000"
 }
-  ```
+```
 
-- `terraform.tfvars`
-
-  ```hcl
-# Configure the Azure Stack Provider
-arm_endpoint = "https://management.{region}.{domain}"
-
-subscription_id = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
-
-client_id = "{applicationId}@{tenantDomain}"
-
-client_secret = "{applicationPassword}"
-
-tenant_id = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
-  ```
-
-### Example of Provider Block
-
-- `example.tf`
-
-  ```hcl
-# Configure the Azure Stack Provider
-provider "azurestack" {
-  arm_endpoint    = "https://management.{region}.{domain}"
-  subscription_id = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
-  client_id       = "{applicationId}@{tenantDomain}"
-  client_secret   = "{applicationPassword}"
-  tenant_id       = "xxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx"
-}
-  ```
+More information on [the fields supported in the Provider block can be found here](../index.html#argument-reference).

@@ -15,26 +15,29 @@ Use the navigation to the left to read about the available resources.
 
 # Creating Credentials
 
-Terraform supports authenticating to Azure Stack through a Service Principal - [this page explains how to Create a Service Principal](authenticating_via_service_principal.html).
+Terraform supports authenticating to Azure Stack using a Service Principal, either using [Client Secret](auth/service_principal_client_secret.html) or a [Client Certificate](auth/service_principal_client_certificate.html).
 
 ## Example Usage
 
 ```hcl
-# Configure the Azure Provider
-provider "azurestack" {}
+# Configure the Azure Stack Provider
+provider "azurestack" {
+  # NOTE: we recommend pinning the version of the Provider which should be used in the Provider block
+  # version = "=0.5.0"
+}
 
 # Create a resource group
-resource "azurestack_resource_group" "network" {
+resource "azurestack_resource_group" "test" {
   name     = "production"
   location = "West US"
 }
 
 # Create a virtual network within the resource group
-resource "azurestack_virtual_network" "network" {
+resource "azurestack_virtual_network" "test" {
   name                = "production-network"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurestack_resource_group.network.location}"
-  resource_group_name = "${azurestack_resource_group.network.name}"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
   subnet {
     name           = "subnet1"
@@ -57,38 +60,45 @@ resource "azurestack_virtual_network" "network" {
 
 The following arguments are supported:
 
-* `arm_endpoint` - (Optional) The Azure Resource Manager API Endpoint for
-  your Azure Stack instance, such as `https://management.westus.mydomain.com`.
-  It can also be sourced from the `ARM_ENDPOINT` environment variable.
+* `arm_endpoint` - (Optional) The Azure Resource Manager Endpoint for your Azure Stack instance, for example `https://management.westus.mydomain.com`. This can also be sourceed from the `ARM_ENDPOINT` Environment Variable.
 
-* `subscription_id` - (Optional) The subscription ID to use. It can also
-  be sourced from the `ARM_SUBSCRIPTION_ID` environment variable.
+* `client_id` - (Optional) The Client ID which should be used. This can also be sourceed from the `ARM_CLIENT_ID` Environment Variable.
 
-* `client_id` - (Optional) The client ID to use. It can also be sourced from
-  the `ARM_CLIENT_ID` environment variable.
+* `subscription_id` - (Optional) The Subscription ID which should be used. This can also be sourced from the `ARM_SUBSCRIPTION_ID` Environment Variable.
 
-* `client_secret` - (Optional) The client secret to use. It can also be sourced from
-  the `ARM_CLIENT_SECRET` environment variable.
+* `tenant_id` - (Optional) The Tenant ID which should be used. This can also be sourced from the `ARM_TENANT_ID` Environment Variable.
 
-* `tenant_id` - (Optional) The tenant ID to use. It can also be sourced from the
-  `ARM_TENANT_ID` environment variable.
+---
 
-* `skip_credentials_validation` - (Optional) Prevents the provider from validating
-  the given credentials. When set to `true`, `skip_provider_registration` is assumed.
-  It can also be sourced from the `ARM_SKIP_CREDENTIALS_VALIDATION` environment
-  variable; defaults to `false`.
+When authenticating as a Service Principal using a Client Certificate, the following fields can be set:
 
-* `skip_provider_registration` - (Optional) Prevents the provider from registering
-  the ARM provider namespaces, this can be used if you don't wish to give the Active
-  Directory Application permission to register resource providers. It can also be
-  sourced from the `ARM_SKIP_PROVIDER_REGISTRATION` environment variable; defaults
-  to `false`.
+* `client_certificate_password` - (Optional) The password associated with the Client Certificate. This can also be sourced from the `ARM_CLIENT_CERTIFICATE_PASSWORD` Environment Variable.
+
+* `client_certificate_path` - (Optional) The path to the Client Certificate associated with the Service Principal which should be used. This can also be sourced from the `ARM_CLIENT_CERTIFICATE_PATH` Environment Variable.
+
+More information on [how to configure a Service Principal using a Client Certificate can be found in this guide](auth/service_principal_client_certificate.html).
+
+---
+
+When authenticating as a Service Principal using a Client Secret, the following fields can be set:
+
+* `client_secret` - (Optional) The Client Secret which should be used. This can also be sourced from the `ARM_CLIENT_SECRET` Environment Variable.
+
+More information on [how to configure a Service Principal using a Client Secret can be found in this guide](auth/service_principal_client_secret.html).
+
+---
+
+For some advanced scenarios, such as where more granular permissions are necessary - the following properties can be set:
+
+* `skip_credentials_validation` - (Optional) Should the Azure Stack Provider skip verifying the credentials being used are valid? This can also be sourced from the `ARM_SKIP_CREDENTIALS_VALIDATION` Environment Variable. Defaults to `false`.
+
+* `skip_provider_registration` - (Optional) Should the Azure Stack Provider skip registering any required Resource Providers? This can also be sourced from the `ARM_SKIP_PROVIDER_REGISTRATION` Environment Variable. Defaults to `false`.
 
 ## Testing
 
 The following Environment Variables must be set to run the acceptance tests:
 
-~> **NOTE:** The Acceptance Tests require the use of a Service Principal.
+~> **NOTE:** The Acceptance Tests require the use of a Service Principal using a Client Secret.
 
 * `ARM_ENDPOINT` - The Azure Resource Manager API Endpoint for Azure Stack.
 * `ARM_SUBSCRIPTION_ID` - The ID of the Azure Subscription in which to run the Acceptance Tests.

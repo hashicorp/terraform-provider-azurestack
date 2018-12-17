@@ -5,6 +5,7 @@ IMPROVEMENTS:
 * dependencies: upgrading to Go 1.11 [GH-53]
 * dependencies: upgrading to version 21.3.0 of github.com/Azure/azure-sdk-for-go [GH-53]
 * authentication: switching to use the new authentication package [GH-54]
+* authentication: support for Client Certificate authentication [GH-56]
 
 ## 0.4.0 (September 18, 2018)
 

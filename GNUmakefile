@@ -42,12 +42,9 @@ lint:
 
 tools:
 	@echo "==> installing required tooling..."
-	go get -u github.com/kardianos/govendor
 	go get -u github.com/alecthomas/gometalinter
 	gometalinter --install
 
-vendor-status:
-	@govendor status
 
 test-compile:
 	@if [ "$(TEST)" = "./..." ]; then \
@@ -71,5 +68,5 @@ ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
 endif
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
-.PHONY: build build-docker test test-docker testacc vet fmt fmtcheck errcheck vendor-status test-compile website website-test
+.PHONY: build build-docker test test-docker testacc vet fmt fmtcheck errcheck  test-compile website website-test
 

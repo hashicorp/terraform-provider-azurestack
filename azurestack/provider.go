@@ -185,14 +185,14 @@ var armMutexKV = mutexkv.NewMutexKV()
 
 // Resource group names can be capitalised, but we store them in lowercase.
 // Use a custom diff function to avoid creation of new resources.
-func resourceAzureStackResourceGroupNameDiffSuppress(k, old, new string, d *schema.ResourceData) bool {
-	return strings.ToLower(old) == strings.ToLower(new)
+func resourceAzureStackResourceGroupNameDiffSuppress(_, old, new string, _ *schema.ResourceData) bool {
+	return strings.EqualFold(old, new)
 }
 
 // ignoreCaseDiffSuppressFunc is a DiffSuppressFunc from helper/schema that is
 // used to ignore any case-changes in a return value.
-func ignoreCaseDiffSuppressFunc(k, old, new string, d *schema.ResourceData) bool {
-	return strings.ToLower(old) == strings.ToLower(new)
+func ignoreCaseDiffSuppressFunc(_, old, new string, _ *schema.ResourceData) bool {
+	return strings.EqualFold(old, new)
 }
 
 // ignoreCaseStateFunc is a StateFunc from helper/schema that converts the

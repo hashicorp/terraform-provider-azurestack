@@ -460,6 +460,10 @@ func getArmVirtualNetworkGatewayProperties(d *schema.ResourceData) (*network.Vir
 
 func expandArmVirtualNetworkGatewayBgpSettings(d *schema.ResourceData) *network.BgpSettings {
 	bgpSets := d.Get("bgp_settings").([]interface{})
+	if len(bgpSets) == 0 {
+		return nil
+	}
+
 	bgp := bgpSets[0].(map[string]interface{})
 
 	peeringAddress := bgp["peering_address"].(string)

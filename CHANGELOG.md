@@ -7,6 +7,11 @@ IMPROVEMENTS:
 * authentication: switching to use the new authentication package [GH-54]
 * authentication: support for Client Certificate authentication [GH-56]
 
+
+BUG FIXES:
+
+* `azurestack_virtual_network_gateway` - will no longer panic when the API/SDK return an empty `bgp_settings` property [GH-71]
+
 ## 0.4.0 (September 18, 2018)
 
 * **New Resource:** `azurestack_route_table` ([#26](https://github.com/terraform-providers/terraform-provider-azurestack/issues/26))

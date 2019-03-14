@@ -1,7 +1,7 @@
 ## 0.5.0 (Unreleased)
 
 IMPROVEMENTS:
-
+* dependencies: switching to Go Modules [GH-70]
 * dependencies: upgrading to Go 1.11 [GH-53]
 * dependencies: upgrading to version 21.3.0 of github.com/Azure/azure-sdk-for-go [GH-53]
 * authentication: switching to use the new authentication package [GH-54]

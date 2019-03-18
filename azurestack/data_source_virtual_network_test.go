@@ -86,7 +86,7 @@ data "azurestack_virtual_network" "test" {
   resource_group_name = "${azurestack_resource_group.test.name}"
   name                = "${azurestack_virtual_network.test.name}"
 }
-	`, rInt, location, rInt)
+`, rInt, location, rInt)
 }
 
 func testAccDataSourceArmVirtualNetwork_peering(rInt int, location string) string {

@@ -213,40 +213,39 @@ func testCheckAzureStackLoadBalancerDestroy(s *terraform.State) error {
 func testAccAzureStackLoadBalancer_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_lb" "test" {
-    name = "arm-test-loadbalancer-%d"
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "arm-test-loadbalancer-%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
-    tags {
-    	Environment = "production"
-    	Purpose = "AcceptanceTests"
-    }
-
-}`, rInt, location, rInt)
+  tags {
+    Environment = "production"
+    Purpose     = "AcceptanceTests"
+  }
+}
+`, rInt, location, rInt)
 }
 
 func testAccAzureStackLoadBalancer_standard(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_lb" "test" {
-    name = "acctest-loadbalancer-%d"
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctest-loadbalancer-%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
-    tags {
-      Environment = "production"
-      Purpose = "AcceptanceTests"
-    }
-
+  tags {
+    Environment = "production"
+    Purpose     = "AcceptanceTests"
+  }
 }
 `, rInt, location, rInt)
 }

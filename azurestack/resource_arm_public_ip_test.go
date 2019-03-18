@@ -353,15 +353,15 @@ func testCheckAzureStackPublicIpDestroy(s *terraform.State) error {
 func testAccAzureStackPublicIPStatic_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_public_ip" "test" {
-    name = "acctestpublicip-%d"
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    public_ip_address_allocation = "static"
+  name                         = "acctestpublicip-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
+  public_ip_address_allocation = "static"
 }
 `, rInt, location, rInt)
 }
@@ -369,16 +369,16 @@ resource "azurestack_public_ip" "test" {
 func testAccAzureStackPublicIPStatic_standard(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_public_ip" "test" {
-    name = "acctestpublicip-%d"
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    public_ip_address_allocation = "static"
-    sku = "standard"
+  name                         = "acctestpublicip-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
+  public_ip_address_allocation = "static"
+  sku                          = "standard"
 }
 `, rInt, location, rInt)
 }
@@ -386,16 +386,16 @@ resource "azurestack_public_ip" "test" {
 func testAccAzureStackPublicIPStatic_update(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_public_ip" "test" {
-    name = "acctestpublicip-%d"
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    public_ip_address_allocation = "static"
-    domain_name_label = "acctest-%d"
+  name                         = "acctestpublicip-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
+  public_ip_address_allocation = "static"
+  domain_name_label            = "acctest-%d"
 }
 `, rInt, location, rInt, rInt)
 }
@@ -403,16 +403,16 @@ resource "azurestack_public_ip" "test" {
 func testAccAzureStackPublicIPStatic_idleTimeout(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_public_ip" "test" {
-    name = "acctestpublicip-%d"
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    public_ip_address_allocation = "static"
-    idle_timeout_in_minutes = 30
+  name                         = "acctestpublicip-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
+  public_ip_address_allocation = "static"
+  idle_timeout_in_minutes      = 30
 }
 `, rInt, location, rInt)
 }
@@ -420,15 +420,15 @@ resource "azurestack_public_ip" "test" {
 func testAccAzureStackPublicIPDynamic_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_public_ip" "test" {
-    name = "acctestpublicip-%d"
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    public_ip_address_allocation = "dynamic"
+  name                         = "acctestpublicip-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
+  public_ip_address_allocation = "dynamic"
 }
 `, rInt, location, rInt)
 }
@@ -436,20 +436,20 @@ resource "azurestack_public_ip" "test" {
 func testAccAzureStackPublicIPStatic_withTags(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_public_ip" "test" {
-    name = "acctestpublicip-%d"
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    public_ip_address_allocation = "static"
+  name                         = "acctestpublicip-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
+  public_ip_address_allocation = "static"
 
-    tags {
-	environment = "Production"
-	cost_center = "MSFT"
-    }
+  tags {
+    environment = "Production"
+    cost_center = "MSFT"
+  }
 }
 `, rInt, location, rInt)
 }
@@ -457,19 +457,19 @@ resource "azurestack_public_ip" "test" {
 func testAccAzureStackPublicIPStatic_withTagsUpdate(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_public_ip" "test" {
-    name = "acctestpublicip-%d"
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    public_ip_address_allocation = "static"
+  name                         = "acctestpublicip-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
+  public_ip_address_allocation = "static"
 
-    tags {
-	environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 `, rInt, location, rInt)
 }

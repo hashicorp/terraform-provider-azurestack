@@ -119,13 +119,13 @@ func testCheckAzureStackDnsZoneDestroy(s *terraform.State) error {
 func testAccAzureStackDnsZone_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG_%d"
-    location = "%s"
+  name     = "acctestRG_%d"
+  location = "%s"
 }
 
 resource "azurestack_dns_zone" "test" {
-    name = "acctestzone%d.com"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctestzone%d.com"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 `, rInt, location, rInt)
 }
@@ -133,17 +133,18 @@ resource "azurestack_dns_zone" "test" {
 func testAccAzureStackDnsZone_withTags(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG_%d"
-    location = "%s"
+  name     = "acctestRG_%d"
+  location = "%s"
 }
 
 resource "azurestack_dns_zone" "test" {
-    name = "acctestzone%d.com"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    tags {
-        environment = "Production"
-        cost_center = "MSFT"
-    }
+  name                = "acctestzone%d.com"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+
+  tags {
+    environment = "Production"
+    cost_center = "MSFT"
+  }
 }
 `, rInt, location, rInt)
 }
@@ -151,16 +152,17 @@ resource "azurestack_dns_zone" "test" {
 func testAccAzureStackDnsZone_withTagsUpdate(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG_%d"
-    location = "%s"
+  name     = "acctestRG_%d"
+  location = "%s"
 }
 
 resource "azurestack_dns_zone" "test" {
-    name = "acctestzone%d.com"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    tags {
-        environment = "staging"
-    }
+  name                = "acctestzone%d.com"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+
+  tags {
+    environment = "staging"
+  }
 }
 `, rInt, location, rInt)
 }

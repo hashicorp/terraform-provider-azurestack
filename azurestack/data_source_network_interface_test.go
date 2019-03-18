@@ -49,9 +49,9 @@ resource "azurestack_virtual_network" "test" {
 }
 
 resource "azurestack_network_security_group" "test" {
-  name                 = "acctest-nsg-%d"
-  location             = "${azurestack_resource_group.test.location}"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
+  name                = "acctest-nsg-%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
@@ -77,7 +77,6 @@ resource "azurestack_network_interface" "test" {
     environment = "staging"
   }
 }
-
 `, rInt, location, rInt, rInt, rInt)
 }
 
@@ -96,9 +95,9 @@ resource "azurestack_virtual_network" "test" {
 }
 
 resource "azurestack_network_security_group" "test" {
-  name                 = "acctest-nsg-%d"
-  location             = "${azurestack_resource_group.test.location}"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
+  name                = "acctest-nsg-%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
@@ -126,10 +125,8 @@ resource "azurestack_network_interface" "test" {
 }
 
 data "azurestack_network_interface" "test" {
-  name = "acctest-nic-%d"
+  name                = "acctest-nic-%d"
   resource_group_name = "${azurestack_resource_group.test.name}"
 }
-
-
 `, rInt, location, rInt, rInt, rInt, rInt)
 }

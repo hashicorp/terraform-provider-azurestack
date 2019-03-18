@@ -525,10 +525,10 @@ resource "azurestack_route_table" "test" {
   resource_group_name = "${azurestack_resource_group.test.name}"
 
   route {
-	name                   = "acctest-%d"
-	address_prefix         = "10.100.0.0/14"
-	next_hop_type          = "VirtualAppliance"
-	next_hop_in_ip_address = "10.10.1.1"
+    name                   = "acctest-%d"
+    address_prefix         = "10.100.0.0/14"
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = "10.10.1.1"
   }
 
   tags {
@@ -613,10 +613,10 @@ resource "azurestack_virtual_network" "test" {
 }
 
 resource "azurestack_subnet" "test" {
-  name                      = "acctest%d-private"
-  resource_group_name       = "${azurestack_resource_group.test.name}"
-  virtual_network_name      = "${azurestack_virtual_network.test.name}"
-  address_prefix            = "10.0.0.0/24"
+  name                 = "acctest%d-private"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.0.0/24"
 }
 `, rInt, location, rInt, rInt, rInt)
 }
@@ -641,9 +641,9 @@ resource "azurestack_route_table" "first" {
   resource_group_name = "${azurestack_resource_group.test.name}"
 
   route {
-    name                = "acctest%d-private-1"
-    address_prefix      = "0.0.0.0/0"
-    next_hop_type       = "None"
+    name           = "acctest%d-private-1"
+    address_prefix = "0.0.0.0/0"
+    next_hop_type  = "None"
   }
 }
 
@@ -661,9 +661,9 @@ resource "azurestack_route_table" "second" {
   resource_group_name = "${azurestack_resource_group.test.name}"
 
   route {
-    name                = "acctest%d-private-2"
-    address_prefix      = "0.0.0.0/0"
-    next_hop_type       = "None"
+    name           = "acctest%d-private-2"
+    address_prefix = "0.0.0.0/0"
+    next_hop_type  = "None"
   }
 }
 
@@ -692,7 +692,7 @@ resource "azurestack_virtual_network" "test" {
 }
 
 resource "azurestack_network_security_group" "test" {
-  name = "acctestnsg-%d"
+  name                = "acctestnsg-%d"
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 }
@@ -733,7 +733,7 @@ resource "azurestack_subnet" "test" {
   resource_group_name  = "${azurestack_resource_group.test.name}"
   virtual_network_name = "${azurestack_virtual_network.test.name}"
   address_prefix       = "10.0.2.0/24"
-  service_endpoints    = ["Microsoft.Sql","Microsoft.Storage"]
+  service_endpoints    = ["Microsoft.Sql", "Microsoft.Storage"]
 }
 `, rInt, location, rInt, rInt)
 }

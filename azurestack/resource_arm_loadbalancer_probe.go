@@ -106,10 +106,6 @@ func resourceArmLoadBalancerProbeCreateUpdate(d *schema.ResourceData, meta inter
 	}
 
 	newProbe := expandAzureRmLoadBalancerProbe(d)
-	if err != nil {
-		return fmt.Errorf("Error Expanding Probe: %+v", err)
-	}
-
 	probes := append(*loadBalancer.LoadBalancerPropertiesFormat.Probes, *newProbe)
 
 	existingProbe, existingProbeIndex, exists := findLoadBalancerProbeByName(loadBalancer, d.Get("name").(string))

@@ -37,7 +37,7 @@ resource "azurestack_resource_group" "test" {
   name     = "%s"
   location = "%s"
 
-  tags {
+  tags = {
     env = "test"
   }
 }

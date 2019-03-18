@@ -812,7 +812,7 @@ resource "azurestack_network_interface" "test" {
     private_ip_address_allocation = "dynamic"
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost_center = "MSFT"
   }
@@ -852,7 +852,7 @@ resource "azurestack_network_interface" "test" {
     private_ip_address_allocation = "dynamic"
   }
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1079,7 +1079,7 @@ resource "azurestack_application_gateway" "test" {
     backend_http_settings_name = "backend-http-1"
   }
 
-  tags {
+  tags = {
     environment = "tf01"
   }
 }
@@ -1115,7 +1115,7 @@ resource "azurestack_network_security_group" "test" {
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }
@@ -1154,7 +1154,7 @@ resource "azurestack_public_ip" "test" {
   resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "Dynamic"
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }
@@ -1184,7 +1184,7 @@ resource "azurestack_network_interface" "test1" {
     private_ip_address_allocation = "dynamic"
   }
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -1200,7 +1200,7 @@ resource "azurestack_network_interface" "test2" {
     private_ip_address_allocation = "dynamic"
   }
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }

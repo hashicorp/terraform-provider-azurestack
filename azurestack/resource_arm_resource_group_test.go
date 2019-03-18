@@ -234,7 +234,7 @@ resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 
-  tags {
+  tags = {
     environment = "Production"
     cost_center = "MSFT"
   }
@@ -248,7 +248,7 @@ resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }

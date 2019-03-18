@@ -44,7 +44,7 @@ resource "azurestack_network_interface" "test" {
     private_ip_address_allocation = "dynamic"
   }
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }

@@ -222,7 +222,7 @@ resource "azurestack_lb" "test" {
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  tags {
+  tags = {
     Environment = "production"
     Purpose     = "AcceptanceTests"
   }
@@ -242,7 +242,7 @@ resource "azurestack_lb" "test" {
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  tags {
+  tags = {
     Environment = "production"
     Purpose     = "AcceptanceTests"
   }
@@ -262,7 +262,7 @@ resource "azurestack_lb" "test" {
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  tags {
+  tags = {
     Purpose = "AcceptanceTests"
   }
 }

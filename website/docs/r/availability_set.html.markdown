@@ -24,7 +24,7 @@ resource "azurestack_availability_set" "test" {
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }

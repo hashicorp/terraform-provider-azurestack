@@ -32,7 +32,7 @@ resource "azurestack_route_table" "test" {
     next_hop_type  = "vnetlocal"
   }
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }

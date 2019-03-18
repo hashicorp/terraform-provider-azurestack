@@ -54,7 +54,7 @@ resource "azurestack_public_ip" "test" {
   domain_name_label            = "acctest-%d"
   idle_timeout_in_minutes      = 30
 
-  tags {
+  tags = {
     environment = "test"
   }
 }

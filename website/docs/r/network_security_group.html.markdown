@@ -40,7 +40,7 @@ resource "azurestack_network_security_group" "test" {
     destination_address_prefix = "*"
   }
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }

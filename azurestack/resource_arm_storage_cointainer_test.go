@@ -255,7 +255,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -283,7 +283,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }

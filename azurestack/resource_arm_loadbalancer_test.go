@@ -247,7 +247,8 @@ resource "azurestack_lb" "test" {
       Purpose = "AcceptanceTests"
     }
 
-}`, rInt, location, rInt)
+}
+`, rInt, location, rInt)
 }
 
 func testAccAzureStackLoadBalancer_updatedTags(rInt int, location string) string {
@@ -267,7 +268,8 @@ resource "azurestack_lb" "test" {
     	Purpose = "AcceptanceTests"
     }
 
-}`, rInt, location, rInt)
+}
+`, rInt, location, rInt)
 }
 
 func testAccAzureStackLoadBalancer_frontEndConfig(rInt int, location string) string {
@@ -305,7 +307,8 @@ resource "azurestack_lb" "test" {
       name = "two-%d"
       public_ip_address_id = "${azurestack_public_ip.test1.id}"
     }
-}`, rInt, location, rInt, rInt, rInt, rInt, rInt)
+}
+`, rInt, location, rInt, rInt, rInt, rInt, rInt)
 }
 
 func testAccAzureStackLoadBalancer_frontEndConfigRemovalWithIP(rInt int, location string) string {
@@ -338,7 +341,8 @@ resource "azurestack_lb" "test" {
       name = "one-%d"
       public_ip_address_id = "${azurestack_public_ip.test.id}"
     }
-}`, rInt, location, rInt, rInt, rInt, rInt)
+}
+`, rInt, location, rInt, rInt, rInt, rInt)
 }
 
 func testAccAzureStackLoadBalancer_frontEndConfigRemoval(rInt int, location string) string {
@@ -364,5 +368,6 @@ resource "azurestack_lb" "test" {
       name = "one-%d"
       public_ip_address_id = "${azurestack_public_ip.test.id}"
     }
-}`, rInt, location, rInt, rInt, rInt)
+}
+`, rInt, location, rInt, rInt, rInt)
 }

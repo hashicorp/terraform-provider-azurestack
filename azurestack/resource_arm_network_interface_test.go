@@ -609,9 +609,9 @@ resource "azurestack_network_security_group" "test" {
 }
 
 resource "azurestack_network_interface" "test" {
-  name                = "acctestni-%d"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                      = "acctestni-%d"
+  location                  = "${azurestack_resource_group.test.location}"
+  resource_group_name       = "${azurestack_resource_group.test.name}"
   network_security_group_id = "${azurestack_network_security_group.test.id}"
 
   ip_configuration {
@@ -1065,17 +1065,17 @@ resource "azurestack_application_gateway" "test" {
   }
 
   http_listener {
-    name = "listener-1"
+    name                           = "listener-1"
     frontend_ip_configuration_name = "ip-config-public"
-    frontend_port_name = "port-8080"
-    protocol           = "Http"
+    frontend_port_name             = "port-8080"
+    protocol                       = "Http"
   }
 
   request_routing_rule {
-    name      = "rule-basic-1"
-    rule_type = "Basic"
-    http_listener_name = "listener-1"
-    backend_address_pool_name = "pool-1"
+    name                       = "rule-basic-1"
+    rule_type                  = "Basic"
+    http_listener_name         = "listener-1"
+    backend_address_pool_name  = "pool-1"
     backend_http_settings_name = "backend-http-1"
   }
 
@@ -1277,9 +1277,9 @@ resource "azurestack_network_interface" "test" {
   internal_fqdn       = "acctestnic-%d.example.com"
 
   ip_configuration {
-    name                           = "testconfiguration1"
-    subnet_id                      = "${azurestack_subnet.test.id}"
-    private_ip_address_allocation  = "dynamic"
+    name                          = "testconfiguration1"
+    subnet_id                     = "${azurestack_subnet.test.id}"
+    private_ip_address_allocation = "dynamic"
   }
 }
 `, rInt, location, rInt, rInt, rInt)

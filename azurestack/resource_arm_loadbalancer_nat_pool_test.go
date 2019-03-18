@@ -285,28 +285,27 @@ resource "azurestack_lb" "test" {
 
 func testAccAzureStackLoadBalancerNatPool_multiplePools(rInt int, natPoolName, natPool2Name string, location string) string {
 	return fmt.Sprintf(`
-
 resource "azurestack_resource_group" "test" {
-    name     = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_public_ip" "test" {
-    name                         = "test-ip-%d"
-    location                     = "${azurestack_resource_group.test.location}"
-    resource_group_name          = "${azurestack_resource_group.test.name}"
-    public_ip_address_allocation = "static"
+  name                         = "test-ip-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
+  public_ip_address_allocation = "static"
 }
 
 resource "azurestack_lb" "test" {
-    name                = "arm-test-loadbalancer-%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "arm-test-loadbalancer-%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
-    frontend_ip_configuration {
-      name                 = "one-%d"
-      public_ip_address_id = "${azurestack_public_ip.test.id}"
-    }
+  frontend_ip_configuration {
+    name                 = "one-%d"
+    public_ip_address_id = "${azurestack_public_ip.test.id}"
+  }
 }
 
 resource "azurestack_lb_nat_pool" "test" {

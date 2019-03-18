@@ -215,14 +215,15 @@ func testCheckAzureStackTemplateDeploymentDestroy(s *terraform.State) error {
 func testAccAzureStackTemplateDeployment_basicSingle(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
-  }
+  name     = "acctestRG-%d"
+  location = "%s"
+}
 
-  resource "azurestack_template_deployment" "test" {
-    name = "acctesttemplate-%d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    template_body = <<DEPLOY
+resource "azurestack_template_deployment" "test" {
+  name                = "acctesttemplate-%d"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+
+  template_body = <<DEPLOY
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
@@ -248,22 +249,24 @@ resource "azurestack_resource_group" "test" {
   ]
 }
 DEPLOY
-    deployment_mode = "Complete"
-  }
+
+  deployment_mode = "Complete"
+}
 `, rInt, location, rInt, rInt)
 }
 
 func testAccAzureStackTemplateDeployment_basicMultiple(rInt int, location string) string {
 	return fmt.Sprintf(`
-  resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
-  }
+resource "azurestack_resource_group" "test" {
+  name     = "acctestRG-%d"
+  location = "%s"
+}
 
-  resource "azurestack_template_deployment" "test" {
-    name = "acctesttemplate-%d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    template_body = <<DEPLOY
+resource "azurestack_template_deployment" "test" {
+  name                = "acctesttemplate-%d"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+
+  template_body = <<DEPLOY
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
@@ -314,15 +317,16 @@ func testAccAzureStackTemplateDeployment_basicMultiple(rInt int, location string
   ]
 }
 DEPLOY
-    deployment_mode = "Complete"
-  }
+
+  deployment_mode = "Complete"
+}
 `, rInt, location, rInt)
 }
 
 func testaccAzureStackTemplateDeployment_withParamsBody(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name = "acctestRG-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -331,16 +335,16 @@ output "test" {
 }
 
 resource "azurestack_storage_container" "using-outputs" {
-  name = "vhds"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-  storage_account_name = "${azurestack_template_deployment.test.outputs["accountName"]}"
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_template_deployment.test.outputs["accountName"]}"
   container_access_type = "private"
 }
 
 data "azurestack_client_config" "current" {}
 
 locals {
-	"templated-file" = <<TPL
+  "templated-file" = <<TPL
 {
 "dnsLabelPrefix": {
 	"value": "terraform-test-%d"
@@ -353,8 +357,9 @@ TPL
 }
 
 resource "azurestack_template_deployment" "test" {
-  name = "acctesttemplate-%d"
+  name                = "acctesttemplate-%d"
   resource_group_name = "${azurestack_resource_group.test.name}"
+
   template_body = <<DEPLOY
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
@@ -431,26 +436,27 @@ DEPLOY
 
 func testAccAzureStackTemplateDeployment_withParams(rInt int, location string) string {
 	return fmt.Sprintf(`
-  resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
-  }
+resource "azurestack_resource_group" "test" {
+  name     = "acctestRG-%d"
+  location = "%s"
+}
 
-  output "test" {
-    value = "${azurestack_template_deployment.test.outputs["testOutput"]}"
-  }
+output "test" {
+  value = "${azurestack_template_deployment.test.outputs["testOutput"]}"
+}
 
-  resource "azurestack_storage_container" "using-outputs" {
-    name = "vhds"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_template_deployment.test.outputs["accountName"]}"
-    container_access_type = "private"
-  }
+resource "azurestack_storage_container" "using-outputs" {
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_template_deployment.test.outputs["accountName"]}"
+  container_access_type = "private"
+}
 
-  resource "azurestack_template_deployment" "test" {
-    name = "acctesttemplate-%d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    template_body = <<DEPLOY
+resource "azurestack_template_deployment" "test" {
+  name                = "acctesttemplate-%d"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+
+  template_body = <<DEPLOY
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
@@ -516,42 +522,45 @@ func testAccAzureStackTemplateDeployment_withParams(rInt int, location string) s
   }
 }
 DEPLOY
-    parameters {
-	dnsLabelPrefix = "terraform-test-%d"
-	storageAccountType = "Standard_LRS"
-    }
-    deployment_mode = "Complete"
+
+  parameters {
+    dnsLabelPrefix     = "terraform-test-%d"
+    storageAccountType = "Standard_LRS"
   }
+
+  deployment_mode = "Complete"
+}
 `, rInt, location, rInt, rInt)
 }
 
 func testAccAzureStackTemplateDeployment_withOutputs(rInt int, location string) string {
 	return fmt.Sprintf(`
-  resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
-  }
+resource "azurestack_resource_group" "test" {
+  name     = "acctestRG-%d"
+  location = "%s"
+}
 
-  output "tfStringOutput" {
-    value = "${lookup(azurestack_template_deployment.test.outputs, "stringOutput")}"
-  }
+output "tfStringOutput" {
+  value = "${lookup(azurestack_template_deployment.test.outputs, "stringOutput")}"
+}
 
-  output "tfIntOutput" {
-    value = "${lookup(azurestack_template_deployment.test.outputs, "intOutput")}"
-  }
+output "tfIntOutput" {
+  value = "${lookup(azurestack_template_deployment.test.outputs, "intOutput")}"
+}
 
-  output "tfFalseOutput" {
-    value = "${lookup(azurestack_template_deployment.test.outputs, "falseOutput")}"
-  }
+output "tfFalseOutput" {
+  value = "${lookup(azurestack_template_deployment.test.outputs, "falseOutput")}"
+}
 
-  output "tfTrueOutput" {
-    value = "${lookup(azurestack_template_deployment.test.outputs, "trueOutput")}"
-  }
+output "tfTrueOutput" {
+  value = "${lookup(azurestack_template_deployment.test.outputs, "trueOutput")}"
+}
 
-  resource "azurestack_template_deployment" "test" {
-    name = "acctesttemplate-%d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    template_body = <<DEPLOY
+resource "azurestack_template_deployment" "test" {
+  name                = "acctesttemplate-%d"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+
+  template_body = <<DEPLOY
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
@@ -637,12 +646,14 @@ func testAccAzureStackTemplateDeployment_withOutputs(rInt int, location string) 
   }
 }
 DEPLOY
-    parameters {
-      dnsLabelPrefix = "terraform-test-%d"
-      storageAccountType = "Standard_LRS"
-    }
-    deployment_mode = "Incremental"
+
+  parameters {
+    dnsLabelPrefix     = "terraform-test-%d"
+    storageAccountType = "Standard_LRS"
   }
+
+  deployment_mode = "Incremental"
+}
 `, rInt, location, rInt, rInt)
 }
 
@@ -650,18 +661,19 @@ DEPLOY
 func testAccAzureStackTemplateDeployment_withError(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
-  }
+  name     = "acctestRG-%d"
+  location = "%s"
+}
 
-  output "test" {
-    value = "${lookup(azurestack_template_deployment.test.outputs, "testOutput")}"
-  }
+output "test" {
+  value = "${lookup(azurestack_template_deployment.test.outputs, "testOutput")}"
+}
 
-  resource "azurestack_template_deployment" "test" {
-    name = "acctesttemplate-%d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    template_body = <<DEPLOY
+resource "azurestack_template_deployment" "test" {
+  name                = "acctesttemplate-%d"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+
+  template_body = <<DEPLOY
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
@@ -703,10 +715,12 @@ resource "azurestack_resource_group" "test" {
   }
 }
 DEPLOY
-    parameters {
-        storageAccountType = "Standard_GRS"
-    }
-    deployment_mode = "Complete"
+
+  parameters {
+    storageAccountType = "Standard_GRS"
   }
+
+  deployment_mode = "Complete"
+}
 `, rInt, location, rInt)
 }

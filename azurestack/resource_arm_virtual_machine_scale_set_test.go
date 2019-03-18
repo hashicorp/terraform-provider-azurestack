@@ -1028,74 +1028,75 @@ func testCheckAzureStackVirtualMachineScaleSetHasDataDisks(name string) resource
 func testAccAzureStackVirtualMachineScaleSet_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_storage_account" "test" {
-	name                     = "accsa%[1]d"
-	resource_group_name      = "${azurestack_resource_group.test.name}"
-	location                 = "${azurestack_resource_group.test.location}"
-	account_tier             = "Standard"
-	account_replication_type = "LRS"
+  name                     = "accsa%[1]d"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "test" {
-    name = "vhds"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    container_access_type = "private"
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
-    name = "Standard_D1_v2"
-    tier = "Standard"
+    name     = "Standard_D1_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm-%[1]d"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   network_profile {
-      name = "TestNetworkProfile-%[1]d"
-      primary = true
-      ip_configuration {
-        name = "TestIPConfiguration"
-        subnet_id = "${azurestack_subnet.test.id}"
-      }
+    name    = "TestNetworkProfile-%[1]d"
+    primary = true
+
+    ip_configuration {
+      name      = "TestIPConfiguration"
+      subnet_id = "${azurestack_subnet.test.id}"
+    }
   }
 
   storage_profile_os_disk {
-    name = "osDiskProfile"
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    name           = "osDiskProfile"
+    caching        = "ReadWrite"
+    create_option  = "FromImage"
     vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
   }
 
@@ -1112,80 +1113,82 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_basicPublicIP(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_storage_account" "test" {
-	name                     = "accsa%[1]d"
-	resource_group_name      = "${azurestack_resource_group.test.name}"
-	location                 = "${azurestack_resource_group.test.location}"
-	account_tier             = "Standard"
-	account_replication_type = "LRS"
+  name                     = "accsa%[1]d"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "test" {
-    name = "vhds"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    container_access_type = "private"
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
-    name = "Standard_D1_v2"
-    tier = "Standard"
+    name     = "Standard_D1_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm-%[1]d"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   network_profile {
-      name = "TestNetworkProfile-%[1]d"
-      primary = true
-      ip_configuration {
-        name = "TestIPConfiguration"
-        subnet_id = "${azurestack_subnet.test.id}"
-				primary = true
-				public_ip_address_configuration {
-					name = "TestPublicIPConfiguration"
-					domain_name_label = "test-domain-label-%[1]d"
-					idle_timeout = 4
-				}
+    name    = "TestNetworkProfile-%[1]d"
+    primary = true
+
+    ip_configuration {
+      name      = "TestIPConfiguration"
+      subnet_id = "${azurestack_subnet.test.id}"
+      primary   = true
+
+      public_ip_address_configuration {
+        name              = "TestPublicIPConfiguration"
+        domain_name_label = "test-domain-label-%[1]d"
+        idle_timeout      = 4
       }
+    }
   }
 
   storage_profile_os_disk {
-    name = "osDiskProfile"
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    name           = "osDiskProfile"
+    caching        = "ReadWrite"
+    create_option  = "FromImage"
     vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
   }
 
@@ -1202,75 +1205,76 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_basicAcceleratedNetworking(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_storage_account" "test" {
-	name                     = "accsa%[1]d"
-	resource_group_name      = "${azurestack_resource_group.test.name}"
-	location                 = "${azurestack_resource_group.test.location}"
-	account_tier             = "Standard"
-	account_replication_type = "LRS"
+  name                     = "accsa%[1]d"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "test" {
-    name = "vhds"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    container_access_type = "private"
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
-    name = "Standard_D4_v2"
-    tier = "Standard"
+    name     = "Standard_D4_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm-%[1]d"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   network_profile {
-      name = "TestNetworkProfile-%[1]d"
-      primary = true
-			accelerated_networking = true
-      ip_configuration {
-        name = "TestIPConfiguration"
-        subnet_id = "${azurestack_subnet.test.id}"
-      }
+    name                   = "TestNetworkProfile-%[1]d"
+    primary                = true
+    accelerated_networking = true
+
+    ip_configuration {
+      name      = "TestIPConfiguration"
+      subnet_id = "${azurestack_subnet.test.id}"
+    }
   }
 
   storage_profile_os_disk {
-    name = "osDiskProfile"
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    name           = "osDiskProfile"
+    caching        = "ReadWrite"
+    create_option  = "FromImage"
     vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
   }
 
@@ -1287,75 +1291,76 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_basicIPForwarding(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_storage_account" "test" {
-	name                     = "accsa%[1]d"
-	resource_group_name      = "${azurestack_resource_group.test.name}"
-	location                 = "${azurestack_resource_group.test.location}"
-	account_tier             = "Standard"
-	account_replication_type = "LRS"
+  name                     = "accsa%[1]d"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "test" {
-    name = "vhds"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    container_access_type = "private"
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
-    name = "Standard_D4_v2"
-    tier = "Standard"
+    name     = "Standard_D4_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm-%[1]d"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   network_profile {
-      name = "TestNetworkProfile-%[1]d"
-      primary = true
-	  ip_forwarding = true
-      ip_configuration {
-        name = "TestIPConfiguration"
-        subnet_id = "${azurestack_subnet.test.id}"
-      }
+    name          = "TestNetworkProfile-%[1]d"
+    primary       = true
+    ip_forwarding = true
+
+    ip_configuration {
+      name      = "TestIPConfiguration"
+      subnet_id = "${azurestack_subnet.test.id}"
+    }
   }
 
   storage_profile_os_disk {
-    name = "osDiskProfile"
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    name           = "osDiskProfile"
+    caching        = "ReadWrite"
+    create_option  = "FromImage"
     vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
   }
 
@@ -1372,77 +1377,79 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_basicDNSSettings(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_storage_account" "test" {
-	name                     = "accsa%[1]d"
-	resource_group_name      = "${azurestack_resource_group.test.name}"
-	location                 = "${azurestack_resource_group.test.location}"
-	account_tier             = "Standard"
-	account_replication_type = "LRS"
+  name                     = "accsa%[1]d"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "test" {
-    name = "vhds"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    container_access_type = "private"
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
-    name = "Standard_D4_v2"
-    tier = "Standard"
+    name     = "Standard_D4_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm-%[1]d"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   network_profile {
-      name = "TestNetworkProfile-%[1]d"
-      primary = true
-	  dns_settings {
-		  dns_servers = ["8.8.8.8", "8.8.4.4"]
-	  }
-      ip_configuration {
-        name = "TestIPConfiguration"
-        subnet_id = "${azurestack_subnet.test.id}"
-      }
+    name    = "TestNetworkProfile-%[1]d"
+    primary = true
+
+    dns_settings {
+      dns_servers = ["8.8.8.8", "8.8.4.4"]
+    }
+
+    ip_configuration {
+      name      = "TestIPConfiguration"
+      subnet_id = "${azurestack_subnet.test.id}"
+    }
   }
 
   storage_profile_os_disk {
-    name = "osDiskProfile"
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    name           = "osDiskProfile"
+    caching        = "ReadWrite"
+    create_option  = "FromImage"
     vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
   }
 
@@ -1459,78 +1466,79 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_bootDiagnostic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_storage_account" "test" {
-	name                     = "accsa%[1]d"
-	resource_group_name      = "${azurestack_resource_group.test.name}"
-	location                 = "${azurestack_resource_group.test.location}"
-	account_tier             = "Standard"
-	account_replication_type = "LRS"
+  name                     = "accsa%[1]d"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "test" {
-    name = "vhds"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    container_access_type = "private"
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
-    name = "Standard_D1_v2"
-    tier = "Standard"
+    name     = "Standard_D1_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm-%[1]d"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
-	boot_diagnostics {
-			storage_uri = "${azurestack_storage_account.test.primary_blob_endpoint}"
-	}
+  boot_diagnostics {
+    storage_uri = "${azurestack_storage_account.test.primary_blob_endpoint}"
+  }
 
   network_profile {
-      name = "TestNetworkProfile-%[1]d"
-      primary = true
-      ip_configuration {
-        name = "TestIPConfiguration"
-        subnet_id = "${azurestack_subnet.test.id}"
-      }
+    name    = "TestNetworkProfile-%[1]d"
+    primary = true
+
+    ip_configuration {
+      name      = "TestIPConfiguration"
+      subnet_id = "${azurestack_subnet.test.id}"
+    }
   }
 
   storage_profile_os_disk {
-    name = "osDiskProfile"
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    name           = "osDiskProfile"
+    caching        = "ReadWrite"
+    create_option  = "FromImage"
     vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
   }
 
@@ -1547,41 +1555,41 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_networkSecurityGroup(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_storage_account" "test" {
-	name                     = "accsa%[1]d"
-	resource_group_name      = "${azurestack_resource_group.test.name}"
-	location                 = "${azurestack_resource_group.test.location}"
-	account_tier             = "Standard"
-	account_replication_type = "LRS"
+  name                     = "accsa%[1]d"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "test" {
-    name = "vhds"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    container_access_type = "private"
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
 }
 
 resource "azurestack_network_security_group" "test" {
@@ -1591,43 +1599,45 @@ resource "azurestack_network_security_group" "test" {
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
-    name = "Standard_D1_v2"
-    tier = "Standard"
+    name     = "Standard_D1_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm-%[1]d"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   network_profile {
-      name = "TestNetworkProfile-%[1]d"
-      primary = true
-			network_security_group_id = "${azurestack_network_security_group.test.id}"
-      ip_configuration {
-        name = "TestIPConfiguration"
-        subnet_id = "${azurestack_subnet.test.id}"
-				primary = true
-				public_ip_address_configuration {
-					name = "TestPublicIPConfiguration"
-					domain_name_label = "test-domain-label-%[1]d"
-					idle_timeout = 4
-				}
+    name                      = "TestNetworkProfile-%[1]d"
+    primary                   = true
+    network_security_group_id = "${azurestack_network_security_group.test.id}"
+
+    ip_configuration {
+      name      = "TestIPConfiguration"
+      subnet_id = "${azurestack_subnet.test.id}"
+      primary   = true
+
+      public_ip_address_configuration {
+        name              = "TestPublicIPConfiguration"
+        domain_name_label = "test-domain-label-%[1]d"
+        idle_timeout      = 4
       }
+    }
   }
 
   storage_profile_os_disk {
-    name = "osDiskProfile"
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    name           = "osDiskProfile"
+    caching        = "ReadWrite"
+    create_option  = "FromImage"
     vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
   }
 
@@ -1644,64 +1654,64 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_basicWindows(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_storage_account" "test" {
-	name                     = "accsa%[1]d"
-	resource_group_name      = "${azurestack_resource_group.test.name}"
-	location                 = "${azurestack_resource_group.test.location}"
-	account_tier             = "Standard"
-	account_replication_type = "LRS"
+  name                     = "accsa%[1]d"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "test" {
-    name = "vhds"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    container_access_type = "private"
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
-    name = "Standard_D1_v2"
-    tier = "Standard"
+    name     = "Standard_D1_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   os_profile_windows_config {
     enable_automatic_upgrades = false
-    provision_vm_agent = true
+    provision_vm_agent        = true
 
     winrm {
       protocol = "http"
@@ -1709,18 +1719,19 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   }
 
   network_profile {
-      name = "TestNetworkProfile-%[1]d"
-      primary = true
-      ip_configuration {
-        name = "TestIPConfiguration"
-        subnet_id = "${azurestack_subnet.test.id}"
-      }
+    name    = "TestNetworkProfile-%[1]d"
+    primary = true
+
+    ip_configuration {
+      name      = "TestIPConfiguration"
+      subnet_id = "${azurestack_subnet.test.id}"
+    }
   }
 
   storage_profile_os_disk {
-    name = "osDiskProfile"
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    name           = "osDiskProfile"
+    caching        = "ReadWrite"
+    create_option  = "FromImage"
     vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
   }
 
@@ -1737,22 +1748,22 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_singlePlacementGroupFalse(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_storage_account" "test" {
@@ -1762,50 +1773,51 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "test" {
-    name = "vhds"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    container_access_type = "private"
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-  upgrade_policy_mode = "Manual"
+  name                   = "acctvmss-%[1]d"
+  location               = "${azurestack_resource_group.test.location}"
+  resource_group_name    = "${azurestack_resource_group.test.name}"
+  upgrade_policy_mode    = "Manual"
   single_placement_group = false
 
   sku {
-    name = "Standard_D1_v2"
-    tier = "Standard"
+    name     = "Standard_D1_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm-%[1]d"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   network_profile {
-      name = "TestNetworkProfile-%[1]d"
-      primary = true
-      ip_configuration {
-        name = "TestIPConfiguration"
-        subnet_id = "${azurestack_subnet.test.id}"
-      }
+    name    = "TestNetworkProfile-%[1]d"
+    primary = true
+
+    ip_configuration {
+      name      = "TestIPConfiguration"
+      subnet_id = "${azurestack_subnet.test.id}"
+    }
   }
 
   storage_profile_os_disk {
-    name = ""
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    name              = ""
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
@@ -1866,6 +1878,7 @@ resource "azurestack_lb" "test" {
   name                = "acctestlb-%[1]d"
   resource_group_name = "${azurestack_resource_group.test.name}"
   location            = "${azurestack_resource_group.test.location}"
+
   frontend_ip_configuration {
     name                 = "ip-address"
     public_ip_address_id = "${azurestack_public_ip.test.id}"
@@ -1899,6 +1912,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 
   os_profile_linux_config {
     disable_password_authentication = true
+
     ssh_keys {
       path     = "/home/ubuntu/.ssh/authorized_keys"
       key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDCsTcryUl51Q2VSEHqDRNmceUFo55ZtcIwxl2QITbN1RREti5ml/VTytC0yeBOvnZA4x4CFpdw/lCDPk0yrH9Ei5vVkXmOrExdTlT3qI7YaAzj1tUVlBd4S6LX1F7y6VLActvdHuDDuXZXzCDd/97420jrDfWZqJMlUK/EmCE5ParCeHIRIvmBxcEnGfFIsw8xQZl0HphxWOtJil8qsUWSdMyCiJYYQpMoMliO99X40AUc4/AlsyPyT5ddbKk08YrZ+rKDVHF7o29rh4vi5MmHkVgVQHKiKybWlHq+b71gIAUQk9wrJxD+dqt4igrmDSpIjfjwnd+l5UIn5fJSO5DYV4YT/4hwK7OKmuo7OFHD0WyY5YnkYEMtFgzemnRBdE8ulcT60DQpVgRMXFWHvhyCWy0L6sgj1QWDZlLpvsIvNfHsyhKFMG1frLnMt/nP0+YCcfg+v1JYeCKjeoJxB8DWcRBsjzItY0CGmzP8UYZiYKl/2u+2TgFS5r7NWH11bxoUzjKdaa1NLw+ieA8GlBFfCbfWe6YVB9ggUte4VtYFMZGxOjS2bAiYtfgTKFJv+XqORAwExG6+G2eDxIDyo80/OA9IG7Xv/jwQr7D6KDjDuULFcN/iTxuttoKrHeYz1hf5ZQlBdllwJHYx6fK2g8kha6r2JIQKocvsAXiiONqSfw== hello@world.com"
@@ -1908,6 +1922,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   network_profile {
     name    = "TestNetworkProfile"
     primary = true
+
     ip_configuration {
       name                                   = "TestIPConfiguration"
       subnet_id                              = "${azurestack_subnet.test.id}"
@@ -1980,6 +1995,7 @@ resource "azurestack_lb" "test" {
   name                = "acctestlb-%[1]d"
   resource_group_name = "${azurestack_resource_group.test.name}"
   location            = "${azurestack_resource_group.test.location}"
+
   frontend_ip_configuration {
     name                 = "ip-address"
     public_ip_address_id = "${azurestack_public_ip.test.id}"
@@ -2013,6 +2029,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 
   os_profile_linux_config {
     disable_password_authentication = true
+
     ssh_keys {
       path     = "/home/ubuntu/.ssh/authorized_keys"
       key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDCsTcryUl51Q2VSEHqDRNmceUFo55ZtcIwxl2QITbN1RREti5ml/VTytC0yeBOvnZA4x4CFpdw/lCDPk0yrH9Ei5vVkXmOrExdTlT3qI7YaAzj1tUVlBd4S6LX1F7y6VLActvdHuDDuXZXzCDd/97420jrDfWZqJMlUK/EmCE5ParCeHIRIvmBxcEnGfFIsw8xQZl0HphxWOtJil8qsUWSdMyCiJYYQpMoMliO99X40AUc4/AlsyPyT5ddbKk08YrZ+rKDVHF7o29rh4vi5MmHkVgVQHKiKybWlHq+b71gIAUQk9wrJxD+dqt4igrmDSpIjfjwnd+l5UIn5fJSO5DYV4YT/4hwK7OKmuo7OFHD0WyY5YnkYEMtFgzemnRBdE8ulcT60DQpVgRMXFWHvhyCWy0L6sgj1QWDZlLpvsIvNfHsyhKFMG1frLnMt/nP0+YCcfg+v1JYeCKjeoJxB8DWcRBsjzItY0CGmzP8UYZiYKl/2u+2TgFS5r7NWH11bxoUzjKdaa1NLw+ieA8GlBFfCbfWe6YVB9ggUte4VtYFMZGxOjS2bAiYtfgTKFJv+XqORAwExG6+G2eDxIDyo80/OA9IG7Xv/jwQr7D6KDjDuULFcN/iTxuttoKrHeYz1hf5ZQlBdllwJHYx6fK2g8kha6r2JIQKocvsAXiiONqSfw== hello@world.com"
@@ -2022,6 +2039,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   network_profile {
     name    = "TestNetworkProfile"
     primary = true
+
     ip_configuration {
       name                                   = "TestIPConfiguration"
       subnet_id                              = "${azurestack_subnet.test.id}"
@@ -2098,6 +2116,7 @@ resource "azurestack_lb" "test" {
   name                = "acctestlb-%[1]d"
   resource_group_name = "${azurestack_resource_group.test.name}"
   location            = "${azurestack_resource_group.test.location}"
+
   frontend_ip_configuration {
     name                 = "ip-address"
     public_ip_address_id = "${azurestack_public_ip.test.id}"
@@ -2131,6 +2150,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 
   os_profile_linux_config {
     disable_password_authentication = true
+
     ssh_keys {
       path     = "/home/ubuntu/.ssh/authorized_keys"
       key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDCsTcryUl51Q2VSEHqDRNmceUFo55ZtcIwxl2QITbN1RREti5ml/VTytC0yeBOvnZA4x4CFpdw/lCDPk0yrH9Ei5vVkXmOrExdTlT3qI7YaAzj1tUVlBd4S6LX1F7y6VLActvdHuDDuXZXzCDd/97420jrDfWZqJMlUK/EmCE5ParCeHIRIvmBxcEnGfFIsw8xQZl0HphxWOtJil8qsUWSdMyCiJYYQpMoMliO99X40AUc4/AlsyPyT5ddbKk08YrZ+rKDVHF7o29rh4vi5MmHkVgVQHKiKybWlHq+b71gIAUQk9wrJxD+dqt4igrmDSpIjfjwnd+l5UIn5fJSO5DYV4YT/4hwK7OKmuo7OFHD0WyY5YnkYEMtFgzemnRBdE8ulcT60DQpVgRMXFWHvhyCWy0L6sgj1QWDZlLpvsIvNfHsyhKFMG1frLnMt/nP0+YCcfg+v1JYeCKjeoJxB8DWcRBsjzItY0CGmzP8UYZiYKl/2u+2TgFS5r7NWH11bxoUzjKdaa1NLw+ieA8GlBFfCbfWe6YVB9ggUte4VtYFMZGxOjS2bAiYtfgTKFJv+XqORAwExG6+G2eDxIDyo80/OA9IG7Xv/jwQr7D6KDjDuULFcN/iTxuttoKrHeYz1hf5ZQlBdllwJHYx6fK2g8kha6r2JIQKocvsAXiiONqSfw== hello@world.com"
@@ -2140,6 +2160,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   network_profile {
     name    = "TestNetworkProfile"
     primary = true
+
     ip_configuration {
       name                                   = "TestIPConfiguration"
       subnet_id                              = "${azurestack_subnet.test.id}"
@@ -2168,55 +2189,56 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_basicLinux_managedDisk(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
-    name = "Standard_D1_v2"
-    tier = "Standard"
+    name     = "Standard_D1_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm-%[1]d"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   network_profile {
-    name = "TestNetworkProfile-%[1]d"
+    name    = "TestNetworkProfile-%[1]d"
     primary = true
+
     ip_configuration {
-      name = "TestIPConfiguration"
+      name      = "TestIPConfiguration"
       subnet_id = "${azurestack_subnet.test.id}"
     }
   }
 
   storage_profile_os_disk {
-    name 		  = ""
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    name              = ""
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
@@ -2233,74 +2255,75 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_basicWindows_managedDisk(rInt int, location string, vmSize string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
-    name = "%[3]s"
-    tier = "Standard"
+    name     = "%[3]s"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   os_profile_windows_config {
-	enable_automatic_upgrades = false
-	provision_vm_agent = true
+    enable_automatic_upgrades = false
+    provision_vm_agent        = true
 
-	additional_unattend_config {
-	  pass = "oobeSystem"
-	  component = "Microsoft-Windows-Shell-Setup"
-	  setting_name = "AutoLogon"
-	  content = "<AutoLogon><Username>myadmin</Username><Password><Value>Passwword1234</Value></Password><Enabled>true</Enabled><LogonCount>1</LogonCount></AutoLogon>"
-	}
+    additional_unattend_config {
+      pass         = "oobeSystem"
+      component    = "Microsoft-Windows-Shell-Setup"
+      setting_name = "AutoLogon"
+      content      = "<AutoLogon><Username>myadmin</Username><Password><Value>Passwword1234</Value></Password><Enabled>true</Enabled><LogonCount>1</LogonCount></AutoLogon>"
+    }
 
-	additional_unattend_config {
-      pass = "oobeSystem"
-      component = "Microsoft-Windows-Shell-Setup"
+    additional_unattend_config {
+      pass         = "oobeSystem"
+      component    = "Microsoft-Windows-Shell-Setup"
       setting_name = "FirstLogonCommands"
-      content = "<FirstLogonCommands><SynchronousCommand><CommandLine>shutdown /r /t 0 /c \"initial reboot\"</CommandLine><Description>reboot</Description><Order>1</Order></SynchronousCommand></FirstLogonCommands>"
+      content      = "<FirstLogonCommands><SynchronousCommand><CommandLine>shutdown /r /t 0 /c \"initial reboot\"</CommandLine><Description>reboot</Description><Order>1</Order></SynchronousCommand></FirstLogonCommands>"
     }
   }
 
   network_profile {
-    name = "TestNetworkProfile-%[1]d"
+    name    = "TestNetworkProfile-%[1]d"
     primary = true
+
     ip_configuration {
-      name = "TestIPConfiguration"
+      name      = "TestIPConfiguration"
       subnet_id = "${azurestack_subnet.test.id}"
     }
   }
 
   storage_profile_os_disk {
-    name 		  = ""
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    name              = ""
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
@@ -2317,54 +2340,55 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_basicLinux_managedDiskNoName(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
-    name = "Standard_D1_v2"
-    tier = "Standard"
+    name     = "Standard_D1_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm-%[1]d"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   network_profile {
-    name = "TestNetworkProfile-%[1]d"
+    name    = "TestNetworkProfile-%[1]d"
     primary = true
+
     ip_configuration {
-      name = "TestIPConfiguration"
+      name      = "TestIPConfiguration"
       subnet_id = "${azurestack_subnet.test.id}"
     }
   }
 
   storage_profile_os_disk {
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
@@ -2624,8 +2648,9 @@ resource "azurestack_lb" "test" {
 resource "azurestack_lb_backend_address_pool" "test" {
   name                = "test"
   resource_group_name = "${azurestack_resource_group.test.name}"
+
   #location            = "${azurestack_resource_group.test.location}"
-  loadbalancer_id     = "${azurestack_lb.test.id}"
+  loadbalancer_id = "${azurestack_lb.test.id}"
 }
 
 resource "azurestack_lb_nat_pool" "test" {
@@ -2683,7 +2708,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
     version   = "latest"
   }
 }
-
 `, rInt, location)
 }
 
@@ -2766,7 +2790,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
     version   = "latest"
   }
 }
-
 `, rInt, location)
 }
 
@@ -2850,7 +2873,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
     version   = "latest"
   }
 }
-
 `, rInt, location)
 }
 
@@ -2904,15 +2926,15 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   }
 
   identity {
-    type     = "systemAssigned"
+    type = "systemAssigned"
   }
 
   extension {
-    name                       = "MSILinuxExtension"
-    publisher                  = "Microsoft.ManagedIdentity"
-    type                       = "ManagedIdentityExtensionForLinux"
-    type_handler_version       = "1.0"
-    settings                   = "{\"port\": 50342}"
+    name                 = "MSILinuxExtension"
+    publisher            = "Microsoft.ManagedIdentity"
+    type                 = "ManagedIdentityExtensionForLinux"
+    type_handler_version = "1.0"
+    settings             = "{\"port\": 50342}"
   }
 
   os_profile {
@@ -2945,7 +2967,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
     version   = "latest"
   }
 }
-
 `, rInt, location)
 }
 
@@ -3006,6 +3027,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 
   os_profile_linux_config {
     disable_password_authentication = true
+
     ssh_keys {
       path     = "/home/myadmin/.ssh/authorized_keys"
       key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDCsTcryUl51Q2VSEHqDRNmceUFo55ZtcIwxl2QITbN1RREti5ml/VTytC0yeBOvnZA4x4CFpdw/lCDPk0yrH9Ei5vVkXmOrExdTlT3qI7YaAzj1tUVlBd4S6LX1F7y6VLActvdHuDDuXZXzCDd/97420jrDfWZqJMlUK/EmCE5ParCeHIRIvmBxcEnGfFIsw8xQZl0HphxWOtJil8qsUWSdMyCiJYYQpMoMliO99X40AUc4/AlsyPyT5ddbKk08YrZ+rKDVHF7o29rh4vi5MmHkVgVQHKiKybWlHq+b71gIAUQk9wrJxD+dqt4igrmDSpIjfjwnd+l5UIn5fJSO5DYV4YT/4hwK7OKmuo7OFHD0WyY5YnkYEMtFgzemnRBdE8ulcT60DQpVgRMXFWHvhyCWy0L6sgj1QWDZlLpvsIvNfHsyhKFMG1frLnMt/nP0+YCcfg+v1JYeCKjeoJxB8DWcRBsjzItY0CGmzP8UYZiYKl/2u+2TgFS5r7NWH11bxoUzjKdaa1NLw+ieA8GlBFfCbfWe6YVB9ggUte4VtYFMZGxOjS2bAiYtfgTKFJv+XqORAwExG6+G2eDxIDyo80/OA9IG7Xv/jwQr7D6KDjDuULFcN/iTxuttoKrHeYz1hf5ZQlBdllwJHYx6fK2g8kha6r2JIQKocvsAXiiONqSfw== hello@world.com"
@@ -3117,6 +3139,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 
   os_profile_linux_config {
     disable_password_authentication = true
+
     ssh_keys {
       path     = "/home/myadmin/.ssh/authorized_keys"
       key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDCsTcryUl51Q2VSEHqDRNmceUFo55ZtcIwxl2QITbN1RREti5ml/VTytC0yeBOvnZA4x4CFpdw/lCDPk0yrH9Ei5vVkXmOrExdTlT3qI7YaAzj1tUVlBd4S6LX1F7y6VLActvdHuDDuXZXzCDd/97420jrDfWZqJMlUK/EmCE5ParCeHIRIvmBxcEnGfFIsw8xQZl0HphxWOtJil8qsUWSdMyCiJYYQpMoMliO99X40AUc4/AlsyPyT5ddbKk08YrZ+rKDVHF7o29rh4vi5MmHkVgVQHKiKybWlHq+b71gIAUQk9wrJxD+dqt4igrmDSpIjfjwnd+l5UIn5fJSO5DYV4YT/4hwK7OKmuo7OFHD0WyY5YnkYEMtFgzemnRBdE8ulcT60DQpVgRMXFWHvhyCWy0L6sgj1QWDZlLpvsIvNfHsyhKFMG1frLnMt/nP0+YCcfg+v1JYeCKjeoJxB8DWcRBsjzItY0CGmzP8UYZiYKl/2u+2TgFS5r7NWH11bxoUzjKdaa1NLw+ieA8GlBFfCbfWe6YVB9ggUte4VtYFMZGxOjS2bAiYtfgTKFJv+XqORAwExG6+G2eDxIDyo80/OA9IG7Xv/jwQr7D6KDjDuULFcN/iTxuttoKrHeYz1hf5ZQlBdllwJHYx6fK2g8kha6r2JIQKocvsAXiiONqSfw== hello@world.com"
@@ -3280,7 +3303,6 @@ SETTINGS
     auto_upgrade_minor_version = true
   }
 }
-
 `, rInt, location)
 }
 
@@ -3348,7 +3370,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
     version   = "latest"
   }
 }
-
 `, rInt, location)
 }
 
@@ -3442,7 +3463,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
     version   = "latest"
   }
 }
-
 `, rInt, location)
 }
 
@@ -3534,60 +3554,61 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_planManagedDisk(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
-    name = "Standard_D1_v2"
-    tier = "Standard"
+    name     = "Standard_D1_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm-%[1]d"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   network_profile {
-      name = "TestNetworkProfile-%[1]d"
-      primary = true
-      ip_configuration {
-        name = "TestIPConfiguration"
-        subnet_id = "${azurestack_subnet.test.id}"
-      }
+    name    = "TestNetworkProfile-%[1]d"
+    primary = true
+
+    ip_configuration {
+      name      = "TestIPConfiguration"
+      subnet_id = "${azurestack_subnet.test.id}"
+    }
   }
 
   plan {
-    name = "os"
-    product = "rancheros"
+    name      = "os"
+    product   = "rancheros"
     publisher = "rancher"
   }
 
   storage_profile_os_disk {
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
@@ -3604,22 +3625,22 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_customImage(rInt int, location string, userName string, password string, hostName string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_public_ip" "test" {
@@ -3720,39 +3741,40 @@ resource "azurestack_image" "test" {
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
-	storage_profile_image_reference {
-      id = "${azurestack_image.test.id}"
-	}
+  storage_profile_image_reference {
+    id = "${azurestack_image.test.id}"
+  }
 
   sku {
-    name = "Standard_D1_v2"
-    tier = "Standard"
+    name     = "Standard_D1_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm-%[1]d"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   network_profile {
-      name = "TestNetworkProfile-%[1]d"
-      primary = true
-      ip_configuration {
-        name = "TestIPConfiguration"
-        subnet_id = "${azurestack_subnet.test.id}"
-      }
+    name    = "TestNetworkProfile-%[1]d"
+    primary = true
+
+    ip_configuration {
+      name      = "TestIPConfiguration"
+      subnet_id = "${azurestack_subnet.test.id}"
+    }
   }
 
   storage_profile_os_disk {
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 }
@@ -3762,83 +3784,85 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 func testAccAzureStackVirtualMachineScaleSet_multipleNetworkProfiles(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%[1]d"
-    location = "%[2]s"
+  name     = "acctestRG-%[1]d"
+  location = "%[2]s"
 }
 
 resource "azurestack_virtual_network" "test" {
-    name = "acctvn-%[1]d"
-    address_space = ["10.0.0.0/16"]
-    location = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctvn-%[1]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_subnet" "test" {
-    name = "acctsub-%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix = "10.0.2.0/24"
+  name                 = "acctsub-%[1]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_storage_account" "test" {
-    name = "accsa%[1]d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    location = "${azurestack_resource_group.test.location}"
-    account_tier = "Standard"
-    account_replication_type = "LRS"
+  name                     = "accsa%[1]d"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "test" {
-    name = "vhds"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    container_access_type = "private"
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-  name = "acctvmss-%[1]d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctvmss-%[1]d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
   upgrade_policy_mode = "Manual"
 
   sku {
-    name = "Standard_D1_v2"
-    tier = "Standard"
+    name     = "Standard_D1_v2"
+    tier     = "Standard"
     capacity = 2
   }
 
   os_profile {
     computer_name_prefix = "testvm-%[1]d"
-    admin_username = "myadmin"
-    admin_password = "Passwword1234"
+    admin_username       = "myadmin"
+    admin_password       = "Passwword1234"
   }
 
   network_profile {
-      name = "primary-%[1]d"
-      primary = true
-      ip_configuration {
-        name = "primary"
-        subnet_id = "${azurestack_subnet.test.id}"
-      }
+    name    = "primary-%[1]d"
+    primary = true
+
+    ip_configuration {
+      name      = "primary"
+      subnet_id = "${azurestack_subnet.test.id}"
+    }
   }
 
   network_profile {
-      name = "secondary-%[1]d"
-      primary = false
-      ip_configuration {
-        name = "secondary"
-        subnet_id = "${azurestack_subnet.test.id}"
-      }
+    name    = "secondary-%[1]d"
+    primary = false
+
+    ip_configuration {
+      name      = "secondary"
+      subnet_id = "${azurestack_subnet.test.id}"
+    }
   }
 
   storage_profile_os_disk {
-    name = "osDiskProfile"
-    caching       = "ReadWrite"
-    create_option = "FromImage"
+    name           = "osDiskProfile"
+    caching        = "ReadWrite"
+    create_option  = "FromImage"
     vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
   }
 

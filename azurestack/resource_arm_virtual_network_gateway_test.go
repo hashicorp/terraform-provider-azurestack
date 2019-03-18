@@ -247,44 +247,44 @@ func testCheckAzureStackVirtualNetworkGatewayDestroy(s *terraform.State) error {
 func testAccAzureStackVirtualNetworkGateway_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name = "acctestRG-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
 resource "azurestack_virtual_network" "test" {
-  name = "acctestvn-%d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctestvn-%d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  address_space = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "test" {
-  name = "GatewaySubnet"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                 = "GatewaySubnet"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
   virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix = "10.0.1.0/24"
+  address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_public_ip" "test" {
-  name = "acctestpip-%d"
-  location = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                         = "acctestpip-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "test" {
-  name = "acctestvng-%d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctestvng-%d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type = "Vpn"
+  type     = "Vpn"
   vpn_type = "RouteBased"
-  sku = "Basic"
+  sku      = "Basic"
 
   ip_configuration {
-    public_ip_address_id = "${azurestack_public_ip.test.id}"
+    public_ip_address_id          = "${azurestack_public_ip.test.id}"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
   }
 }
 `, rInt, location, rInt, rInt, rInt)
@@ -293,44 +293,44 @@ resource "azurestack_virtual_network_gateway" "test" {
 func testAccAzureStackVirtualNetworkGateway_lowerCaseSubnetName(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name = "acctestRG-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
 resource "azurestack_virtual_network" "test" {
-  name = "acctestvn-%d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctestvn-%d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  address_space = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "test" {
-  name = "gatewaySubnet"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                 = "gatewaySubnet"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
   virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix = "10.0.1.0/24"
+  address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_public_ip" "test" {
-  name = "acctestpip-%d"
-  location = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                         = "acctestpip-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "test" {
-  name = "acctestvng-%d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctestvng-%d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type = "Vpn"
+  type     = "Vpn"
   vpn_type = "RouteBased"
-  sku = "Basic"
+  sku      = "Basic"
 
   ip_configuration {
-    public_ip_address_id = "${azurestack_public_ip.test.id}"
+    public_ip_address_id          = "${azurestack_public_ip.test.id}"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
   }
 }
 `, rInt, location, rInt, rInt, rInt)
@@ -339,44 +339,44 @@ resource "azurestack_virtual_network_gateway" "test" {
 func testAccAzureStackVirtualNetworkGateway_vpnGw1(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name = "acctestRG-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
 resource "azurestack_virtual_network" "test" {
-  name = "acctestvn-%d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctestvn-%d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  address_space = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "test" {
-  name = "GatewaySubnet"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                 = "GatewaySubnet"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
   virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix = "10.0.1.0/24"
+  address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_public_ip" "test" {
-  name = "acctestpip-%d"
-  location = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                         = "acctestpip-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "test" {
-  name = "acctestvng-%d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctestvng-%d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type = "Vpn"
+  type     = "Vpn"
   vpn_type = "RouteBased"
-  sku = "VpnGw1"
+  sku      = "VpnGw1"
 
   ip_configuration {
-    public_ip_address_id = "${azurestack_public_ip.test.id}"
+    public_ip_address_id          = "${azurestack_public_ip.test.id}"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
   }
 }
 `, rInt, location, rInt, rInt, rInt)
@@ -386,67 +386,65 @@ func testAccAzureStackVirtualNetworkGateway_activeActive(rInt int, location stri
 
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name = "acctestRG-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
 resource "azurestack_virtual_network" "test" {
-  name = "acctestvn-%d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctestvn-%d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  address_space = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "test" {
-  name = "GatewaySubnet"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                 = "GatewaySubnet"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
   virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix = "10.0.1.0/24"
+  address_prefix       = "10.0.1.0/24"
 }
 
-
 resource "azurestack_public_ip" "first" {
-  name = "acctestpip1-%d"
-  location = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                         = "acctestpip1-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_public_ip" "second" {
   name = "acctestpip2-%d"
 
-  location = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "test" {
-  depends_on = ["azurestack_public_ip.first", "azurestack_public_ip.second"]
-  name = "acctestvng-%d"
-  location = "${azurestack_resource_group.test.location}"
+  depends_on          = ["azurestack_public_ip.first", "azurestack_public_ip.second"]
+  name                = "acctestvng-%d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type = "Vpn"
+  type     = "Vpn"
   vpn_type = "RouteBased"
-  sku = "VpnGw1"
+  sku      = "VpnGw1"
 
   active_active = true
-  enable_bgp = true
+  enable_bgp    = true
 
   ip_configuration {
-    name = "gw-ip1"
+    name                 = "gw-ip1"
     public_ip_address_id = "${azurestack_public_ip.first.id}"
 
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
   }
 
-
   ip_configuration {
-    name = "gw-ip2"
-    public_ip_address_id = "${azurestack_public_ip.second.id}"
+    name                          = "gw-ip2"
+    public_ip_address_id          = "${azurestack_public_ip.second.id}"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
   }
 
   bgp_settings {
@@ -460,55 +458,56 @@ resource "azurestack_virtual_network_gateway" "test" {
 func testAccAzureStackVirtualNetworkGateway_vpnClientConfig(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name = "acctestRG-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
 resource "azurestack_virtual_network" "test" {
-  name = "acctestvn-%d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctestvn-%d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  address_space = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "test" {
-  name = "GatewaySubnet"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                 = "GatewaySubnet"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
   virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix = "10.0.1.0/24"
+  address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_public_ip" "test" {
-  name = "acctestpip-%d"
-  location = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                         = "acctestpip-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "test" {
-  depends_on = ["azurestack_public_ip.test"]
-  name = "acctestvng-%d"
-  location = "${azurestack_resource_group.test.location}"
+  depends_on          = ["azurestack_public_ip.test"]
+  name                = "acctestvng-%d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type = "Vpn"
+  type     = "Vpn"
   vpn_type = "RouteBased"
-	sku  = "Basic"
-	#sku = "VpnGw1"
+  sku      = "Basic"
+
+  #sku = "VpnGw1"
 
   ip_configuration {
-    public_ip_address_id = "${azurestack_public_ip.test.id}"
+    public_ip_address_id          = "${azurestack_public_ip.test.id}"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
   }
-
   vpn_client_configuration {
-	address_space = ["10.2.0.0/24"]
-	#vpn_client_protocols, radius_server_address and radius_server_certificate are not supported yet.
-	#vpn_client_protocols = ["SSTP", "IkeV2"]
+    address_space = ["10.2.0.0/24"]
 
-	#radius_server_address = "1.2.3.4"
-  #  radius_server_secret = "1234"
+    #vpn_client_protocols, radius_server_address and radius_server_certificate are not supported yet.
+    #vpn_client_protocols = ["SSTP", "IkeV2"]
+
+    #radius_server_address = "1.2.3.4"
+    #  radius_server_secret = "1234"
   }
 }
 `, rInt, location, rInt, rInt, rInt)
@@ -517,44 +516,44 @@ resource "azurestack_virtual_network_gateway" "test" {
 func testAccAzureStackVirtualNetworkGateway_sku(rInt int, location string, sku string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name = "acctestRG-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
 resource "azurestack_virtual_network" "test" {
-  name = "acctestvn-%d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctestvn-%d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  address_space = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "test" {
-  name = "GatewaySubnet"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                 = "GatewaySubnet"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
   virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix = "10.0.1.0/24"
+  address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_public_ip" "test" {
-  name = "acctestpip-%d"
-  location = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                         = "acctestpip-%d"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "test" {
-  name = "acctestvng-%d"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctestvng-%d"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type = "Vpn"
+  type     = "Vpn"
   vpn_type = "RouteBased"
-  sku = "%s"
+  sku      = "%s"
 
   ip_configuration {
-    public_ip_address_id = "${azurestack_public_ip.test.id}"
+    public_ip_address_id          = "${azurestack_public_ip.test.id}"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
   }
 }
 `, rInt, location, rInt, rInt, rInt, sku)

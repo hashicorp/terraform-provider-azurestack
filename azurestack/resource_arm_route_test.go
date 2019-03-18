@@ -176,23 +176,23 @@ func testCheckAzureStackRouteDestroy(s *terraform.State) error {
 func testAccAzureStackRoute_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name     = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_route_table" "test" {
-    name                = "acctestrt%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctestrt%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_route" "test" {
-    name                = "acctestroute%d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    route_table_name    = "${azurestack_route_table.test.name}"
+  name                = "acctestroute%d"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  route_table_name    = "${azurestack_route_table.test.name}"
 
-    address_prefix = "10.1.0.0/16"
-    next_hop_type  = "vnetlocal"
+  address_prefix = "10.1.0.0/16"
+  next_hop_type  = "vnetlocal"
 }
 `, rInt, location, rInt, rInt)
 }
@@ -200,23 +200,23 @@ resource "azurestack_route" "test" {
 func testAccAzureStackRoute_multipleRoutes(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name     = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_route_table" "test" {
-    name                = "acctestrt%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctestrt%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 
 resource "azurestack_route" "test1" {
-    name                = "acctestroute%d"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    route_table_name    = "${azurestack_route_table.test.name}"
+  name                = "acctestroute%d"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  route_table_name    = "${azurestack_route_table.test.name}"
 
-    address_prefix = "10.2.0.0/16"
-    next_hop_type  = "none"
+  address_prefix = "10.2.0.0/16"
+  next_hop_type  = "none"
 }
 `, rInt, location, rInt, rInt)
 }

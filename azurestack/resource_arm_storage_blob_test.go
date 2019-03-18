@@ -496,38 +496,38 @@ func testCheckAzureStackStorageBlobDestroy(s *terraform.State) error {
 func testAccAzureStackStorageBlob_basic(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_storage_account" "test" {
-    name                     = "acctestacc%s"
-    resource_group_name      = "${azurestack_resource_group.test.name}"
-    location                 = "${azurestack_resource_group.test.location}"
-    account_tier             = "Standard"
-    account_replication_type = "LRS"
+  name                     = "acctestacc%s"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "test" {
-    name = "vhds"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    container_access_type = "private"
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
 }
 
 resource "azurestack_storage_blob" "test" {
-    name = "herpderp1.vhd"
+  name = "herpderp1.vhd"
 
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    storage_container_name = "${azurestack_storage_container.test.name}"
+  resource_group_name    = "${azurestack_resource_group.test.name}"
+  storage_account_name   = "${azurestack_storage_account.test.name}"
+  storage_container_name = "${azurestack_storage_container.test.name}"
 
-    type = "page"
-    size = 5120
+  type = "page"
+  size = 5120
 }
 `, rInt, location, rString)
 }
@@ -535,40 +535,40 @@ resource "azurestack_storage_blob" "test" {
 func testAccAzureStackStorageBlobBlock_source(rInt int, rString string, sourceBlobName string, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_storage_account" "source" {
-    name                     = "acctestacc%s"
-    resource_group_name      = "${azurestack_resource_group.test.name}"
-    location                 = "${azurestack_resource_group.test.location}"
-    account_tier             = "Standard"
-    account_replication_type = "LRS"
+  name                     = "acctestacc%s"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "source" {
-    name = "source"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.source.name}"
-    container_access_type = "blob"
+  name                  = "source"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.source.name}"
+  container_access_type = "blob"
 }
 
 resource "azurestack_storage_blob" "source" {
-    name = "source.vhd"
+  name = "source.vhd"
 
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.source.name}"
-    storage_container_name = "${azurestack_storage_container.source.name}"
+  resource_group_name    = "${azurestack_resource_group.test.name}"
+  storage_account_name   = "${azurestack_storage_account.source.name}"
+  storage_container_name = "${azurestack_storage_container.source.name}"
 
-    type = "block"
-    source = "%s"
-    parallelism = 4
-    attempts = 2
+  type        = "block"
+  source      = "%s"
+  parallelism = 4
+  attempts    = 2
 }
 `, rInt, location, rString, sourceBlobName)
 }
@@ -576,40 +576,40 @@ resource "azurestack_storage_blob" "source" {
 func testAccAzureStackStorageBlobPage_source(rInt int, rString string, sourceBlobName string, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_storage_account" "source" {
-    name                     = "acctestacc%s"
-    resource_group_name      = "${azurestack_resource_group.test.name}"
-    location                 = "${azurestack_resource_group.test.location}"
-    account_tier             = "Standard"
-    account_replication_type = "LRS"
+  name                     = "acctestacc%s"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "source" {
-    name = "source"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.source.name}"
-    container_access_type = "blob"
+  name                  = "source"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.source.name}"
+  container_access_type = "blob"
 }
 
 resource "azurestack_storage_blob" "source" {
-    name = "source.vhd"
+  name = "source.vhd"
 
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.source.name}"
-    storage_container_name = "${azurestack_storage_container.source.name}"
+  resource_group_name    = "${azurestack_resource_group.test.name}"
+  storage_account_name   = "${azurestack_storage_account.source.name}"
+  storage_container_name = "${azurestack_storage_container.source.name}"
 
-    type = "page"
-    source = "%s"
-    parallelism = 3
-    attempts = 3
+  type        = "page"
+  source      = "%s"
+  parallelism = 3
+  attempts    = 3
 }
 `, rInt, location, rString, sourceBlobName)
 }
@@ -617,48 +617,48 @@ resource "azurestack_storage_blob" "source" {
 func testAccAzureStackStorageBlob_source_uri(rInt int, rString string, sourceBlobName string, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_storage_account" "source" {
-    name                     = "acctestacc%s"
-    resource_group_name      = "${azurestack_resource_group.test.name}"
-    location                 = "${azurestack_resource_group.test.location}"
-    account_tier             = "Standard"
-    account_replication_type = "LRS"
+  name                     = "acctestacc%s"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "source" {
-    name = "source"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.source.name}"
-    container_access_type = "blob"
+  name                  = "source"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.source.name}"
+  container_access_type = "blob"
 }
 
 resource "azurestack_storage_blob" "source" {
-    name = "source.vhd"
+  name = "source.vhd"
 
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.source.name}"
-    storage_container_name = "${azurestack_storage_container.source.name}"
+  resource_group_name    = "${azurestack_resource_group.test.name}"
+  storage_account_name   = "${azurestack_storage_account.source.name}"
+  storage_container_name = "${azurestack_storage_container.source.name}"
 
-    type = "block"
-    source = "%s"
-    parallelism = 4
-    attempts = 2
+  type        = "block"
+  source      = "%s"
+  parallelism = 4
+  attempts    = 2
 }
 
 resource "azurestack_storage_blob" "destination" {
-    name = "destination.vhd"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.source.name}"
-    storage_container_name = "${azurestack_storage_container.source.name}"
-    source_uri = "${azurestack_storage_blob.source.url}"
+  name                   = "destination.vhd"
+  resource_group_name    = "${azurestack_resource_group.test.name}"
+  storage_account_name   = "${azurestack_storage_account.source.name}"
+  storage_container_name = "${azurestack_storage_container.source.name}"
+  source_uri             = "${azurestack_storage_blob.source.url}"
 }
 `, rInt, location, rString, sourceBlobName)
 }

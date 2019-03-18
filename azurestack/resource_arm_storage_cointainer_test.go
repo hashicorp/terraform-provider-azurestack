@@ -244,27 +244,27 @@ func TestValidateArmStorageContainerName(t *testing.T) {
 func testAccAzureStackStorageContainer_basic(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_storage_account" "test" {
-    name                     = "acctestacc%s"
-    resource_group_name      = "${azurestack_resource_group.test.name}"
-    location                 = "${azurestack_resource_group.test.location}"
-    account_tier             = "Standard"
-    account_replication_type = "LRS"
+  name                     = "acctestacc%s"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "test" {
-    name = "vhds"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    container_access_type = "private"
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
 }
 `, rInt, location, rString)
 }
@@ -272,27 +272,27 @@ resource "azurestack_storage_container" "test" {
 func testAccAzureStackStorageContainer_root(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name     = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_storage_account" "test" {
-    name                     = "acctestacc%s"
-    resource_group_name      = "${azurestack_resource_group.test.name}"
-    location                 = "${azurestack_resource_group.test.location}"
-    account_tier             = "Standard"
-    account_replication_type = "LRS"
+  name                     = "acctestacc%s"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-    tags {
-        environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_storage_container" "test" {
-    name = "$root"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    storage_account_name = "${azurestack_storage_account.test.name}"
-    container_access_type = "private"
+  name                  = "$root"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
 }
 `, rInt, location, rString)
 }

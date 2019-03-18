@@ -181,65 +181,65 @@ variable "random" {
 }
 
 resource "azurestack_resource_group" "test" {
-  name = "acctestRG-${var.random}"
+  name     = "acctestRG-${var.random}"
   location = "%s"
 }
 
 resource "azurestack_virtual_network" "test" {
-  name = "acctestvn-${var.random}"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctestvn-${var.random}"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  address_space = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "test" {
-  name = "GatewaySubnet"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                 = "GatewaySubnet"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
   virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix = "10.0.1.0/24"
+  address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_public_ip" "test" {
-  name = "acctest-${var.random}"
-  location = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                         = "acctest-${var.random}"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "test" {
-  name = "acctest-${var.random}"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctest-${var.random}"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type = "Vpn"
+  type     = "Vpn"
   vpn_type = "RouteBased"
-  sku = "Basic"
+  sku      = "Basic"
 
   ip_configuration {
-    name = "vnetGatewayConfig"
-    public_ip_address_id = "${azurestack_public_ip.test.id}"
+    name                          = "vnetGatewayConfig"
+    public_ip_address_id          = "${azurestack_public_ip.test.id}"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
   }
 }
 
 resource "azurestack_local_network_gateway" "test" {
-  name = "acctest-${var.random}"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctest-${var.random}"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
   gateway_address = "168.62.225.23"
-  address_space = ["10.1.1.0/24"]
+  address_space   = ["10.1.1.0/24"]
 }
 
 resource "azurestack_virtual_network_gateway_connection" "test" {
-  name = "acctest-${var.random}"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctest-${var.random}"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type = "IPsec"
+  type                       = "IPsec"
   virtual_network_gateway_id = "${azurestack_virtual_network_gateway.test.id}"
-  local_network_gateway_id = "${azurestack_local_network_gateway.test.id}"
+  local_network_gateway_id   = "${azurestack_local_network_gateway.test.id}"
 
   shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
 }
@@ -261,110 +261,110 @@ variable "shared_key" {
 }
 
 resource "azurestack_resource_group" "test_1" {
-  name = "acctestRG-${var.random1}"
+  name     = "acctestRG-${var.random1}"
   location = "%s"
 }
 
 resource "azurestack_virtual_network" "test_1" {
-  name = "acctestvn-${var.random1}"
-  location = "${azurestack_resource_group.test_1.location}"
+  name                = "acctestvn-${var.random1}"
+  location            = "${azurestack_resource_group.test_1.location}"
   resource_group_name = "${azurestack_resource_group.test_1.name}"
-  address_space = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "test_1" {
-  name = "GatewaySubnet"
-  resource_group_name = "${azurestack_resource_group.test_1.name}"
+  name                 = "GatewaySubnet"
+  resource_group_name  = "${azurestack_resource_group.test_1.name}"
   virtual_network_name = "${azurestack_virtual_network.test_1.name}"
-  address_prefix = "10.0.1.0/24"
+  address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_public_ip" "test_1" {
-  name = "acctest-${var.random1}"
-  location = "${azurestack_resource_group.test_1.location}"
-  resource_group_name = "${azurestack_resource_group.test_1.name}"
+  name                         = "acctest-${var.random1}"
+  location                     = "${azurestack_resource_group.test_1.location}"
+  resource_group_name          = "${azurestack_resource_group.test_1.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "test_1" {
-  name = "acctest-${var.random1}"
-  location = "${azurestack_resource_group.test_1.location}"
+  name                = "acctest-${var.random1}"
+  location            = "${azurestack_resource_group.test_1.location}"
   resource_group_name = "${azurestack_resource_group.test_1.name}"
 
-  type = "Vpn"
+  type     = "Vpn"
   vpn_type = "RouteBased"
-  sku = "Basic"
+  sku      = "Basic"
 
   ip_configuration {
-    name = "vnetGatewayConfig"
-    public_ip_address_id = "${azurestack_public_ip.test_1.id}"
+    name                          = "vnetGatewayConfig"
+    public_ip_address_id          = "${azurestack_public_ip.test_1.id}"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.test_1.id}"
+    subnet_id                     = "${azurestack_subnet.test_1.id}"
   }
 }
 
 resource "azurestack_virtual_network_gateway_connection" "test_1" {
-  name = "acctest-${var.random1}"
-  location = "${azurestack_resource_group.test_1.location}"
+  name                = "acctest-${var.random1}"
+  location            = "${azurestack_resource_group.test_1.location}"
   resource_group_name = "${azurestack_resource_group.test_1.name}"
 
-  type = "Vnet2Vnet"
-  virtual_network_gateway_id = "${azurestack_virtual_network_gateway.test_1.id}"
+  type                            = "Vnet2Vnet"
+  virtual_network_gateway_id      = "${azurestack_virtual_network_gateway.test_1.id}"
   peer_virtual_network_gateway_id = "${azurestack_virtual_network_gateway.test_2.id}"
 
   shared_key = "${var.shared_key}"
 }
 
 resource "azurestack_resource_group" "test_2" {
-  name = "acctestRG-${var.random2}"
+  name     = "acctestRG-${var.random2}"
   location = "%s"
 }
 
 resource "azurestack_virtual_network" "test_2" {
-  name = "acctest-${var.random2}"
-  location = "${azurestack_resource_group.test_2.location}"
+  name                = "acctest-${var.random2}"
+  location            = "${azurestack_resource_group.test_2.location}"
   resource_group_name = "${azurestack_resource_group.test_2.name}"
-  address_space = ["10.1.0.0/16"]
+  address_space       = ["10.1.0.0/16"]
 }
 
 resource "azurestack_subnet" "test_2" {
-  name = "GatewaySubnet"
-  resource_group_name = "${azurestack_resource_group.test_2.name}"
+  name                 = "GatewaySubnet"
+  resource_group_name  = "${azurestack_resource_group.test_2.name}"
   virtual_network_name = "${azurestack_virtual_network.test_2.name}"
-  address_prefix = "10.1.1.0/24"
+  address_prefix       = "10.1.1.0/24"
 }
 
 resource "azurestack_public_ip" "test_2" {
-  name = "acctest-${var.random2}"
-  location = "${azurestack_resource_group.test_2.location}"
-  resource_group_name = "${azurestack_resource_group.test_2.name}"
+  name                         = "acctest-${var.random2}"
+  location                     = "${azurestack_resource_group.test_2.location}"
+  resource_group_name          = "${azurestack_resource_group.test_2.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "test_2" {
-  name = "acctest-${var.random2}"
-  location = "${azurestack_resource_group.test_2.location}"
+  name                = "acctest-${var.random2}"
+  location            = "${azurestack_resource_group.test_2.location}"
   resource_group_name = "${azurestack_resource_group.test_2.name}"
 
-  type = "Vpn"
+  type     = "Vpn"
   vpn_type = "RouteBased"
-  sku = "Basic"
+  sku      = "Basic"
 
   ip_configuration {
-    name = "vnetGatewayConfig"
-    public_ip_address_id = "${azurestack_public_ip.test_2.id}"
+    name                          = "vnetGatewayConfig"
+    public_ip_address_id          = "${azurestack_public_ip.test_2.id}"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.test_2.id}"
+    subnet_id                     = "${azurestack_subnet.test_2.id}"
   }
 }
 
 resource "azurestack_virtual_network_gateway_connection" "test_2" {
-  name = "acctest-${var.random2}"
-  location = "${azurestack_resource_group.test_2.location}"
+  name                = "acctest-${var.random2}"
+  location            = "${azurestack_resource_group.test_2.location}"
   resource_group_name = "${azurestack_resource_group.test_2.name}"
 
-  type = "Vnet2Vnet"
-  virtual_network_gateway_id = "${azurestack_virtual_network_gateway.test_2.id}"
+  type                            = "Vnet2Vnet"
+  virtual_network_gateway_id      = "${azurestack_virtual_network_gateway.test_2.id}"
   peer_virtual_network_gateway_id = "${azurestack_virtual_network_gateway.test_1.id}"
 
   shared_key = "${var.shared_key}"
@@ -379,78 +379,80 @@ variable "random" {
 }
 
 resource "azurestack_resource_group" "test" {
-  name = "acctestRG-${var.random}"
+  name     = "acctestRG-${var.random}"
   location = "%s"
 }
 
 resource "azurestack_virtual_network" "test" {
-  name = "acctestvn-${var.random}"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctestvn-${var.random}"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  address_space = ["10.0.0.0/16"]
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "test" {
-  name = "GatewaySubnet"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                 = "GatewaySubnet"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
   virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix = "10.0.1.0/24"
+  address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_public_ip" "test" {
-  name = "acctest-${var.random}"
-  location = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                         = "acctest-${var.random}"
+  location                     = "${azurestack_resource_group.test.location}"
+  resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "test" {
-  name = "acctest-${var.random}"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctest-${var.random}"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type = "Vpn"
+  type     = "Vpn"
   vpn_type = "RouteBased"
+
   #sku = "VpnGw1"
   sku = "Basic"
+
   ip_configuration {
-    name = "vnetGatewayConfig"
-    public_ip_address_id = "${azurestack_public_ip.test.id}"
+    name                          = "vnetGatewayConfig"
+    public_ip_address_id          = "${azurestack_public_ip.test.id}"
     private_ip_address_allocation = "Dynamic"
-    subnet_id = "${azurestack_subnet.test.id}"
+    subnet_id                     = "${azurestack_subnet.test.id}"
   }
 }
 
 resource "azurestack_local_network_gateway" "test" {
-  name = "acctest-${var.random}"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctest-${var.random}"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
   gateway_address = "168.62.225.23"
-  address_space = ["10.1.1.0/24"]
+  address_space   = ["10.1.1.0/24"]
 }
 
 resource "azurestack_virtual_network_gateway_connection" "test" {
-  name = "acctest-${var.random}"
-  location = "${azurestack_resource_group.test.location}"
+  name                = "acctest-${var.random}"
+  location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  type = "IPsec"
+  type                       = "IPsec"
   virtual_network_gateway_id = "${azurestack_virtual_network_gateway.test.id}"
-  local_network_gateway_id = "${azurestack_local_network_gateway.test.id}"
+  local_network_gateway_id   = "${azurestack_local_network_gateway.test.id}"
 
   use_policy_based_traffic_selectors = true
-  routing_weight = 20
+  routing_weight                     = 20
 
   ipsec_policy {
-    dh_group = "DHGroup14"
-    ike_encryption = "AES256"
-    ike_integrity = "SHA256"
+    dh_group         = "DHGroup14"
+    ike_encryption   = "AES256"
+    ike_integrity    = "SHA256"
     ipsec_encryption = "AES256"
-    ipsec_integrity = "SHA256"
-    pfs_group = "PFS2048"
-    sa_datasize = 102400000
-    sa_lifetime = 27000
+    ipsec_integrity  = "SHA256"
+    pfs_group        = "PFS2048"
+    sa_datasize      = 102400000
+    sa_lifetime      = 27000
   }
 
   shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"

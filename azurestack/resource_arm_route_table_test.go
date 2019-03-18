@@ -360,14 +360,14 @@ func testCheckAzureStackRouteTableDestroy(s *terraform.State) error {
 func testAccAzureStackRouteTable_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name     = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_route_table" "test" {
-    name                = "acctestrt%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctestrt%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 }
 `, rInt, location, rInt)
 }
@@ -375,21 +375,20 @@ resource "azurestack_route_table" "test" {
 func testAccAzureStackRouteTable_complete(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name     = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_route_table" "test" {
-    name                = "acctestrt%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctestrt%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
-    route {
-        name           = "acctestRoute"
-          address_prefix = "10.1.0.0/16"
-          next_hop_type  = "vnetlocal"
-    }
-
+  route {
+    name           = "acctestRoute"
+    address_prefix = "10.1.0.0/16"
+    next_hop_type  = "vnetlocal"
+  }
 }
 `, rInt, location, rInt)
 }
@@ -397,20 +396,20 @@ resource "azurestack_route_table" "test" {
 func testAccAzureStackRouteTable_singleRoute(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name     = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_route_table" "test" {
-    name                = "acctestrt%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctestrt%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
-    route {
-        name           = "route1"
-          address_prefix = "10.1.0.0/16"
-          next_hop_type  = "vnetlocal"
-    }
+  route {
+    name           = "route1"
+    address_prefix = "10.1.0.0/16"
+    next_hop_type  = "vnetlocal"
+  }
 }
 `, rInt, location, rInt)
 }
@@ -418,15 +417,15 @@ resource "azurestack_route_table" "test" {
 func testAccAzureStackRouteTable_singleRouteRemoved(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name     = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_route_table" "test" {
-    name                = "acctestrt%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-      route               = []
+  name                = "acctestrt%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  route               = []
 }
 `, rInt, location, rInt)
 }
@@ -434,26 +433,26 @@ resource "azurestack_route_table" "test" {
 func testAccAzureStackRouteTable_multipleRoutes(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name     = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_route_table" "test" {
-    name                = "acctestrt%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctestrt%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
-    route {
-        name             = "route1"
-          address_prefix = "10.1.0.0/16"
-          next_hop_type  = "vnetlocal"
-    }
+  route {
+    name           = "route1"
+    address_prefix = "10.1.0.0/16"
+    next_hop_type  = "vnetlocal"
+  }
 
-    route {
-        name             = "route2"
-          address_prefix = "10.2.0.0/16"
-          next_hop_type  = "vnetlocal"
-    }
+  route {
+    name           = "route2"
+    address_prefix = "10.2.0.0/16"
+    next_hop_type  = "vnetlocal"
+  }
 }
 `, rInt, location, rInt)
 }
@@ -461,25 +460,25 @@ resource "azurestack_route_table" "test" {
 func testAccAzureStackRouteTable_withTags(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name     = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_route_table" "test" {
-    name                = "acctestrt%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctestrt%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
-    route {
-        name           = "route1"
-        address_prefix = "10.1.0.0/16"
-        next_hop_type  = "vnetlocal"
-    }
+  route {
+    name           = "route1"
+    address_prefix = "10.1.0.0/16"
+    next_hop_type  = "vnetlocal"
+  }
 
-    tags {
-          environment = "Production"
-          cost_center = "MSFT"
-    }
+  tags {
+    environment = "Production"
+    cost_center = "MSFT"
+  }
 }
 `, rInt, location, rInt)
 }
@@ -487,24 +486,24 @@ resource "azurestack_route_table" "test" {
 func testAccAzureStackRouteTable_withTagsUpdate(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name     = "acctestRG-%d"
-    location = "%s"
+  name     = "acctestRG-%d"
+  location = "%s"
 }
 
 resource "azurestack_route_table" "test" {
-    name                = "acctestrt%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctestrt%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
-    route {
-        name           = "route1"
-        address_prefix = "10.1.0.0/16"
-        next_hop_type  = "vnetlocal"
-    }
+  route {
+    name           = "route1"
+    address_prefix = "10.1.0.0/16"
+    next_hop_type  = "vnetlocal"
+  }
 
-    tags {
-          environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 `, rInt, location, rInt)
 }
@@ -512,46 +511,47 @@ resource "azurestack_route_table" "test" {
 func testAccAzureStackRouteTable_withTagsSubnet(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name      = "acctestRG-%d"
-    location  = "%s"
-    tags {
-          environment = "staging"
-    }
+  name     = "acctestRG-%d"
+  location = "%s"
+
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_virtual_network" "test" {
-    name                = "acctestvirtnet%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    address_space       = ["10.0.0.0/16"]
+  name                = "acctestvirtnet%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  address_space       = ["10.0.0.0/16"]
 
-      tags {
-          environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 
 resource "azurestack_subnet" "subnet1" {
-    name                 = "subnet1"
-    resource_group_name  = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix       = "10.0.1.0/24"
-    route_table_id       = "${azurestack_route_table.test.id}"
+  name                 = "subnet1"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.1.0/24"
+  route_table_id       = "${azurestack_route_table.test.id}"
 }
 
 resource "azurestack_route_table" "test" {
-    name                = "acctestrt%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctestrt%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
-    route {
-        name           = "route1"
-        address_prefix = "10.1.0.0/16"
-        next_hop_type  = "vnetlocal"
-    }
+  route {
+    name           = "route1"
+    address_prefix = "10.1.0.0/16"
+    next_hop_type  = "vnetlocal"
+  }
 
-    tags {
-          environment = "staging"
-    }
+  tags {
+    environment = "staging"
+  }
 }
 `, rInt, location, rInt, rInt)
 }
@@ -559,49 +559,50 @@ resource "azurestack_route_table" "test" {
 func testAccAzureStackRouteTable_withAddTagsSubnet(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-    name     = "acctestRG-%d"
-    location = "%s"
-    tags {
-        environment = "staging"
-        cloud       = "Azure"
-    }
+  name     = "acctestRG-%d"
+  location = "%s"
+
+  tags {
+    environment = "staging"
+    cloud       = "Azure"
+  }
 }
 
 resource "azurestack_virtual_network" "test" {
-    name                = "acctestvirtnet%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
-    address_space       = ["10.0.0.0/16"]
+  name                = "acctestvirtnet%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+  address_space       = ["10.0.0.0/16"]
 
-      tags {
-          environment = "staging"
-          cloud       = "Azure"
-    }
+  tags {
+    environment = "staging"
+    cloud       = "Azure"
+  }
 }
 
 resource "azurestack_subnet" "subnet1" {
-    name                 = "subnet1"
-    resource_group_name  = "${azurestack_resource_group.test.name}"
-    virtual_network_name = "${azurestack_virtual_network.test.name}"
-    address_prefix       = "10.0.1.0/24"
-    route_table_id       = "${azurestack_route_table.test.id}"
+  name                 = "subnet1"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.1.0/24"
+  route_table_id       = "${azurestack_route_table.test.id}"
 }
 
 resource "azurestack_route_table" "test" {
-    name                 = "acctestrt%d"
-    location            = "${azurestack_resource_group.test.location}"
-    resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = "acctestrt%d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
 
-    route {
-        name           = "route1"
-        address_prefix = "10.1.0.0/16"
-        next_hop_type  = "vnetlocal"
-    }
+  route {
+    name           = "route1"
+    address_prefix = "10.1.0.0/16"
+    next_hop_type  = "vnetlocal"
+  }
 
-    tags {
-          environment = "staging"
-          cloud       = "Azure"
-    }
+  tags {
+    environment = "staging"
+    cloud       = "Azure"
+  }
 }
 `, rInt, location, rInt, rInt)
 }

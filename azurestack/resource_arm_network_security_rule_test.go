@@ -325,17 +325,17 @@ resource "azurestack_network_security_group" "test1" {
 }
 
 resource "azurestack_network_security_rule" "test1" {
-  name                         = "test123"
-  priority                     = 100
-  direction                    = "Outbound"
-  access                       = "Allow"
-  protocol                     = "Tcp"
-	source_port_range            = "*"
-	destination_port_range       = "*"
-  source_address_prefix        = "10.0.0.0/8"
-  destination_address_prefix   = "172.16.0.0/20"
-  resource_group_name          = "${azurestack_resource_group.test1.name}"
-  network_security_group_name  = "${azurestack_network_security_group.test1.name}"
+  name                        = "test123"
+  priority                    = 100
+  direction                   = "Outbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefix       = "10.0.0.0/8"
+  destination_address_prefix  = "172.16.0.0/20"
+  resource_group_name         = "${azurestack_resource_group.test1.name}"
+  network_security_group_name = "${azurestack_network_security_group.test1.name}"
 }
 `, rInt, location)
 }
@@ -375,8 +375,8 @@ resource "azurestack_network_security_rule" "test1" {
   protocol                                   = "Tcp"
   source_application_security_group_ids      = ["${azurestack_application_security_group.first.id}"]
   destination_application_security_group_ids = ["${azurestack_application_security_group.second.id}"]
-  source_port_ranges                         = [ "10000-40000" ]
-  destination_port_ranges                    = [ "80", "443", "8080", "8190" ]
+  source_port_ranges                         = ["10000-40000"]
+  destination_port_ranges                    = ["80", "443", "8080", "8190"]
 }
 `, rInt, location, rInt, rInt, rInt)
 }

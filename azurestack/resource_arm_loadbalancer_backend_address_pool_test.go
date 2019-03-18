@@ -208,7 +208,6 @@ resource "azurestack_lb_backend_address_pool" "test" {
   loadbalancer_id     = "${azurestack_lb.test.id}"
   name                = "%s"
 }
-
 `, rInt, location, rInt, rInt, rInt, addressPoolName)
 }
 

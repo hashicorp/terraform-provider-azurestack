@@ -523,7 +523,7 @@ resource "azurestack_template_deployment" "test" {
 }
 DEPLOY
 
-  parameters {
+  parameters = {
     dnsLabelPrefix     = "terraform-test-%d"
     storageAccountType = "Standard_LRS"
   }
@@ -647,7 +647,7 @@ resource "azurestack_template_deployment" "test" {
 }
 DEPLOY
 
-  parameters {
+  parameters = {
     dnsLabelPrefix     = "terraform-test-%d"
     storageAccountType = "Standard_LRS"
   }
@@ -716,7 +716,7 @@ resource "azurestack_template_deployment" "test" {
 }
 DEPLOY
 
-  parameters {
+  parameters = {
     storageAccountType = "Standard_GRS"
   }
 

@@ -105,8 +105,8 @@ func TestAccAzureStackTemplateDeployment_withOutputs(t *testing.T) {
 					testCheckAzureStackTemplateDeploymentExists("azurestack_template_deployment.test"),
 					resource.TestCheckOutput("tfIntOutput", "-123"),
 					resource.TestCheckOutput("tfStringOutput", "Standard_LRS"),
-					resource.TestCheckOutput("tfFalseOutput", "0"),
-					resource.TestCheckOutput("tfTrueOutput", "1"),
+					resource.TestCheckOutput("tfFalseOutput", "false"),
+					resource.TestCheckOutput("tfTrueOutput", "true"),
 					resource.TestCheckResourceAttr("azurestack_template_deployment.test", "outputs.stringOutput", "Standard_LRS"),
 				),
 			},
@@ -344,7 +344,7 @@ resource "azurestack_storage_container" "using-outputs" {
 data "azurestack_client_config" "current" {}
 
 locals {
-  "templated-file" = <<TPL
+  templated-file = <<TPL
 {
 "dnsLabelPrefix": {
 	"value": "terraform-test-%d"

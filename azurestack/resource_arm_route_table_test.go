@@ -425,7 +425,6 @@ resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  route               = []
 }
 `, rInt, location, rInt)
 }

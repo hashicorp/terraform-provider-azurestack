@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/compute/mgmt/compute"
+	"github.com/Azure/azure-sdk-for-go/profiles/2018-03-01/compute/mgmt/compute"
 	"github.com/Azure/azure-sdk-for-go/storage"
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"

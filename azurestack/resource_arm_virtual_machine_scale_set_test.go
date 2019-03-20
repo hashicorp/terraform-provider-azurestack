@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/compute/mgmt/compute"
+	"github.com/Azure/azure-sdk-for-go/profiles/2018-03-01/compute/mgmt/compute"
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"

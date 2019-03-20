@@ -107,40 +107,6 @@ func TestAccAzureStackLoadBalancerNatRule_update(t *testing.T) {
 	})
 }
 
-func TestAccAzureStackLoadBalancerNatRule_reapply(t *testing.T) {
-	var lb network.LoadBalancer
-	ri := acctest.RandInt()
-	natRuleName := fmt.Sprintf("NatRule-%d", ri)
-
-	deleteNatRuleState := func(s *terraform.State) error {
-		return s.Remove("azurestack_lb_nat_rule.test")
-	}
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureStackLoadBalancerNatRule_basic(ri, natRuleName, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
-					testCheckAzureStackLoadBalancerNatRuleExists(natRuleName, &lb),
-					deleteNatRuleState,
-				),
-				ExpectNonEmptyPlan: true,
-			},
-			{
-				Config: testAccAzureStackLoadBalancerNatRule_basic(ri, natRuleName, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
-					testCheckAzureStackLoadBalancerNatRuleExists(natRuleName, &lb),
-				),
-			},
-		},
-	})
-}
-
 func TestAccAzureStackLoadBalancerNatRule_disappears(t *testing.T) {
 	var lb network.LoadBalancer
 	ri := acctest.RandInt()

@@ -105,40 +105,6 @@ func TestAccAzureStackLoadBalancerNatPool_update(t *testing.T) {
 	})
 }
 
-func TestAccAzureStackLoadBalancerNatPool_reapply(t *testing.T) {
-	var lb network.LoadBalancer
-	ri := acctest.RandInt()
-	natPoolName := fmt.Sprintf("NatPool-%d", ri)
-
-	deleteNatPoolState := func(s *terraform.State) error {
-		return s.Remove("azurestack_lb_nat_pool.test")
-	}
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureStackLoadBalancerNatPool_basic(ri, natPoolName, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
-					testCheckAzureStackLoadBalancerNatPoolExists(natPoolName, &lb),
-					deleteNatPoolState,
-				),
-				ExpectNonEmptyPlan: true,
-			},
-			{
-				Config: testAccAzureStackLoadBalancerNatPool_basic(ri, natPoolName, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
-					testCheckAzureStackLoadBalancerNatPoolExists(natPoolName, &lb),
-				),
-			},
-		},
-	})
-}
-
 func TestAccAzureStackLoadBalancerNatPool_disappears(t *testing.T) {
 	var lb network.LoadBalancer
 	ri := acctest.RandInt()

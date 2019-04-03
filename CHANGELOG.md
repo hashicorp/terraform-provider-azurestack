@@ -6,7 +6,7 @@ IMPROVEMENTS:
 * dependencies: upgrading to version 21.3.0 of github.com/Azure/azure-sdk-for-go [GH-53]
 * authentication: switching to use the new authentication package [GH-54]
 * authentication: support for Client Certificate authentication [GH-56]
-
+* authentication: support for CLI authentication [GH-57]
 
 BUG FIXES:
 

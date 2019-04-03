@@ -134,6 +134,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 			Environment:                   "AZURESTACKCLOUD",
 
 			// Feature Toggles
+			SupportsAzureCliToken:    true,
 			SupportsClientSecretAuth: true,
 			SupportsClientCertAuth:   true,
 		}

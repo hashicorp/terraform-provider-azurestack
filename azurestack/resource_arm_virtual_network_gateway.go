@@ -668,7 +668,7 @@ func flattenArmVirtualNetworkGatewayVpnClientConfig(cfg *network.VpnClientConfig
 			rootCerts = append(rootCerts, v)
 		}
 	}
-	flat["root_certificate"] = *schema.NewSet(hashVirtualNetworkGatewayRootCert, rootCerts)
+	flat["root_certificate"] = schema.NewSet(hashVirtualNetworkGatewayRootCert, rootCerts)
 
 	revokedCerts := make([]interface{}, 0)
 	if certs := cfg.VpnClientRevokedCertificates; certs != nil {
@@ -680,7 +680,7 @@ func flattenArmVirtualNetworkGatewayVpnClientConfig(cfg *network.VpnClientConfig
 			revokedCerts = append(revokedCerts, v)
 		}
 	}
-	flat["revoked_certificate"] = *schema.NewSet(hashVirtualNetworkGatewayRevokedCert, revokedCerts)
+	flat["revoked_certificate"] = schema.NewSet(hashVirtualNetworkGatewayRevokedCert, revokedCerts)
 
 	// RadiusServerAddress, RadiusServerSecret and VpnClientProtocols
 	// not yet supported for 2017-03-09 service

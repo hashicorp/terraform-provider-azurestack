@@ -1,17 +1,17 @@
-## 0.5.0 (Unreleased)
+## 0.5.0 (April 05, 2019)
 
 IMPROVEMENTS:
-* dependencies: switching to Go Modules [GH-70]
-* dependencies: upgrading to Go 1.11 [GH-53]
-* dependencies: upgrading to version 21.3.0 of github.com/Azure/azure-sdk-for-go [GH-53]
-* dependencies: upgrading to terraform 0.11.13 [GH-78]
-* authentication: switching to use the new authentication package [GH-54]
-* authentication: support for Client Certificate authentication [GH-56]
-* authentication: support for CLI authentication [GH-57]
+* dependencies: switching to Go Modules ([#70](https://github.com/terraform-providers/terraform-provider-azurestack/issues/70))
+* dependencies: upgrading to Go 1.11 ([#53](https://github.com/terraform-providers/terraform-provider-azurestack/issues/53))
+* dependencies: upgrading to version 21.3.0 of github.com/Azure/azure-sdk-for-go ([#53](https://github.com/terraform-providers/terraform-provider-azurestack/issues/53))
+* dependencies: upgrading to terraform 0.11.13 ([#78](https://github.com/terraform-providers/terraform-provider-azurestack/issues/78))
+* authentication: switching to use the new authentication package ([#54](https://github.com/terraform-providers/terraform-provider-azurestack/issues/54))
+* authentication: support for Client Certificate authentication ([#56](https://github.com/terraform-providers/terraform-provider-azurestack/issues/56))
+* authentication: support for CLI authentication ([#57](https://github.com/terraform-providers/terraform-provider-azurestack/issues/57))
 
 BUG FIXES:
 
-* `azurestack_virtual_network_gateway` - will no longer panic when the API/SDK return an empty `bgp_settings` property [GH-71]
+* `azurestack_virtual_network_gateway` - will no longer panic when the API/SDK return an empty `bgp_settings` property ([#71](https://github.com/terraform-providers/terraform-provider-azurestack/issues/71))
 
 ## 0.4.0 (September 18, 2018)
 

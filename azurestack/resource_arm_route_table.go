@@ -37,9 +37,10 @@ func resourceArmRouteTable() *schema.Resource {
 			"resource_group_name": resourceGroupNameSchema(),
 
 			"route": {
-				Type:     schema.TypeList,
-				Optional: true,
-				Computed: true,
+				Type:       schema.TypeList,
+				Optional:   true,
+				Computed:   true,
+				ConfigMode: schema.SchemaConfigModeAttr,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {

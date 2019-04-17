@@ -236,40 +236,8 @@ func (n *NodeRefreshableManagedResourceInstance) evalTreeManagedResourceNoState(
 	var change *plans.ResourceInstanceChange
 	var state *states.ResourceInstanceObject
 
-	addr := n.NodeAbstractResource.Addr
-	stateID := addr.stateId()
-	info := &InstanceInfo{
-		Id:         stateID,
-		Type:       addr.Type,
-		ModulePath: normalizeModulePath(addr.Path),
-	}
-
-	// Build the resource for eval
-	resource := &Resource{
-		Name:       addr.Name,
-		Type:       addr.Type,
-		CountIndex: addr.Index,
-	}
-	if resource.CountIndex < 0 {
-		resource.CountIndex = 0
-	}
-
-	// Determine the dependencies for the state.
-	stateDeps := n.StateReferences()
-
-	// n.Config can be nil if the config and state don't match
-	var raw *config.RawConfig
-	if n.Config != nil {
-		raw = n.Config.RawConfig.Copy()
-	}
-
 	return &EvalSequence{
 		Nodes: []EvalNode{
-			&EvalInterpolate{
-				Config:   raw,
-				Resource: resource,
-				Output:   &resourceConfig,
-			},
 			&EvalGetProvider{
 				Addr:   n.ResolvedProvider,
 				Output: &provider,

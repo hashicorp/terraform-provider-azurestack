@@ -109,13 +109,13 @@ func (n *EvalValidateProvider) Eval(ctx EvalContext) (interface{}, error) {
 }
 
 // EvalValidateProvisioner is an EvalNode implementation that validates
-// the configuration of a provisioner belonging to a resource.
+// the configuration of a provisioner belonging to a resource. The provisioner
+// config is expected to contain the merged connection configurations.
 type EvalValidateProvisioner struct {
 	ResourceAddr     addrs.Resource
 	Provisioner      *provisioners.Interface
 	Schema           **configschema.Block
 	Config           *configs.Provisioner
-	ConnConfig       *configs.Connection
 	ResourceHasCount bool
 }
 
@@ -149,10 +149,9 @@ func (n *EvalValidateProvisioner) Eval(ctx EvalContext) (interface{}, error) {
 	}
 
 	{
-		// Now validate the connection config, which might either be from
-		// the provisioner block itself or inherited from the resource's
-		// shared connection info.
-		connDiags := n.validateConnConfig(ctx, n.ConnConfig, n.ResourceAddr)
+		// Now validate the connection config, which contains the merged bodies
+		// of the resource and provisioner connection blocks.
+		connDiags := n.validateConnConfig(ctx, config.Connection, n.ResourceAddr)
 		diags = diags.Append(connDiags)
 	}
 
@@ -174,24 +173,14 @@ func (n *EvalValidateProvisioner) validateConnConfig(ctx EvalContext, config *co
 		return diags
 	}
 
-		// For type=ssh only (enforced in ssh communicator)
-		PrivateKey        interface{} `mapstructure:"private_key"`
-		HostKey           interface{} `mapstructure:"host_key"`
-		Agent             interface{} `mapstructure:"agent"`
-		BastionHost       interface{} `mapstructure:"bastion_host"`
-		BastionHostKey    interface{} `mapstructure:"bastion_host_key"`
-		BastionPort       interface{} `mapstructure:"bastion_port"`
-		BastionUser       interface{} `mapstructure:"bastion_user"`
-		BastionPassword   interface{} `mapstructure:"bastion_password"`
-		BastionPrivateKey interface{} `mapstructure:"bastion_private_key"`
-		AgentIdentity     interface{} `mapstructure:"agent_identity"`
+	// We evaluate here just by evaluating the block and returning any
+	// diagnostics we get, since evaluation alone is enough to check for
+	// extraneous arguments and incorrectly-typed arguments.
+	_, _, configDiags := n.evaluateBlock(ctx, config.Config, connectionBlockSupersetSchema)
+	diags = diags.Append(configDiags)
 
-		// For type=winrm only (enforced in winrm communicator)
-		HTTPS    interface{} `mapstructure:"https"`
-		Insecure interface{} `mapstructure:"insecure"`
-		NTLM     interface{} `mapstructure:"use_ntlm"`
-		CACert   interface{} `mapstructure:"cacert"`
-	}
+	return diags
+}
 
 func (n *EvalValidateProvisioner) evaluateBlock(ctx EvalContext, body hcl.Body, schema *configschema.Block) (cty.Value, hcl.Body, tfdiags.Diagnostics) {
 	keyData := EvalDataForNoInstanceKey

@@ -484,12 +484,13 @@ func (n *EvalApplyProvisioners) Eval(ctx EvalContext) (interface{}, error) {
 	// if we have one, otherwise we just output it.
 	err := n.apply(ctx, provs)
 	if err != nil {
-		if taint {
-			state.Tainted = true
-		}
-
 		*n.Error = multierror.Append(*n.Error, err)
-		return nil, err
+		if n.Error == nil {
+			return nil, err
+		} else {
+			log.Printf("[TRACE] EvalApplyProvisioners: %s provisioning failed, but we will continue anyway at the caller's request", absAddr)
+			return nil, nil
+		}
 	}
 
 	{

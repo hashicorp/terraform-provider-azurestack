@@ -53,18 +53,7 @@ func (n *NodeLocal) References() []*addrs.Reference {
 // GraphNodeEvalable
 func (n *NodeLocal) EvalTree() EvalNode {
 	return &EvalLocal{
-		Addr: n.Addr.LocalValue,
-		Expr: n.Config.Expr,
-	}
-}
-
-// dag.GraphNodeDotter impl.
-func (n *NodeLocal) DotNode(name string, opts *dag.DotOpts) *dag.DotNode {
-	return &dag.DotNode{
-		Name: name,
-		Attrs: map[string]string{
-			"label": n.Name(),
-			"shape": "note",
-		},
+		Name:  n.Config.Name,
+		Value: n.Config.RawConfig,
 	}
 }

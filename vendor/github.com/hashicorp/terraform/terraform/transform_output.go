@@ -3,7 +3,7 @@ package terraform
 import (
 	"log"
 
-	"github.com/hashicorp/terraform/configs"
+	"github.com/hashicorp/terraform/config/module"
 	"github.com/hashicorp/terraform/dag"
 )
 
@@ -44,8 +44,8 @@ func (t *OutputTransformer) transform(g *Graph, c *configs.Config) error {
 	// are implemented for modules.
 	path := c.Path.UnkeyedInstanceShim()
 
-	for _, o := range c.Module.Outputs {
-		addr := path.OutputValue(o.Name)
+	// Add all outputs here
+	for _, o := range os {
 		node := &NodeApplyableOutput{
 			Addr:   addr,
 			Config: o,
@@ -71,8 +71,8 @@ func (t *DestroyOutputTransformer) Transform(g *Graph) error {
 
 		// create the destroy node for this output
 		node := &NodeDestroyableOutput{
-			Addr:   output.Addr,
-			Config: output.Config,
+			PathValue: output.PathValue,
+			Config:    output.Config,
 		}
 
 		log.Printf("[TRACE] creating %s", node.Name())

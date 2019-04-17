@@ -102,7 +102,7 @@ github.com/google/go-cmp/cmp/internal/value
 github.com/googleapis/gax-go/v2
 # github.com/hashicorp/errwrap v1.0.0
 github.com/hashicorp/errwrap
-# github.com/hashicorp/go-azure-helpers v0.0.0-20190129193224-166dfd221bb2
+# github.com/hashicorp/go-azure-helpers v0.3.2
 github.com/hashicorp/go-azure-helpers/authentication
 github.com/hashicorp/go-azure-helpers/resourceproviders
 # github.com/hashicorp/go-cleanhttp v0.5.0
@@ -151,7 +151,7 @@ github.com/hashicorp/hil/parser
 github.com/hashicorp/hil/scanner
 # github.com/hashicorp/logutils v1.0.0
 github.com/hashicorp/logutils
-# github.com/hashicorp/terraform v0.12.0-alpha4.0.20190319164645-50b47156c443
+# github.com/hashicorp/terraform v0.11.13
 github.com/hashicorp/terraform/plugin
 github.com/hashicorp/terraform/helper/hashcode
 github.com/hashicorp/terraform/helper/mutexkv
@@ -183,9 +183,8 @@ github.com/hashicorp/terraform/tfdiags
 github.com/hashicorp/terraform/config/module
 github.com/hashicorp/terraform/dag
 github.com/hashicorp/terraform/flatmap
-github.com/hashicorp/terraform/helper/didyoumean
+github.com/hashicorp/terraform/helper/hilmapstructure
 github.com/hashicorp/terraform/httpclient
-github.com/hashicorp/terraform/lang
 github.com/hashicorp/terraform/moduledeps
 github.com/hashicorp/terraform/plans/objchange
 github.com/hashicorp/terraform/states/statefile
@@ -200,11 +199,9 @@ github.com/hashicorp/terraform/internal/earlyconfig
 github.com/hashicorp/terraform/lang/funcs
 github.com/hashicorp/terraform/svchost
 github.com/hashicorp/terraform/svchost/auth
-# github.com/hashicorp/terraform-config-inspect v0.0.0-20190208230122-b0707673339c
-github.com/hashicorp/terraform-config-inspect/tfconfig
 # github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb
 github.com/hashicorp/yamux
-# github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
+# github.com/jmespath/go-jmespath v0.0.0-20160803190731-bd40a432e4c7
 github.com/jmespath/go-jmespath
 # github.com/marstr/guid v1.1.0
 github.com/marstr/guid

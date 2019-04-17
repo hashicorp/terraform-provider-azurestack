@@ -118,7 +118,16 @@ func (n *NodeApplyableOutput) EvalTree() EvalNode {
 			&EvalOpFilter{
 				Ops: []walkOperation{walkRefresh, walkPlan, walkApply, walkValidate, walkDestroy, walkPlanDestroy},
 				Node: &EvalWriteOutput{
-					Addr:      n.Addr.OutputValue,
+					Name:          n.Config.Name,
+					Sensitive:     n.Config.Sensitive,
+					Value:         n.Config.RawConfig,
+					ContinueOnErr: true,
+				},
+			},
+			&EvalOpFilter{
+				Ops: []walkOperation{walkRefresh, walkPlan, walkApply, walkValidate, walkDestroy, walkPlanDestroy},
+				Node: &EvalWriteOutput{
+					Name:      n.Config.Name,
 					Sensitive: n.Config.Sensitive,
 					Expr:      n.Config.Expr,
 				},
@@ -127,40 +136,25 @@ func (n *NodeApplyableOutput) EvalTree() EvalNode {
 	}
 }
 
-// dag.GraphNodeDotter impl.
-func (n *NodeApplyableOutput) DotNode(name string, opts *dag.DotOpts) *dag.DotNode {
-	return &dag.DotNode{
-		Name: name,
-		Attrs: map[string]string{
-			"label": n.Name(),
-			"shape": "note",
-		},
-	}
-}
-
 // NodeDestroyableOutput represents an output that is "destroybale":
 // its application will remove the output from the state.
 type NodeDestroyableOutput struct {
-	Addr   addrs.AbsOutputValue
-	Config *configs.Output // Config is the output in the config
+	PathValue []string
+	Config    *config.Output // Config is the output in the config
 }
 
-var (
-	_ GraphNodeSubPath          = (*NodeDestroyableOutput)(nil)
-	_ RemovableIfNotTargeted    = (*NodeDestroyableOutput)(nil)
-	_ GraphNodeTargetDownstream = (*NodeDestroyableOutput)(nil)
-	_ GraphNodeReferencer       = (*NodeDestroyableOutput)(nil)
-	_ GraphNodeEvalable         = (*NodeDestroyableOutput)(nil)
-	_ dag.GraphNodeDotter       = (*NodeDestroyableOutput)(nil)
-)
-
 func (n *NodeDestroyableOutput) Name() string {
-	return fmt.Sprintf("%s (destroy)", n.Addr.String())
+	result := fmt.Sprintf("output.%s (destroy)", n.Config.Name)
+	if len(n.PathValue) > 1 {
+		result = fmt.Sprintf("%s.%s", modulePrefixStr(n.PathValue), result)
+	}
+
+	return result
 }
 
 // GraphNodeSubPath
-func (n *NodeDestroyableOutput) Path() addrs.ModuleInstance {
-	return n.Addr.Module
+func (n *NodeDestroyableOutput) Path() []string {
+	return n.PathValue
 }
 
 // RemovableIfNotTargeted
@@ -177,24 +171,25 @@ func (n *NodeDestroyableOutput) TargetDownstream(targetedDeps, untargetedDeps *d
 }
 
 // GraphNodeReferencer
-func (n *NodeDestroyableOutput) References() []*addrs.Reference {
-	return referencesForOutput(n.Config)
+func (n *NodeDestroyableOutput) References() []string {
+	var result []string
+	result = append(result, n.Config.DependsOn...)
+	result = append(result, ReferencesFromConfig(n.Config.RawConfig)...)
+	for _, v := range result {
+		split := strings.Split(v, "/")
+		for i, s := range split {
+			split[i] = s + ".destroy"
+		}
+
+		result = append(result, strings.Join(split, "/"))
+	}
+
+	return result
 }
 
 // GraphNodeEvalable
 func (n *NodeDestroyableOutput) EvalTree() EvalNode {
 	return &EvalDeleteOutput{
-		Addr: n.Addr.OutputValue,
-	}
-}
-
-// dag.GraphNodeDotter impl.
-func (n *NodeDestroyableOutput) DotNode(name string, opts *dag.DotOpts) *dag.DotNode {
-	return &dag.DotNode{
-		Name: name,
-		Attrs: map[string]string{
-			"label": n.Name(),
-			"shape": "note",
-		},
+		Name: n.Config.Name,
 	}
 }

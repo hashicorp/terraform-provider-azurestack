@@ -260,17 +260,6 @@ type Schema struct {
 	Sensitive bool
 }
 
-// SchemaConfigMode is used to influence how a schema item is mapped into a
-// corresponding configuration construct, using the ConfigMode field of
-// Schema.
-type SchemaConfigMode int
-
-const (
-	SchemaConfigModeAuto SchemaConfigMode = iota
-	SchemaConfigModeAttr
-	SchemaConfigModeBlock
-)
-
 // SchemaDiffSuppressFunc is a function which can be used to determine
 // whether a detected diff on a schema element is "valid" or not, and
 // suppress it from the plan if necessary.
@@ -1407,15 +1396,10 @@ func (m schemaMap) validateConflictingAttributes(
 		return nil
 	}
 
-	for _, conflictingKey := range schema.ConflictsWith {
-		if raw, ok := c.Get(conflictingKey); ok {
-			if raw == config.UnknownVariableValue {
-				// An unknown value might become unset (null) once known, so
-				// we must defer validation until it's known.
-				continue
-			}
+	for _, conflicting_key := range schema.ConflictsWith {
+		if _, ok := c.Get(conflicting_key); ok {
 			return fmt.Errorf(
-				"%q: conflicts with %s", k, conflictingKey)
+				"%q: conflicts with %s", k, conflicting_key)
 		}
 	}
 

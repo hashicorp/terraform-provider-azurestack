@@ -13,16 +13,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/hashicorp/errwrap"
+	"golang.org/x/net/html"
+
 	getter "github.com/hashicorp/go-getter"
 	multierror "github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform/httpclient"
-	"github.com/hashicorp/terraform/registry"
-	"github.com/hashicorp/terraform/registry/regsrc"
-	"github.com/hashicorp/terraform/registry/response"
-	"github.com/hashicorp/terraform/svchost/disco"
-	"github.com/hashicorp/terraform/tfdiags"
-	tfversion "github.com/hashicorp/terraform/version"
 	"github.com/mitchellh/cli"
 )
 
@@ -37,8 +32,6 @@ the publisher of the provider removed the key it was signed with, or that the
 distributed files were changed after this version was released.`
 
 var httpClient *http.Client
-
-var errVersionNotFound = errors.New("version not found")
 
 func init() {
 	httpClient = httpclient.New()

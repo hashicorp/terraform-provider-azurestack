@@ -9,7 +9,7 @@ description: |-
 
 # Azure Stack Provider: Authenticating using a Service Principal using a Client Secret
 
-Terraform supports authenticating to Azure Stack using a Service Principal, either using a Client Secret (which is detailed in this guide) or [using a Client Certificate](service_principal_client_certificate.html).
+Terraform supports authenticating to Azure Stack using [the Azure CLI](azure_cli.html) or a Service Principal, either using a Client Secret (which is detailed in this guide) or [using a Client Certificate](service_principal_client_certificate.html).
 
 ## Creating a Service Principal
 

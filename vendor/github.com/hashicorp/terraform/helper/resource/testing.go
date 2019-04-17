@@ -804,7 +804,7 @@ func testIDOnlyRefresh(c TestCase, opts terraform.ContextOpts, step TestStep, r 
 	return nil
 }
 
-func testConfig(opts terraform.ContextOpts, step TestStep) (*configs.Config, error) {
+func testModule(opts terraform.ContextOpts, step TestStep) (*module.Tree, error) {
 	if step.PreConfig != nil {
 		step.PreConfig()
 	}
@@ -818,6 +818,13 @@ func testConfig(opts terraform.ContextOpts, step TestStep) (*configs.Config, err
 		log.Printf("[INFO] Skipping defer os.RemoveAll call")
 	} else {
 		defer os.RemoveAll(cfgPath)
+	}
+
+	// Write the configuration
+	cfgF, err := os.Create(filepath.Join(cfgPath, "main.tf"))
+	if err != nil {
+		return nil, fmt.Errorf(
+			"Error creating temporary file for config: %s", err)
 	}
 
 	// Write the main configuration file

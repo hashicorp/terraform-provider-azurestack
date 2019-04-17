@@ -174,14 +174,24 @@ func (n *EvalValidateProvisioner) validateConnConfig(ctx EvalContext, config *co
 		return diags
 	}
 
-	// We evaluate here just by evaluating the block and returning any
-	// diagnostics we get, since evaluation alone is enough to check for
-	// extraneous arguments and incorrectly-typed arguments.
-	_, _, configDiags := n.evaluateBlock(ctx, config.Config, connectionBlockSupersetSchema)
-	diags = diags.Append(configDiags)
+		// For type=ssh only (enforced in ssh communicator)
+		PrivateKey        interface{} `mapstructure:"private_key"`
+		HostKey           interface{} `mapstructure:"host_key"`
+		Agent             interface{} `mapstructure:"agent"`
+		BastionHost       interface{} `mapstructure:"bastion_host"`
+		BastionHostKey    interface{} `mapstructure:"bastion_host_key"`
+		BastionPort       interface{} `mapstructure:"bastion_port"`
+		BastionUser       interface{} `mapstructure:"bastion_user"`
+		BastionPassword   interface{} `mapstructure:"bastion_password"`
+		BastionPrivateKey interface{} `mapstructure:"bastion_private_key"`
+		AgentIdentity     interface{} `mapstructure:"agent_identity"`
 
-	return diags
-}
+		// For type=winrm only (enforced in winrm communicator)
+		HTTPS    interface{} `mapstructure:"https"`
+		Insecure interface{} `mapstructure:"insecure"`
+		NTLM     interface{} `mapstructure:"use_ntlm"`
+		CACert   interface{} `mapstructure:"cacert"`
+	}
 
 func (n *EvalValidateProvisioner) evaluateBlock(ctx EvalContext, body hcl.Body, schema *configschema.Block) (cty.Value, hcl.Body, tfdiags.Diagnostics) {
 	keyData := EvalDataForNoInstanceKey

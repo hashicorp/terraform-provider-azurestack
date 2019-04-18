@@ -1,7 +1,13 @@
 ## 0.6.0 (Unreleased)
+
+NOTES:
+
+* This release includes a Terraform SDK upgrade with compatibility for Terraform v0.12. The provider remains backwards compatible with Terraform v0.11 and there should not be any significant behavioural changes. [GH-75]
+
 ## 0.5.0 (April 05, 2019)
 
 IMPROVEMENTS:
+
 * dependencies: switching to Go Modules ([#70](https://github.com/terraform-providers/terraform-provider-azurestack/issues/70))
 * dependencies: upgrading to Go 1.11 ([#53](https://github.com/terraform-providers/terraform-provider-azurestack/issues/53))
 * dependencies: upgrading to version 21.3.0 of github.com/Azure/azure-sdk-for-go ([#53](https://github.com/terraform-providers/terraform-provider-azurestack/issues/53))

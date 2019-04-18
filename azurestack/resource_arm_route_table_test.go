@@ -425,7 +425,8 @@ resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
-  route               = []
+
+  route = []
 }
 `, rInt, location, rInt)
 }
@@ -475,7 +476,7 @@ resource "azurestack_route_table" "test" {
     next_hop_type  = "vnetlocal"
   }
 
-  tags {
+  tags = {
     environment = "Production"
     cost_center = "MSFT"
   }
@@ -501,7 +502,7 @@ resource "azurestack_route_table" "test" {
     next_hop_type  = "vnetlocal"
   }
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -514,7 +515,7 @@ resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -525,7 +526,7 @@ resource "azurestack_virtual_network" "test" {
   resource_group_name = "${azurestack_resource_group.test.name}"
   address_space       = ["10.0.0.0/16"]
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -549,7 +550,7 @@ resource "azurestack_route_table" "test" {
     next_hop_type  = "vnetlocal"
   }
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -562,7 +563,7 @@ resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 
-  tags {
+  tags = {
     environment = "staging"
     cloud       = "Azure"
   }
@@ -574,7 +575,7 @@ resource "azurestack_virtual_network" "test" {
   resource_group_name = "${azurestack_resource_group.test.name}"
   address_space       = ["10.0.0.0/16"]
 
-  tags {
+  tags = {
     environment = "staging"
     cloud       = "Azure"
   }
@@ -599,7 +600,7 @@ resource "azurestack_route_table" "test" {
     next_hop_type  = "vnetlocal"
   }
 
-  tags {
+  tags = {
     environment = "staging"
     cloud       = "Azure"
   }

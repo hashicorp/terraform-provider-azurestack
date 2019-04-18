@@ -136,40 +136,6 @@ func TestAccAzureStackLoadBalancerProbe_updateProtocol(t *testing.T) {
 	})
 }
 
-func TestAccAzureStackLoadBalancerProbe_reapply(t *testing.T) {
-	var lb network.LoadBalancer
-	ri := acctest.RandInt()
-	probeName := fmt.Sprintf("probe-%d", ri)
-
-	deleteProbeState := func(s *terraform.State) error {
-		return s.Remove("azurestack_lb_probe.test")
-	}
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureStackLoadBalancerProbe_basic(ri, probeName, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
-					testCheckAzureStackLoadBalancerProbeExists(probeName, &lb),
-					deleteProbeState,
-				),
-				ExpectNonEmptyPlan: true,
-			},
-			{
-				Config: testAccAzureStackLoadBalancerProbe_basic(ri, probeName, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
-					testCheckAzureStackLoadBalancerProbeExists(probeName, &lb),
-				),
-			},
-		},
-	})
-}
-
 func TestAccAzureStackLoadBalancerProbe_disappears(t *testing.T) {
 	var lb network.LoadBalancer
 	ri := acctest.RandInt()

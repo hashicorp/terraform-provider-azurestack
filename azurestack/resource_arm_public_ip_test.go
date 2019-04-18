@@ -446,7 +446,7 @@ resource "azurestack_public_ip" "test" {
   resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "static"
 
-  tags {
+  tags = {
     environment = "Production"
     cost_center = "MSFT"
   }
@@ -467,7 +467,7 @@ resource "azurestack_public_ip" "test" {
   resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "static"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }

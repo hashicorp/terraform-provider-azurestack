@@ -55,7 +55,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -98,7 +98,7 @@ resource "azurestack_virtual_machine" "test" {
     disable_password_authentication = false
   }
 
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -118,7 +118,7 @@ resource "azurestack_virtual_machine_extension" "test" {
 	}
 SETTINGS
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }

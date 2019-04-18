@@ -501,7 +501,7 @@ resource "azurestack_storage_account" "testsa" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "production"
   }
 }
@@ -523,7 +523,7 @@ resource "azurestack_storage_account" "testsa" {
   account_tier             = "Premium"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "production"
   }
 }
@@ -546,7 +546,7 @@ resource "azurestack_storage_account" "testsa" {
   account_replication_type = "LRS"
   enable_blob_encryption   = true
 
-  tags {
+  tags = {
     environment = "production"
   }
 }
@@ -569,7 +569,7 @@ resource "azurestack_storage_account" "testsa" {
   account_replication_type = "LRS"
   enable_blob_encryption   = false
 
-  tags {
+  tags = {
     environment = "production"
   }
 }
@@ -592,7 +592,7 @@ resource "azurestack_storage_account" "testsa" {
   account_replication_type = "LRS"
   enable_file_encryption   = true
 
-  tags {
+  tags = {
     environment = "production"
   }
 }
@@ -615,7 +615,7 @@ resource "azurestack_storage_account" "testsa" {
   account_replication_type = "LRS"
   enable_file_encryption   = false
 
-  tags {
+  tags = {
     environment = "production"
   }
 }
@@ -638,7 +638,7 @@ resource "azurestack_storage_account" "testsa" {
   account_replication_type  = "LRS"
   enable_https_traffic_only = true
 
-  tags {
+  tags = {
     environment = "production"
   }
 }
@@ -661,7 +661,7 @@ resource "azurestack_storage_account" "testsa" {
   account_replication_type  = "LRS"
   enable_https_traffic_only = false
 
-  tags {
+  tags = {
     environment = "production"
   }
 }
@@ -684,7 +684,7 @@ resource "azurestack_storage_account" "testsa" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "production"
   }
 }
@@ -707,7 +707,7 @@ resource "azurestack_storage_account" "testsa" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "production"
   }
 }
@@ -730,7 +730,7 @@ resource "azurestack_storage_account" "testsa" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "production"
   }
 }
@@ -753,7 +753,7 @@ resource "azurestack_storage_account" "testsa" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  tags {
+  tags = {
     environment = "production"
   }
 }
@@ -774,7 +774,7 @@ resource "azurestack_storage_account" "testsa" {
   account_tier             = "standard"
   account_replication_type = "lrs"
 
-  tags {
+  tags = {
     environment = "production"
   }
 }

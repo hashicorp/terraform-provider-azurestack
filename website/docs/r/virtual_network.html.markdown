@@ -52,7 +52,7 @@ resource "azurestack_virtual_network" "test" {
     security_group = "${azurestack_network_security_group.test.id}"
   }
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }

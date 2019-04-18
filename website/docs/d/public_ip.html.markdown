@@ -57,7 +57,7 @@ resource "azurestack_public_ip" "test" {
   public_ip_address_allocation = "Dynamic"
   idle_timeout_in_minutes      = 30
 
-  tags {
+  tags = {
     environment = "test"
   }
 }

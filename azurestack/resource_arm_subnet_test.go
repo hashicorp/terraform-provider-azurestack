@@ -473,7 +473,7 @@ resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 
-  tags {
+  tags = {
     environment = "Testing"
   }
 }
@@ -495,7 +495,7 @@ resource "azurestack_network_security_group" "test_secgroup" {
     destination_address_prefix = "*"
   }
 
-  tags {
+  tags = {
     environment = "Testing"
   }
 }
@@ -506,7 +506,7 @@ resource "azurestack_virtual_network" "test" {
   location            = "${azurestack_resource_group.test.location}"
   resource_group_name = "${azurestack_resource_group.test.name}"
 
-  tags {
+  tags = {
     environment = "Testing"
   }
 }
@@ -531,7 +531,7 @@ resource "azurestack_route_table" "test" {
     next_hop_in_ip_address = "10.10.1.1"
   }
 
-  tags {
+  tags = {
     environment = "Testing"
   }
 }

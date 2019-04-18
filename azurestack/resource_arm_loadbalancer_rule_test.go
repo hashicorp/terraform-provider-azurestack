@@ -202,40 +202,6 @@ func TestAccAzureStackLoadBalancerRule_update(t *testing.T) {
 	})
 }
 
-func TestAccAzureStackLoadBalancerRule_reapply(t *testing.T) {
-	var lb network.LoadBalancer
-	ri := acctest.RandInt()
-	lbRuleName := fmt.Sprintf("LbRule-%s", acctest.RandStringFromCharSet(8, acctest.CharSetAlpha))
-
-	deleteRuleState := func(s *terraform.State) error {
-		return s.Remove("azurestack_lb_rule.test")
-	}
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureStackLoadBalancerRule_basic(ri, lbRuleName, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
-					testCheckAzureStackLoadBalancerRuleExists(lbRuleName, &lb),
-					deleteRuleState,
-				),
-				ExpectNonEmptyPlan: true,
-			},
-			{
-				Config: testAccAzureStackLoadBalancerRule_basic(ri, lbRuleName, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackLoadBalancerExists("azurestack_lb.test", &lb),
-					testCheckAzureStackLoadBalancerRuleExists(lbRuleName, &lb),
-				),
-			},
-		},
-	})
-}
-
 func TestAccAzureStackLoadBalancerRule_disappears(t *testing.T) {
 	var lb network.LoadBalancer
 	ri := acctest.RandInt()

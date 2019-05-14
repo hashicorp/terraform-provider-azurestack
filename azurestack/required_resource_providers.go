@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
+	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/resources/mgmt/resources"
 	"github.com/hashicorp/go-azure-helpers/resourceproviders"
 )
 

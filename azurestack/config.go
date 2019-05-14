@@ -56,8 +56,8 @@ type ArmClient struct {
 	vnetGatewayConnectionsClient network.VirtualNetworkGatewayConnectionsClient
 
 	// Resources
-	providersClient resources.ProvidersClient
-	resourcesClient resources.Client
+	providersClient resources.ProvidersGroupClient
+	resourcesClient resources.GroupClient
 
 	vmClient             compute.VirtualMachinesClient
 	vmScaleSetClient     compute.VirtualMachineScaleSetsClient
@@ -71,8 +71,8 @@ type ArmClient struct {
 	routesClient       network.RoutesClient
 	routeTablesClient  network.RouteTablesClient
 
-	resourceGroupsClient resources.GroupsClient
-	deploymentsClient    resources.DeploymentsClient
+	resourceGroupsClient resources.GroupsGroupClient
+	deploymentsClient    resources.DeploymentsGroupClient
 }
 
 func (c *ArmClient) configureClient(client *autorest.Client, auth autorest.Authorizer) {
@@ -271,19 +271,19 @@ func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, a
 }
 
 func (c *ArmClient) registerResourcesClients(endpoint, subscriptionId string, auth autorest.Authorizer) {
-	resourcesClient := resources.NewClientWithBaseURI(endpoint, subscriptionId)
+	resourcesClient := resources.NewGroupClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&resourcesClient.Client, auth)
 	c.resourcesClient = resourcesClient
 
-	deploymentsClient := resources.NewDeploymentsClientWithBaseURI(endpoint, subscriptionId)
+	deploymentsClient := resources.NewDeploymentsGroupClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&deploymentsClient.Client, auth)
 	c.deploymentsClient = deploymentsClient
 
-	resourceGroupsClient := resources.NewGroupsClientWithBaseURI(endpoint, subscriptionId)
+	resourceGroupsClient := resources.NewGroupsGroupClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&resourceGroupsClient.Client, auth)
 	c.resourceGroupsClient = resourceGroupsClient
 
-	providersClient := resources.NewProvidersClientWithBaseURI(endpoint, subscriptionId)
+	providersClient := resources.NewProvidersGroupClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&providersClient.Client, auth)
 	c.providersClient = providersClient
 }

@@ -100,8 +100,8 @@ func resourceArmStorageAccount() *schema.Resource {
 				Optional: true,
 				Default:  string("Microsoft.Storage"),
 				ValidateFunc: validation.StringInSlice([]string{
-					"Microsoft.Keyvault",
-					"Microsoft.Storage",
+					string(storage.MicrosoftKeyvault),
+					string(storage.MicrosoftStorage),
 				}, true),
 				DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
 			},
@@ -274,7 +274,7 @@ func resourceArmStorageAccountCreate(d *schema.ResourceData, meta interface{}) e
 						Blob: &storage.EncryptionService{
 							Enabled: utils.Bool(enableBlobEncryption),
 						}},
-					KeySource: &storageAccountEncryptionSource,
+					KeySource: storage.KeySource(storageAccountEncryptionSource),
 				}
 		}
 
@@ -392,7 +392,7 @@ func resourceArmStorageAccountUpdate(d *schema.ResourceData, meta interface{}) e
 			AccountPropertiesUpdateParameters: &storage.AccountPropertiesUpdateParameters{
 				Encryption: &storage.Encryption{
 					Services:  &storage.EncryptionServices{},
-					KeySource: &encryptionSource,
+					KeySource: storage.KeySource(encryptionSource),
 				},
 			},
 		}
@@ -485,7 +485,7 @@ func resourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) err
 					d.Set("enable_blob_encryption", blob.Enabled)
 				}
 			}
-			d.Set("account_encryption_source", *encryption.KeySource)
+			d.Set("account_encryption_source", string(encryption.KeySource))
 		}
 
 		// Computed

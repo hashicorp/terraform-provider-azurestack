@@ -668,7 +668,7 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 			OsProfile:        osProfile,
 			ExtensionProfile: extensions,
 		},
-		OverProvision: &overprovision,
+		Overprovision: &overprovision,
 	}
 
 	properties := compute.VirtualMachineScaleSet{
@@ -747,7 +747,7 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 		if upgradePolicy := properties.UpgradePolicy; upgradePolicy != nil {
 			d.Set("upgrade_policy_mode", upgradePolicy.Mode)
 		}
-		d.Set("overprovision", properties.OverProvision)
+		d.Set("overprovision", properties.Overprovision)
 
 		if profile := properties.VirtualMachineProfile; profile != nil {
 

@@ -24,7 +24,7 @@ func requiredResourceProviders() map[string]struct{} {
 	}
 }
 
-func ensureResourceProvidersAreRegistered(ctx context.Context, client resources.ProvidersClient, availableRPs []resources.Provider, requiredRPs map[string]struct{}) error {
+func ensureResourceProvidersAreRegistered(ctx context.Context, client resources.ProvidersGroupClient, availableRPs []resources.Provider, requiredRPs map[string]struct{}) error {
 	log.Printf("[DEBUG] Determining which Resource Providers require Registration")
 	providersToRegister := resourceproviders.DetermineResourceProvidersRequiringRegistration(availableRPs, requiredRPs)
 

@@ -10,9 +10,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
-	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/resources/mgmt/resources"
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/storage/mgmt/storage"
 	"github.com/Azure/azure-sdk-for-go/services/dns/mgmt/2016-04-01/dns"
 	"github.com/Azure/azure-sdk-for-go/services/graphrbac/1.6/graphrbac"
@@ -56,8 +56,8 @@ type ArmClient struct {
 	vnetGatewayConnectionsClient network.VirtualNetworkGatewayConnectionsClient
 
 	// Resources
-	providersClient resources.ProvidersGroupClient
-	resourcesClient resources.GroupClient
+	providersClient resources.ProvidersClient
+	resourcesClient resources.Client
 
 	vmClient             compute.VirtualMachinesClient
 	vmScaleSetClient     compute.VirtualMachineScaleSetsClient
@@ -71,8 +71,8 @@ type ArmClient struct {
 	routesClient       network.RoutesClient
 	routeTablesClient  network.RouteTablesClient
 
-	resourceGroupsClient resources.GroupsGroupClient
-	deploymentsClient    resources.DeploymentsGroupClient
+	resourceGroupsClient resources.GroupsClient
+	deploymentsClient    resources.DeploymentsClient
 }
 
 func (c *ArmClient) configureClient(client *autorest.Client, auth autorest.Authorizer) {
@@ -271,19 +271,19 @@ func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, a
 }
 
 func (c *ArmClient) registerResourcesClients(endpoint, subscriptionId string, auth autorest.Authorizer) {
-	resourcesClient := resources.NewGroupClientWithBaseURI(endpoint, subscriptionId)
+	resourcesClient := resources.NewClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&resourcesClient.Client, auth)
 	c.resourcesClient = resourcesClient
 
-	deploymentsClient := resources.NewDeploymentsGroupClientWithBaseURI(endpoint, subscriptionId)
+	deploymentsClient := resources.NewDeploymentsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&deploymentsClient.Client, auth)
 	c.deploymentsClient = deploymentsClient
 
-	resourceGroupsClient := resources.NewGroupsGroupClientWithBaseURI(endpoint, subscriptionId)
+	resourceGroupsClient := resources.NewGroupsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&resourceGroupsClient.Client, auth)
 	c.resourceGroupsClient = resourceGroupsClient
 
-	providersClient := resources.NewProvidersGroupClientWithBaseURI(endpoint, subscriptionId)
+	providersClient := resources.NewProvidersClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&providersClient.Client, auth)
 	c.providersClient = providersClient
 }

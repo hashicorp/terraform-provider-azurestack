@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/resources/mgmt/resources"
+	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
 	"github.com/hashicorp/go-azure-helpers/resourceproviders"
 )
 
@@ -24,7 +24,7 @@ func requiredResourceProviders() map[string]struct{} {
 	}
 }
 
-func ensureResourceProvidersAreRegistered(ctx context.Context, client resources.ProvidersGroupClient, availableRPs []resources.Provider, requiredRPs map[string]struct{}) error {
+func ensureResourceProvidersAreRegistered(ctx context.Context, client resources.ProvidersClient, availableRPs []resources.Provider, requiredRPs map[string]struct{}) error {
 	log.Printf("[DEBUG] Determining which Resource Providers require Registration")
 	providersToRegister := resourceproviders.DetermineResourceProvidersRequiringRegistration(availableRPs, requiredRPs)
 

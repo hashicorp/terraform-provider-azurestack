@@ -1,8 +1,8 @@
-## 0.7.0 (Unreleased)
+## 0.7.0 (May 23, 2019)
 
-* dependencies: upgrading to `v29.0.0` of `github.com/Azure/azure-sdk-for-go` [GH-83]
-* dependencies: upgrading to `v11.7.0` of `github.com/Azure/go-autorest` [GH-83]
-* dependencies: upgrading to `v0.12.0` of `github.com/hashicorp/terraform` [GH-86]
+* dependencies: upgrading to `v29.0.0` of `github.com/Azure/azure-sdk-for-go` ([#83](https://github.com/terraform-providers/terraform-provider-azurestack/issues/83))
+* dependencies: upgrading to `v11.7.0` of `github.com/Azure/go-autorest` ([#83](https://github.com/terraform-providers/terraform-provider-azurestack/issues/83))
+* dependencies: upgrading to `v0.12.0` of `github.com/hashicorp/terraform` ([#86](https://github.com/terraform-providers/terraform-provider-azurestack/issues/86))
 
 ## 0.6.0 (April 19, 2019)
 

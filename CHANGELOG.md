@@ -1,4 +1,7 @@
 ## 0.7.0 (Unreleased)
+
+* dependencies: upgrading to `v0.12.0` of `github.com/hashicorp/terraform` [GH-86]
+
 ## 0.6.0 (April 19, 2019)
 
 NOTES:

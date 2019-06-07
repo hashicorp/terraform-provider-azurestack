@@ -1158,51 +1158,6 @@ resource "azurestack_virtual_machine" "test" {
 `, rInt, location, rInt, rInt, rInt, rInt, rInt, rInt)
 }
 
-func testAccAzureStackVirtualMachine_requiresImport(rInt int, location string) string {
-	template := testAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_standardSSD(rInt, location)
-	return fmt.Sprintf(`
-%s
-
-resource "azurestack_virtual_machine" "import" {
-  name                  = "${azurestack_virtual_machine.test.name}"
-  location              = "${azurestack_virtual_machine.test.location}"
-  resource_group_name   = "${azurestack_virtual_machine.test.resource_group_name}"
-  network_interface_ids = ["${azurestack_network_interface.test.id}"]
-  vm_size               = "Standard_D1_v2"
-
-  storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-
-  storage_os_disk {
-    name              = "osd-%d"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    disk_size_gb      = "50"
-    managed_disk_type = "StandardSSD_LRS"
-  }
-
-  os_profile {
-    computer_name  = "hn%d"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = false
-  }
-
-  tags = {
-    environment = "Production"
-    cost-center = "Ops"
-  }
-}
-`, template, rInt, rInt)
-}
-
 func testAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_implicit(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {

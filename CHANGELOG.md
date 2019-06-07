@@ -1,6 +1,7 @@
 ## 0.8.0 (Unreleased)
 
 * dependencies: Changing to the `2019-03-01` profile [GH-84]
+* dependencies: upgrading to `v30.0.0` of `github.com/Azure/azure-sdk-for-go` [GH-88]
 
 ## 0.7.0 (May 23, 2019)
 

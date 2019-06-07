@@ -6,7 +6,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/compute/mgmt/compute"
+	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/structure"
@@ -668,7 +668,7 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 			OsProfile:        osProfile,
 			ExtensionProfile: extensions,
 		},
-		OverProvision: &overprovision,
+		Overprovision: &overprovision,
 	}
 
 	properties := compute.VirtualMachineScaleSet{
@@ -747,7 +747,7 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 		if upgradePolicy := properties.UpgradePolicy; upgradePolicy != nil {
 			d.Set("upgrade_policy_mode", upgradePolicy.Mode)
 		}
-		d.Set("overprovision", properties.OverProvision)
+		d.Set("overprovision", properties.Overprovision)
 
 		if profile := properties.VirtualMachineProfile; profile != nil {
 

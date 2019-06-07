@@ -3,7 +3,7 @@ package azurestack
 import (
 	"fmt"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/network/mgmt/network"
+	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"

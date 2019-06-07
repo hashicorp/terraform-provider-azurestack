@@ -1,4 +1,7 @@
 ## 0.8.0 (Unreleased)
+
+* dependencies: Changing to the `2019-03-01` profile [GH-84]
+
 ## 0.7.0 (May 23, 2019)
 
 * dependencies: upgrading to `v29.0.0` of `github.com/Azure/azure-sdk-for-go` ([#83](https://github.com/terraform-providers/terraform-provider-azurestack/issues/83))

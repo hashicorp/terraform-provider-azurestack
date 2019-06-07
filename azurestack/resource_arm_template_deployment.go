@@ -196,7 +196,7 @@ func resourceArmTemplateDeploymentRead(d *schema.ResourceData, meta interface{})
 					outputValueString = fmt.Sprint(outputValue)
 
 				default:
-					log.Printf("[WARN] Ignoring output %s: Outputs of type %s are not currently supported in azurerm_template_deployment.",
+					log.Printf("[WARN] Ignoring output %s: Outputs of type %s are not currently supported in azurestack_template_deployment.",
 						key, outputType)
 					continue
 				}

@@ -174,12 +174,6 @@ func resourceArmManagedDiskCreateUpdate(d *schema.ResourceData, meta interface{}
 		}
 	}
 
-	if v, ok := d.GetOk("encryption_settings"); ok {
-		encryptionSettings := v.([]interface{})
-		settings := encryptionSettings[0].(map[string]interface{})
-		createDisk.EncryptionSettings = expandManagedDiskEncryptionSettings(settings)
-	}
-
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, createDisk)
 	if err != nil {
 		return err
@@ -246,15 +240,7 @@ func resourceArmManagedDiskRead(d *schema.ResourceData, meta interface{}) error 
 		flattenAzureRmManagedDiskCreationData(d, resp.CreationData)
 	}
 
-	if settings := resp.EncryptionSettings; settings != nil {
-		flattened := flattenManagedDiskEncryptionSettings(settings)
-		if err := d.Set("encryption_settings", flattened); err != nil {
-			return fmt.Errorf("Error setting encryption settings: %+v", err)
-		}
-	}
-
 	flattenAndSetTags(d, &resp.Tags)
-
 	return nil
 }
 

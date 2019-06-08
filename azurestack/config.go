@@ -214,6 +214,10 @@ func (c *ArmClient) registerComputeClients(endpoint, subscriptionId string, auth
 	virtualMachinesClient := compute.NewVirtualMachinesClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&virtualMachinesClient.Client, auth)
 	c.vmClient = virtualMachinesClient
+
+	virtualMachineImagesClient := compute.NewVirtualMachineImagesClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&virtualMachineImagesClient.Client, auth)
+	c.vmImageClient = virtualMachineImagesClient
 }
 
 func (c *ArmClient) registerDNSClients(endpoint, subscriptionId string, auth autorest.Authorizer) {

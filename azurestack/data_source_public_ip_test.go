@@ -8,14 +8,14 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccDataSourceAzureRMPublicIP_basic(t *testing.T) {
+func TestAccDataAZURESTACKPublicIP_basic(t *testing.T) {
 	dataSourceName := "data.azurestack_public_ip.test"
 	ri := acctest.RandInt()
 
 	name := fmt.Sprintf("acctestpublicip-%d", ri)
 	resourceGroupName := fmt.Sprintf("acctestRG-%d", ri)
 
-	config := testAccDataSourceAzureRMPublicIPBasic(name, resourceGroupName, ri, testLocation())
+	config := testAccDataAZURESTACKPublicIPBasic(name, resourceGroupName, ri, testLocation())
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -39,7 +39,7 @@ func TestAccDataSourceAzureRMPublicIP_basic(t *testing.T) {
 	})
 }
 
-func testAccDataSourceAzureRMPublicIPBasic(name string, resourceGroupName string, rInt int, location string) string {
+func testAccDataAZURESTACKPublicIPBasic(name string, resourceGroupName string, rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
   name     = "%s"

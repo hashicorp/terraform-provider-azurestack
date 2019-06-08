@@ -94,8 +94,6 @@ func resourceArmManagedDisk() *schema.Resource {
 				ValidateFunc: validateDiskSizeGB,
 			},
 
-			"encryption_settings": encryptionSettingsSchema(),
-
 			"tags": tagsSchema(),
 		},
 	}

@@ -75,6 +75,7 @@ func Provider() terraform.ResourceProvider {
 			"azurestack_client_config":           dataSourceArmClientConfig(),
 			"azurestack_network_interface":       dataSourceArmNetworkInterface(),
 			"azurestack_network_security_group":  dataSourceArmNetworkSecurityGroup(),
+			"azurestack_platform_image":                         dataSourceArmPlatformImage(),
 			"azurestack_public_ip":               dataSourceArmPublicIP(),
 			"azurestack_resource_group":          dataSourceArmResourceGroup(),
 			"azurestack_storage_account":         dataSourceArmStorageAccount(),

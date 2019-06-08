@@ -61,6 +61,7 @@ type ArmClient struct {
 	resourcesClient resources.Client
 
 	vmClient             compute.VirtualMachinesClient
+	vmImageClient        compute.VirtualMachineImagesClient
 	vmScaleSetClient     compute.VirtualMachineScaleSetsClient
 	storageServiceClient storage.AccountsClient
 

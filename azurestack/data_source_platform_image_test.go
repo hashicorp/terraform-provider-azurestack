@@ -12,8 +12,8 @@ func TestAccDataAZURESTACKPlatformImage_basic(t *testing.T) {
 	config := testAccDataAZURESTACKPlatformImageBasic(testLocation())
 
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: config,

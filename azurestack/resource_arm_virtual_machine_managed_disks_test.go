@@ -14,29 +14,6 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-// NOTE: Test `TestAccAzureStackVirtualMachine_enableAnWithVM` requires a machine of size `D8_v3` which is large/expensive - you may wish to ignore this test"
-
-func TestAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_standardSSD(t *testing.T) {
-	resourceName := "azurestack_virtual_machine.test"
-	var vm compute.VirtualMachine
-	ri := acctest.RandInt()
-	config := testAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_standardSSD(ri, testLocation())
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackVirtualMachineExists(resourceName, &vm),
-					resource.TestCheckResourceAttr(resourceName, "storage_os_disk.0.managed_disk_type", "StandardSSD_LRS"),
-				),
-			},
-		},
-	})
-}
-
 func TestAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_explicit(t *testing.T) {
 	var vm compute.VirtualMachine
 	ri := acctest.RandInt()
@@ -159,8 +136,8 @@ func TestAccAzureStackVirtualMachine_deleteManagedDiskOptOut(t *testing.T) {
 			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMVirtualMachineManagedDiskExists(&osd, true),
-					testCheckAzureRMVirtualMachineManagedDiskExists(&dtd, true),
+					testCheckAzureStackVirtualMachineManagedDiskExists(&osd, true),
+					testCheckAzureStackVirtualMachineManagedDiskExists(&dtd, true),
 				),
 			},
 		},
@@ -192,8 +169,8 @@ func TestAccAzureStackVirtualMachine_deleteManagedDiskOptIn(t *testing.T) {
 			{
 				Config: postConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureRMVirtualMachineManagedDiskExists(&osd, false),
-					testCheckAzureRMVirtualMachineManagedDiskExists(&dtd, false),
+					testCheckAzureStackVirtualMachineManagedDiskExists(&osd, false),
+					testCheckAzureStackVirtualMachineManagedDiskExists(&dtd, false),
 				),
 			},
 		},
@@ -374,83 +351,6 @@ func TestAccAzureStackVirtualMachine_enableAnWithVM(t *testing.T) {
 				Config: testAccAzureStackVirtualMachine_anWithVM(rInt, testAltLocation()),
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackVirtualMachineExists(resourceName, &vm),
-				),
-			},
-		},
-	})
-}
-
-func TestAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_changeOsWriteAcceleratorEnabled(t *testing.T) {
-	resourceName := "azurestack_virtual_machine.test"
-	rInt := acctest.RandInt()
-	var vm compute.VirtualMachine
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_withOsWriteAcceleratorEnabled(rInt, testAltLocation(), "true"),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackVirtualMachineExists(resourceName, &vm),
-					resource.TestCheckResourceAttr(resourceName, "storage_os_disk.0.write_accelerator_enabled", "true"),
-				),
-			},
-			{
-				Config: testAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_withOsWriteAcceleratorEnabled(rInt, testAltLocation(), "false"),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackVirtualMachineExists(resourceName, &vm),
-					resource.TestCheckResourceAttr(resourceName, "storage_os_disk.0.write_accelerator_enabled", "false"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_withWriteAcceleratorEnabled(t *testing.T) {
-	resourceName := "azurestack_virtual_machine.test"
-	rInt := acctest.RandInt()
-	var vm compute.VirtualMachine
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_withWriteAcceleratorEnabled(rInt, testAltLocation(), "true"),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackVirtualMachineExists(resourceName, &vm),
-					resource.TestCheckResourceAttr(resourceName, "storage_data_disk.0.write_accelerator_enabled", "true"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_changeWriteAcceleratorEnabled(t *testing.T) {
-	resourceName := "azurestack_virtual_machine.test"
-	rInt := acctest.RandInt()
-	var vm compute.VirtualMachine
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_withWriteAcceleratorEnabled(rInt, testAltLocation(), "false"),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackVirtualMachineExists(resourceName, &vm),
-					resource.TestCheckResourceAttr(resourceName, "storage_data_disk.0.write_accelerator_enabled", "false"),
-				),
-			},
-			{
-				Config: testAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_withWriteAcceleratorEnabled(rInt, testAltLocation(), "true"),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackVirtualMachineExists(resourceName, &vm),
-					resource.TestCheckResourceAttr(resourceName, "storage_data_disk.0.write_accelerator_enabled", "true"),
 				),
 			},
 		},
@@ -2041,7 +1941,7 @@ resource "azurestack_virtual_machine" "test" {
 `, rInt, location, rInt, rInt, rInt, rString, rString)
 }
 
-func testCheckAzureRMVirtualMachineManagedDiskExists(managedDiskID *string, shouldExist bool) resource.TestCheckFunc {
+func testCheckAzureStackVirtualMachineManagedDiskExists(managedDiskID *string, shouldExist bool) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		d, err := testGetAzureRMVirtualMachineManagedDisk(managedDiskID)
 		if err != nil {

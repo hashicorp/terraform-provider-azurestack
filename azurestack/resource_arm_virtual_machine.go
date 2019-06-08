@@ -202,8 +202,8 @@ func resourceArmVirtualMachine() *schema.Resource {
 							Computed:      true,
 							ConflictsWith: []string{"storage_os_disk.0.vhd_uri"},
 							ValidateFunc: validation.StringInSlice([]string{
-								"Premium_LRS",
-								"Standard_LRS",
+								string(compute.PremiumLRS),
+								string(compute.StandardLRS),
 							}, true),
 						},
 
@@ -267,8 +267,8 @@ func resourceArmVirtualMachine() *schema.Resource {
 							Optional: true,
 							Computed: true,
 							ValidateFunc: validation.StringInSlice([]string{
-								"Premium_LRS",
-								"Standard_LRS",
+								string(compute.PremiumLRS),
+								string(compute.StandardLRS),
 							}, true),
 						},
 

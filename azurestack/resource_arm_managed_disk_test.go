@@ -76,7 +76,7 @@ func TestAccAzureStackManagedDisk_import(t *testing.T) {
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackVirtualMachineExists("azurestack_virtual_machine.test", &vm),
-					testDeleteAzureRMVirtualMachine("azurestack_virtual_machine.test"),
+					testDeleteAzureStackVirtualMachine("azurestack_virtual_machine.test"),
 				),
 			},
 			{
@@ -250,7 +250,7 @@ func testCheckAzureStackManagedDiskDestroy(s *terraform.State) error {
 	return nil
 }
 
-func testDeleteAzureRMVirtualMachine(resourceName string) resource.TestCheckFunc {
+func testDeleteAzureStackVirtualMachine(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
 		if !ok {

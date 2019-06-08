@@ -129,8 +129,8 @@ func TestAccAzureStackVirtualMachine_deleteManagedDiskOptOut(t *testing.T) {
 				Config:  preConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackVirtualMachineExists("azurestack_virtual_machine.test", &vm),
-					testLookupAzureRMVirtualMachineManagedDiskID(&vm, "myosdisk1", &osd),
-					testLookupAzureRMVirtualMachineManagedDiskID(&vm, "mydatadisk1", &dtd),
+					testLookupAzureStackVirtualMachineManagedDiskID(&vm, "myosdisk1", &osd),
+					testLookupAzureStackVirtualMachineManagedDiskID(&vm, "mydatadisk1", &dtd),
 				),
 			},
 			{
@@ -162,8 +162,8 @@ func TestAccAzureStackVirtualMachine_deleteManagedDiskOptIn(t *testing.T) {
 				Config:  preConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackVirtualMachineExists("azurestack_virtual_machine.test", &vm),
-					testLookupAzureRMVirtualMachineManagedDiskID(&vm, "myosdisk1", &osd),
-					testLookupAzureRMVirtualMachineManagedDiskID(&vm, "mydatadisk1", &dtd),
+					testLookupAzureStackVirtualMachineManagedDiskID(&vm, "myosdisk1", &osd),
+					testLookupAzureStackVirtualMachineManagedDiskID(&vm, "mydatadisk1", &dtd),
 				),
 			},
 			{
@@ -209,10 +209,10 @@ func TestAccAzureStackVirtualMachine_dataDiskTypeConflict(t *testing.T) {
 	})
 }
 
-func TestAccAzureStackVirtualMachine_bugAzureRM33(t *testing.T) {
+func TestAccAzureStackVirtualMachine_bugAzureStack33(t *testing.T) {
 	ri := acctest.RandInt()
 	rs := acctest.RandString(7)
-	config := testAccAzureStackVirtualMachine_bugAzureRM33(ri, rs, testLocation())
+	config := testAccAzureStackVirtualMachine_bugAzureStack33(ri, rs, testLocation())
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -397,7 +397,7 @@ func TestAccAzureStackVirtualMachine_hasDiskInfoWhenStopped(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckAndStopAzureRMVirtualMachine(&vm),
+					testCheckAndStopAzureStackVirtualMachine(&vm),
 					resource.TestCheckResourceAttr(resourceName, "storage_os_disk.0.managed_disk_type", "Standard_LRS"),
 					resource.TestCheckResourceAttr(resourceName, "storage_data_disk.0.disk_size_gb", "64"),
 				),
@@ -434,7 +434,7 @@ func TestAccAzureStackVirtualMachine_importBasic_withZone(t *testing.T) {
 	})
 }
 
-func testCheckAndStopAzureRMVirtualMachine(vm *compute.VirtualMachine) resource.TestCheckFunc {
+func testCheckAndStopAzureStackVirtualMachine(vm *compute.VirtualMachine) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		vmID, err := parseAzureResourceID(*vm.ID)
 		if err != nil {
@@ -1871,7 +1871,7 @@ resource "azurestack_virtual_machine" "test" {
 `, rInt, location, rInt, rInt, rInt, rInt, rInt, rInt)
 }
 
-func testAccAzureStackVirtualMachine_bugAzureRM33(rInt int, rString string, location string) string {
+func testAccAzureStackVirtualMachine_bugAzureStack33(rInt int, rString string, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
@@ -1943,7 +1943,7 @@ resource "azurestack_virtual_machine" "test" {
 
 func testCheckAzureStackVirtualMachineManagedDiskExists(managedDiskID *string, shouldExist bool) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		d, err := testGetAzureRMVirtualMachineManagedDisk(managedDiskID)
+		d, err := testGetAzureStackVirtualMachineManagedDisk(managedDiskID)
 		if err != nil {
 			return fmt.Errorf("Error trying to retrieve Managed Disk %s, %+v", *managedDiskID, err)
 		}
@@ -1958,12 +1958,12 @@ func testCheckAzureStackVirtualMachineManagedDiskExists(managedDiskID *string, s
 	}
 }
 
-func testLookupAzureRMVirtualMachineManagedDiskID(vm *compute.VirtualMachine, diskName string, managedDiskID *string) resource.TestCheckFunc {
+func testLookupAzureStackVirtualMachineManagedDiskID(vm *compute.VirtualMachine, diskName string, managedDiskID *string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if osd := vm.StorageProfile.OsDisk; osd != nil {
 			if strings.EqualFold(*osd.Name, diskName) {
 				if osd.ManagedDisk != nil {
-					id, err := findAzureRMVirtualMachineManagedDiskID(osd.ManagedDisk)
+					id, err := findAzureStackVirtualMachineManagedDiskID(osd.ManagedDisk)
 					if err != nil {
 						return fmt.Errorf("Unable to parse Managed Disk ID for OS Disk %s, %+v", diskName, err)
 					}
@@ -1976,7 +1976,7 @@ func testLookupAzureRMVirtualMachineManagedDiskID(vm *compute.VirtualMachine, di
 		for _, dataDisk := range *vm.StorageProfile.DataDisks {
 			if strings.EqualFold(*dataDisk.Name, diskName) {
 				if dataDisk.ManagedDisk != nil {
-					id, err := findAzureRMVirtualMachineManagedDiskID(dataDisk.ManagedDisk)
+					id, err := findAzureStackVirtualMachineManagedDiskID(dataDisk.ManagedDisk)
 					if err != nil {
 						return fmt.Errorf("Unable to parse Managed Disk ID for Data Disk %s, %+v", diskName, err)
 					}
@@ -1990,14 +1990,14 @@ func testLookupAzureRMVirtualMachineManagedDiskID(vm *compute.VirtualMachine, di
 	}
 }
 
-func findAzureRMVirtualMachineManagedDiskID(md *compute.ManagedDiskParameters) (string, error) {
+func findAzureStackVirtualMachineManagedDiskID(md *compute.ManagedDiskParameters) (string, error) {
 	if _, err := parseAzureResourceID(*md.ID); err != nil {
 		return "", err
 	}
 	return *md.ID, nil
 }
 
-func testGetAzureRMVirtualMachineManagedDisk(managedDiskID *string) (*compute.Disk, error) {
+func testGetAzureStackVirtualMachineManagedDisk(managedDiskID *string) (*compute.Disk, error) {
 	armID, err := parseAzureResourceID(*managedDiskID)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to parse Managed Disk ID %s, %+v", *managedDiskID, err)

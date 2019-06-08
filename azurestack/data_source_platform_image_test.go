@@ -8,7 +8,7 @@ import (
 )
 
 func TestAccDataAZURESTACKPlatformImage_basic(t *testing.T) {
-	dataSourceName := "data.azurerm_platform_image.test"
+	dataSourceName := "data.azurestack_platform_image.test"
 	config := testAccDataAZURESTACKPlatformImageBasic(testLocation())
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -30,7 +30,7 @@ func TestAccDataAZURESTACKPlatformImage_basic(t *testing.T) {
 
 func testAccDataAZURESTACKPlatformImageBasic(location string) string {
 	return fmt.Sprintf(`
-data "azurerm_platform_image" "test" {
+data "azurestack_platform_image" "test" {
   location  = "%s"
   publisher = "Canonical"
   offer     = "UbuntuServer"

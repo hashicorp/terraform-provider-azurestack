@@ -54,8 +54,6 @@ func resourceArmManagedDisk() *schema.Resource {
 					string(compute.Empty),
 					string(compute.FromImage),
 					string(compute.Import),
-					string(compute.PremiumLRS),
-					string(compute.StandardLRS),
 				}, true),
 			},
 

@@ -1,5 +1,5 @@
 ---
-layout: "azurerm"
+layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_managed_disk"
 sidebar_current: "docs-azurestack-resource-compute-managed-disk"
 description: |-
@@ -82,7 +82,7 @@ The following arguments are supported:
     Changing this forces a new resource to be created.
 
 * `storage_account_type` - (Required) The type of storage to use for the managed disk.
-    Allowable values are `Standard_LRS`, `Premium_LRS`, `StandardSSD_LRS` or `UltraSSD_LRS`.
+    Allowable values are `Standard_LRS` or `Premium_LRS`.
 
 * `create_option` - (Required) The method to use when creating the managed disk. Possible values include:
  * `Import` - Import a VHD file in to the managed disk (VHD specified with `source_uri`).
@@ -103,8 +103,6 @@ The following arguments are supported:
     If `create_option` is `Copy` or `FromImage`, then the value must be equal to or greater than the source's size.
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
-
--> **Please Note**: Availability Zones are [only supported in several regions at this time](https://docs.microsoft.com/en-us/azure/availability-zones/az-overview).
 
 For more information on managed disks, such as sizing options and pricing, please check out the
 [azure documentation](https://docs.microsoft.com/en-us/azure/storage/storage-managed-disks-overview).

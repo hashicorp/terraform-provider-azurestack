@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
@@ -41,8 +40,7 @@ func resourceArmManagedDisk() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{
 					string(compute.PremiumLRS),
 					string(compute.StandardLRS),
-				}, true),
-				DiffSuppressFunc: suppress.CaseDifference,
+				}, false),
 			},
 
 			"create_option": {
@@ -54,7 +52,7 @@ func resourceArmManagedDisk() *schema.Resource {
 					string(compute.Empty),
 					string(compute.FromImage),
 					string(compute.Import),
-				}, true),
+				}, false),
 			},
 
 			"source_uri": {
@@ -82,7 +80,7 @@ func resourceArmManagedDisk() *schema.Resource {
 				ValidateFunc: validation.StringInSlice([]string{
 					string(compute.Windows),
 					string(compute.Linux),
-				}, true),
+				}, false),
 			},
 
 			"disk_size_gb": {
@@ -121,13 +119,6 @@ func resourceArmManagedDiskCreateUpdate(d *schema.ResourceData, meta interface{}
 	tags := d.Get("tags").(map[string]interface{})
 	expandedTags := expandTags(tags)
 
-	var skuName compute.StorageAccountTypes
-	if strings.EqualFold(storageAccountType, string(compute.PremiumLRS)) {
-		skuName = compute.PremiumLRS
-	} else if strings.EqualFold(storageAccountType, string(compute.StandardLRS)) {
-		skuName = compute.StandardLRS
-	}
-
 	createDisk := compute.Disk{
 		Name:     &name,
 		Location: &location,
@@ -135,7 +126,7 @@ func resourceArmManagedDiskCreateUpdate(d *schema.ResourceData, meta interface{}
 			OsType: compute.OperatingSystemTypes(osType),
 		},
 		Sku: &compute.DiskSku{
-			Name: skuName,
+			Name: compute.StorageAccountTypes(storageAccountType),
 		},
 		Tags: *expandedTags,
 	}

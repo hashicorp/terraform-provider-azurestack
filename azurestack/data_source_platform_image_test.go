@@ -7,9 +7,9 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestAccDataAZURESTACKPlatformImage_basic(t *testing.T) {
+func TestAccDataAzureStackPlatformImage_basic(t *testing.T) {
 	dataSourceName := "data.azurestack_platform_image.test"
-	config := testAccDataAZURESTACKPlatformImageBasic(testLocation())
+	config := testAccDataAzureStackPlatformImageBasic(testLocation())
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
@@ -28,7 +28,7 @@ func TestAccDataAZURESTACKPlatformImage_basic(t *testing.T) {
 	})
 }
 
-func testAccDataAZURESTACKPlatformImageBasic(location string) string {
+func testAccDataAzureStackPlatformImageBasic(location string) string {
 	return fmt.Sprintf(`
 data "azurestack_platform_image" "test" {
   location  = "%s"

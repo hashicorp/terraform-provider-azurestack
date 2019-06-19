@@ -1,7 +1,15 @@
 ## 0.8.0 (Unreleased)
 
+FEATURES:
+
+* **New Data Source:** `azurestack_platform_image` [GH-85]
+* **New Resource:** `azurestack_managed_disk` [GH-85]
+
+IMPROVEMENTS:
+
 * dependencies: Changing to the `2019-03-01` profile [GH-84]
 * dependencies: upgrading to `v30.0.0` of `github.com/Azure/azure-sdk-for-go` [GH-88]
+* `azurestack_virtual_machine` - support for manage disks [GH-85]
 
 ## 0.7.0 (May 23, 2019)
 

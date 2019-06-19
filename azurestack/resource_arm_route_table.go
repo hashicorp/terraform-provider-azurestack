@@ -94,7 +94,7 @@ func resourceArmRouteTableCreateUpdate(d *schema.ResourceData, meta interface{})
 	client := meta.(*ArmClient).routeTablesClient
 	ctx := meta.(*ArmClient).StopContext
 
-	log.Printf("[INFO] preparing arguments for AzureRM Route Table creation.")
+	log.Printf("[INFO] preparing arguments for AzureStack Route Table creation.")
 
 	name := d.Get("name").(string)
 	location := azureStackNormalizeLocation(d.Get("location").(string))

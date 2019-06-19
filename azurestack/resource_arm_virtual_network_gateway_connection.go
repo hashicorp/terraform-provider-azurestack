@@ -108,7 +108,7 @@ func resourceArmVirtualNetworkGatewayConnectionCreateUpdate(d *schema.ResourceDa
 	client := meta.(*ArmClient).vnetGatewayConnectionsClient
 	ctx := meta.(*ArmClient).StopContext
 
-	log.Printf("[INFO] preparing arguments for AzureRM Virtual Network Gateway Connection creation.")
+	log.Printf("[INFO] preparing arguments for AzureStack Virtual Network Gateway Connection creation.")
 
 	name := d.Get("name").(string)
 	location := azureStackNormalizeLocation(d.Get("location").(string))
@@ -129,7 +129,7 @@ func resourceArmVirtualNetworkGatewayConnectionCreateUpdate(d *schema.ResourceDa
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, connection)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating AzureRM Virtual Network Gateway Connection %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("Error Creating/Updating AzureStack Virtual Network Gateway Connection %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
@@ -141,7 +141,7 @@ func resourceArmVirtualNetworkGatewayConnectionCreateUpdate(d *schema.ResourceDa
 		return err
 	}
 	if read.ID == nil {
-		return fmt.Errorf("Cannot read AzureRM Virtual Network Gateway Connection %q (resource group %q) ID", name, resGroup)
+		return fmt.Errorf("Cannot read AzureStack Virtual Network Gateway Connection %q (resource group %q) ID", name, resGroup)
 	}
 
 	d.SetId(*read.ID)
@@ -164,7 +164,7 @@ func resourceArmVirtualNetworkGatewayConnectionRead(d *schema.ResourceData, meta
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on AzureRM Virtual Network Gateway Connection %q: %+v", name, err)
+		return fmt.Errorf("Error making Read request on AzureStack Virtual Network Gateway Connection %q: %+v", name, err)
 	}
 
 	conn := *resp.VirtualNetworkGatewayConnectionPropertiesFormat
@@ -214,7 +214,7 @@ func resourceArmVirtualNetworkGatewayConnectionRead(d *schema.ResourceData, meta
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making GetSharedKey request on AzureRM Virtual Network Gateway Connection %q: %+v", name, err)
+		return fmt.Errorf("Error making GetSharedKey request on AzureStack Virtual Network Gateway Connection %q: %+v", name, err)
 	}
 
 	if sharedKeyResp.Value != nil {

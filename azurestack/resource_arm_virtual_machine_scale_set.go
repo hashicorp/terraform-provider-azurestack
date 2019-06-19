@@ -622,7 +622,7 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 	}
 
 	storageProfile := compute.VirtualMachineScaleSetStorageProfile{}
-	osDisk, err := expandAzureRMVirtualMachineScaleSetsStorageProfileOsDisk(d)
+	osDisk, err := expandAzureStackVirtualMachineScaleSetsStorageProfileOsDisk(d)
 	if err != nil {
 		return err
 	}
@@ -630,7 +630,7 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 
 	// Not supported
 	// if _, ok := d.GetOk("storage_profile_data_disk"); ok {
-	// 	dataDisks, err := expandAzureRMVirtualMachineScaleSetsStorageProfileDataDisk(d)
+	// 	dataDisks, err := expandAzureStackVirtualMachineScaleSetsStorageProfileDataDisk(d)
 	// 	if err != nil {
 	// 		return err
 	// 	}
@@ -645,12 +645,12 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 		storageProfile.ImageReference = imageRef
 	}
 
-	osProfile, err := expandAzureRMVirtualMachineScaleSetsOsProfile(d)
+	osProfile, err := expandAzureStackVirtualMachineScaleSetsOsProfile(d)
 	if err != nil {
 		return err
 	}
 
-	extensions, err := expandAzureRMVirtualMachineScaleSetExtensions(d)
+	extensions, err := expandAzureStackVirtualMachineScaleSetExtensions(d)
 	if err != nil {
 		return err
 	}
@@ -719,7 +719,7 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 	resp, err := client.Get(ctx, resGroup, name)
 	if err != nil {
 		if utils.ResponseWasNotFound(resp.Response) {
-			log.Printf("[INFO] AzureRM Virtual Machine Scale Set (%s) Not Found. Removing from State", name)
+			log.Printf("[INFO] AzureStack Virtual Machine Scale Set (%s) Not Found. Removing from State", name)
 			d.SetId("")
 			return nil
 		}
@@ -751,7 +751,7 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 
 		if profile := properties.VirtualMachineProfile; profile != nil {
 
-			osProfile := flattenAzureRMVirtualMachineScaleSetOsProfile(d, profile.OsProfile)
+			osProfile := flattenAzureStackVirtualMachineScaleSetOsProfile(d, profile.OsProfile)
 			if err := d.Set("os_profile", osProfile); err != nil {
 				return fmt.Errorf("[DEBUG] Error setting `os_profile`: %#v", err)
 			}
@@ -1021,7 +1021,7 @@ func flattenAzureRmVirtualMachineScaleSetNetworkProfile(profile *compute.Virtual
 	return result
 }
 
-func flattenAzureRMVirtualMachineScaleSetOsProfile(d *schema.ResourceData, profile *compute.VirtualMachineScaleSetOSProfile) []interface{} {
+func flattenAzureStackVirtualMachineScaleSetOsProfile(d *schema.ResourceData, profile *compute.VirtualMachineScaleSetOSProfile) []interface{} {
 	result := make(map[string]interface{})
 
 	result["computer_name_prefix"] = *profile.ComputerNamePrefix
@@ -1357,7 +1357,7 @@ func expandAzureRmVirtualMachineScaleSetNetworkProfile(d *schema.ResourceData) *
 	}
 }
 
-func expandAzureRMVirtualMachineScaleSetsOsProfile(d *schema.ResourceData) (*compute.VirtualMachineScaleSetOSProfile, error) {
+func expandAzureStackVirtualMachineScaleSetsOsProfile(d *schema.ResourceData) (*compute.VirtualMachineScaleSetOSProfile, error) {
 	osProfileConfigs := d.Get("os_profile").([]interface{})
 
 	osProfileConfig := osProfileConfigs[0].(map[string]interface{})
@@ -1418,7 +1418,7 @@ func expandAzureRmVirtualMachineScaleSetIdentity(d *schema.ResourceData) *comput
 	}
 }
 
-func expandAzureRMVirtualMachineScaleSetsStorageProfileOsDisk(d *schema.ResourceData) (*compute.VirtualMachineScaleSetOSDisk, error) {
+func expandAzureStackVirtualMachineScaleSetsStorageProfileOsDisk(d *schema.ResourceData) (*compute.VirtualMachineScaleSetOSDisk, error) {
 	osDiskConfigs := d.Get("storage_profile_os_disk").(*schema.Set).List()
 
 	osDiskConfig := osDiskConfigs[0].(map[string]interface{})
@@ -1624,7 +1624,7 @@ func expandAzureRmVirtualMachineScaleSetOsProfileSecrets(d *schema.ResourceData)
 	return &secrets
 }
 
-func expandAzureRMVirtualMachineScaleSetExtensions(d *schema.ResourceData) (*compute.VirtualMachineScaleSetExtensionProfile, error) {
+func expandAzureStackVirtualMachineScaleSetExtensions(d *schema.ResourceData) (*compute.VirtualMachineScaleSetExtensionProfile, error) {
 	extensions := d.Get("extension").(*schema.Set).List()
 	resources := make([]compute.VirtualMachineScaleSetExtension, 0, len(extensions))
 	for _, e := range extensions {

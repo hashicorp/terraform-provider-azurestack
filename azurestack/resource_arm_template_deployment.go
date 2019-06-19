@@ -81,7 +81,7 @@ func resourceArmTemplateDeploymentCreate(d *schema.ResourceData, meta interface{
 	resourceGroup := d.Get("resource_group_name").(string)
 	deploymentMode := d.Get("deployment_mode").(string)
 
-	log.Printf("[INFO] preparing arguments for AzureRM Template Deployment creation.")
+	log.Printf("[INFO] preparing arguments for AzureStack Template Deployment creation.")
 	properties := resources.DeploymentProperties{
 		Mode: resources.DeploymentMode(deploymentMode),
 	}
@@ -196,7 +196,7 @@ func resourceArmTemplateDeploymentRead(d *schema.ResourceData, meta interface{})
 					outputValueString = fmt.Sprint(outputValue)
 
 				default:
-					log.Printf("[WARN] Ignoring output %s: Outputs of type %s are not currently supported in azurerm_template_deployment.",
+					log.Printf("[WARN] Ignoring output %s: Outputs of type %s are not currently supported in azurestack_template_deployment.",
 						key, outputType)
 					continue
 				}

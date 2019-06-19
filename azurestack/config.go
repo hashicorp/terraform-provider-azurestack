@@ -42,6 +42,7 @@ type ArmClient struct {
 
 	// Compute
 	availSetClient    compute.AvailabilitySetsClient
+	diskClient        compute.DisksClient
 	vmExtensionClient compute.VirtualMachineExtensionsClient
 
 	// DNS
@@ -60,6 +61,7 @@ type ArmClient struct {
 	resourcesClient resources.Client
 
 	vmClient             compute.VirtualMachinesClient
+	vmImageClient        compute.VirtualMachineImagesClient
 	vmScaleSetClient     compute.VirtualMachineScaleSetsClient
 	storageServiceClient storage.AccountsClient
 
@@ -197,6 +199,10 @@ func (c *ArmClient) registerComputeClients(endpoint, subscriptionId string, auth
 	c.configureClient(&availabilitySetsClient.Client, auth)
 	c.availSetClient = availabilitySetsClient
 
+	diskClient := compute.NewDisksClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&diskClient.Client, auth)
+	c.diskClient = diskClient
+
 	extensionsClient := compute.NewVirtualMachineExtensionsClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&extensionsClient.Client, auth)
 	c.vmExtensionClient = extensionsClient
@@ -208,6 +214,10 @@ func (c *ArmClient) registerComputeClients(endpoint, subscriptionId string, auth
 	virtualMachinesClient := compute.NewVirtualMachinesClientWithBaseURI(endpoint, subscriptionId)
 	c.configureClient(&virtualMachinesClient.Client, auth)
 	c.vmClient = virtualMachinesClient
+
+	virtualMachineImagesClient := compute.NewVirtualMachineImagesClientWithBaseURI(endpoint, subscriptionId)
+	c.configureClient(&virtualMachineImagesClient.Client, auth)
+	c.vmImageClient = virtualMachineImagesClient
 }
 
 func (c *ArmClient) registerDNSClients(endpoint, subscriptionId string, auth autorest.Authorizer) {

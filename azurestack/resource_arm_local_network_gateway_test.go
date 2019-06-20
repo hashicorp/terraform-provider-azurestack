@@ -15,7 +15,7 @@ func TestAccAzureStackLocalNetworkGateway_basic(t *testing.T) {
 	resourceName := "azurestack_local_network_gateway.test"
 
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLocalNetworkGatewayDestroy,
@@ -41,7 +41,7 @@ func TestAccAzureStackLocalNetworkGateway_disappears(t *testing.T) {
 	name := "azurestack_local_network_gateway.test"
 	rInt := acctest.RandInt()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLocalNetworkGatewayDestroy,
@@ -64,7 +64,7 @@ func TestAccAzureStackLocalNetworkGateway_tags(t *testing.T) {
 	resourceName := "azurestack_local_network_gateway.test"
 
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLocalNetworkGatewayDestroy,
@@ -86,7 +86,7 @@ func TestAccAzureStackLocalNetworkGateway_bgpSettings(t *testing.T) {
 	rInt := acctest.RandInt()
 	location := testLocation()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLocalNetworkGatewayDestroy,
@@ -109,7 +109,7 @@ func TestAccAzureStackLocalNetworkGateway_bgpSettingsDisable(t *testing.T) {
 	rInt := acctest.RandInt()
 	location := testLocation()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLocalNetworkGatewayDestroy,
@@ -143,7 +143,7 @@ func TestAccAzureStackLocalNetworkGateway_bgpSettingsEnable(t *testing.T) {
 	rInt := acctest.RandInt()
 	location := testLocation()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLocalNetworkGatewayDestroy,
@@ -177,7 +177,7 @@ func TestAccAzureStackLocalNetworkGateway_bgpSettingsComplete(t *testing.T) {
 	rInt := acctest.RandInt()
 	location := testLocation()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLocalNetworkGatewayDestroy,

@@ -62,7 +62,7 @@ func TestAccAzureStackStorageAccount_basic(t *testing.T) {
 	preConfig := testAccAzureStackStorageAccount_basic(ri, rs, location)
 	// postConfig := testAccAzureStackStorageAccount_update(ri, rs, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
@@ -104,7 +104,7 @@ func TestAccAzureStackStorageAccount_premium(t *testing.T) {
 	location := testLocation()
 	preConfig := testAccAzureStackStorageAccount_premium(ri, rs, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
@@ -134,7 +134,7 @@ func TestAccAzureStackStorageAccount_disappears(t *testing.T) {
 	rs := acctest.RandString(4)
 	preConfig := testAccAzureStackStorageAccount_basic(ri, rs, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
@@ -161,7 +161,7 @@ func TestAccAzureStackStorageAccount_blobConnectionString(t *testing.T) {
 	rs := acctest.RandString(4)
 	preConfig := testAccAzureStackStorageAccount_basic(ri, rs, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
@@ -194,7 +194,7 @@ func TestAccAzureStackStorageAccount_blobEncryption(t *testing.T) {
 	preConfig := testAccAzureStackStorageAccount_blobEncryption(ri, rs, location)
 	postConfig := testAccAzureStackStorageAccount_blobEncryptionDisabled(ri, rs, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
@@ -235,7 +235,7 @@ func TestAccAzureStackStorageAccount_fileEncryption(t *testing.T) {
 	preConfig := testAccAzureStackStorageAccount_fileEncryption(ri, rs, location)
 	postConfig := testAccAzureStackStorageAccount_fileEncryptionDisabled(ri, rs, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
@@ -279,7 +279,7 @@ func TestAccAzureStackStorageAccount_enableHttpsTrafficOnly(t *testing.T) {
 	preConfig := testAccAzureStackStorageAccount_enableHttpsTrafficOnly(ri, rs, location)
 	postConfig := testAccAzureStackStorageAccount_enableHttpsTrafficOnlyDisabled(ri, rs, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
@@ -315,7 +315,7 @@ func TestAccAzureStackStorageAccount_blobStorageWithUpdate(t *testing.T) {
 	preConfig := testAccAzureStackStorageAccount_blobStorage(ri, rs, location)
 	postConfig := testAccAzureStackStorageAccount_blobStorageUpdate(ri, rs, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
@@ -351,7 +351,7 @@ func TestAccAzureStackStorageAccount_storageV2WithUpdate(t *testing.T) {
 	preConfig := testAccAzureStackStorageAccount_storageV2(ri, rs, location)
 	postConfig := testAccAzureStackStorageAccount_storageV2Update(ri, rs, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageAccountDestroy,
@@ -382,7 +382,7 @@ func TestAccAzureStackStorageAccount_NonStandardCasing(t *testing.T) {
 	rs := acctest.RandString(4)
 	preConfig := testAccAzureStackStorageAccount_nonStandardCasing(ri, rs, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageAccountDestroy,

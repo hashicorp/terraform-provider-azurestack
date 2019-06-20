@@ -19,7 +19,7 @@ func TestAccAzureStackStorageContainer_basic(t *testing.T) {
 	rs := strings.ToLower(acctest.RandString(11))
 	config := testAccAzureStackStorageContainer_basic(ri, rs, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageContainerDestroy,
@@ -41,7 +41,7 @@ func TestAccAzureStackStorageContainer_disappears(t *testing.T) {
 	rs := strings.ToLower(acctest.RandString(11))
 	config := testAccAzureStackStorageContainer_basic(ri, rs, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageContainerDestroy,
@@ -65,7 +65,7 @@ func TestAccAzureStackStorageContainer_root(t *testing.T) {
 	rs := strings.ToLower(acctest.RandString(11))
 	config := testAccAzureStackStorageContainer_root(ri, rs, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageContainerDestroy,

@@ -17,7 +17,7 @@ func TestAccDataAzureStackPublicIP_basic(t *testing.T) {
 
 	config := testAccDataAzureStackPublicIPBasic(name, resourceGroupName, ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackPublicIpDestroy,

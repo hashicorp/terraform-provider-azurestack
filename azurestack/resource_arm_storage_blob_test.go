@@ -148,7 +148,7 @@ func TestAccAzureStackStorageBlob_basic(t *testing.T) {
 	rs := strings.ToLower(acctest.RandString(11))
 	config := testAccAzureStackStorageBlob_basic(ri, rs, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageBlobDestroy,
@@ -168,7 +168,7 @@ func TestAccAzureStackStorageBlob_disappears(t *testing.T) {
 	rs := strings.ToLower(acctest.RandString(11))
 	config := testAccAzureStackStorageBlob_basic(ri, rs, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageBlobDestroy,
@@ -205,7 +205,7 @@ func TestAccAzureStackStorageBlobBlock_source(t *testing.T) {
 
 	config := testAccAzureStackStorageBlobBlock_source(ri, rs1, sourceBlob.Name(), testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageBlobDestroy,
@@ -264,7 +264,7 @@ func TestAccAzureStackStorageBlobPage_source(t *testing.T) {
 
 	config := testAccAzureStackStorageBlobPage_source(ri, rs, sourceBlob.Name(), testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageBlobDestroy,
@@ -299,7 +299,7 @@ func TestAccAzureStackStorageBlob_source_uri(t *testing.T) {
 
 	config := testAccAzureStackStorageBlob_source_uri(ri, rs, sourceBlob.Name(), testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackStorageBlobDestroy,

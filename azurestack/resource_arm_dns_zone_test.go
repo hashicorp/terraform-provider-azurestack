@@ -15,7 +15,7 @@ func TestAccAzureStackDnsZone_basic(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackDnsZone_basic(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackDnsZoneDestroy,
@@ -37,7 +37,7 @@ func TestAccAzureStackDnsZone_withTags(t *testing.T) {
 	preConfig := testAccAzureStackDnsZone_withTags(ri, location)
 	postConfig := testAccAzureStackDnsZone_withTagsUpdate(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackDnsZoneDestroy,

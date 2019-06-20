@@ -15,7 +15,7 @@ func TestAccAzureStackVirtualNetworkGateway_basic(t *testing.T) {
 	resourceName := "azurestack_virtual_network_gateway.test"
 	config := testAccAzureStackVirtualNetworkGateway_basic(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualNetworkGatewayDestroy,
@@ -41,7 +41,7 @@ func TestAccAzureStackVirtualNetworkGateway_lowerCaseSubnetName(t *testing.T) {
 	resourceName := "azurestack_virtual_network_gateway.test"
 	config := testAccAzureStackVirtualNetworkGateway_lowerCaseSubnetName(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualNetworkGatewayDestroy,
@@ -63,7 +63,7 @@ func TestAccAzureStackVirtualNetworkGateway_vpnGw1(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualNetworkGateway_vpnGw1(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualNetworkGatewayDestroy,
@@ -86,7 +86,7 @@ func TestAccAzureStackVirtualNetworkGateway_activeActive(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualNetworkGateway_activeActive(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualNetworkGatewayDestroy,
@@ -106,7 +106,7 @@ func TestAccAzureStackVirtualNetworkGateway_standard(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualNetworkGateway_sku(ri, testLocation(), "Standard")
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualNetworkGatewayDestroy,
@@ -131,7 +131,7 @@ func TestAccAzureStackVirtualNetworkGateway_vpnGw2(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualNetworkGateway_sku(ri, testLocation(), "VpnGw2")
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualNetworkGatewayDestroy,
@@ -156,7 +156,7 @@ func TestAccAzureStackVirtualNetworkGateway_vpnGw3(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualNetworkGateway_sku(ri, testLocation(), "VpnGw3")
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualNetworkGatewayDestroy,
@@ -177,7 +177,7 @@ func TestAccAzureStackVirtualNetworkGateway_vpnClientConfig(t *testing.T) {
 	resourceName := "azurestack_virtual_network_gateway.test"
 	config := testAccAzureStackVirtualNetworkGateway_vpnClientConfig(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualNetworkGatewayDestroy,

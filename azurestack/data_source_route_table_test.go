@@ -14,7 +14,7 @@ func TestAccDataSourceAzureStackRouteTable_basic(t *testing.T) {
 	location := testLocation()
 	config := testAccDataSourceAzureStackRouteTable_basic(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteTableDestroy,
@@ -36,7 +36,7 @@ func TestAccDataSourceAzureStackRouteTable_singleRoute(t *testing.T) {
 	location := testLocation()
 	config := testAccDataSourceAzureStackRouteTable_singleRoute(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteTableDestroy,
@@ -61,7 +61,7 @@ func TestAccDataSourceAzureStackRouteTable_multipleRoutes(t *testing.T) {
 	location := testLocation()
 	config := testAccDataSourceAzureStackRouteTable_multipleRoutes(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteTableDestroy,

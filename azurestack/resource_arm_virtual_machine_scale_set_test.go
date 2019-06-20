@@ -20,7 +20,7 @@ func TestAccAzureStackVirtualMachineScaleSet_basic(t *testing.T) {
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_basic(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -47,7 +47,7 @@ func TestAccAzureStackVirtualMachineScaleSet_basicPublicIP(t *testing.T) {
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_basicPublicIP(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -70,7 +70,7 @@ func TestAccAzureStackVirtualMachineScaleSet_basicAcceleratedNetworking(t *testi
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_basicAcceleratedNetworking(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -98,7 +98,7 @@ func TestAccAzureStackVirtualMachineScaleSet_basicIPForwarding(t *testing.T) {
 	networkProfile := map[string]interface{}{"name": networkProfileName, "primary": true}
 	networkProfileHash := fmt.Sprintf("%d", resourceArmVirtualMachineScaleSetNetworkConfigurationHash(networkProfile))
 	config := testAccAzureStackVirtualMachineScaleSet_basicIPForwarding(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -125,7 +125,7 @@ func TestAccAzureStackVirtualMachineScaleSet_basicDNSSettings(t *testing.T) {
 	networkProfile := map[string]interface{}{"name": networkProfileName, "primary": true}
 	networkProfileHash := fmt.Sprintf("%d", resourceArmVirtualMachineScaleSetNetworkConfigurationHash(networkProfile))
 	config := testAccAzureStackVirtualMachineScaleSet_basicDNSSettings(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -150,7 +150,7 @@ func TestAccAzureStackVirtualMachineScaleSet_bootDiagnostic(t *testing.T) {
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_bootDiagnostic(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -170,7 +170,7 @@ func TestAccAzureStackVirtualMachineScaleSet_networkSecurityGroup(t *testing.T) 
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_networkSecurityGroup(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -189,7 +189,7 @@ func TestAccAzureStackVirtualMachineScaleSet_basicWindows(t *testing.T) {
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_basicWindows(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -215,7 +215,7 @@ func TestAccAzureStackVirtualMachineScaleSet_singlePlacementGroupFalse(t *testin
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_singlePlacementGroupFalse(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -238,7 +238,7 @@ func TestAccAzureStackVirtualMachineScaleSet_linuxUpdated(t *testing.T) {
 	config := testAccAzureStackVirtualMachineScaleSet_linux(ri, location)
 	updatedConfig := testAccAzureStackVirtualMachineScaleSet_linuxUpdated(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -268,7 +268,7 @@ func TestAccAzureStackVirtualMachineScaleSet_customDataUpdated(t *testing.T) {
 	config := testAccAzureStackVirtualMachineScaleSet_linux(ri, location)
 	updatedConfig := testAccAzureStackVirtualMachineScaleSet_linuxCustomDataUpdated(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -289,16 +289,11 @@ func TestAccAzureStackVirtualMachineScaleSet_customDataUpdated(t *testing.T) {
 	})
 }
 
-// 	Managed disks not supported yet
-
 func TestAccAzureStackVirtualMachineScaleSet_basicLinux_managedDisk(t *testing.T) {
-
-	t.Skip()
-
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_basicLinux_managedDisk(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -313,15 +308,11 @@ func TestAccAzureStackVirtualMachineScaleSet_basicLinux_managedDisk(t *testing.T
 	})
 }
 
-// Not yet supported by AzureStack
 func TestAccAzureStackVirtualMachineScaleSet_basicWindows_managedDisk(t *testing.T) {
-
-	t.Skip()
-
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_basicWindows_managedDisk(ri, testLocation(), "Standard_D1_v2")
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -336,16 +327,12 @@ func TestAccAzureStackVirtualMachineScaleSet_basicWindows_managedDisk(t *testing
 	})
 }
 
-// Not yet supported by AzureStack
 func TestAccAzureStackVirtualMachineScaleSet_basicWindows_managedDisk_resize(t *testing.T) {
-
-	t.Skip()
-
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	preConfig := testAccAzureStackVirtualMachineScaleSet_basicWindows_managedDisk(ri, testLocation(), "Standard_D1_v2")
 	postConfig := testAccAzureStackVirtualMachineScaleSet_basicWindows_managedDisk(ri, testLocation(), "Standard_D2_v2")
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -366,15 +353,11 @@ func TestAccAzureStackVirtualMachineScaleSet_basicWindows_managedDisk_resize(t *
 	})
 }
 
-// Not yet supported by AzureStack
 func TestAccAzureStackVirtualMachineScaleSet_basicLinux_managedDiskNoName(t *testing.T) {
-
-	t.Skip()
-
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_basicLinux_managedDiskNoName(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -393,7 +376,7 @@ func TestAccAzureStackVirtualMachineScaleSet_basicLinux_disappears(t *testing.T)
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_basic(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -410,15 +393,11 @@ func TestAccAzureStackVirtualMachineScaleSet_basicLinux_disappears(t *testing.T)
 	})
 }
 
-// managed disk not supported yet
 func TestAccAzureStackVirtualMachineScaleSet_planManagedDisk(t *testing.T) {
-
-	t.Skip()
-
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_planManagedDisk(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -446,7 +425,7 @@ func TestAccAzureStackVirtualMachineScaleSet_customImage(t *testing.T) {
 	config := testAccAzureStackVirtualMachineScaleSet_customImage(ri, testLocation(), userName, password, hostName)
 	preConfig := testAccAzureStackImage_standaloneImage_setup(ri, userName, password, hostName, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -477,7 +456,7 @@ func TestAccAzureStackVirtualMachineScaleSet_applicationGateway(t *testing.T) {
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSetApplicationGatewayTemplate(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -497,7 +476,7 @@ func TestAccAzureStackVirtualMachineScaleSet_loadBalancer(t *testing.T) {
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSetLoadBalancerTemplate(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -513,14 +492,11 @@ func TestAccAzureStackVirtualMachineScaleSet_loadBalancer(t *testing.T) {
 	})
 }
 
-// Managed disks not supported yet
 func TestAccAzureStackVirtualMachineScaleSet_loadBalancerManagedDataDisks(t *testing.T) {
-	t.Skip()
-
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSetLoadBalancerTemplateManagedDataDisks(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -540,7 +516,7 @@ func TestAccAzureStackVirtualMachineScaleSet_overprovision(t *testing.T) {
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSetOverProvisionTemplate(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -560,7 +536,7 @@ func TestAccAzureStackVirtualMachineScaleSet_priority(t *testing.T) {
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSetPriorityTemplate(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -582,7 +558,7 @@ func TestAccAzureStackVirtualMachineScaleSet_MSI(t *testing.T) {
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSetMSITemplate(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -599,7 +575,7 @@ func TestAccAzureStackVirtualMachineScaleSet_extension(t *testing.T) {
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSetExtensionTemplate(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -621,7 +597,7 @@ func TestAccAzureStackVirtualMachineScaleSet_extensionUpdate(t *testing.T) {
 	location := testLocation()
 	config := testAccAzureStackVirtualMachineScaleSetExtensionTemplate(ri, location)
 	updatedConfig := testAccAzureStackVirtualMachineScaleSetExtensionTemplateUpdated(ri, location)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -648,7 +624,7 @@ func TestAccAzureStackVirtualMachineScaleSet_multipleExtensions(t *testing.T) {
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSetMultipleExtensionsTemplate(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -664,12 +640,10 @@ func TestAccAzureStackVirtualMachineScaleSet_multipleExtensions(t *testing.T) {
 	})
 }
 
-//osDiskTypeConflict must work when managed disk be supported.
 func TestAccAzureStackVirtualMachineScaleSet_osDiskTypeConflict(t *testing.T) {
-	t.Skip()
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_osDiskTypeConflict(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -686,7 +660,7 @@ func TestAccAzureStackVirtualMachineScaleSet_NonStandardCasing(t *testing.T) {
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSetNonStandardCasing(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -711,7 +685,7 @@ func TestAccAzureStackVirtualMachineScaleSet_multipleNetworkProfiles(t *testing.
 	resourceName := "azurestack_virtual_machine_scale_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackVirtualMachineScaleSet_multipleNetworkProfiles(ri, testLocation())
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
@@ -3459,7 +3433,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   storage_profile_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "16.04.0-LTS"
+    sku       = "16.04-LTS"
     version   = "latest"
   }
 }
@@ -3601,9 +3575,9 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   }
 
   plan {
-    name      = "os"
-    product   = "rancheros"
-    publisher = "rancher"
+    name      = "basic-byol"
+    publisher = "kemptech"
+    product   = "vlm-azure"
   }
 
   storage_profile_os_disk {
@@ -3613,9 +3587,9 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   }
 
   storage_profile_image_reference {
-    publisher = "rancher"
-    offer     = "rancheros"
-    sku       = "os"
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "16.04-LTS"
     version   = "latest"
   }
 }

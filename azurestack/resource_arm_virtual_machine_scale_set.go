@@ -1556,7 +1556,7 @@ func expandAzureStackVirtualMachineScaleSetsStorageProfileDataDisk(d *schema.Res
 		if managedDiskType != "" {
 			managedDiskVMSS.StorageAccountType = compute.StorageAccountTypes(managedDiskType)
 		} else {
-			managedDiskVMSS.StorageAccountType = compute.StorageAccountTypes(compute.StandardLRS)
+			managedDiskVMSS.StorageAccountType = compute.StandardLRS
 		}
 
 		// assume that data disks in VMSS can only be Managed Disks

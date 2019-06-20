@@ -15,7 +15,7 @@ func TestAccAzureStackRoute_basic(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackRoute_basic(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteDestroy,
@@ -39,7 +39,7 @@ func TestAccAzureStackRoute_disappears(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackRoute_basic(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteDestroy,
@@ -62,7 +62,7 @@ func TestAccAzureStackRoute_multipleRoutes(t *testing.T) {
 	preConfig := testAccAzureStackRoute_basic(ri, location)
 	postConfig := testAccAzureStackRoute_multipleRoutes(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackRouteDestroy,

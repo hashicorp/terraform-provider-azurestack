@@ -15,7 +15,7 @@ func TestAccAzureStackResourceGroup_basic(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackResourceGroup_basic(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackResourceGroupDestroy,
@@ -40,7 +40,7 @@ func TestAccAzureStackResourceGroup_disappears(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackResourceGroup_basic(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackResourceGroupDestroy,
@@ -64,7 +64,7 @@ func TestAccAzureStackResourceGroup_withTags(t *testing.T) {
 	preConfig := testAccAzureStackResourceGroup_withTags(ri, location)
 	postConfig := testAccAzureStackResourceGroup_withTagsUpdated(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackResourceGroupDestroy,

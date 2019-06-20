@@ -21,7 +21,7 @@ func TestAccAzureStackLoadBalancerNatRule_basic(t *testing.T) {
 		"/subscriptions/%s/resourceGroups/acctestRG-%d/providers/Microsoft.Network/loadBalancers/arm-test-loadbalancer-%d/inboundNatRules/%s",
 		subscriptionID, ri, ri, natRuleName)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -49,7 +49,7 @@ func TestAccAzureStackLoadBalancerNatRule_removal(t *testing.T) {
 	ri := acctest.RandInt()
 	natRuleName := fmt.Sprintf("NatRule-%d", ri)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -78,7 +78,7 @@ func TestAccAzureStackLoadBalancerNatRule_update(t *testing.T) {
 	natRuleName := fmt.Sprintf("NatRule-%d", ri)
 	natRule2Name := fmt.Sprintf("NatRule-%d", acctest.RandInt())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -112,7 +112,7 @@ func TestAccAzureStackLoadBalancerNatRule_disappears(t *testing.T) {
 	ri := acctest.RandInt()
 	natRuleName := fmt.Sprintf("NatRule-%d", ri)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -136,7 +136,7 @@ func TestAccAzureStackLoadBalancerNatRule_enableFloatingIP(t *testing.T) {
 	natRuleName := fmt.Sprintf("NatRule-%d", ri)
 	location := testLocation()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,
@@ -158,7 +158,7 @@ func TestAccAzureStackLoadBalancerNatRule_disableFloatingIP(t *testing.T) {
 	natRuleName := fmt.Sprintf("NatRule-%d", ri)
 	location := testLocation()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackLoadBalancerDestroy,

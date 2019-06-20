@@ -15,7 +15,7 @@ func TestAccAzureStackAvailabilitySet_basic(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackAvailabilitySet_basic(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,
@@ -42,7 +42,7 @@ func TestAccAzureStackAvailabilitySet_disappears(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackAvailabilitySet_basic(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,
@@ -68,7 +68,7 @@ func TestAccAzureStackAvailabilitySet_withTags(t *testing.T) {
 	preConfig := testAccAzureStackAvailabilitySet_withTags(ri, location)
 	postConfig := testAccAzureStackAvailabilitySet_withUpdatedTags(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,
@@ -104,7 +104,7 @@ func TestAccAzureStackAvailabilitySet_withDomainCounts(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackAvailabilitySet_withDomainCounts(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,
@@ -135,7 +135,7 @@ func TestAccAzureStackAvailabilitySet_managed(t *testing.T) {
 	ri := acctest.RandInt()
 	config := testAccAzureStackAvailabilitySet_managed(ri, testLocation())
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackAvailabilitySetDestroy,

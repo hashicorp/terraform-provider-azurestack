@@ -14,7 +14,7 @@ func TestAccDataSourceAzureStackNetworkSecurityGroup_basic(t *testing.T) {
 	location := testLocation()
 	config := testAccDataSourceAzureStackNetworkSecurityGroupBasic(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
@@ -37,7 +37,7 @@ func TestAccDataSourceAzureStackNetworkSecurityGroup_rules(t *testing.T) {
 	location := testLocation()
 	config := testAccDataSourceAzureStackNetworkSecurityGroupWithRules(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
@@ -69,7 +69,7 @@ func TestAccDataSourceAzureStackNetworkSecurityGroup_tags(t *testing.T) {
 	location := testLocation()
 	config := testAccDataSourceAzureStackNetworkSecurityGroupTags(ri, location)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,

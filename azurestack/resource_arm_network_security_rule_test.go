@@ -15,7 +15,7 @@ import (
 func TestAccAzureStackNetworkSecurityRule_basic(t *testing.T) {
 	resourceName := "azurestack_network_security_rule.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityRuleDestroy,
@@ -39,7 +39,7 @@ func TestAccAzureStackNetworkSecurityRule_disappears(t *testing.T) {
 	resourceGroup := "azurestack_network_security_rule.test"
 	rInt := acctest.RandInt()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityRuleDestroy,
@@ -59,7 +59,7 @@ func TestAccAzureStackNetworkSecurityRule_disappears(t *testing.T) {
 func TestAccAzureStackNetworkSecurityRule_addingRules(t *testing.T) {
 	rInt := acctest.RandInt()
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityRuleDestroy,
@@ -83,7 +83,7 @@ func TestAccAzureStackNetworkSecurityRule_addingRules(t *testing.T) {
 
 func TestAccAzureStackNetworkSecurityRule_augmented(t *testing.T) {
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityRuleDestroy,
@@ -104,7 +104,7 @@ func TestAccAzureStackNetworkSecurityRule_applicationSecurityGroups(t *testing.T
 	t.Skip()
 
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityRuleDestroy,

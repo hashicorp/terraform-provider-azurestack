@@ -13,7 +13,7 @@ import (
 func TestAccAzureStackNetworkSecurityGroup_basic(t *testing.T) {
 	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
@@ -36,7 +36,7 @@ func TestAccAzureStackNetworkSecurityGroup_basic(t *testing.T) {
 func TestAccAzureStackNetworkSecurityGroup_singleRule(t *testing.T) {
 	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
@@ -60,7 +60,7 @@ func TestAccAzureStackNetworkSecurityGroup_update(t *testing.T) {
 	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
 	location := testLocation()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
@@ -84,7 +84,7 @@ func TestAccAzureStackNetworkSecurityGroup_update(t *testing.T) {
 func TestAccAzureStackNetworkSecurityGroup_disappears(t *testing.T) {
 	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
@@ -104,7 +104,7 @@ func TestAccAzureStackNetworkSecurityGroup_disappears(t *testing.T) {
 func TestAccAzureStackNetworkSecurityGroup_withTags(t *testing.T) {
 	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
@@ -140,7 +140,7 @@ func TestAccAzureStackNetworkSecurityGroup_withTags(t *testing.T) {
 func TestAccAzureStackNetworkSecurityGroup_addingExtraRules(t *testing.T) {
 	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
@@ -177,7 +177,7 @@ func TestAccAzureStackNetworkSecurityGroup_augmented(t *testing.T) {
 
 	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
@@ -200,7 +200,7 @@ func TestAccAzureStackNetworkSecurityGroup_applicationSecurityGroup(t *testing.T
 
 	resourceName := "azurestack_network_security_group.test"
 	rInt := acctest.RandInt()
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,

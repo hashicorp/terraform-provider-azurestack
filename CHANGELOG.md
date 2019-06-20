@@ -10,6 +10,7 @@ IMPROVEMENTS:
 * dependencies: Changing to the `2019-03-01` profile [GH-84]
 * dependencies: upgrading to `v30.0.0` of `github.com/Azure/azure-sdk-for-go` [GH-88]
 * `azurestack_virtual_machine` - support for manage disks [GH-85]
+* `azurestack_virtual_machine_scale_set` - add support for managed disks [GH-93]
 
 ## 0.7.0 (May 23, 2019)
 

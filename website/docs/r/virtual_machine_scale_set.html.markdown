@@ -125,6 +125,7 @@ The following arguments are supported:
 * `os_profile_linux_config` - (Required, when a linux machine) A Linux config block as documented below.
 * `network_profile` - (Required) A collection of network profile block as documented below.
 * `storage_profile_os_disk` - (Required) A storage profile os disk block as documented below
+* `storage_profile_data_disk` - (Optional) A storage profile data disk block as documented below
 * `storage_profile_image_reference` - (Optional) A storage profile image reference block as documented below.
 * `extension` - (Optional) Can be specified multiple times to add extension profiles to the scale set. Each `extension` block supports the fields documented below.
 * `plan` - (Optional) A plan block as documented below.

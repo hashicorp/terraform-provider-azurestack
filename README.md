@@ -17,11 +17,11 @@ The Azure Stack provider is only compatible with specific profile versions as li
 
 You can pin the version of the Azure Stack Provider you're using like so:
 
-[][][]
+```hcl
 provider "azurestack" {
   version = "=0.8.0"
 }
-[][][]
+```
 
 General Requirements
 ------------

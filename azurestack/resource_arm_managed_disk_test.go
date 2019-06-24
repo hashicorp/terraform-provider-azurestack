@@ -164,32 +164,6 @@ func TestAccAzureStackManagedDisk_update(t *testing.T) {
 	})
 }
 
-func TestAccAzureStackManagedDisk_NonStandardCasing(t *testing.T) {
-	resourceName := "azurestack_managed_disk.test"
-	ri := acctest.RandInt()
-	var d compute.Disk
-
-	config := testAccAzureStackManagedDiskNonStandardCasing(ri, testLocation())
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackManagedDiskDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackManagedDiskExists(resourceName, &d, true),
-				),
-			},
-			{
-				Config:             config,
-				PlanOnly:           true,
-				ExpectNonEmptyPlan: false,
-			},
-		},
-	})
-}
-
 func testCheckAzureStackManagedDiskExists(resourceName string, d *compute.Disk, shouldExist bool) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
@@ -399,29 +373,6 @@ resource "azurestack_managed_disk" "test" {
 
   tags = {
     environment = "acctest"
-  }
-}
-`, rInt, location, rInt)
-}
-
-func testAccAzureStackManagedDiskNonStandardCasing(rInt int, location string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_managed_disk" "test" {
-  name                 = "acctestd-%d"
-  location             = "${azurestack_resource_group.test.location}"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  storage_account_type = "standard_lrs"
-  create_option        = "Empty"
-  disk_size_gb         = "1"
-
-  tags = {
-    environment = "acctest"
-    cost-center = "ops"
   }
 }
 `, rInt, location, rInt)

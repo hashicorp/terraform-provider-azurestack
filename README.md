@@ -15,6 +15,14 @@ The Azure Stack provider is only compatible with specific profile versions as li
 | 2019-03-01                  | 0.8+                                    |
 | 2017-10-01                  | 0.1-0.7                                 |
 
+You can pin the version of the Azure Stack Provider you're using like so:
+
+[][][]
+provider "azurestack" {
+  version = "=0.8.0"
+}
+[][][]
+
 General Requirements
 ------------
 

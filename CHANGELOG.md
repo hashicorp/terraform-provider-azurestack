@@ -1,16 +1,17 @@
-## 0.8.0 (Unreleased)
+## 0.9.0 (Unreleased)
+## 0.8.0 (June 24, 2019)
 
 FEATURES:
 
-* **New Data Source:** `azurestack_platform_image` [GH-85]
-* **New Resource:** `azurestack_managed_disk` [GH-85]
+* **New Data Source:** `azurestack_platform_image` ([#85](https://github.com/terraform-providers/terraform-provider-azurestack/issues/85))
+* **New Resource:** `azurestack_managed_disk` ([#85](https://github.com/terraform-providers/terraform-provider-azurestack/issues/85))
 
 IMPROVEMENTS:
 
-* dependencies: Changing to the `2019-03-01` profile [GH-84]
-* dependencies: upgrading to `v30.0.0` of `github.com/Azure/azure-sdk-for-go` [GH-88]
-* `azurestack_virtual_machine` - support for manage disks [GH-85]
-* `azurestack_virtual_machine_scale_set` - add support for managed disks [GH-93]
+* dependencies: Changing to the `2019-03-01` profile ([#84](https://github.com/terraform-providers/terraform-provider-azurestack/issues/84))
+* dependencies: upgrading to `v30.0.0` of `github.com/Azure/azure-sdk-for-go` ([#88](https://github.com/terraform-providers/terraform-provider-azurestack/issues/88))
+* `azurestack_virtual_machine` - support for manage disks ([#85](https://github.com/terraform-providers/terraform-provider-azurestack/issues/85))
+* `azurestack_virtual_machine_scale_set` - add support for managed disks ([#93](https://github.com/terraform-providers/terraform-provider-azurestack/issues/93))
 
 ## 0.7.0 (May 23, 2019)
 

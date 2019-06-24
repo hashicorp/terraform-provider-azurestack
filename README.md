@@ -5,6 +5,24 @@ Azure Stack Terraform Provider
 - [![Gitter chat](https://badges.gitter.im/hashicorp-terraform/Lobby.png)](https://gitter.im/hashicorp-terraform/Lobby)
 - Mailing list: [Google Groups](http://groups.google.com/group/terraform-tool)
 
+Compatibility
+------------
+
+The Azure Stack provider is only compatible with specific profile versions as listed below:
+
+| Azure Stack Profile Version | Supported Azure Stack Provider Versions |
+| --------------------------- | --------------------------------------- |
+| 2019-03-01                  | 0.8+                                    |
+| 2017-10-01                  | 0.1-0.7                                 |
+
+You can pin the version of the Azure Stack Provider you're using like so:
+
+```hcl
+provider "azurestack" {
+  version = "=0.8.0"
+}
+```
+
 General Requirements
 ------------
 

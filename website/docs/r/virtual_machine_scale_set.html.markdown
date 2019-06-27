@@ -171,6 +171,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   output "principal_id" {
     value = "${lookup(azurestack_virtual_machine.test.identity[0], "principal_id")}"
   }
+}
 ```
 
 `os_profile` supports the following:
@@ -282,21 +283,23 @@ machine scale set, as in the [example below](#example-of-storage_profile_image_r
 ## Example of storage_profile_image_reference with id
 
 ```hcl
-
 resource "azurestack_image" "test" {
-	name = "test"
-  ...
+  name = "test"
+
+  #...
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
-	name = "test"
-  ...
+  name = "test"
 
-	storage_profile_image_reference {
-		id = "${azurestack_image.test.id}"
-	}
+  #...
 
-...
+  storage_profile_image_reference {
+    id = "${azurestack_image.test.id}"
+  }
+
+  #...
+}
 ```
 
 ## Attributes Reference

@@ -66,24 +66,20 @@ resource "azurestack_virtual_machine" "test" {
     sku       = "16.04-LTS"
     version   = "latest"
   }
-
   storage_os_disk {
     name              = "myosdisk1"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
-
   os_profile {
     computer_name  = "hostname"
     admin_username = "testadmin"
     admin_password = "Password1234!"
   }
-
   os_profile_linux_config {
     disable_password_authentication = false
   }
-
   tags {
     environment = "staging"
   }
@@ -138,7 +134,6 @@ resource "azurestack_network_interface" "test" {
   }
 }
 
-
 resource "azurestack_virtual_machine" "test" {
   name                  = "acctvm"
   location              = "${azurestack_resource_group.test.location}"
@@ -159,24 +154,20 @@ resource "azurestack_virtual_machine" "test" {
     sku       = "16.04-LTS"
     version   = "latest"
   }
-
   storage_os_disk {
     name              = "myosdisk1"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
-
   os_profile {
     computer_name  = "hostname"
     admin_username = "testadmin"
     admin_password = "Password1234!"
   }
-
   os_profile_linux_config {
     disable_password_authentication = false
   }
-
   tags {
     environment = "staging"
   }
@@ -449,21 +440,23 @@ For more information on the different example configurations, please check out t
 machine, for example:
 
 ```hcl
-
 resource "azurestack_image" "test" {
-	name = "test"
-  ...
+  name = "test"
+
+  #...
 }
 
 resource "azurestack_virtual_machine" "test" {
-	name = "test"
-  ...
+  name = "test"
 
-	storage_image_reference {
-		id = "${azurestack_image.test.id}"
-	}
+  #...
 
-...
+  storage_image_reference {
+    id = "${azurestack_image.test.id}"
+  }
+
+  #...
+}
 ```
 
 * `publisher` - (Required, when not using image resource) Specifies the publisher of the image used to create the virtual machine. Changing this forces a new resource to be created.
@@ -610,6 +603,6 @@ The following attributes are exported:
 
 Virtual Machines can be imported using the `resource id`, e.g.
 
-```hcl
+```shell
 terraform import azurestack_virtual_machine.test /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/microsoft.compute/virtualMachines/machine1
 ```

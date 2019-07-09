@@ -321,6 +321,12 @@ func resourceArmStorageAccountUpdate(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 	storageAccountName := id.Path["storageaccounts"]
+	// https://github.com/terraform-providers/terraform-provider-azurestack/issues/98
+	// it appears the casing of the Resource ID's changed in Azure Stack version 1905
+	// as such we need to confirm both casings
+	if storageAccountName == "" {
+		storageAccountName = id.Path["storageAccounts"]
+	}
 	resourceGroupName := id.ResourceGroup
 
 	accountTier := d.Get("account_tier").(string)
@@ -441,6 +447,12 @@ func resourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) err
 	}
 
 	name := id.Path["storageaccounts"]
+	// https://github.com/terraform-providers/terraform-provider-azurestack/issues/98
+	// it appears the casing of the Resource ID's changed in Azure Stack version 1905
+	// as such we need to confirm both casings
+	if name == "" {
+		name = id.Path["storageAccounts"]
+	}
 	resGroup := id.ResourceGroup
 
 	resp, err := client.GetProperties(ctx, resGroup, name)
@@ -555,6 +567,12 @@ func resourceArmStorageAccountDelete(d *schema.ResourceData, meta interface{}) e
 		return err
 	}
 	name := id.Path["storageaccounts"]
+	// https://github.com/terraform-providers/terraform-provider-azurestack/issues/98
+	// it appears the casing of the Resource ID's changed in Azure Stack version 1905
+	// as such we need to confirm both casings
+	if name == "" {
+		name = id.Path["storageAccounts"]
+	}
 	resGroup := id.ResourceGroup
 
 	_, err = client.Delete(ctx, resGroup, name)

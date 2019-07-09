@@ -1,8 +1,8 @@
-## 0.8.1 (Unreleased)
+## 0.8.1 (July 09, 2019)
 
 IMPROVEMENTS:
 
-* `azurestack_storage_account` - handling the casing of the Storage Account ID changing in Azure Stack 1905 [GH-99]
+* `azurestack_storage_account` - handling the casing of the Storage Account ID changing in Azure Stack 1905 ([#99](https://github.com/terraform-providers/terraform-provider-azurestack/issues/99))
 
 ## 0.8.0 (June 24, 2019)
 

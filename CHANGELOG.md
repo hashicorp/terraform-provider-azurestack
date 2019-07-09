@@ -1,4 +1,9 @@
-## 0.9.0 (Unreleased)
+## 0.8.1 (Unreleased)
+
+IMPROVEMENTS:
+
+* `azurestack_storage_account` - handling the casing of the Storage Account ID changing in Azure Stack 1905 [GH-99]
+
 ## 0.8.0 (June 24, 2019)
 
 FEATURES:

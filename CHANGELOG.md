@@ -1,4 +1,9 @@
 ## 0.9.0 (Unreleased)
+
+IMPROVEMENTS:
+
+* dependencies: upgrading `github.com/hashicorp/terraform` to `0.12.6` [GH-102]
+
 ## 0.8.1 (July 09, 2019)
 
 BUG FIXES:

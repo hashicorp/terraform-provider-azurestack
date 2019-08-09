@@ -13,7 +13,7 @@ require (
 	github.com/hashicorp/go-hclog v0.8.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93 // indirect
-	github.com/hashicorp/terraform v0.12.0
+	github.com/hashicorp/terraform v0.12.6
 	github.com/terraform-providers/terraform-provider-azurerm v1.15.0
-	golang.org/x/crypto v0.0.0-20190426145343-a29dc8fdc734
+	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 )

@@ -126,10 +126,7 @@ func TestAccAzureStackAvailabilitySet_withDomainCounts(t *testing.T) {
 	})
 }
 
-// managed not supported in the profile, skipping
 func TestAccAzureStackAvailabilitySet_managed(t *testing.T) {
-
-	t.Skip()
 
 	resourceName := "azurestack_availability_set.test"
 	ri := acctest.RandInt()

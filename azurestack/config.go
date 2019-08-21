@@ -56,9 +56,9 @@ type ArmClient struct {
 	deploymentsClient    resources.DeploymentsClient
 
 	// Compute
-	availSetClient    compute.AvailabilitySetsClient
-	diskClient        compute.DisksClient
-	vmExtensionClient compute.VirtualMachineExtensionsClient
+	availSetClient       compute.AvailabilitySetsClient
+	diskClient           compute.DisksClient
+	vmExtensionClient    compute.VirtualMachineExtensionsClient
 	vmClient             compute.VirtualMachinesClient
 	vmImageClient        compute.VirtualMachineImagesClient
 	vmScaleSetClient     compute.VirtualMachineScaleSetsClient

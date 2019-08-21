@@ -712,7 +712,7 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	if err = future.WaitForCompletion(ctx, client.Client); err != nil {
+	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
 		return fmt.Errorf("Error Creating/Updating Virtual Machine Scale Set %s (resource group %s) ID: %+v", name, resGroup, err)
 	}
 

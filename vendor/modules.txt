@@ -115,6 +115,7 @@ github.com/hashicorp/errwrap
 # github.com/hashicorp/go-azure-helpers v0.7.0
 github.com/hashicorp/go-azure-helpers/authentication
 github.com/hashicorp/go-azure-helpers/resourceproviders
+github.com/hashicorp/go-azure-helpers/sender
 # github.com/hashicorp/go-cleanhttp v0.5.0
 github.com/hashicorp/go-cleanhttp
 # github.com/hashicorp/go-getter v1.3.1-0.20190627223108-da0323b9545e

@@ -328,7 +328,7 @@ func (armClient *ArmClient) getBlobStorageClientForStorageAccount(ctx context.Co
 	}
 
 	storageClient, err := mainStorage.NewClient(storageAccountName, key, armClient.environment.StorageEndpointSuffix,
-		mainStorage.DefaultAPIVersion, true)
+		"2016-05-31", true)
 	if err != nil {
 		return nil, true, fmt.Errorf("Error creating storage client for storage account %q: %s", storageAccountName, err)
 	}

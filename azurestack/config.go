@@ -3,9 +3,6 @@ package azurestack
 import (
 	"context"
 	"fmt"
-	"log"
-	"net/http"
-	"net/http/httputil"
 	"os"
 	"sync"
 	"time"
@@ -18,9 +15,9 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/graphrbac/1.6/graphrbac"
 	mainStorage "github.com/Azure/azure-sdk-for-go/storage"
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/hashicorp/go-azure-helpers/authentication"
+	"github.com/hashicorp/go-azure-helpers/sender"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
@@ -40,11 +37,6 @@ type ArmClient struct {
 	// Authentication
 	servicePrincipalsClient graphrbac.ServicePrincipalsClient
 
-	// Compute
-	availSetClient    compute.AvailabilitySetsClient
-	diskClient        compute.DisksClient
-	vmExtensionClient compute.VirtualMachineExtensionsClient
-
 	// DNS
 	dnsClient   dns.RecordSetsClient
 	zonesClient dns.ZonesClient
@@ -60,11 +52,19 @@ type ArmClient struct {
 	providersClient resources.ProvidersClient
 	resourcesClient resources.Client
 
+	resourceGroupsClient resources.GroupsClient
+	deploymentsClient    resources.DeploymentsClient
+
+	// Compute
+	availSetClient       compute.AvailabilitySetsClient
+	diskClient           compute.DisksClient
+	vmExtensionClient    compute.VirtualMachineExtensionsClient
 	vmClient             compute.VirtualMachinesClient
 	vmImageClient        compute.VirtualMachineImagesClient
 	vmScaleSetClient     compute.VirtualMachineScaleSetsClient
 	storageServiceClient storage.AccountsClient
 
+	// Network
 	vnetClient         network.VirtualNetworksClient
 	secGroupClient     network.SecurityGroupsClient
 	publicIPClient     network.PublicIPAddressesClient
@@ -72,45 +72,14 @@ type ArmClient struct {
 	loadBalancerClient network.LoadBalancersClient
 	routesClient       network.RoutesClient
 	routeTablesClient  network.RouteTablesClient
-
-	resourceGroupsClient resources.GroupsClient
-	deploymentsClient    resources.DeploymentsClient
 }
 
 func (c *ArmClient) configureClient(client *autorest.Client, auth autorest.Authorizer) {
 	setUserAgent(client)
 	client.Authorizer = auth
-	client.Sender = autorest.CreateSender(withRequestLogging())
+	client.Sender = sender.BuildSender("AzureStack")
 	client.SkipResourceProviderRegistration = c.skipProviderRegistration
 	client.PollingDuration = 60 * time.Minute
-}
-
-func withRequestLogging() autorest.SendDecorator {
-	return func(s autorest.Sender) autorest.Sender {
-		return autorest.SenderFunc(func(r *http.Request) (*http.Response, error) {
-			// dump request to wire format
-			if dump, err := httputil.DumpRequestOut(r, true); err == nil {
-				log.Printf("[DEBUG] azurestack Request: \n%s\n", dump)
-			} else {
-				// fallback to basic message
-				log.Printf("[DEBUG] azurestack Request: %s to %s\n", r.Method, r.URL)
-			}
-
-			resp, err := s.Do(r)
-			if resp != nil {
-				// dump response to wire format
-				if dump, err := httputil.DumpResponse(resp, true); err == nil {
-					log.Printf("[DEBUG] azurestack Response for %s: \n%s\n", r.URL, dump)
-				} else {
-					// fallback to basic message
-					log.Printf("[DEBUG] azurestack Response: %s for %s\n", resp.Status, r.URL)
-				}
-			} else {
-				log.Printf("[DEBUG] Request to %s completed with no response", r.URL)
-			}
-			return resp, err
-		})
-	}
 }
 
 func setUserAgent(client *autorest.Client) {
@@ -131,56 +100,51 @@ func setUserAgent(client *autorest.Client) {
 
 // getArmClient is a helper method which returns a fully instantiated
 // *ArmClient based on the Config's current settings.
-func getArmClient(c *authentication.Config, skipProviderRegistration bool) (*ArmClient, error) {
-	env, err := authentication.LoadEnvironmentFromUrl(c.CustomResourceManagerEndpoint)
+func getArmClient(authCfg *authentication.Config, skipProviderRegistration bool) (*ArmClient, error) {
+	env, err := authentication.LoadEnvironmentFromUrl(authCfg.CustomResourceManagerEndpoint)
 	if err != nil {
 		return nil, err
 	}
 
 	// client declarations:
 	client := ArmClient{
-		clientId:                 c.ClientID,
-		tenantId:                 c.TenantID,
-		subscriptionId:           c.SubscriptionID,
+		clientId:                 authCfg.ClientID,
+		tenantId:                 authCfg.TenantID,
+		subscriptionId:           authCfg.SubscriptionID,
 		environment:              *env,
-		usingServicePrincipal:    c.AuthenticatedAsAServicePrincipal,
+		usingServicePrincipal:    authCfg.AuthenticatedAsAServicePrincipal,
 		skipProviderRegistration: skipProviderRegistration,
 	}
 
-	oauthConfig, err := adal.NewOAuthConfig(env.ActiveDirectoryEndpoint, c.TenantID)
+	oauth, err := authCfg.BuildOAuthConfig(env.ActiveDirectoryEndpoint)
 	if err != nil {
 		return nil, err
 	}
 
-	// OAuthConfigForTenant returns a pointer, which can be nil.
-	if oauthConfig == nil {
-		return nil, fmt.Errorf("Unable to configure OAuthConfig for tenant %s", c.TenantID)
-	}
-
-	sender := autorest.CreateSender(withRequestLogging())
+	sender := sender.BuildSender("AzureStack")
 
 	// Resource Manager endpoints
 	endpoint := env.ResourceManagerEndpoint
 
 	// Instead of the same endpoint use token audience to get the correct token.
-	auth, err := c.GetAuthorizationToken(oauthConfig, env.TokenAudience)
+	auth, err := authCfg.GetAuthorizationToken(sender, oauth, env.TokenAudience)
 	if err != nil {
 		return nil, err
 	}
 
 	// Graph Endpoints
 	graphEndpoint := env.GraphEndpoint
-	graphAuth, err := c.GetAuthorizationToken(oauthConfig, graphEndpoint)
+	graphAuth, err := authCfg.GetAuthorizationToken(sender, oauth, graphEndpoint)
 	if err != nil {
 		return nil, err
 	}
 
-	client.registerAuthentication(graphEndpoint, c.TenantID, graphAuth, sender)
-	client.registerComputeClients(endpoint, c.SubscriptionID, auth)
-	client.registerDNSClients(endpoint, c.SubscriptionID, auth)
-	client.registerNetworkingClients(endpoint, c.SubscriptionID, auth)
-	client.registerResourcesClients(endpoint, c.SubscriptionID, auth)
-	client.registerStorageClients(endpoint, c.SubscriptionID, auth)
+	client.registerAuthentication(graphEndpoint, client.tenantId, graphAuth, sender)
+	client.registerComputeClients(endpoint, client.subscriptionId, auth)
+	client.registerDNSClients(endpoint, client.subscriptionId, auth)
+	client.registerNetworkingClients(endpoint, client.subscriptionId, auth)
+	client.registerResourcesClients(endpoint, client.subscriptionId, auth)
+	client.registerStorageClients(endpoint, client.subscriptionId, auth)
 
 	return &client, nil
 }
@@ -364,7 +328,7 @@ func (armClient *ArmClient) getBlobStorageClientForStorageAccount(ctx context.Co
 	}
 
 	storageClient, err := mainStorage.NewClient(storageAccountName, key, armClient.environment.StorageEndpointSuffix,
-		mainStorage.DefaultAPIVersion, true)
+		"2016-05-31", true)
 	if err != nil {
 		return nil, true, fmt.Errorf("Error creating storage client for storage account %q: %s", storageAccountName, err)
 	}

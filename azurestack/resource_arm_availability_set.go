@@ -3,6 +3,7 @@ package azurestack
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -47,13 +48,12 @@ func resourceArmAvailabilitySet() *schema.Resource {
 				ValidateFunc: validation.IntBetween(1, 3),
 			},
 
-			// Not supported for 2017-03-09 profile
-			// "managed": {
-			// 	Type:     schema.TypeBool,
-			// 	Optional: true,
-			// 	Default:  false,
-			// 	ForceNew: true,
-			// },
+			"managed": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+				ForceNew: true,
+			},
 
 			"tags": tagsSchema(),
 		},
@@ -72,8 +72,7 @@ func resourceArmAvailabilitySetCreate(d *schema.ResourceData, meta interface{}) 
 	updateDomainCount := d.Get("platform_update_domain_count").(int)
 	faultDomainCount := d.Get("platform_fault_domain_count").(int)
 
-	// Not supported for 2017-03-09 profile
-	// managed := d.Get("managed").(bool)
+	managed := d.Get("managed").(bool)
 
 	tags := d.Get("tags").(map[string]interface{})
 
@@ -87,13 +86,12 @@ func resourceArmAvailabilitySetCreate(d *schema.ResourceData, meta interface{}) 
 		Tags: *expandTags(tags),
 	}
 
-	// Not supported for 2017-03-09 profile
-	// if managed == true {
-	// 	n := "Aligned"
-	// 	availSet.Sku = &compute.Sku{
-	// 		Name: &n,
-	// 	}
-	// }
+	if managed {
+		n := "Aligned"
+		availSet.Sku = &compute.Sku{
+			Name: &n,
+		}
+	}
 
 	resp, err := client.CreateOrUpdate(ctx, resGroup, name, availSet)
 	if err != nil {
@@ -134,10 +132,9 @@ func resourceArmAvailabilitySetRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("platform_update_domain_count", availSet.PlatformUpdateDomainCount)
 	d.Set("platform_fault_domain_count", availSet.PlatformFaultDomainCount)
 
-	// Not supported for 2017-03-09 profile
-	// if resp.Sku != nil && resp.Sku.Name != nil {
-	// 	d.Set("managed", strings.EqualFold(*resp.Sku.Name, "Aligned"))
-	// }
+	if resp.Sku != nil && resp.Sku.Name != nil {
+		d.Set("managed", strings.EqualFold(*resp.Sku.Name, "Aligned"))
+	}
 
 	flattenAndSetTags(d, &resp.Tags)
 

@@ -6,12 +6,11 @@ require (
 	github.com/Azure/azure-sdk-for-go v32.5.0+incompatible
 	github.com/Azure/go-autorest v13.0.0+incompatible // indirect
 	github.com/Azure/go-autorest/autorest v0.9.0
-	github.com/Azure/go-autorest/autorest/adal v0.6.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/dnaeon/go-vcr v1.0.1 // indirect
 	github.com/golang/protobuf v1.3.1 // indirect
 	github.com/hashicorp/errwrap v1.0.0
-	github.com/hashicorp/go-azure-helpers v0.7.0
+	github.com/hashicorp/go-azure-helpers v0.8.0
 	github.com/hashicorp/go-hclog v0.8.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93 // indirect

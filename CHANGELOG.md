@@ -1,13 +1,13 @@
-## 0.9.0 (Unreleased)
+## 0.9.0 (August 30, 2019)
 
 IMPROVEMENTS:
 
-* dependencies: upgrading `github.com/hashicorp/terraform` to `0.12.6` [GH-102]
-* dependencies: upgrading `github.com/hashicorp/go-azure-helpers` to `0.7.0` [GH-103]
-* dependencies: upgrading `github.com/Azure/go-autorest` to `13.0.0` [GH-103]
-* dependencies: upgrading `github.com/Azure/terraform` to `32.0.0` [GH-103]
-* provider: automatically set authentication tenant ID to `adfs` in AD environments [GH-105]
-* `azurestack_availability_set` - support for the `managed` property [GH-104]
+* dependencies: upgrading `github.com/hashicorp/terraform` to `0.12.6` ([#102](https://github.com/terraform-providers/terraform-provider-azurestack/issues/102))
+* dependencies: upgrading `github.com/hashicorp/go-azure-helpers` to `0.7.0` ([#103](https://github.com/terraform-providers/terraform-provider-azurestack/issues/103))
+* dependencies: upgrading `github.com/Azure/go-autorest` to `13.0.0` ([#103](https://github.com/terraform-providers/terraform-provider-azurestack/issues/103))
+* dependencies: upgrading `github.com/Azure/terraform` to `32.0.0` ([#103](https://github.com/terraform-providers/terraform-provider-azurestack/issues/103))
+* provider: automatically set authentication tenant ID to `adfs` in AD environments ([#105](https://github.com/terraform-providers/terraform-provider-azurestack/issues/105))
+* `azurestack_availability_set` - support for the `managed` property ([#104](https://github.com/terraform-providers/terraform-provider-azurestack/issues/104))
 
 ## 0.8.1 (July 09, 2019)
 

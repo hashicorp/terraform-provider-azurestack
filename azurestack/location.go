@@ -3,7 +3,7 @@ package azurestack
 import (
 	"strings"
 
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func locationSchema() *schema.Schema {

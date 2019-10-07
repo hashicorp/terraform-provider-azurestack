@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 func testCheckAzureStackVirtualMachineExists(name string, vm *compute.VirtualMachine) resource.TestCheckFunc {

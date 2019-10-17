@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/locks"
 )
 
 func resourceArmRoute() *schema.Resource {
@@ -74,8 +75,8 @@ func resourceArmRouteCreateUpdate(d *schema.ResourceData, meta interface{}) erro
 	addressPrefix := d.Get("address_prefix").(string)
 	nextHopType := d.Get("next_hop_type").(string)
 
-	azureStackLockByName(rtName, routeTableResourceName)
-	defer azureStackUnlockByName(rtName, routeTableResourceName)
+	locks.ByName(rtName, routeTableResourceName)
+	defer locks.UnlockByName(rtName, routeTableResourceName)
 
 	route := network.Route{
 		Name: &name,
@@ -159,8 +160,8 @@ func resourceArmRouteDelete(d *schema.ResourceData, meta interface{}) error {
 	rtName := id.Path["routeTables"]
 	routeName := id.Path["routes"]
 
-	azureStackLockByName(rtName, routeTableResourceName)
-	defer azureStackUnlockByName(rtName, routeTableResourceName)
+	locks.ByName(rtName, routeTableResourceName)
+	defer locks.UnlockByName(rtName, routeTableResourceName)
 
 	future, err := client.Delete(ctx, resGroup, rtName, routeName)
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/locks"
 )
 
 var networkSecurityGroupResourceName = "azurestack_network_security_group"
@@ -180,8 +181,8 @@ func resourceArmNetworkSecurityGroupCreate(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("Error Building list of Network Security Group Rules: %+v", sgErr)
 	}
 
-	azureStackLockByName(name, networkSecurityGroupResourceName)
-	defer azureStackUnlockByName(name, networkSecurityGroupResourceName)
+	locks.ByName(name, networkSecurityGroupResourceName)
+	defer locks.UnlockByName(name, networkSecurityGroupResourceName)
 
 	sg := network.SecurityGroup{
 		Name:     &name,

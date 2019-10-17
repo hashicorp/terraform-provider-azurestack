@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/locks"
 )
 
 func resourceArmNetworkInterface() *schema.Resource {
@@ -228,8 +229,8 @@ func resourceArmNetworkInterfaceCreateUpdate(d *schema.ResourceData, meta interf
 			return err
 		}
 
-		azureStackLockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
-		defer azureStackUnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		locks.ByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		defer locks.UnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
 	}
 
 	dns, hasDns := d.GetOk("dns_servers")
@@ -265,11 +266,11 @@ func resourceArmNetworkInterfaceCreateUpdate(d *schema.ResourceData, meta interf
 		return fmt.Errorf("Error Building list of Network Interface IP Configurations: %+v", sgErr)
 	}
 
-	azureStackLockMultipleByName(subnetnToLock, subnetResourceName)
-	defer azureStackUnlockMultipleByName(subnetnToLock, subnetResourceName)
+	locks.MultipleByName(subnetnToLock, subnetResourceName)
+	defer locks.UnlockMultipleByName(subnetnToLock, subnetResourceName)
 
-	azureStackLockMultipleByName(vnnToLock, virtualNetworkResourceName)
-	defer azureStackUnlockMultipleByName(vnnToLock, virtualNetworkResourceName)
+	locks.MultipleByName(vnnToLock, virtualNetworkResourceName)
+	defer locks.UnlockMultipleByName(vnnToLock, virtualNetworkResourceName)
 
 	if len(ipConfigs) > 0 {
 		properties.IPConfigurations = &ipConfigs
@@ -410,8 +411,8 @@ func resourceArmNetworkInterfaceDelete(d *schema.ResourceData, meta interface{})
 			return err
 		}
 
-		azureStackLockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
-		defer azureStackUnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		locks.ByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		defer locks.UnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
 	}
 
 	configs := d.Get("ip_configuration").([]interface{})
@@ -437,11 +438,11 @@ func resourceArmNetworkInterfaceDelete(d *schema.ResourceData, meta interface{})
 		}
 	}
 
-	azureStackLockMultipleByName(&subnetNamesToLock, subnetResourceName)
-	defer azureStackUnlockMultipleByName(&subnetNamesToLock, subnetResourceName)
+	locks.MultipleByName(&subnetNamesToLock, subnetResourceName)
+	defer locks.UnlockMultipleByName(&subnetNamesToLock, subnetResourceName)
 
-	azureStackLockMultipleByName(&virtualNetworkNamesToLock, virtualNetworkResourceName)
-	defer azureStackUnlockMultipleByName(&virtualNetworkNamesToLock, virtualNetworkResourceName)
+	locks.MultipleByName(&virtualNetworkNamesToLock, virtualNetworkResourceName)
+	defer locks.UnlockMultipleByName(&virtualNetworkNamesToLock, virtualNetworkResourceName)
 
 	future, err := client.Delete(ctx, resGroup, name)
 	if err != nil {

@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/locks"
 )
 
 var virtualNetworkResourceName = "azurestack_virtual_network"
@@ -116,8 +117,8 @@ func resourceArmVirtualNetworkCreate(d *schema.ResourceData, meta interface{}) e
 		}
 	}
 
-	azureStackLockMultipleByName(&networkSecurityGroupNames, networkSecurityGroupResourceName)
-	defer azureStackUnlockMultipleByName(&networkSecurityGroupNames, networkSecurityGroupResourceName)
+	locks.MultipleByName(&networkSecurityGroupNames, networkSecurityGroupResourceName)
+	defer locks.UnlockMultipleByName(&networkSecurityGroupNames, networkSecurityGroupResourceName)
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, vnet)
 	if err != nil {
@@ -214,8 +215,8 @@ func resourceArmVirtualNetworkDelete(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("[ERROR] Error parsing Network Security Group ID's: %+v", err)
 	}
 
-	azureStackLockMultipleByName(&nsgNames, virtualNetworkResourceName)
-	defer azureStackUnlockMultipleByName(&nsgNames, virtualNetworkResourceName)
+	locks.MultipleByName(&nsgNames, virtualNetworkResourceName)
+	defer locks.UnlockMultipleByName(&nsgNames, virtualNetworkResourceName)
 
 	future, err := client.Delete(ctx, resGroup, name)
 	if err != nil {

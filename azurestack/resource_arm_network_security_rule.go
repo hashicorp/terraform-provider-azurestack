@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/locks"
 )
 
 func resourceArmNetworkSecurityRule() *schema.Resource {
@@ -186,8 +187,8 @@ func resourceArmNetworkSecurityRuleCreate(d *schema.ResourceData, meta interface
 	direction := d.Get("direction").(string)
 	protocol := d.Get("protocol").(string)
 
-	azureStackLockByName(nsgName, networkSecurityGroupResourceName)
-	defer azureStackUnlockByName(nsgName, networkSecurityGroupResourceName)
+	locks.ByName(nsgName, networkSecurityGroupResourceName)
+	defer locks.UnlockByName(nsgName, networkSecurityGroupResourceName)
 
 	rule := network.SecurityRule{
 		Name: &name,
@@ -359,8 +360,8 @@ func resourceArmNetworkSecurityRuleDelete(d *schema.ResourceData, meta interface
 	nsgName := id.Path["networkSecurityGroups"]
 	sgRuleName := id.Path["securityRules"]
 
-	azureStackLockByName(nsgName, networkSecurityGroupResourceName)
-	defer azureStackUnlockByName(nsgName, networkSecurityGroupResourceName)
+	locks.ByName(nsgName, networkSecurityGroupResourceName)
+	defer locks.UnlockByName(nsgName, networkSecurityGroupResourceName)
 
 	future, err := client.Delete(ctx, resGroup, nsgName, sgRuleName)
 	if err != nil {

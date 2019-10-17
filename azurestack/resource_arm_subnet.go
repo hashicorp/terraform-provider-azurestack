@@ -7,6 +7,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/locks"
 )
 
 var subnetResourceName = "azurestack_subnet"
@@ -80,8 +81,8 @@ func resourceArmSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 	resGroup := d.Get("resource_group_name").(string)
 	addressPrefix := d.Get("address_prefix").(string)
 
-	azureStackLockByName(vnetName, virtualNetworkResourceName)
-	defer azureStackUnlockByName(vnetName, virtualNetworkResourceName)
+	locks.ByName(vnetName, virtualNetworkResourceName)
+	defer locks.UnlockByName(vnetName, virtualNetworkResourceName)
 
 	properties := network.SubnetPropertiesFormat{
 		AddressPrefix: &addressPrefix,
@@ -98,8 +99,8 @@ func resourceArmSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 
-		azureStackLockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
-		defer azureStackUnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		locks.ByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		defer locks.UnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
 	}
 
 	if v, ok := d.GetOk("route_table_id"); ok {
@@ -113,8 +114,8 @@ func resourceArmSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 
-		azureStackLockByName(routeTableName, routeTableResourceName)
-		defer azureStackUnlockByName(routeTableName, routeTableResourceName)
+		locks.ByName(routeTableName, routeTableResourceName)
+		defer locks.UnlockByName(routeTableName, routeTableResourceName)
 	}
 
 	// Not supported for 2017-03-09 profile
@@ -224,15 +225,15 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 
-		azureStackLockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
-		defer azureStackUnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		locks.ByName(networkSecurityGroupName, networkSecurityGroupResourceName)
+		defer locks.UnlockByName(networkSecurityGroupName, networkSecurityGroupResourceName)
 	}
 
-	azureStackLockByName(vnetName, virtualNetworkResourceName)
-	defer azureStackUnlockByName(vnetName, virtualNetworkResourceName)
+	locks.ByName(vnetName, virtualNetworkResourceName)
+	defer locks.UnlockByName(vnetName, virtualNetworkResourceName)
 
-	azureStackLockByName(name, subnetResourceName)
-	defer azureStackUnlockByName(name, subnetResourceName)
+	locks.ByName(name, subnetResourceName)
+	defer locks.UnlockByName(name, subnetResourceName)
 
 	if v, ok := d.GetOk("route_table_id"); ok {
 		rtId := v.(string)
@@ -241,8 +242,8 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 
-		azureStackLockByName(routeTableName, routeTableResourceName)
-		defer azureStackUnlockByName(routeTableName, routeTableResourceName)
+		locks.ByName(routeTableName, routeTableResourceName)
+		defer locks.UnlockByName(routeTableName, routeTableResourceName)
 
 		// This behaviour is only for AzureStack
 		// If the route table is not dissasociated from the subnet prior to deletion

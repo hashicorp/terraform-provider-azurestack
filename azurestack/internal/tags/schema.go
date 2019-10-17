@@ -12,7 +12,7 @@ func SchemaDataSource() *schema.Schema {
 	}
 }
 
-func tagsSchema() *schema.Schema {
+func Schema() *schema.Schema {
 	return &schema.Schema{
 		Type:         schema.TypeMap,
 		Optional:     true,

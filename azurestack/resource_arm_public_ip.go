@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/tags"
 )
 
 func resourceArmPublicIp() *schema.Resource {
@@ -101,7 +102,7 @@ func resourceArmPublicIp() *schema.Resource {
 			// 	DiffSuppressFunc: ignoreCaseDiffSuppressFunc,
 			// },
 
-			"tags": tagsSchema(),
+			"tags": tags.Schema(),
 		},
 	}
 }
@@ -119,7 +120,7 @@ func resourceArmPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
 	// sku := network.PublicIPAddressSku{
 	// 	Name: network.PublicIPAddressSkuName(d.Get("sku").(string)),
 	// }
-	tags := d.Get("tags").(map[string]interface{})
+	t := d.Get("tags").(map[string]interface{})
 
 	// Not supported for 2017-03-09 profile
 	// zones := expandZones(d.Get("zones").([]interface{}))
@@ -141,7 +142,7 @@ func resourceArmPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
 			PublicIPAllocationMethod: network.IPAllocationMethod(ipAllocationMethod),
 			IdleTimeoutInMinutes:     utils.Int32(int32(idleTimeout)),
 		},
-		Tags: *expandTags(tags),
+		Tags: *tags.Expand(t),
 		// Not supported for 2017-03-09 profile
 		// Sku:      &sku,
 		// Zones: zones,

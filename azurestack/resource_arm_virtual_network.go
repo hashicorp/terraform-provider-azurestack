@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/tags"
 )
 
 var virtualNetworkResourceName = "azurestack_virtual_network"
@@ -75,7 +76,7 @@ func resourceArmVirtualNetwork() *schema.Resource {
 
 			"resource_group_name": resourceGroupNameSchema(),
 
-			"tags": tagsSchema(),
+			"tags": tags.Schema(),
 		},
 	}
 }
@@ -89,7 +90,7 @@ func resourceArmVirtualNetworkCreate(d *schema.ResourceData, meta interface{}) e
 	name := d.Get("name").(string)
 	location := azureStackNormalizeLocation(d.Get("location").(string))
 	resGroup := d.Get("resource_group_name").(string)
-	tags := d.Get("tags").(map[string]interface{})
+	t := d.Get("tags").(map[string]interface{})
 	vnetProperties, vnetPropsErr := getVirtualNetworkProperties(ctx, d, meta)
 	if vnetPropsErr != nil {
 		return vnetPropsErr
@@ -99,7 +100,7 @@ func resourceArmVirtualNetworkCreate(d *schema.ResourceData, meta interface{}) e
 		Name:                           &name,
 		Location:                       &location,
 		VirtualNetworkPropertiesFormat: vnetProperties,
-		Tags:                           *expandTags(tags),
+		Tags:                           *tags.Expand(t),
 	}
 
 	networkSecurityGroupNames := make([]string, 0)

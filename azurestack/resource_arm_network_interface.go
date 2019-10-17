@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/tags"
 )
 
 func resourceArmNetworkInterface() *schema.Resource {
@@ -193,7 +194,7 @@ func resourceArmNetworkInterface() *schema.Resource {
 				},
 			},
 
-			"tags": tagsSchema(),
+			"tags": tags.Schema(),
 		},
 	}
 }
@@ -209,7 +210,7 @@ func resourceArmNetworkInterfaceCreateUpdate(d *schema.ResourceData, meta interf
 	resGroup := d.Get("resource_group_name").(string)
 	enableIpForwarding := d.Get("enable_ip_forwarding").(bool)
 	// enableAcceleratedNetworking := d.Get("enable_accelerated_networking").(bool)
-	tags := d.Get("tags").(map[string]interface{})
+	t := d.Get("tags").(map[string]interface{})
 
 	properties := network.InterfacePropertiesFormat{
 		EnableIPForwarding: &enableIpForwarding,
@@ -279,7 +280,7 @@ func resourceArmNetworkInterfaceCreateUpdate(d *schema.ResourceData, meta interf
 		Name:                      &name,
 		Location:                  &location,
 		InterfacePropertiesFormat: &properties,
-		Tags:                      *expandTags(tags),
+		Tags:                      *tags.Expand(t),
 	}
 
 	data, _ := json.Marshal(&iface)

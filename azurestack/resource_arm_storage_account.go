@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/tags"
 )
 
 const blobStorageAccountDefaultAccessTier = "Hot"
@@ -208,7 +209,7 @@ func resourceArmStorageAccount() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": tags.Schema(),
 		},
 	}
 
@@ -222,7 +223,7 @@ func resourceArmStorageAccountCreate(d *schema.ResourceData, meta interface{}) e
 	accountKind := d.Get("account_kind").(string)
 
 	location := d.Get("location").(string)
-	tags := d.Get("tags").(map[string]interface{})
+	t := d.Get("tags").(map[string]interface{})
 
 	accountTier := d.Get("account_tier").(string)
 	replicationType := d.Get("account_replication_type").(string)
@@ -239,7 +240,7 @@ func resourceArmStorageAccountCreate(d *schema.ResourceData, meta interface{}) e
 		Sku: &storage.Sku{
 			Name: storage.SkuName(storageType),
 		},
-		Tags: *expandTags(tags),
+		Tags: *tags.Expand(t),
 		Kind: storage.Kind(accountKind),
 
 		// If any paramers are specified withouth the right values this will fail
@@ -377,10 +378,10 @@ func resourceArmStorageAccountUpdate(d *schema.ResourceData, meta interface{}) e
 	// }
 
 	if d.HasChange("tags") {
-		tags := d.Get("tags").(map[string]interface{})
+		t := d.Get("tags").(map[string]interface{})
 
 		opts := storage.AccountUpdateParameters{
-			Tags: *expandTags(tags),
+			Tags: *tags.Expand(t),
 		}
 
 		_, err := client.Update(ctx, resourceGroupName, storageAccountName, opts)

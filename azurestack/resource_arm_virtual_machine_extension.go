@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/tags"
 )
 
 func resourceArmVirtualMachineExtensions() *schema.Resource {
@@ -73,7 +74,7 @@ func resourceArmVirtualMachineExtensions() *schema.Resource {
 				DiffSuppressFunc: structure.SuppressJsonDiff,
 			},
 
-			"tags": tagsSchema(),
+			"tags": tags.Schema(),
 		},
 	}
 }
@@ -90,7 +91,7 @@ func resourceArmVirtualMachineExtensionsCreate(d *schema.ResourceData, meta inte
 	extensionType := d.Get("type").(string)
 	typeHandlerVersion := d.Get("type_handler_version").(string)
 	autoUpgradeMinor := d.Get("auto_upgrade_minor_version").(bool)
-	tags := d.Get("tags").(map[string]interface{})
+	t := d.Get("tags").(map[string]interface{})
 
 	extension := compute.VirtualMachineExtension{
 		Location: &location,
@@ -100,7 +101,7 @@ func resourceArmVirtualMachineExtensionsCreate(d *schema.ResourceData, meta inte
 			TypeHandlerVersion:      &typeHandlerVersion,
 			AutoUpgradeMinorVersion: &autoUpgradeMinor,
 		},
-		Tags: *expandTags(tags),
+		Tags: *tags.Expand(t),
 	}
 
 	if settingsString := d.Get("settings").(string); settingsString != "" {

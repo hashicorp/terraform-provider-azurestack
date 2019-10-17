@@ -2,6 +2,7 @@ package azurestack
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/tags"
 )
 
 func dataSourceArmResourceGroup() *schema.Resource {
@@ -11,7 +12,7 @@ func dataSourceArmResourceGroup() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"name":     resourceGroupNameForDataSourceSchema(),
 			"location": locationForDataSourceSchema(),
-			"tags":     tagsForDataSourceSchema(),
+			"tags":     tags.SchemaDataSource(),
 		},
 	}
 }

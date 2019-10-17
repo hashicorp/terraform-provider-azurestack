@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/tags"
 )
 
 func resourceArmLocalNetworkGateway() *schema.Resource {
@@ -68,7 +69,7 @@ func resourceArmLocalNetworkGateway() *schema.Resource {
 				},
 			},
 
-			"tags": tagsSchema(),
+			"tags": tags.Schema(),
 		},
 	}
 }
@@ -89,7 +90,7 @@ func resourceArmLocalNetworkGatewayCreate(d *schema.ResourceData, meta interface
 		return err
 	}
 
-	tags := d.Get("tags").(map[string]interface{})
+	t := d.Get("tags").(map[string]interface{})
 
 	gateway := network.LocalNetworkGateway{
 		Name:     &name,
@@ -101,7 +102,7 @@ func resourceArmLocalNetworkGatewayCreate(d *schema.ResourceData, meta interface
 			GatewayIPAddress: &ipAddress,
 			BgpSettings:      bgpSettings,
 		},
-		Tags: *expandTags(tags),
+		Tags: *tags.Expand(t),
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, gateway)

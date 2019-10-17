@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/tags"
 )
 
 var routeTableResourceName = "azurestack_route_table"
@@ -85,7 +86,7 @@ func resourceArmRouteTable() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"tags": tagsSchema(),
+			"tags": tags.Schema(),
 		},
 	}
 }
@@ -99,7 +100,7 @@ func resourceArmRouteTableCreateUpdate(d *schema.ResourceData, meta interface{})
 	name := d.Get("name").(string)
 	location := azureStackNormalizeLocation(d.Get("location").(string))
 	resGroup := d.Get("resource_group_name").(string)
-	tags := d.Get("tags").(map[string]interface{})
+	t := d.Get("tags").(map[string]interface{})
 
 	routes := expandRouteTableRoutes(d)
 
@@ -109,7 +110,7 @@ func resourceArmRouteTableCreateUpdate(d *schema.ResourceData, meta interface{})
 		RouteTablePropertiesFormat: &network.RouteTablePropertiesFormat{
 			Routes: &routes,
 		},
-		Tags: *expandTags(tags),
+		Tags: *tags.Expand(t),
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, routeSet)

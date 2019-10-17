@@ -7,6 +7,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/dns/mgmt/2016-04-01/dns"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/tags"
 )
 
 func resourceArmDnsARecord() *schema.Resource {
@@ -45,7 +46,7 @@ func resourceArmDnsARecord() *schema.Resource {
 				Required: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": tags.Schema(),
 		},
 	}
 }
@@ -58,7 +59,7 @@ func resourceArmDnsARecordCreateOrUpdate(d *schema.ResourceData, meta interface{
 	resGroup := d.Get("resource_group_name").(string)
 	zoneName := d.Get("zone_name").(string)
 	ttl := int64(d.Get("ttl").(int))
-	tags := d.Get("tags").(map[string]interface{})
+	t := d.Get("tags").(map[string]interface{})
 
 	records, err := expandAzureStackDnsARecords(d)
 	if err != nil {
@@ -68,7 +69,7 @@ func resourceArmDnsARecordCreateOrUpdate(d *schema.ResourceData, meta interface{
 	parameters := dns.RecordSet{
 		Name: &name,
 		RecordSetProperties: &dns.RecordSetProperties{
-			Metadata: *expandTags(tags),
+			Metadata: *tags.Expand(t),
 			TTL:      &ttl,
 			ARecords: &records,
 		},

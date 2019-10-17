@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/internal/tags"
 )
 
 func resourceArmResourceGroup() *schema.Resource {
@@ -26,7 +27,7 @@ func resourceArmResourceGroup() *schema.Resource {
 
 			"location": locationSchema(),
 
-			"tags": tagsSchema(),
+			"tags": tags.Schema(),
 		},
 	}
 }
@@ -37,10 +38,10 @@ func resourceArmResourceGroupCreateUpdate(d *schema.ResourceData, meta interface
 
 	name := d.Get("name").(string)
 	location := d.Get("location").(string)
-	tags := d.Get("tags").(map[string]interface{})
+	t := d.Get("tags").(map[string]interface{})
 	parameters := resources.Group{
 		Location: utils.String(location),
-		Tags:     *expandTags(tags),
+		Tags:     *tags.Expand(t),
 	}
 	_, err := client.CreateOrUpdate(ctx, name, parameters)
 	if err != nil {

@@ -44,7 +44,7 @@ goimport:
 
 lint:
 	@echo "==> Checking source code against linters..."
-	golangci-lint run ./...
+	golangci-lint run ./... --timeout=5m0s
 
 tools:
 	@echo "==> installing required tooling..."

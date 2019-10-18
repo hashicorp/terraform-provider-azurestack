@@ -247,7 +247,7 @@ func dataSourceArmVirtualNetworkGatewayRead(d *schema.ResourceData, meta interfa
 		}
 	}
 
-	flattenAndSetTags(d, &resp.Tags)
+	tags.FlattenAndSet(d, &resp.Tags)
 
 	return nil
 }

@@ -194,7 +194,7 @@ func resourceArmVirtualNetworkRead(d *schema.ResourceData, meta interface{}) err
 		d.Set("dns_servers", *vnet.DhcpOptions.DNSServers)
 	}
 
-	flattenAndSetTags(d, &resp.Tags)
+	tags.FlattenAndSet(d, &resp.Tags)
 
 	return nil
 }

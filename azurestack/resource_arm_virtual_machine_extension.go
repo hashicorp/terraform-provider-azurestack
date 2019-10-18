@@ -187,7 +187,7 @@ func resourceArmVirtualMachineExtensionsRead(d *schema.ResourceData, meta interf
 		}
 	}
 
-	flattenAndSetTags(d, &resp.Tags)
+	tags.FlattenAndSet(d, &resp.Tags)
 
 	return nil
 }

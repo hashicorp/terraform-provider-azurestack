@@ -137,7 +137,7 @@ func resourceArmAvailabilitySetRead(d *schema.ResourceData, meta interface{}) er
 		d.Set("managed", strings.EqualFold(*resp.Sku.Name, "Aligned"))
 	}
 
-	flattenAndSetTags(d, &resp.Tags)
+	tags.FlattenAndSet(d, &resp.Tags)
 
 	return nil
 }

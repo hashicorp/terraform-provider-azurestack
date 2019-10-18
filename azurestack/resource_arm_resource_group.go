@@ -82,7 +82,7 @@ func resourceArmResourceGroupRead(d *schema.ResourceData, meta interface{}) erro
 
 	d.Set("name", resp.Name)
 	d.Set("location", azureStackNormalizeLocation(*resp.Location))
-	flattenAndSetTags(d, &resp.Tags)
+	tags.FlattenAndSet(d, &resp.Tags)
 
 	return nil
 }

@@ -121,7 +121,7 @@ func resourceArmDnsARecordRead(d *schema.ResourceData, meta interface{}) error {
 	if err := d.Set("records", flattenAzureStackDnsARecords(resp.ARecords)); err != nil {
 		return err
 	}
-	flattenAndSetTags(d, &resp.Metadata)
+	tags.FlattenAndSet(d, &resp.Metadata)
 
 	return nil
 }

@@ -230,7 +230,7 @@ func resourceArmManagedDiskRead(d *schema.ResourceData, meta interface{}) error 
 		flattenAzureRmManagedDiskCreationData(d, resp.CreationData)
 	}
 
-	flattenAndSetTags(d, &resp.Tags)
+	tags.FlattenAndSet(d, &resp.Tags)
 	return nil
 }
 

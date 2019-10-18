@@ -222,7 +222,7 @@ func resourceArmVirtualNetworkGatewayConnectionRead(d *schema.ResourceData, meta
 		d.Set("shared_key", sharedKeyResp.Value)
 	}
 
-	flattenAndSetTags(d, &resp.Tags)
+	tags.FlattenAndSet(d, &resp.Tags)
 
 	return nil
 }

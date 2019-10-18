@@ -242,7 +242,7 @@ func dataSourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{})
 	// AzureStack
 	// d.Set("enable_accelerated_networking", resp.EnableAcceleratedNetworking)
 
-	flattenAndSetTags(d, &resp.Tags)
+	tags.FlattenAndSet(d, &resp.Tags)
 
 	return nil
 }

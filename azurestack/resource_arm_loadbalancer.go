@@ -230,7 +230,7 @@ func resourceArmLoadBalancerRead(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 
-	flattenAndSetTags(d, &loadBalancer.Tags)
+	tags.FlattenAndSet(d, &loadBalancer.Tags)
 
 	return nil
 }

@@ -375,7 +375,7 @@ func resourceArmVirtualNetworkGatewayRead(d *schema.ResourceData, meta interface
 
 	}
 
-	flattenAndSetTags(d, &resp.Tags)
+	tags.FlattenAndSet(d, &resp.Tags)
 
 	return nil
 }

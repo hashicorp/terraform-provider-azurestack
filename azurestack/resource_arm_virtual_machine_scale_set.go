@@ -848,7 +848,7 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 		}
 	}
 
-	flattenAndSetTags(d, &resp.Tags)
+	tags.FlattenAndSet(d, &resp.Tags)
 
 	return nil
 }

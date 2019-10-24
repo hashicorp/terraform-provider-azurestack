@@ -80,7 +80,7 @@ resource "azurestack_virtual_machine" "test" {
   os_profile_linux_config {
     disable_password_authentication = false
   }
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -102,7 +102,7 @@ resource "azurestack_public_ip" "test" {
   resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "static"
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }
@@ -168,7 +168,7 @@ resource "azurestack_virtual_machine" "test" {
   os_profile_linux_config {
     disable_password_authentication = false
   }
-  tags {
+  tags = {
     environment = "staging"
   }
 }

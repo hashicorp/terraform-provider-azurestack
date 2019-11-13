@@ -581,7 +581,7 @@ func resourceArmVirtualMachineCreate(d *schema.ResourceData, meta interface{}) e
 		Name:                     &name,
 		Location:                 &location,
 		VirtualMachineProperties: &properties,
-		Tags:                     *expandedTags,
+		Tags: *expandedTags,
 
 		// The attribute zones is missing in the virtual machin struct for 2017-03-09 profile
 		// Zones: zones,
@@ -913,11 +913,9 @@ func flattenAzureStackVirtualMachineImageReference(image *compute.ImageReference
 	if image.Version != nil {
 		result["version"] = *image.Version
 	}
-
-	// Image ID not in struct
-	// if image.ID != nil {
-	// 	result["id"] = *image.ID
-	// }
+	if image.ID != nil {
+		result["id"] = *image.ID
+	}
 
 	return []interface{}{result}
 }
@@ -1474,7 +1472,7 @@ func expandAzureStackVirtualMachineImageReference(d *schema.ResourceData) (*comp
 		sku := storageImageRef["sku"].(string)
 		version := storageImageRef["version"].(string)
 
-	 	imageReference = compute.ImageReference{
+		imageReference = compute.ImageReference{
 			Publisher: &publisher,
 			Offer:     &offer,
 			Sku:       &sku,

@@ -1467,31 +1467,20 @@ func expandAzureStackVirtualMachineImageReference(d *schema.ResourceData) (*comp
 		return nil, fmt.Errorf("[ERROR] Conflict between `id` and `publisher` (only one or the other can be used)")
 	}
 
-	offer := storageImageRef["offer"].(string)
-	sku := storageImageRef["sku"].(string)
-	version := storageImageRef["version"].(string)
+	if imageID != "" {
+		imageReference.ID = utils.String(storageImageRef["id"].(string))
+	} else {
+		offer := storageImageRef["offer"].(string)
+		sku := storageImageRef["sku"].(string)
+		version := storageImageRef["version"].(string)
 
-	imageReference = compute.ImageReference{
-		Publisher: &publisher,
-		Offer:     &offer,
-		Sku:       &sku,
-		Version:   &version,
+	 	imageReference = compute.ImageReference{
+			Publisher: &publisher,
+			Offer:     &offer,
+			Sku:       &sku,
+			Version:   &version,
+		}
 	}
-
-	// if imageID != "" {
-	// 	imageReference.ID = utils.String(storageImageRef["id"].(string))
-	// } else {
-	// 	offer := storageImageRef["offer"].(string)
-	// 	sku := storageImageRef["sku"].(string)
-	// 	version := storageImageRef["version"].(string)
-	//
-	// 	imageReference = compute.ImageReference{
-	// 		Publisher: &publisher,
-	// 		Offer:     &offer,
-	// 		Sku:       &sku,
-	// 		Version:   &version,
-	// 	}
-	// }
 
 	return &imageReference, nil
 }

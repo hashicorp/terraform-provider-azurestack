@@ -126,7 +126,7 @@ func resourceArmSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 	// properties.ServiceEndpoints = &serviceEndpoints
 
 	subnet := network.Subnet{
-		Name:                   &name,
+		Name: &name,
 		SubnetPropertiesFormat: &properties,
 	}
 

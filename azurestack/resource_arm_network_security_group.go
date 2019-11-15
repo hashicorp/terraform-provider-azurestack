@@ -374,7 +374,7 @@ func expandAzureStackSecurityRules(d *schema.ResourceData) ([]network.SecurityRu
 		// }
 
 		rules = append(rules, network.SecurityRule{
-			Name:                         &name,
+			Name: &name,
 			SecurityRulePropertiesFormat: &properties,
 		})
 	}

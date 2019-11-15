@@ -279,7 +279,7 @@ func resourceArmNetworkInterfaceCreateUpdate(d *schema.ResourceData, meta interf
 		Name:                      &name,
 		Location:                  &location,
 		InterfacePropertiesFormat: &properties,
-		Tags:                      *expandTags(tags),
+		Tags: *expandTags(tags),
 	}
 
 	data, _ := json.Marshal(&iface)
@@ -631,7 +631,7 @@ func expandAzureStackNetworkInterfaceIpConfigurations(d *schema.ResourceData) ([
 
 		name := data["name"].(string)
 		ipConfig := network.InterfaceIPConfiguration{
-			Name:                                     &name,
+			Name: &name,
 			InterfaceIPConfigurationPropertiesFormat: &properties,
 		}
 

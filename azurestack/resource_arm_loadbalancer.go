@@ -143,9 +143,9 @@ func resourceArmLoadBalancerCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	loadBalancer := network.LoadBalancer{
-		Name:                         utils.String(name),
-		Location:                     utils.String(location),
-		Tags:                         *expandedTags,
+		Name:     utils.String(name),
+		Location: utils.String(location),
+		Tags:     *expandedTags,
 		LoadBalancerPropertiesFormat: &properties,
 	}
 
@@ -288,7 +288,7 @@ func expandAzureRmLoadBalancerFrontendIpConfigurations(d *schema.ResourceData) *
 
 		name := data["name"].(string)
 		frontEndConfig := network.FrontendIPConfiguration{
-			Name:                                    &name,
+			Name: &name,
 			FrontendIPConfigurationPropertiesFormat: &properties,
 		}
 

@@ -1,7 +1,7 @@
 ---
 subcategory: "Authentication"
 layout: "azurestack"
-page_title: "Azure Stack Provider: Authenticating using the Azure CLI"
+page_title: "Authenticating using the Azure CLI"
 sidebar_current: "docs-azurestack-auth-service-principal-azure-cli"
 description: |-
   This guide explains how to authenticate using the Azure CLI with the Azure Stack Provider.

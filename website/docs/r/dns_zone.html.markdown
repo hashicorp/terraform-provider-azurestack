@@ -1,4 +1,5 @@
 ---
+subcategory: "DNS"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_dns_zone"
 sidebar_current: "docs-azurestack-resource-dns-zone"

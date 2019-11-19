@@ -1,4 +1,5 @@
 ---
+subcategory: "Authentication"
 layout: "azurestack"
 page_title: "Azure Stack Provider: Authenticating using the Azure CLI"
 sidebar_current: "docs-azurestack-auth-service-principal-azure-cli"

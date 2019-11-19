@@ -1,4 +1,5 @@
 ---
+subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Stack: azurestack_virtual_network_gateway"
 sidebar_current: "docs-azurestack-resource-network-virtual-network-gateway"

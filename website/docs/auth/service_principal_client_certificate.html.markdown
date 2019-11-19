@@ -1,4 +1,5 @@
 ---
+subcategory: "Authentication"
 layout: "azurestack"
 page_title: "Azure Stack Provider: Authenticating via a Service Principal using a Client Certificate"
 sidebar_current: "docs-azurestack-auth-service-principal-client-certificate"

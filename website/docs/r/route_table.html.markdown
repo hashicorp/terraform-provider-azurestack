@@ -1,4 +1,5 @@
 ---
+subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_route_table"
 sidebar_current: "docs-azurestack-resource-network-route-table"

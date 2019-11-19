@@ -1,4 +1,5 @@
 ---
+subcategory: ""
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_virtual_network"
 sidebar_current: "docs-azurestack-datasource-virtual-network-x"

@@ -1,4 +1,5 @@
 ---
+subcategory: "Load Balancer"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_lb_backend_address_pool"
 sidebar_current: "docs-azurestack-resource-loadbalancer-backend-address-pool"

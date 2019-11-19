@@ -1,4 +1,5 @@
 ---
+subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_local_network_gateway"
 sidebar_current: "docs-azurestack-resource-network-local-network-gateway"

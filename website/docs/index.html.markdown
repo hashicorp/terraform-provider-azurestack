@@ -15,7 +15,7 @@ Use the navigation to the left to read about the available resources.
 
 # Creating Credentials
 
-Terraform supports authenticating to Azure Stack using [the Azure CLI](auth/azure_cli.html) or a Service Principal (either using a [Client Secret](auth/service_principal_client_secret.html) or a [Client Certificate](auth/service_principal_client_certificate.html)).
+Terraform supports authenticating to Azure Stack using [the Azure CLI](guides/azure_cli.html) or a Service Principal (either using a [Client Secret](guides/service_principal_client_secret.html) or a [Client Certificate](guides/service_principal_client_certificate.html)).
 
 ## Example Usage
 
@@ -76,7 +76,7 @@ When authenticating as a Service Principal using a Client Certificate, the follo
 
 * `client_certificate_path` - (Optional) The path to the Client Certificate associated with the Service Principal which should be used. This can also be sourced from the `ARM_CLIENT_CERTIFICATE_PATH` Environment Variable.
 
-More information on [how to configure a Service Principal using a Client Certificate can be found in this guide](auth/service_principal_client_certificate.html).
+More information on [how to configure a Service Principal using a Client Certificate can be found in this guide](guides/service_principal_client_certificate.html).
 
 ---
 
@@ -84,7 +84,7 @@ When authenticating as a Service Principal using a Client Secret, the following 
 
 * `client_secret` - (Optional) The Client Secret which should be used. This can also be sourced from the `ARM_CLIENT_SECRET` Environment Variable.
 
-More information on [how to configure a Service Principal using a Client Secret can be found in this guide](auth/service_principal_client_secret.html).
+More information on [how to configure a Service Principal using a Client Secret can be found in this guide](guides/service_principal_client_secret.html).
 
 ---
 

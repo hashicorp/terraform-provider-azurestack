@@ -1,4 +1,5 @@
 ---
+subcategory: ""
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_network_interface"
 sidebar_current: "docs-azurestack-datasource-network-interface"

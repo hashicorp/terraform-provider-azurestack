@@ -1,4 +1,5 @@
 ---
+subcategory: ""
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_subnet"
 sidebar_current: "docs-azurestack-datasource-subnet"

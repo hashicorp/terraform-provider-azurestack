@@ -1,4 +1,5 @@
 ---
+subcategory: "Load Balancer"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_lb_nat_rule"
 sidebar_current: "docs-azurestack-resource-loadbalancer-nat-rule"

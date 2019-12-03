@@ -1,4 +1,5 @@
 ---
+subcategory: "Storage"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_storage_blob"
 sidebar_current: "docs-azurestack-resource-storage-blob"

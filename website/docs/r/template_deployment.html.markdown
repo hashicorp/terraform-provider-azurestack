@@ -1,4 +1,5 @@
 ---
+subcategory: "Template"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_template_deployment"
 sidebar_current: "docs-azurestack-resource-template-deployment"

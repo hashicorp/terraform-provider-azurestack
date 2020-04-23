@@ -20,7 +20,7 @@ data "azurestack_storage_account" "test" {
 }
 
 output "storage_account_tier" {
-  value = "${data.azurestack_storage_account.test.account_tier}"
+  value = data.azurestack_storage_account.test.account_tier
 }
 ```
 

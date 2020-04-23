@@ -21,7 +21,7 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_dns_zone" "test" {
   name                = "mydomain.com"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  resource_group_name = azurestack_resource_group.test.name
 }
 ```
 ## Argument Reference

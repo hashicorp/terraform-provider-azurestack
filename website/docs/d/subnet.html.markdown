@@ -21,7 +21,7 @@ data "azurestack_subnet" "test" {
 }
 
 output "subnet_id" {
-  value = "${data.azurestack_subnet.test.id}"
+  value = data.azurestack_subnet.test.id
 }
 ```
 

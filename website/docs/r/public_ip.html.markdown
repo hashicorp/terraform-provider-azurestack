@@ -22,7 +22,7 @@ resource "azurestack_resource_group" "test" {
 resource "azurestack_public_ip" "test" {
   name                         = "acceptanceTestPublicIp1"
   location                     = "West US"
-  resource_group_name          = "${azurestack_resource_group.test.name}"
+  resource_group_name          = azurestack_resource_group.test.name
   public_ip_address_allocation = "static"
 
   tags = {

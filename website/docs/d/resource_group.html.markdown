@@ -20,8 +20,8 @@ data "azurestack_resource_group" "test" {
 
 resource "azurestack_managed_disk" "test" {
   name                 = "managed_disk_name"
-  location             = "${data.azurestack_resource_group.test.location}"
-  resource_group_name  = "${data.azurestack_resource_group.test.name}"
+  location             = data.azurestack_resource_group.test.location
+  resource_group_name  = data.azurestack_resource_group.test.name
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
   disk_size_gb         = "1"

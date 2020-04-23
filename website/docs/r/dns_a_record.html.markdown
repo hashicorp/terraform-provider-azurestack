@@ -21,13 +21,13 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_dns_zone" "test" {
   name                = "mydomain.com"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  resource_group_name = azurestack_resource_group.test.name
 }
 
 resource "azurestack_dns_a_record" "test" {
   name                = "test"
-  zone_name           = "${azurestack_dns_zone.test.name}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  zone_name           = azurestack_dns_zone.test.name
+  resource_group_name = azurestack_resource_group.test.name
   ttl                 = 300
   records             = ["10.0.180.17"]
 }

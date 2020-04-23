@@ -15,12 +15,12 @@ Use this data source to access the properties of a Network Security Group.
 
 ```hcl
 data "azurestack_network_security_group" "test" {
-  name                = "${azurestack_network_security_group.test.name}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = azurestack_network_security_group.test.name
+  resource_group_name = azurestack_resource_group.test.name
 }
 
 output "location" {
-  value = "${data.azurestack_network_security_group.test.location}"
+  value = data.azurestack_network_security_group.test.location
 }
 ```
 

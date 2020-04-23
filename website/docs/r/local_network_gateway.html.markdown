@@ -21,8 +21,8 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_local_network_gateway" "home" {
   name                = "backHome"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = azurestack_resource_group.test.name
+  location            = azurestack_resource_group.test.location
   gateway_address     = "12.13.14.15"
   address_space       = ["10.0.0.0/16"]
 }

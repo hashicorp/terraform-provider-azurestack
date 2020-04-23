@@ -27,19 +27,19 @@ resource "azurestack_virtual_network" "test" {
   name                = "acctvn"
   address_space       = ["10.0.0.0/16"]
   location            = "West US"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  resource_group_name = azurestack_resource_group.test.name
 }
 
 resource "azurestack_subnet" "test" {
   name                 = "acctsub"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  resource_group_name  = azurestack_resource_group.test.name
+  virtual_network_name = azurestack_virtual_network.test.name
   address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_storage_account" "test" {
   name                     = "accsa"
-  resource_group_name      = "${azurestack_resource_group.test.name}"
+  resource_group_name      = azurestack_resource_group.test.name
   location                 = "westus"
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -51,15 +51,15 @@ resource "azurestack_storage_account" "test" {
 
 resource "azurestack_storage_container" "test" {
   name                  = "vhds"
-  resource_group_name   = "${azurestack_resource_group.test.name}"
-  storage_account_name  = "${azurestack_storage_account.test.name}"
+  resource_group_name   = azurestack_resource_group.test.name
+  storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "private"
 }
 
 resource "azurestack_virtual_machine_scale_set" "test" {
   name                = "mytestscaleset-1"
   location            = "West US"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  resource_group_name = azurestack_resource_group.test.name
   upgrade_policy_mode = "Manual"
 
   sku {
@@ -89,7 +89,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 
     ip_configuration {
       name      = "TestIPConfiguration"
-      subnet_id = "${azurestack_subnet.test.id}"
+      subnet_id = azurestack_subnet.test.id
     }
   }
 

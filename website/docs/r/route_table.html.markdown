@@ -22,8 +22,8 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_route_table" "test" {
   name                = "acceptanceTestSecurityGroup1"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   disable_bgp_route_propagation = false
 

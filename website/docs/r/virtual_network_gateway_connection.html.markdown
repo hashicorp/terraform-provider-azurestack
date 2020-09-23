@@ -26,37 +26,37 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_virtual_network" "test" {
   name                = "test"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
   address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "test" {
   name                 = "GatewaySubnet"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  resource_group_name  = azurestack_resource_group.test.name
+  virtual_network_name = azurestack_virtual_network.test.name
   address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_local_network_gateway" "onpremise" {
   name                = "onpremise"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
   gateway_address     = "168.62.225.23"
   address_space       = ["10.1.1.0/24"]
 }
 
 resource "azurestack_public_ip" "test" {
   name                         = "test"
-  location                     = "${azurestack_resource_group.test.location}"
-  resource_group_name          = "${azurestack_resource_group.test.name}"
+  location                     = azurestack_resource_group.test.location
+  resource_group_name          = azurestack_resource_group.test.name
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "test" {
   name                = "test"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   type     = "Vpn"
   vpn_type = "RouteBased"
@@ -66,20 +66,20 @@ resource "azurestack_virtual_network_gateway" "test" {
   sku           = "Basic"
 
   ip_configuration {
-    public_ip_address_id          = "${azurestack_public_ip.test.id}"
+    public_ip_address_id          = azurestack_public_ip.test.id
     private_ip_address_allocation = "Dynamic"
-    subnet_id                     = "${azurestack_subnet.test.id}"
+    subnet_id                     = azurestack_subnet.test.id
   }
 }
 
 resource "azurestack_virtual_network_gateway_connection" "onpremise" {
   name                = "onpremise"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   type                       = "IPsec"
-  virtual_network_gateway_id = "${azurestack_virtual_network_gateway.test.id}"
-  local_network_gateway_id   = "${azurestack_local_network_gateway.onpremise.id}"
+  virtual_network_gateway_id = azurestack_virtual_network_gateway.test.id
+  local_network_gateway_id   = azurestack_local_network_gateway.onpremise.id
 
   shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
 }
@@ -98,38 +98,38 @@ resource "azurestack_resource_group" "us" {
 
 resource "azurestack_virtual_network" "us" {
   name                = "us"
-  location            = "${azurestack_resource_group.us.location}"
-  resource_group_name = "${azurestack_resource_group.us.name}"
+  location            = azurestack_resource_group.us.location
+  resource_group_name = azurestack_resource_group.us.name
   address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "us_gateway" {
   name                 = "GatewaySubnet"
-  resource_group_name  = "${azurestack_resource_group.us.name}"
-  virtual_network_name = "${azurestack_virtual_network.us.name}"
+  resource_group_name  = azurestack_resource_group.us.name
+  virtual_network_name = azurestack_virtual_network.us.name
   address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_public_ip" "us" {
   name                         = "us"
-  location                     = "${azurestack_resource_group.us.location}"
-  resource_group_name          = "${azurestack_resource_group.us.name}"
+  location                     = azurestack_resource_group.us.location
+  resource_group_name          = azurestack_resource_group.us.name
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "us" {
   name                = "us-gateway"
-  location            = "${azurestack_resource_group.us.location}"
-  resource_group_name = "${azurestack_resource_group.us.name}"
+  location            = azurestack_resource_group.us.location
+  resource_group_name = azurestack_resource_group.us.name
 
   type     = "Vpn"
   vpn_type = "RouteBased"
   sku      = "Basic"
 
   ip_configuration {
-    public_ip_address_id          = "${azurestack_public_ip.us.id}"
+    public_ip_address_id          = azurestack_public_ip.us.id
     private_ip_address_allocation = "Dynamic"
-    subnet_id                     = "${azurestack_subnet.us_gateway.id}"
+    subnet_id                     = azurestack_subnet.us_gateway.id
   }
 }
 
@@ -140,61 +140,61 @@ resource "azurestack_resource_group" "europe" {
 
 resource "azurestack_virtual_network" "europe" {
   name                = "europe"
-  location            = "${azurestack_resource_group.europe.location}"
-  resource_group_name = "${azurestack_resource_group.europe.name}"
+  location            = azurestack_resource_group.europe.location
+  resource_group_name = azurestack_resource_group.europe.name
   address_space       = ["10.1.0.0/16"]
 }
 
 resource "azurestack_subnet" "europe_gateway" {
   name                 = "GatewaySubnet"
-  resource_group_name  = "${azurestack_resource_group.europe.name}"
-  virtual_network_name = "${azurestack_virtual_network.europe.name}"
+  resource_group_name  = azurestack_resource_group.europe.name
+  virtual_network_name = azurestack_virtual_network.europe.name
   address_prefix       = "10.1.1.0/24"
 }
 
 resource "azurestack_public_ip" "europe" {
   name                         = "europe"
-  location                     = "${azurestack_resource_group.europe.location}"
-  resource_group_name          = "${azurestack_resource_group.europe.name}"
+  location                     = azurestack_resource_group.europe.location
+  resource_group_name          = azurestack_resource_group.europe.name
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "europe" {
   name                = "europe-gateway"
-  location            = "${azurestack_resource_group.europe.location}"
-  resource_group_name = "${azurestack_resource_group.europe.name}"
+  location            = azurestack_resource_group.europe.location
+  resource_group_name = azurestack_resource_group.europe.name
 
   type     = "Vpn"
   vpn_type = "RouteBased"
   sku      = "Basic"
 
   ip_configuration {
-    public_ip_address_id          = "${azurestack_public_ip.europe.id}"
+    public_ip_address_id          = azurestack_public_ip.europe.id
     private_ip_address_allocation = "Dynamic"
-    subnet_id                     = "${azurestack_subnet.europe_gateway.id}"
+    subnet_id                     = azurestack_subnet.europe_gateway.id
   }
 }
 
 resource "azurestack_virtual_network_gateway_connection" "us_to_europe" {
   name                = "us-to-europe"
-  location            = "${azurestack_resource_group.us.location}"
-  resource_group_name = "${azurestack_resource_group.us.name}"
+  location            = azurestack_resource_group.us.location
+  resource_group_name = azurestack_resource_group.us.name
 
   type                            = "Vnet2Vnet"
-  virtual_network_gateway_id      = "${azurestack_virtual_network_gateway.us.id}"
-  peer_virtual_network_gateway_id = "${azurestack_virtual_network_gateway.europe.id}"
+  virtual_network_gateway_id      = azurestack_virtual_network_gateway.us.id
+  peer_virtual_network_gateway_id = azurestack_virtual_network_gateway.europe.id
 
   shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
 }
 
 resource "azurestack_virtual_network_gateway_connection" "europe_to_us" {
   name                = "europe-to-us"
-  location            = "${azurestack_resource_group.europe.location}"
-  resource_group_name = "${azurestack_resource_group.europe.name}"
+  location            = azurestack_resource_group.europe.location
+  resource_group_name = azurestack_resource_group.europe.name
 
   type                            = "Vnet2Vnet"
-  virtual_network_gateway_id      = "${azurestack_virtual_network_gateway.europe.id}"
-  peer_virtual_network_gateway_id = "${azurestack_virtual_network_gateway.us.id}"
+  virtual_network_gateway_id      = azurestack_virtual_network_gateway.europe.id
+  peer_virtual_network_gateway_id = azurestack_virtual_network_gateway.us.id
 
   shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
 }

@@ -23,7 +23,7 @@ Terraform supports authenticating to Azure Stack using [the Azure CLI](guides/az
 # Configure the Azure Stack Provider
 provider "azurestack" {
   # NOTE: we recommend pinning the version of the Provider which should be used in the Provider block
-  # version = "=0.5.0"
+  # version = "=0.9.0"
 }
 
 # Create a resource group
@@ -36,8 +36,8 @@ resource "azurestack_resource_group" "test" {
 resource "azurestack_virtual_network" "test" {
   name                = "production-network"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   subnet {
     name           = "subnet1"

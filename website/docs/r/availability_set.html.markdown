@@ -22,8 +22,8 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_availability_set" "test" {
   name                = "acceptanceTestAvailabilitySet1"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   tags = {
     environment = "Production"

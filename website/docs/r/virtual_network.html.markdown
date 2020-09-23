@@ -26,13 +26,13 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_network_security_group" "test" {
   name                = "acceptanceTestSecurityGroup1"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 }
 
 resource "azurestack_virtual_network" "test" {
   name                = "virtualNetwork1"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  resource_group_name = azurestack_resource_group.test.name
   address_space       = ["10.0.0.0/16"]
   location            = "West US"
   dns_servers         = ["10.0.0.4", "10.0.0.5"]
@@ -50,7 +50,7 @@ resource "azurestack_virtual_network" "test" {
   subnet {
     name           = "subnet3"
     address_prefix = "10.0.3.0/24"
-    security_group = "${azurestack_network_security_group.test.id}"
+    security_group = azurestack_network_security_group.test.id
   }
 
   tags = {

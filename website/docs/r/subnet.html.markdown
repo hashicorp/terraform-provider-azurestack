@@ -27,14 +27,14 @@ resource "azurestack_resource_group" "test" {
 resource "azurestack_virtual_network" "test" {
   name                = "acceptanceTestVirtualNetwork1"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 }
 
 resource "azurestack_subnet" "test" {
   name                 = "testsubnet"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  resource_group_name  = azurestack_resource_group.test.name
+  virtual_network_name = azurestack_virtual_network.test.name
   address_prefix       = "10.0.1.0/24"
 }
 ```

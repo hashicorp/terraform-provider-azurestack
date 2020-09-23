@@ -22,7 +22,7 @@ data "azurestack_platform_image" "test" {
 }
 
 output "version" {
-  value = "${data.azurestack_platform_image.test.version}"
+  value = data.azurestack_platform_image.test.version
 }
 ```
 

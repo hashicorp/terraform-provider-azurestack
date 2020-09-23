@@ -27,31 +27,31 @@ resource "azurestack_virtual_network" "test" {
   name                = "acctvn"
   address_space       = ["10.0.0.0/16"]
   location            = "West US"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  resource_group_name = azurestack_resource_group.test.name
 }
 
 resource "azurestack_subnet" "test" {
   name                 = "acctsub"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  resource_group_name  = azurestack_resource_group.test.name
+  virtual_network_name = azurestack_virtual_network.test.name
   address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_network_interface" "test" {
   name                = "acctni"
   location            = "West US"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  resource_group_name = azurestack_resource_group.test.name
 
   ip_configuration {
     name                          = "testconfiguration1"
-    subnet_id                     = "${azurestack_subnet.test.id}"
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "dynamic"
   }
 }
 
 resource "azurestack_storage_account" "test" {
   name                     = "accsa"
-  resource_group_name      = "${azurestack_resource_group.test.name}"
+  resource_group_name      = azurestack_resource_group.test.name
   location                 = "westus"
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -63,16 +63,16 @@ resource "azurestack_storage_account" "test" {
 
 resource "azurestack_storage_container" "test" {
   name                  = "vhds"
-  resource_group_name   = "${azurestack_resource_group.test.name}"
-  storage_account_name  = "${azurestack_storage_account.test.name}"
+  resource_group_name   = azurestack_resource_group.test.name
+  storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "private"
 }
 
 resource "azurestack_virtual_machine" "test" {
   name                  = "acctvm"
   location              = "West US"
-  resource_group_name   = "${azurestack_resource_group.test.name}"
-  network_interface_ids = ["${azurestack_network_interface.test.id}"]
+  resource_group_name   = azurestack_resource_group.test.name
+  network_interface_ids = [ azurestack_network_interface.test.id ]
   vm_size               = "Standard_A0"
 
   storage_image_reference {
@@ -107,8 +107,8 @@ resource "azurestack_virtual_machine" "test" {
 resource "azurestack_virtual_machine_extension" "test" {
   name                 = "hostname"
   location             = "West US"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_machine_name = "${azurestack_virtual_machine.test.name}"
+  resource_group_name  = azurestack_resource_group.test.name
+  virtual_machine_name = azurestack_virtual_machine.test.name
   publisher            = "Microsoft.Azure.Extensions"
   type                 = "CustomScript"
   type_handler_version = "2.0"

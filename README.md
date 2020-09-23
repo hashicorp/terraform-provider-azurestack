@@ -19,14 +19,14 @@ You can pin the version of the Azure Stack Provider you're using like so:
 
 ```hcl
 provider "azurestack" {
-  version = "=0.8.0"
+  version = "=0.9.0"
 }
 ```
 
 General Requirements
 ------------
 
--	[Terraform](https://www.terraform.io/downloads.html) 0.10.x
+-	[Terraform](https://www.terraform.io/downloads.html) 0.12.x
 -	[Go](https://golang.org/doc/install) 1.9 (to build the provider plugin)
 
 Windows Specific Requirements
@@ -80,7 +80,7 @@ resource "azurestack_virtual_network" "network" {
   name                = "productionNetwork"
   address_space       = ["10.0.0.0/16"]
   location            = "West US"
-  resource_group_name = "${azurestack_resource_group.production.name}"
+  resource_group_name = azurestack_resource_group.production.name
 
   subnet {
     name           = "subnet1"

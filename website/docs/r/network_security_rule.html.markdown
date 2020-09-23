@@ -26,8 +26,8 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_network_security_group" "test" {
   name                = "acceptanceTestSecurityGroup1"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 }
 
 resource "azurestack_network_security_rule" "test" {
@@ -40,8 +40,8 @@ resource "azurestack_network_security_rule" "test" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = "${azurestack_resource_group.test.name}"
-  network_security_group_name = "${azurestack_network_security_group.test.name}"
+  resource_group_name         = azurestack_resource_group.test.name
+  network_security_group_name = azurestack_network_security_group.test.name
 }
 ```
 

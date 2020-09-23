@@ -20,7 +20,7 @@ data "azurestack_virtual_network_gateway" "test" {
 }
 
 output "virtual_network_gateway_id" {
-  value = "${data.azurestack_virtual_network_gateway.test.id}"
+  value = data.azurestack_virtual_network_gateway.test.id
 }
 ```
 

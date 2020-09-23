@@ -21,7 +21,7 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_storage_account" "test" {
   name                     = "accteststorageaccount"
-  resource_group_name      = "${azurestack_resource_group.test.name}"
+  resource_group_name      = azurestack_resource_group.test.name
   location                 = "westus"
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -33,8 +33,8 @@ resource "azurestack_storage_account" "test" {
 
 resource "azurestack_storage_container" "test" {
   name                  = "vhds"
-  resource_group_name   = "${azurestack_resource_group.test.name}"
-  storage_account_name  = "${azurestack_storage_account.test.name}"
+  resource_group_name   = azurestack_resource_group.test.name
+  storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "private"
 }
 ```

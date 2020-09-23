@@ -22,7 +22,7 @@ resource "azurestack_resource_group" "test" {
 resource "azurestack_managed_disk" "test" {
   name                 = "acctestmd"
   location             = "West US 2"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
+  resource_group_name  = azurestack_resource_group.test.name
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
   disk_size_gb         = "1"
@@ -44,7 +44,7 @@ resource "azurestack_resource_group" "test" {
 resource "azurestack_managed_disk" "source" {
   name                 = "acctestmd1"
   location             = "West US 2"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
+  resource_group_name  = azurestack_resource_group.test.name
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
   disk_size_gb         = "1"
@@ -57,10 +57,10 @@ resource "azurestack_managed_disk" "source" {
 resource "azurestack_managed_disk" "copy" {
   name                 = "acctestmd2"
   location             = "West US 2"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
+  resource_group_name  = azurestack_resource_group.test.name
   storage_account_type = "Standard_LRS"
   create_option        = "Copy"
-  source_resource_id   = "${azurestack_managed_disk.source.id}"
+  source_resource_id   = azurestack_managed_disk.source.id
   disk_size_gb         = "1"
 
   tags = {

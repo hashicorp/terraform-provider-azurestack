@@ -20,7 +20,7 @@ data "azurestack_network_interface" "test" {
 }
 
 output "network_interface_id" {
-  value = "${data.azurestack_network_interface.test.id}"
+  value = data.azurestack_network_interface.test.id
 }
 ```
 

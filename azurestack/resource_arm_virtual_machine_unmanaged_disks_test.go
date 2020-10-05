@@ -72,6 +72,35 @@ func TestAccAzureStackVirtualMachine_basicLinuxMachine_storageBlob_attach(t *tes
 	})
 }
 
+func TestAccAzureStackVirtualMachine_basicLinuxMachineFromPlatformImage(t *testing.T) {
+	resourceName := "azurestack_virtual_machine.test"
+	var vm compute.VirtualMachine
+	ri := acctest.RandInt()
+	config := testAccAzureStackVirtualMachine_basicLinuxMachineFromPlatformImage(ri, testLocation())
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckAzureStackVirtualMachineExists(resourceName, &vm),
+				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"delete_data_disks_on_termination",
+					"delete_os_disk_on_termination",
+				},
+			},
+		},
+	})
+}
+
 func TestAccAzureStackVirtualMachine_basicLinuxMachineSSHOnly(t *testing.T) {
 	var vm compute.VirtualMachine
 	ri := acctest.RandInt()
@@ -677,6 +706,102 @@ resource "azurestack_virtual_machine" "test" {
   }
 }
 `, rInt, location, rInt, rInt, rInt, rInt, rInt, rInt)
+}
+
+func testAccAzureStackVirtualMachine_basicLinuxMachineFromPlatformImage(rInt int, location string) string {
+	return fmt.Sprintf(`
+data "azurestack_platform_image" "test" {
+  location  = "%[1]s"
+  publisher = "Canonical"
+  offer     = "UbuntuServer"
+  sku       = "18.04-LTS"
+}
+
+resource "azurestack_resource_group" "test" {
+  name     = "acctestRG-%[2]d"
+  location = "%[1]s"
+}
+
+resource "azurestack_virtual_network" "test" {
+  name                = "acctvn-%[2]d"
+  address_space       = ["10.0.0.0/16"]
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+}
+
+resource "azurestack_subnet" "test" {
+  name                 = "acctsub-%[2]d"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  address_prefix       = "10.0.2.0/24"
+}
+
+resource "azurestack_network_interface" "test" {
+  name                = "acctni-%[2]d"
+  location            = "${azurestack_resource_group.test.location}"
+  resource_group_name = "${azurestack_resource_group.test.name}"
+
+  ip_configuration {
+    name                          = "testconfiguration1"
+    subnet_id                     = "${azurestack_subnet.test.id}"
+    private_ip_address_allocation = "dynamic"
+  }
+}
+
+resource "azurestack_storage_account" "test" {
+  name                     = "accsa%[2]d"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
+  location                 = "${azurestack_resource_group.test.location}"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  tags = {
+    environment = "staging"
+  }
+}
+
+resource "azurestack_storage_container" "test" {
+  name                  = "vhds"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  storage_account_name  = "${azurestack_storage_account.test.name}"
+  container_access_type = "private"
+}
+
+resource "azurestack_virtual_machine" "test" {
+  name                  = "acctvm-%[2]d"
+  location              = "${azurestack_resource_group.test.location}"
+  resource_group_name   = "${azurestack_resource_group.test.name}"
+  network_interface_ids = ["${azurestack_network_interface.test.id}"]
+  vm_size               = "Standard_D1_v2"
+
+  storage_image_reference {
+    id = data.azurestack_platform_image.test.id
+  }
+
+  storage_os_disk {
+    name          = "myosdisk1"
+    vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
+    caching       = "ReadWrite"
+    create_option = "FromImage"
+    disk_size_gb  = "45"
+  }
+
+  os_profile {
+    computer_name  = "hn%[2]d"
+    admin_username = "testadmin"
+    admin_password = "Password1234!"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+
+  tags = {
+    environment = "Production"
+    cost-center = "Ops"
+  }
+}
+`, location, rInt)
 }
 
 func testAccAzureStackVirtualMachine_basicLinuxMachine_destroyVM(rInt int, location string) string {

@@ -85,6 +85,7 @@ const (
 
 var (
 	validStorageAccount     = regexp.MustCompile("^[0-9a-z]{3,24}$")
+	validCosmosAccount      = regexp.MustCompile("^[0-9a-z-]{3,44}$")
 	defaultValidStatusCodes = []int{
 		http.StatusRequestTimeout,      // 408
 		http.StatusInternalServerError, // 500
@@ -141,15 +142,16 @@ type Client struct {
 	// automatic retry strategy built in. The Sender can be customized.
 	Sender Sender
 
-	accountName      string
-	accountKey       []byte
-	useHTTPS         bool
-	UseSharedKeyLite bool
-	baseURL          string
-	apiVersion       string
-	userAgent        string
-	sasClient        bool
-	accountSASToken  url.Values
+	accountName       string
+	accountKey        []byte
+	useHTTPS          bool
+	UseSharedKeyLite  bool
+	baseURL           string
+	apiVersion        string
+	userAgent         string
+	sasClient         bool
+	accountSASToken   url.Values
+	additionalHeaders map[string]string
 }
 
 type odataResponse struct {
@@ -308,10 +310,36 @@ func NewClient(accountName, accountKey, serviceBaseURL, apiVersion string, useHT
 		return c, fmt.Errorf("azure: malformed storage account key: %v", err)
 	}
 
-	c = Client{
+	return newClient(accountName, key, serviceBaseURL, apiVersion, useHTTPS)
+}
+
+// NewCosmosClient constructs a Client for Azure CosmosDB. This should be used if the caller wants
+// to specify whether to use HTTPS, a specific REST API version or a custom
+// cosmos endpoint than Azure Public Cloud.
+func NewCosmosClient(accountName, accountKey, serviceBaseURL, apiVersion string, useHTTPS bool) (Client, error) {
+	var c Client
+	if !IsValidCosmosAccount(accountName) {
+		return c, fmt.Errorf("azure: account name is not valid: The name can contain only lowercase letters, numbers and the '-' character, and must be between 3 and 44 characters: %v", accountName)
+	} else if accountKey == "" {
+		return c, fmt.Errorf("azure: account key required")
+	} else if serviceBaseURL == "" {
+		return c, fmt.Errorf("azure: base storage service url required")
+	}
+
+	key, err := base64.StdEncoding.DecodeString(accountKey)
+	if err != nil {
+		return c, fmt.Errorf("azure: malformed cosmos account key: %v", err)
+	}
+
+	return newClient(accountName, key, serviceBaseURL, apiVersion, useHTTPS)
+}
+
+// newClient constructs a Client with given parameters.
+func newClient(accountName string, accountKey []byte, serviceBaseURL, apiVersion string, useHTTPS bool) (Client, error) {
+	c := Client{
 		HTTPClient:       http.DefaultClient,
 		accountName:      accountName,
-		accountKey:       key,
+		accountKey:       accountKey,
 		useHTTPS:         useHTTPS,
 		baseURL:          serviceBaseURL,
 		apiVersion:       apiVersion,
@@ -331,6 +359,12 @@ func NewClient(accountName, accountKey, serviceBaseURL, apiVersion string, useHT
 // See https://docs.microsoft.com/en-us/azure/storage/storage-create-storage-account
 func IsValidStorageAccount(account string) bool {
 	return validStorageAccount.MatchString(account)
+}
+
+// IsValidCosmosAccount checks if the Cosmos account name is valid.
+// See https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-manage-database-account
+func IsValidCosmosAccount(account string) bool {
+	return validCosmosAccount.MatchString(account)
 }
 
 // NewAccountSASClient contructs a client that uses accountSAS authorization
@@ -430,6 +464,16 @@ func (c *Client) AddToUserAgent(extension string) error {
 		return nil
 	}
 	return fmt.Errorf("Extension was empty, User Agent stayed as %s", c.userAgent)
+}
+
+// AddAdditionalHeaders adds additional standard headers
+func (c *Client) AddAdditionalHeaders(headers map[string]string) {
+	if headers != nil {
+		c.additionalHeaders = map[string]string{}
+		for k, v := range headers {
+			c.additionalHeaders[k] = v
+		}
+	}
 }
 
 // protectUserAgent is used in funcs that include extraheaders as a parameter.
@@ -696,11 +740,16 @@ func (c Client) GetFileService() FileServiceClient {
 }
 
 func (c Client) getStandardHeaders() map[string]string {
-	return map[string]string{
-		userAgentHeader: c.userAgent,
-		"x-ms-version":  c.apiVersion,
-		"x-ms-date":     currentTimeRfc1123Formatted(),
+	headers := map[string]string{}
+	for k, v := range c.additionalHeaders {
+		headers[k] = v
 	}
+
+	headers[userAgentHeader] = c.userAgent
+	headers["x-ms-version"] = c.apiVersion
+	headers["x-ms-date"] = currentTimeRfc1123Formatted()
+
+	return headers
 }
 
 func (c Client) exec(verb, url string, headers map[string]string, body io.Reader, auth authentication) (*http.Response, error) {

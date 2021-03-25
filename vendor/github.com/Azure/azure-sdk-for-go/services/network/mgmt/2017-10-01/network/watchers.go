@@ -36,7 +36,8 @@ func NewWatchersClient(subscriptionID string) WatchersClient {
 	return NewWatchersClientWithBaseURI(DefaultBaseURI, subscriptionID)
 }
 
-// NewWatchersClientWithBaseURI creates an instance of the WatchersClient client.
+// NewWatchersClientWithBaseURI creates an instance of the WatchersClient client using a custom endpoint.  Use this
+// when interacting with an Azure cloud that uses a non-standard base URI (sovereign clouds, Azure stack).
 func NewWatchersClientWithBaseURI(baseURI string, subscriptionID string) WatchersClient {
 	return WatchersClient{NewWithBaseURI(baseURI, subscriptionID)}
 }
@@ -74,7 +75,7 @@ func (client WatchersClient) CheckConnectivity(ctx context.Context, resourceGrou
 
 	result, err = client.CheckConnectivitySender(req)
 	if err != nil {
-		err = autorest.NewErrorWithError(err, "network.WatchersClient", "CheckConnectivity", result.Response(), "Failure sending request")
+		err = autorest.NewErrorWithError(err, "network.WatchersClient", "CheckConnectivity", nil, "Failure sending request")
 		return
 	}
 
@@ -107,13 +108,38 @@ func (client WatchersClient) CheckConnectivityPreparer(ctx context.Context, reso
 // CheckConnectivitySender sends the CheckConnectivity request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) CheckConnectivitySender(req *http.Request) (future WatchersCheckConnectivityFuture, err error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
 	var resp *http.Response
-	resp, err = autorest.SendWithSender(client, req, sd...)
+	resp, err = client.Send(req, azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	future.Future, err = azure.NewFutureFromResponse(resp)
+	var azf azure.Future
+	azf, err = azure.NewFutureFromResponse(resp)
+	future.FutureAPI = &azf
+	future.Result = func(client WatchersClient) (ci ConnectivityInformation, err error) {
+		var done bool
+		done, err = future.DoneWithContext(context.Background(), client)
+		if err != nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersCheckConnectivityFuture", "Result", future.Response(), "Polling failure")
+			return
+		}
+		if !done {
+			err = azure.NewAsyncOpIncompleteError("network.WatchersCheckConnectivityFuture")
+			return
+		}
+		sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+		ci.Response.Response, err = future.GetResult(sender)
+		if ci.Response.Response == nil && err == nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersCheckConnectivityFuture", "Result", nil, "received nil response and error")
+		}
+		if err == nil && ci.Response.Response.StatusCode != http.StatusNoContent {
+			ci, err = client.CheckConnectivityResponder(ci.Response.Response)
+			if err != nil {
+				err = autorest.NewErrorWithError(err, "network.WatchersCheckConnectivityFuture", "Result", ci.Response.Response, "Failure responding to request")
+			}
+		}
+		return
+	}
 	return
 }
 
@@ -122,7 +148,6 @@ func (client WatchersClient) CheckConnectivitySender(req *http.Request) (future 
 func (client WatchersClient) CheckConnectivityResponder(resp *http.Response) (result ConnectivityInformation, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -162,6 +187,7 @@ func (client WatchersClient) CreateOrUpdate(ctx context.Context, resourceGroupNa
 	result, err = client.CreateOrUpdateResponder(resp)
 	if err != nil {
 		err = autorest.NewErrorWithError(err, "network.WatchersClient", "CreateOrUpdate", resp, "Failure responding to request")
+		return
 	}
 
 	return
@@ -193,8 +219,7 @@ func (client WatchersClient) CreateOrUpdatePreparer(ctx context.Context, resourc
 // CreateOrUpdateSender sends the CreateOrUpdate request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) CreateOrUpdateSender(req *http.Request) (*http.Response, error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
-	return autorest.SendWithSender(client, req, sd...)
+	return client.Send(req, azure.DoRetryWithRegistration(client.Client))
 }
 
 // CreateOrUpdateResponder handles the response to the CreateOrUpdate request. The method always
@@ -202,7 +227,6 @@ func (client WatchersClient) CreateOrUpdateSender(req *http.Request) (*http.Resp
 func (client WatchersClient) CreateOrUpdateResponder(resp *http.Response) (result Watcher, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusCreated),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -233,7 +257,7 @@ func (client WatchersClient) Delete(ctx context.Context, resourceGroupName strin
 
 	result, err = client.DeleteSender(req)
 	if err != nil {
-		err = autorest.NewErrorWithError(err, "network.WatchersClient", "Delete", result.Response(), "Failure sending request")
+		err = autorest.NewErrorWithError(err, "network.WatchersClient", "Delete", nil, "Failure sending request")
 		return
 	}
 
@@ -264,13 +288,28 @@ func (client WatchersClient) DeletePreparer(ctx context.Context, resourceGroupNa
 // DeleteSender sends the Delete request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) DeleteSender(req *http.Request) (future WatchersDeleteFuture, err error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
 	var resp *http.Response
-	resp, err = autorest.SendWithSender(client, req, sd...)
+	resp, err = client.Send(req, azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	future.Future, err = azure.NewFutureFromResponse(resp)
+	var azf azure.Future
+	azf, err = azure.NewFutureFromResponse(resp)
+	future.FutureAPI = &azf
+	future.Result = func(client WatchersClient) (ar autorest.Response, err error) {
+		var done bool
+		done, err = future.DoneWithContext(context.Background(), client)
+		if err != nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersDeleteFuture", "Result", future.Response(), "Polling failure")
+			return
+		}
+		if !done {
+			err = azure.NewAsyncOpIncompleteError("network.WatchersDeleteFuture")
+			return
+		}
+		ar.Response = future.Response()
+		return
+	}
 	return
 }
 
@@ -279,7 +318,6 @@ func (client WatchersClient) DeleteSender(req *http.Request) (future WatchersDel
 func (client WatchersClient) DeleteResponder(resp *http.Response) (result autorest.Response, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted, http.StatusNoContent),
 		autorest.ByClosing())
 	result.Response = resp
@@ -317,6 +355,7 @@ func (client WatchersClient) Get(ctx context.Context, resourceGroupName string, 
 	result, err = client.GetResponder(resp)
 	if err != nil {
 		err = autorest.NewErrorWithError(err, "network.WatchersClient", "Get", resp, "Failure responding to request")
+		return
 	}
 
 	return
@@ -346,8 +385,7 @@ func (client WatchersClient) GetPreparer(ctx context.Context, resourceGroupName 
 // GetSender sends the Get request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) GetSender(req *http.Request) (*http.Response, error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
-	return autorest.SendWithSender(client, req, sd...)
+	return client.Send(req, azure.DoRetryWithRegistration(client.Client))
 }
 
 // GetResponder handles the response to the Get request. The method always
@@ -355,7 +393,6 @@ func (client WatchersClient) GetSender(req *http.Request) (*http.Response, error
 func (client WatchersClient) GetResponder(resp *http.Response) (result Watcher, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -397,7 +434,7 @@ func (client WatchersClient) GetAzureReachabilityReport(ctx context.Context, res
 
 	result, err = client.GetAzureReachabilityReportSender(req)
 	if err != nil {
-		err = autorest.NewErrorWithError(err, "network.WatchersClient", "GetAzureReachabilityReport", result.Response(), "Failure sending request")
+		err = autorest.NewErrorWithError(err, "network.WatchersClient", "GetAzureReachabilityReport", nil, "Failure sending request")
 		return
 	}
 
@@ -430,13 +467,38 @@ func (client WatchersClient) GetAzureReachabilityReportPreparer(ctx context.Cont
 // GetAzureReachabilityReportSender sends the GetAzureReachabilityReport request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) GetAzureReachabilityReportSender(req *http.Request) (future WatchersGetAzureReachabilityReportFuture, err error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
 	var resp *http.Response
-	resp, err = autorest.SendWithSender(client, req, sd...)
+	resp, err = client.Send(req, azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	future.Future, err = azure.NewFutureFromResponse(resp)
+	var azf azure.Future
+	azf, err = azure.NewFutureFromResponse(resp)
+	future.FutureAPI = &azf
+	future.Result = func(client WatchersClient) (arr AzureReachabilityReport, err error) {
+		var done bool
+		done, err = future.DoneWithContext(context.Background(), client)
+		if err != nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersGetAzureReachabilityReportFuture", "Result", future.Response(), "Polling failure")
+			return
+		}
+		if !done {
+			err = azure.NewAsyncOpIncompleteError("network.WatchersGetAzureReachabilityReportFuture")
+			return
+		}
+		sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+		arr.Response.Response, err = future.GetResult(sender)
+		if arr.Response.Response == nil && err == nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersGetAzureReachabilityReportFuture", "Result", nil, "received nil response and error")
+		}
+		if err == nil && arr.Response.Response.StatusCode != http.StatusNoContent {
+			arr, err = client.GetAzureReachabilityReportResponder(arr.Response.Response)
+			if err != nil {
+				err = autorest.NewErrorWithError(err, "network.WatchersGetAzureReachabilityReportFuture", "Result", arr.Response.Response, "Failure responding to request")
+			}
+		}
+		return
+	}
 	return
 }
 
@@ -445,7 +507,6 @@ func (client WatchersClient) GetAzureReachabilityReportSender(req *http.Request)
 func (client WatchersClient) GetAzureReachabilityReportResponder(resp *http.Response) (result AzureReachabilityReport, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -483,7 +544,7 @@ func (client WatchersClient) GetFlowLogStatus(ctx context.Context, resourceGroup
 
 	result, err = client.GetFlowLogStatusSender(req)
 	if err != nil {
-		err = autorest.NewErrorWithError(err, "network.WatchersClient", "GetFlowLogStatus", result.Response(), "Failure sending request")
+		err = autorest.NewErrorWithError(err, "network.WatchersClient", "GetFlowLogStatus", nil, "Failure sending request")
 		return
 	}
 
@@ -516,13 +577,38 @@ func (client WatchersClient) GetFlowLogStatusPreparer(ctx context.Context, resou
 // GetFlowLogStatusSender sends the GetFlowLogStatus request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) GetFlowLogStatusSender(req *http.Request) (future WatchersGetFlowLogStatusFuture, err error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
 	var resp *http.Response
-	resp, err = autorest.SendWithSender(client, req, sd...)
+	resp, err = client.Send(req, azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	future.Future, err = azure.NewFutureFromResponse(resp)
+	var azf azure.Future
+	azf, err = azure.NewFutureFromResponse(resp)
+	future.FutureAPI = &azf
+	future.Result = func(client WatchersClient) (fli FlowLogInformation, err error) {
+		var done bool
+		done, err = future.DoneWithContext(context.Background(), client)
+		if err != nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersGetFlowLogStatusFuture", "Result", future.Response(), "Polling failure")
+			return
+		}
+		if !done {
+			err = azure.NewAsyncOpIncompleteError("network.WatchersGetFlowLogStatusFuture")
+			return
+		}
+		sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+		fli.Response.Response, err = future.GetResult(sender)
+		if fli.Response.Response == nil && err == nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersGetFlowLogStatusFuture", "Result", nil, "received nil response and error")
+		}
+		if err == nil && fli.Response.Response.StatusCode != http.StatusNoContent {
+			fli, err = client.GetFlowLogStatusResponder(fli.Response.Response)
+			if err != nil {
+				err = autorest.NewErrorWithError(err, "network.WatchersGetFlowLogStatusFuture", "Result", fli.Response.Response, "Failure responding to request")
+			}
+		}
+		return
+	}
 	return
 }
 
@@ -531,7 +617,6 @@ func (client WatchersClient) GetFlowLogStatusSender(req *http.Request) (future W
 func (client WatchersClient) GetFlowLogStatusResponder(resp *http.Response) (result FlowLogInformation, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -571,7 +656,7 @@ func (client WatchersClient) GetNextHop(ctx context.Context, resourceGroupName s
 
 	result, err = client.GetNextHopSender(req)
 	if err != nil {
-		err = autorest.NewErrorWithError(err, "network.WatchersClient", "GetNextHop", result.Response(), "Failure sending request")
+		err = autorest.NewErrorWithError(err, "network.WatchersClient", "GetNextHop", nil, "Failure sending request")
 		return
 	}
 
@@ -604,13 +689,38 @@ func (client WatchersClient) GetNextHopPreparer(ctx context.Context, resourceGro
 // GetNextHopSender sends the GetNextHop request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) GetNextHopSender(req *http.Request) (future WatchersGetNextHopFuture, err error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
 	var resp *http.Response
-	resp, err = autorest.SendWithSender(client, req, sd...)
+	resp, err = client.Send(req, azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	future.Future, err = azure.NewFutureFromResponse(resp)
+	var azf azure.Future
+	azf, err = azure.NewFutureFromResponse(resp)
+	future.FutureAPI = &azf
+	future.Result = func(client WatchersClient) (nhr NextHopResult, err error) {
+		var done bool
+		done, err = future.DoneWithContext(context.Background(), client)
+		if err != nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersGetNextHopFuture", "Result", future.Response(), "Polling failure")
+			return
+		}
+		if !done {
+			err = azure.NewAsyncOpIncompleteError("network.WatchersGetNextHopFuture")
+			return
+		}
+		sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+		nhr.Response.Response, err = future.GetResult(sender)
+		if nhr.Response.Response == nil && err == nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersGetNextHopFuture", "Result", nil, "received nil response and error")
+		}
+		if err == nil && nhr.Response.Response.StatusCode != http.StatusNoContent {
+			nhr, err = client.GetNextHopResponder(nhr.Response.Response)
+			if err != nil {
+				err = autorest.NewErrorWithError(err, "network.WatchersGetNextHopFuture", "Result", nhr.Response.Response, "Failure responding to request")
+			}
+		}
+		return
+	}
 	return
 }
 
@@ -619,7 +729,6 @@ func (client WatchersClient) GetNextHopSender(req *http.Request) (future Watcher
 func (client WatchersClient) GetNextHopResponder(resp *http.Response) (result NextHopResult, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -659,6 +768,7 @@ func (client WatchersClient) GetTopology(ctx context.Context, resourceGroupName 
 	result, err = client.GetTopologyResponder(resp)
 	if err != nil {
 		err = autorest.NewErrorWithError(err, "network.WatchersClient", "GetTopology", resp, "Failure responding to request")
+		return
 	}
 
 	return
@@ -690,8 +800,7 @@ func (client WatchersClient) GetTopologyPreparer(ctx context.Context, resourceGr
 // GetTopologySender sends the GetTopology request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) GetTopologySender(req *http.Request) (*http.Response, error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
-	return autorest.SendWithSender(client, req, sd...)
+	return client.Send(req, azure.DoRetryWithRegistration(client.Client))
 }
 
 // GetTopologyResponder handles the response to the GetTopology request. The method always
@@ -699,7 +808,6 @@ func (client WatchersClient) GetTopologySender(req *http.Request) (*http.Respons
 func (client WatchersClient) GetTopologyResponder(resp *http.Response) (result Topology, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -741,7 +849,7 @@ func (client WatchersClient) GetTroubleshooting(ctx context.Context, resourceGro
 
 	result, err = client.GetTroubleshootingSender(req)
 	if err != nil {
-		err = autorest.NewErrorWithError(err, "network.WatchersClient", "GetTroubleshooting", result.Response(), "Failure sending request")
+		err = autorest.NewErrorWithError(err, "network.WatchersClient", "GetTroubleshooting", nil, "Failure sending request")
 		return
 	}
 
@@ -774,13 +882,38 @@ func (client WatchersClient) GetTroubleshootingPreparer(ctx context.Context, res
 // GetTroubleshootingSender sends the GetTroubleshooting request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) GetTroubleshootingSender(req *http.Request) (future WatchersGetTroubleshootingFuture, err error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
 	var resp *http.Response
-	resp, err = autorest.SendWithSender(client, req, sd...)
+	resp, err = client.Send(req, azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	future.Future, err = azure.NewFutureFromResponse(resp)
+	var azf azure.Future
+	azf, err = azure.NewFutureFromResponse(resp)
+	future.FutureAPI = &azf
+	future.Result = func(client WatchersClient) (tr TroubleshootingResult, err error) {
+		var done bool
+		done, err = future.DoneWithContext(context.Background(), client)
+		if err != nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersGetTroubleshootingFuture", "Result", future.Response(), "Polling failure")
+			return
+		}
+		if !done {
+			err = azure.NewAsyncOpIncompleteError("network.WatchersGetTroubleshootingFuture")
+			return
+		}
+		sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+		tr.Response.Response, err = future.GetResult(sender)
+		if tr.Response.Response == nil && err == nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersGetTroubleshootingFuture", "Result", nil, "received nil response and error")
+		}
+		if err == nil && tr.Response.Response.StatusCode != http.StatusNoContent {
+			tr, err = client.GetTroubleshootingResponder(tr.Response.Response)
+			if err != nil {
+				err = autorest.NewErrorWithError(err, "network.WatchersGetTroubleshootingFuture", "Result", tr.Response.Response, "Failure responding to request")
+			}
+		}
+		return
+	}
 	return
 }
 
@@ -789,7 +922,6 @@ func (client WatchersClient) GetTroubleshootingSender(req *http.Request) (future
 func (client WatchersClient) GetTroubleshootingResponder(resp *http.Response) (result TroubleshootingResult, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -827,7 +959,7 @@ func (client WatchersClient) GetTroubleshootingResult(ctx context.Context, resou
 
 	result, err = client.GetTroubleshootingResultSender(req)
 	if err != nil {
-		err = autorest.NewErrorWithError(err, "network.WatchersClient", "GetTroubleshootingResult", result.Response(), "Failure sending request")
+		err = autorest.NewErrorWithError(err, "network.WatchersClient", "GetTroubleshootingResult", nil, "Failure sending request")
 		return
 	}
 
@@ -860,13 +992,38 @@ func (client WatchersClient) GetTroubleshootingResultPreparer(ctx context.Contex
 // GetTroubleshootingResultSender sends the GetTroubleshootingResult request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) GetTroubleshootingResultSender(req *http.Request) (future WatchersGetTroubleshootingResultFuture, err error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
 	var resp *http.Response
-	resp, err = autorest.SendWithSender(client, req, sd...)
+	resp, err = client.Send(req, azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	future.Future, err = azure.NewFutureFromResponse(resp)
+	var azf azure.Future
+	azf, err = azure.NewFutureFromResponse(resp)
+	future.FutureAPI = &azf
+	future.Result = func(client WatchersClient) (tr TroubleshootingResult, err error) {
+		var done bool
+		done, err = future.DoneWithContext(context.Background(), client)
+		if err != nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersGetTroubleshootingResultFuture", "Result", future.Response(), "Polling failure")
+			return
+		}
+		if !done {
+			err = azure.NewAsyncOpIncompleteError("network.WatchersGetTroubleshootingResultFuture")
+			return
+		}
+		sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+		tr.Response.Response, err = future.GetResult(sender)
+		if tr.Response.Response == nil && err == nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersGetTroubleshootingResultFuture", "Result", nil, "received nil response and error")
+		}
+		if err == nil && tr.Response.Response.StatusCode != http.StatusNoContent {
+			tr, err = client.GetTroubleshootingResultResponder(tr.Response.Response)
+			if err != nil {
+				err = autorest.NewErrorWithError(err, "network.WatchersGetTroubleshootingResultFuture", "Result", tr.Response.Response, "Failure responding to request")
+			}
+		}
+		return
+	}
 	return
 }
 
@@ -875,7 +1032,6 @@ func (client WatchersClient) GetTroubleshootingResultSender(req *http.Request) (
 func (client WatchersClient) GetTroubleshootingResultResponder(resp *http.Response) (result TroubleshootingResult, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -913,7 +1069,7 @@ func (client WatchersClient) GetVMSecurityRules(ctx context.Context, resourceGro
 
 	result, err = client.GetVMSecurityRulesSender(req)
 	if err != nil {
-		err = autorest.NewErrorWithError(err, "network.WatchersClient", "GetVMSecurityRules", result.Response(), "Failure sending request")
+		err = autorest.NewErrorWithError(err, "network.WatchersClient", "GetVMSecurityRules", nil, "Failure sending request")
 		return
 	}
 
@@ -946,13 +1102,38 @@ func (client WatchersClient) GetVMSecurityRulesPreparer(ctx context.Context, res
 // GetVMSecurityRulesSender sends the GetVMSecurityRules request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) GetVMSecurityRulesSender(req *http.Request) (future WatchersGetVMSecurityRulesFuture, err error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
 	var resp *http.Response
-	resp, err = autorest.SendWithSender(client, req, sd...)
+	resp, err = client.Send(req, azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	future.Future, err = azure.NewFutureFromResponse(resp)
+	var azf azure.Future
+	azf, err = azure.NewFutureFromResponse(resp)
+	future.FutureAPI = &azf
+	future.Result = func(client WatchersClient) (sgvr SecurityGroupViewResult, err error) {
+		var done bool
+		done, err = future.DoneWithContext(context.Background(), client)
+		if err != nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersGetVMSecurityRulesFuture", "Result", future.Response(), "Polling failure")
+			return
+		}
+		if !done {
+			err = azure.NewAsyncOpIncompleteError("network.WatchersGetVMSecurityRulesFuture")
+			return
+		}
+		sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+		sgvr.Response.Response, err = future.GetResult(sender)
+		if sgvr.Response.Response == nil && err == nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersGetVMSecurityRulesFuture", "Result", nil, "received nil response and error")
+		}
+		if err == nil && sgvr.Response.Response.StatusCode != http.StatusNoContent {
+			sgvr, err = client.GetVMSecurityRulesResponder(sgvr.Response.Response)
+			if err != nil {
+				err = autorest.NewErrorWithError(err, "network.WatchersGetVMSecurityRulesFuture", "Result", sgvr.Response.Response, "Failure responding to request")
+			}
+		}
+		return
+	}
 	return
 }
 
@@ -961,7 +1142,6 @@ func (client WatchersClient) GetVMSecurityRulesSender(req *http.Request) (future
 func (client WatchersClient) GetVMSecurityRulesResponder(resp *http.Response) (result SecurityGroupViewResult, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -999,6 +1179,7 @@ func (client WatchersClient) List(ctx context.Context, resourceGroupName string)
 	result, err = client.ListResponder(resp)
 	if err != nil {
 		err = autorest.NewErrorWithError(err, "network.WatchersClient", "List", resp, "Failure responding to request")
+		return
 	}
 
 	return
@@ -1027,8 +1208,7 @@ func (client WatchersClient) ListPreparer(ctx context.Context, resourceGroupName
 // ListSender sends the List request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) ListSender(req *http.Request) (*http.Response, error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
-	return autorest.SendWithSender(client, req, sd...)
+	return client.Send(req, azure.DoRetryWithRegistration(client.Client))
 }
 
 // ListResponder handles the response to the List request. The method always
@@ -1036,7 +1216,6 @@ func (client WatchersClient) ListSender(req *http.Request) (*http.Response, erro
 func (client WatchersClient) ListResponder(resp *http.Response) (result WatcherListResult, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -1072,6 +1251,7 @@ func (client WatchersClient) ListAll(ctx context.Context) (result WatcherListRes
 	result, err = client.ListAllResponder(resp)
 	if err != nil {
 		err = autorest.NewErrorWithError(err, "network.WatchersClient", "ListAll", resp, "Failure responding to request")
+		return
 	}
 
 	return
@@ -1099,8 +1279,7 @@ func (client WatchersClient) ListAllPreparer(ctx context.Context) (*http.Request
 // ListAllSender sends the ListAll request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) ListAllSender(req *http.Request) (*http.Response, error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
-	return autorest.SendWithSender(client, req, sd...)
+	return client.Send(req, azure.DoRetryWithRegistration(client.Client))
 }
 
 // ListAllResponder handles the response to the ListAll request. The method always
@@ -1108,7 +1287,6 @@ func (client WatchersClient) ListAllSender(req *http.Request) (*http.Response, e
 func (client WatchersClient) ListAllResponder(resp *http.Response) (result WatcherListResult, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -1140,7 +1318,7 @@ func (client WatchersClient) ListAvailableProviders(ctx context.Context, resourc
 
 	result, err = client.ListAvailableProvidersSender(req)
 	if err != nil {
-		err = autorest.NewErrorWithError(err, "network.WatchersClient", "ListAvailableProviders", result.Response(), "Failure sending request")
+		err = autorest.NewErrorWithError(err, "network.WatchersClient", "ListAvailableProviders", nil, "Failure sending request")
 		return
 	}
 
@@ -1173,13 +1351,38 @@ func (client WatchersClient) ListAvailableProvidersPreparer(ctx context.Context,
 // ListAvailableProvidersSender sends the ListAvailableProviders request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) ListAvailableProvidersSender(req *http.Request) (future WatchersListAvailableProvidersFuture, err error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
 	var resp *http.Response
-	resp, err = autorest.SendWithSender(client, req, sd...)
+	resp, err = client.Send(req, azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	future.Future, err = azure.NewFutureFromResponse(resp)
+	var azf azure.Future
+	azf, err = azure.NewFutureFromResponse(resp)
+	future.FutureAPI = &azf
+	future.Result = func(client WatchersClient) (apl AvailableProvidersList, err error) {
+		var done bool
+		done, err = future.DoneWithContext(context.Background(), client)
+		if err != nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersListAvailableProvidersFuture", "Result", future.Response(), "Polling failure")
+			return
+		}
+		if !done {
+			err = azure.NewAsyncOpIncompleteError("network.WatchersListAvailableProvidersFuture")
+			return
+		}
+		sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+		apl.Response.Response, err = future.GetResult(sender)
+		if apl.Response.Response == nil && err == nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersListAvailableProvidersFuture", "Result", nil, "received nil response and error")
+		}
+		if err == nil && apl.Response.Response.StatusCode != http.StatusNoContent {
+			apl, err = client.ListAvailableProvidersResponder(apl.Response.Response)
+			if err != nil {
+				err = autorest.NewErrorWithError(err, "network.WatchersListAvailableProvidersFuture", "Result", apl.Response.Response, "Failure responding to request")
+			}
+		}
+		return
+	}
 	return
 }
 
@@ -1188,7 +1391,6 @@ func (client WatchersClient) ListAvailableProvidersSender(req *http.Request) (fu
 func (client WatchersClient) ListAvailableProvidersResponder(resp *http.Response) (result AvailableProvidersList, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -1230,7 +1432,7 @@ func (client WatchersClient) SetFlowLogConfiguration(ctx context.Context, resour
 
 	result, err = client.SetFlowLogConfigurationSender(req)
 	if err != nil {
-		err = autorest.NewErrorWithError(err, "network.WatchersClient", "SetFlowLogConfiguration", result.Response(), "Failure sending request")
+		err = autorest.NewErrorWithError(err, "network.WatchersClient", "SetFlowLogConfiguration", nil, "Failure sending request")
 		return
 	}
 
@@ -1263,13 +1465,38 @@ func (client WatchersClient) SetFlowLogConfigurationPreparer(ctx context.Context
 // SetFlowLogConfigurationSender sends the SetFlowLogConfiguration request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) SetFlowLogConfigurationSender(req *http.Request) (future WatchersSetFlowLogConfigurationFuture, err error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
 	var resp *http.Response
-	resp, err = autorest.SendWithSender(client, req, sd...)
+	resp, err = client.Send(req, azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	future.Future, err = azure.NewFutureFromResponse(resp)
+	var azf azure.Future
+	azf, err = azure.NewFutureFromResponse(resp)
+	future.FutureAPI = &azf
+	future.Result = func(client WatchersClient) (fli FlowLogInformation, err error) {
+		var done bool
+		done, err = future.DoneWithContext(context.Background(), client)
+		if err != nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersSetFlowLogConfigurationFuture", "Result", future.Response(), "Polling failure")
+			return
+		}
+		if !done {
+			err = azure.NewAsyncOpIncompleteError("network.WatchersSetFlowLogConfigurationFuture")
+			return
+		}
+		sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+		fli.Response.Response, err = future.GetResult(sender)
+		if fli.Response.Response == nil && err == nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersSetFlowLogConfigurationFuture", "Result", nil, "received nil response and error")
+		}
+		if err == nil && fli.Response.Response.StatusCode != http.StatusNoContent {
+			fli, err = client.SetFlowLogConfigurationResponder(fli.Response.Response)
+			if err != nil {
+				err = autorest.NewErrorWithError(err, "network.WatchersSetFlowLogConfigurationFuture", "Result", fli.Response.Response, "Failure responding to request")
+			}
+		}
+		return
+	}
 	return
 }
 
@@ -1278,7 +1505,6 @@ func (client WatchersClient) SetFlowLogConfigurationSender(req *http.Request) (f
 func (client WatchersClient) SetFlowLogConfigurationResponder(resp *http.Response) (result FlowLogInformation, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -1318,6 +1544,7 @@ func (client WatchersClient) UpdateTags(ctx context.Context, resourceGroupName s
 	result, err = client.UpdateTagsResponder(resp)
 	if err != nil {
 		err = autorest.NewErrorWithError(err, "network.WatchersClient", "UpdateTags", resp, "Failure responding to request")
+		return
 	}
 
 	return
@@ -1349,8 +1576,7 @@ func (client WatchersClient) UpdateTagsPreparer(ctx context.Context, resourceGro
 // UpdateTagsSender sends the UpdateTags request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) UpdateTagsSender(req *http.Request) (*http.Response, error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
-	return autorest.SendWithSender(client, req, sd...)
+	return client.Send(req, azure.DoRetryWithRegistration(client.Client))
 }
 
 // UpdateTagsResponder handles the response to the UpdateTags request. The method always
@@ -1358,7 +1584,6 @@ func (client WatchersClient) UpdateTagsSender(req *http.Request) (*http.Response
 func (client WatchersClient) UpdateTagsResponder(resp *http.Response) (result Watcher, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())
@@ -1400,7 +1625,7 @@ func (client WatchersClient) VerifyIPFlow(ctx context.Context, resourceGroupName
 
 	result, err = client.VerifyIPFlowSender(req)
 	if err != nil {
-		err = autorest.NewErrorWithError(err, "network.WatchersClient", "VerifyIPFlow", result.Response(), "Failure sending request")
+		err = autorest.NewErrorWithError(err, "network.WatchersClient", "VerifyIPFlow", nil, "Failure sending request")
 		return
 	}
 
@@ -1433,13 +1658,38 @@ func (client WatchersClient) VerifyIPFlowPreparer(ctx context.Context, resourceG
 // VerifyIPFlowSender sends the VerifyIPFlow request. The method will close the
 // http.Response Body if it receives an error.
 func (client WatchersClient) VerifyIPFlowSender(req *http.Request) (future WatchersVerifyIPFlowFuture, err error) {
-	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
 	var resp *http.Response
-	resp, err = autorest.SendWithSender(client, req, sd...)
+	resp, err = client.Send(req, azure.DoRetryWithRegistration(client.Client))
 	if err != nil {
 		return
 	}
-	future.Future, err = azure.NewFutureFromResponse(resp)
+	var azf azure.Future
+	azf, err = azure.NewFutureFromResponse(resp)
+	future.FutureAPI = &azf
+	future.Result = func(client WatchersClient) (vifr VerificationIPFlowResult, err error) {
+		var done bool
+		done, err = future.DoneWithContext(context.Background(), client)
+		if err != nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersVerifyIPFlowFuture", "Result", future.Response(), "Polling failure")
+			return
+		}
+		if !done {
+			err = azure.NewAsyncOpIncompleteError("network.WatchersVerifyIPFlowFuture")
+			return
+		}
+		sender := autorest.DecorateSender(client, autorest.DoRetryForStatusCodes(client.RetryAttempts, client.RetryDuration, autorest.StatusCodesForRetry...))
+		vifr.Response.Response, err = future.GetResult(sender)
+		if vifr.Response.Response == nil && err == nil {
+			err = autorest.NewErrorWithError(err, "network.WatchersVerifyIPFlowFuture", "Result", nil, "received nil response and error")
+		}
+		if err == nil && vifr.Response.Response.StatusCode != http.StatusNoContent {
+			vifr, err = client.VerifyIPFlowResponder(vifr.Response.Response)
+			if err != nil {
+				err = autorest.NewErrorWithError(err, "network.WatchersVerifyIPFlowFuture", "Result", vifr.Response.Response, "Failure responding to request")
+			}
+		}
+		return
+	}
 	return
 }
 
@@ -1448,7 +1698,6 @@ func (client WatchersClient) VerifyIPFlowSender(req *http.Request) (future Watch
 func (client WatchersClient) VerifyIPFlowResponder(resp *http.Response) (result VerificationIPFlowResult, err error) {
 	err = autorest.Respond(
 		resp,
-		client.ByInspecting(),
 		azure.WithErrorUnlessStatusCode(http.StatusOK, http.StatusAccepted),
 		autorest.ByUnmarshallingJSON(&result),
 		autorest.ByClosing())

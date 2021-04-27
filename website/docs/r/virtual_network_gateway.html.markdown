@@ -1,4 +1,5 @@
 ---
+subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Stack: azurestack_virtual_network_gateway"
 sidebar_current: "docs-azurestack-resource-network-virtual-network-gateway"
@@ -20,38 +21,38 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_virtual_network" "test" {
   name                = "test"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
   address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurestack_subnet" "test" {
   name                 = "GatewaySubnet"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  resource_group_name  = azurestack_resource_group.test.name
+  virtual_network_name = azurestack_virtual_network.test.name
   address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_public_ip" "test" {
   name                         = "test"
-  location                     = "${azurestack_resource_group.test.location}"
-  resource_group_name          = "${azurestack_resource_group.test.name}"
+  location                     = azurestack_resource_group.test.location
+  resource_group_name          = azurestack_resource_group.test.name
   public_ip_address_allocation = "Dynamic"
 }
 
 resource "azurestack_virtual_network_gateway" "test" {
   name                = "test"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   type     = "Vpn"
   vpn_type = "RouteBased"
   sku      = "Basic"
 
   ip_configuration {
-    public_ip_address_id          = "${azurestack_public_ip.test.id}"
+    public_ip_address_id          = azurestack_public_ip.test.id
     private_ip_address_allocation = "Dynamic"
-    subnet_id                     = "${azurestack_subnet.test.id}"
+    subnet_id                     = azurestack_subnet.test.id
   }
 }
 ```

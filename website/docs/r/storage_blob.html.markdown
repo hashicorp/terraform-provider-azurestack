@@ -1,4 +1,5 @@
 ---
+subcategory: "Storage"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_storage_blob"
 sidebar_current: "docs-azurestack-resource-storage-blob"
@@ -20,7 +21,7 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_storage_account" "test" {
   name                     = "acctestaccs"
-  resource_group_name      = "${azurestack_resource_group.test.name}"
+  resource_group_name      = azurestack_resource_group.test.name
   location                 = "westus"
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -28,17 +29,17 @@ resource "azurestack_storage_account" "test" {
 
 resource "azurestack_storage_container" "test" {
   name                  = "vhds"
-  resource_group_name   = "${azurestack_resource_group.test.name}"
-  storage_account_name  = "${azurestack_storage_account.test.name}"
+  resource_group_name   = azurestack_resource_group.test.name
+  storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "private"
 }
 
 resource "azurestack_storage_blob" "testsb" {
   name = "sample.vhd"
 
-  resource_group_name    = "${azurestack_resource_group.test.name}"
-  storage_account_name   = "${azurestack_storage_account.test.name}"
-  storage_container_name = "${azurestack_storage_container.test.name}"
+  resource_group_name    = azurestack_resource_group.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
 
   type = "page"
   size = 5120

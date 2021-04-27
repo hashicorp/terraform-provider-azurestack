@@ -9,6 +9,12 @@ GOFLAGS=-mod=vendor
 
 default: build
 
+tools:
+	@echo "==> installing required tooling..."
+	@sh "$(CURDIR)/scripts/gogetcookie.sh"
+	GO111MODULE=off go get -u github.com/client9/misspell/cmd/misspell
+	GO111MODULE=off go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+
 build: fmtcheck
 	go install
 
@@ -30,6 +36,13 @@ testacc: fmtcheck
 debugacc: fmtcheck
 	TF_ACC=1 dlv test $(TEST) --headless --listen=:2345 --api-version=2 -- -test.v $(TESTARGS)
 
+website-lint:
+	@echo "==> Checking website against linters..."
+	@misspell -error -source=text -i hdinsight website/
+
+website-registrycheck:
+	@sh "$(CURDIR)/scripts/website-registrycheck.sh"
+
 fmt:
 	@echo "==> Fixing source code with gofmt..."
 	gofmt -s -w ./$(PKG_NAME)
@@ -45,12 +58,6 @@ goimport:
 lint:
 	@echo "==> Checking source code against linters..."
 	golangci-lint run ./...
-
-tools:
-	@echo "==> installing required tooling..."
-	@sh "$(CURDIR)/scripts/gogetcookie.sh"
-	GO111MODULE=off go get -u github.com/client9/misspell/cmd/misspell
-	GO111MODULE=off go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 
 test-compile:
 	@if [ "$(TEST)" = "./..." ]; then \
@@ -74,5 +81,5 @@ ifeq (,$(wildcard $(GOPATH)/src/$(WEBSITE_REPO)))
 endif
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
-.PHONY: build build-docker test test-docker testacc vet fmt fmtcheck errcheck test-compile website website-test
+.PHONY: build build-docker website-registrycheck test test-docker testacc vet fmt fmtcheck errcheck test-compile website website-test
 

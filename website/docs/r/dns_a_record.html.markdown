@@ -1,4 +1,5 @@
 ---
+subcategory: "DNS"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_dns_a_record"
 sidebar_current: "docs-azurestack-resource-dns-a-record"
@@ -20,13 +21,13 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_dns_zone" "test" {
   name                = "mydomain.com"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  resource_group_name = azurestack_resource_group.test.name
 }
 
 resource "azurestack_dns_a_record" "test" {
   name                = "test"
-  zone_name           = "${azurestack_dns_zone.test.name}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  zone_name           = azurestack_dns_zone.test.name
+  resource_group_name = azurestack_resource_group.test.name
   ttl                 = 300
   records             = ["10.0.180.17"]
 }

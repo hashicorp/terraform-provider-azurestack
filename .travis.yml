@@ -1,4 +1,4 @@
-dist: trusty
+dist: xenial
 sudo: required
 services:
   - docker
@@ -6,11 +6,13 @@ language: go
 go:
   - "1.12.x"
 
+branches:
+  only:
+    - master
+
 env:
-  matrix:
-    - MODE=unit-tests
-    - MODE=linters
-    - MODE=website
+  global:
+    GOFLAGS=-mod=vendor
 
 install:
   # This script is used by the Travis build to install a cookie for
@@ -20,15 +22,18 @@ install:
   - bash scripts/gogetcookie.sh
   - make tools
 
-script:
-  - if [[ $MODE == 'unit-tests' ]]; then make test; fi
-  - if [[ $MODE == 'linters' ]]; then GOGC=30 make lint; fi
-  - if [[ $MODE == 'website' ]]; then make website-test; fi
-
-branches:
-  only:
-    - master
 matrix:
   fast_finish: true
   allow_failures:
     - go: tip
+  include:
+    - name: "make lint"
+      script: GOGC=15 make lint
+    - name: "make test"
+      script: make test
+    - name: "make website-lint"
+      script: make website-lint
+    - name: "make website-test"
+      script: make website-test
+    - name: "make website-registrycheck"
+      script: make website-registrycheck

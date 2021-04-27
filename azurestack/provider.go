@@ -8,9 +8,9 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-azure-helpers/authentication"
-	"github.com/hashicorp/terraform/helper/mutexkv"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/mutexkv"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
 func Provider() terraform.ResourceProvider {
@@ -147,7 +147,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 
 		skipCredentialsValidation := d.Get("skip_credentials_validation").(bool)
 		skipProviderRegistration := d.Get("skip_provider_registration").(bool)
-		client, err := getArmClient(config, skipProviderRegistration)
+		client, err := getArmClient(config, p.TerraformVersion, skipProviderRegistration)
 		if err != nil {
 			return nil, err
 		}

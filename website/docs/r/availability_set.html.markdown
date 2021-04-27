@@ -1,4 +1,5 @@
 ---
+subcategory: "Compute"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_availability_set"
 sidebar_current: "docs-azurestack-resource-compute-availability-set"
@@ -21,8 +22,8 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_availability_set" "test" {
   name                = "acceptanceTestAvailabilitySet1"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   tags = {
     environment = "Production"

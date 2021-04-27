@@ -1,4 +1,5 @@
 ---
+subcategory: "Storage"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_storage_account"
 sidebar_current: "docs-azurestack-resource-storage-account"
@@ -20,7 +21,7 @@ resource "azurestack_resource_group" "testrg" {
 
 resource "azurestack_storage_account" "testsa" {
   name                     = "storageaccountname"
-  resource_group_name      = "${azurestack_resource_group.testrg.name}"
+  resource_group_name      = azurestack_resource_group.testrg.name
   location                 = "westus"
   account_tier             = "Standard"
   account_replication_type = "LRS"

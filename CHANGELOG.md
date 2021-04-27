@@ -1,11 +1,19 @@
-## 0.9.0 (Unreleased)
+## 0.10.0 (Unreleased)
+
+NOTES:
+
+* provider: The underlying Terraform codebase dependency for the provider SDK and acceptance testing framework has been migrated from `github.com/hashicorp/terraform` to `github.com/hashicorp/terraform-plugin-sdk`. They are functionally equivalent and this should only impact codebase development to switch imports. For more information see the [Terraform Plugin SDK page in the Extending Terraform documentation](https://www.terraform.io/docs/extend/plugin-sdk.html). [GH-108]
+
+## 0.9.0 (August 30, 2019)
 
 IMPROVEMENTS:
 
-* dependencies: upgrading `github.com/hashicorp/terraform` to `0.12.6` [GH-102]
-* dependencies: upgrading `github.com/hashicorp/go-azure-helpers` to `0.7.0` [GH-103]
-* dependencies: upgrading `github.com/Azure/go-autorest` to `13.0.0` [GH-103]
-* dependencies: upgrading `github.com/Azure/terraform` to `32.0.0` [GH-103]
+* dependencies: upgrading `github.com/hashicorp/terraform` to `0.12.6` ([#102](https://github.com/terraform-providers/terraform-provider-azurestack/issues/102))
+* dependencies: upgrading `github.com/hashicorp/go-azure-helpers` to `0.7.0` ([#103](https://github.com/terraform-providers/terraform-provider-azurestack/issues/103))
+* dependencies: upgrading `github.com/Azure/go-autorest` to `13.0.0` ([#103](https://github.com/terraform-providers/terraform-provider-azurestack/issues/103))
+* dependencies: upgrading `github.com/Azure/terraform` to `32.0.0` ([#103](https://github.com/terraform-providers/terraform-provider-azurestack/issues/103))
+* provider: automatically set authentication tenant ID to `adfs` in AD environments ([#105](https://github.com/terraform-providers/terraform-provider-azurestack/issues/105))
+* `azurestack_availability_set` - support for the `managed` property ([#104](https://github.com/terraform-providers/terraform-provider-azurestack/issues/104))
 
 ## 0.8.1 (July 09, 2019)
 

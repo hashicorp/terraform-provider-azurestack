@@ -1,4 +1,5 @@
 ---
+subcategory: ""
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_network_security_group"
 sidebar_current: "docs-azurestack-datasource-network-security-group"
@@ -14,12 +15,12 @@ Use this data source to access the properties of a Network Security Group.
 
 ```hcl
 data "azurestack_network_security_group" "test" {
-  name                = "${azurestack_network_security_group.test.name}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                = azurestack_network_security_group.test.name
+  resource_group_name = azurestack_resource_group.test.name
 }
 
 output "location" {
-  value = "${data.azurestack_network_security_group.test.location}"
+  value = data.azurestack_network_security_group.test.location
 }
 ```
 

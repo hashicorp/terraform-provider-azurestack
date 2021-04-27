@@ -1,4 +1,5 @@
 ---
+subcategory: "Template"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_template_deployment"
 sidebar_current: "docs-azurestack-resource-template-deployment"
@@ -26,7 +27,7 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_template_deployment" "test" {
   name                = "acctesttemplate-01"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  resource_group_name = azurestack_resource_group.test.name
 
   template_body = <<DEPLOY
 {

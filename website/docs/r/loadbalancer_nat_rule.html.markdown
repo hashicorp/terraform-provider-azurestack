@@ -1,4 +1,5 @@
 ---
+subcategory: "Load Balancer"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_lb_nat_rule"
 sidebar_current: "docs-azurestack-resource-loadbalancer-nat-rule"
@@ -23,24 +24,24 @@ resource "azurestack_resource_group" "test" {
 resource "azurestack_public_ip" "test" {
   name                         = "PublicIPForLB"
   location                     = "West US"
-  resource_group_name          = "${azurestack_resource_group.test.name}"
+  resource_group_name          = azurestack_resource_group.test.name
   public_ip_address_allocation = "static"
 }
 
 resource "azurestack_lb" "test" {
   name                = "TestLoadBalancer"
   location            = "West US"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  resource_group_name = azurestack_resource_group.test.name
 
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
-    public_ip_address_id = "${azurestack_public_ip.test.id}"
+    public_ip_address_id = azurestack_public_ip.test.id
   }
 }
 
 resource "azurestack_lb_nat_rule" "test" {
-  resource_group_name            = "${azurestack_resource_group.test.name}"
-  loadbalancer_id                = "${azurestack_lb.test.id}"
+  resource_group_name            = azurestack_resource_group.test.name
+  loadbalancer_id                = azurestack_lb.test.id
   name                           = "RDPAccess"
   protocol                       = "Tcp"
   frontend_port                  = 3389

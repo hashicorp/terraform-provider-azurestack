@@ -1,4 +1,5 @@
 ---
+subcategory: ""
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_virtual_network"
 sidebar_current: "docs-azurestack-datasource-virtual-network-x"
@@ -19,7 +20,7 @@ data "azurestack_virtual_network" "test" {
 }
 
 output "virtual_network_id" {
-  value = "${data.azurestack_virtual_network.test.id}"
+  value = data.azurestack_virtual_network.test.id
 }
 ```
 

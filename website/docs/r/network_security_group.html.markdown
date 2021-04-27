@@ -1,4 +1,5 @@
 ---
+subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_network_security_group"
 sidebar_current: "docs-azurestack-resource-network-security-group"
@@ -25,8 +26,8 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_network_security_group" "test" {
   name                = "acceptanceTestSecurityGroup1"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   security_rule {
     name                       = "test123"

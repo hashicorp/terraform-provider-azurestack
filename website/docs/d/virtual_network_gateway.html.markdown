@@ -1,4 +1,5 @@
 ---
+subcategory: ""
 layout: "azurestack"
 page_title: "Azure Stack: azurestack_virtual_network_gateway"
 sidebar_current: "docs-azurestack-datasource-virtual-network-x"
@@ -19,7 +20,7 @@ data "azurestack_virtual_network_gateway" "test" {
 }
 
 output "virtual_network_gateway_id" {
-  value = "${data.azurestack_virtual_network_gateway.test.id}"
+  value = data.azurestack_virtual_network_gateway.test.id
 }
 ```
 

@@ -1,4 +1,5 @@
 ---
+subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_route"
 sidebar_current: "docs-azurestack-resource-network-route-x"
@@ -20,14 +21,14 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_route_table" "test" {
   name                = "acceptanceTestRouteTable1"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 }
 
 resource "azurestack_route" "test" {
   name                = "acceptanceTestRoute1"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-  route_table_name    = "${azurestack_route_table.test.name}"
+  resource_group_name = azurestack_resource_group.test.name
+  route_table_name    = azurestack_route_table.test.name
   address_prefix      = "10.1.0.0/16"
   next_hop_type       = "vnetlocal"
 }

@@ -1,4 +1,5 @@
 ---
+subcategory: ""
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_subnet"
 sidebar_current: "docs-azurestack-datasource-subnet"
@@ -20,7 +21,7 @@ data "azurestack_subnet" "test" {
 }
 
 output "subnet_id" {
-  value = "${data.azurestack_subnet.test.id}"
+  value = data.azurestack_subnet.test.id
 }
 ```
 

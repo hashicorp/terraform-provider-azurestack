@@ -1,4 +1,5 @@
 ---
+subcategory: "DNS"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_dns_zone"
 sidebar_current: "docs-azurestack-resource-dns-zone"
@@ -20,7 +21,7 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_dns_zone" "test" {
   name                = "mydomain.com"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  resource_group_name = azurestack_resource_group.test.name
 }
 ```
 ## Argument Reference

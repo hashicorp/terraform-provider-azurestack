@@ -18,7 +18,7 @@ import (
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/go-azure-helpers/sender"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/httpclient"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
@@ -28,6 +28,7 @@ type ArmClient struct {
 	clientId                 string
 	tenantId                 string
 	subscriptionId           string
+	terraformVersion         string
 	usingServicePrincipal    bool
 	environment              azure.Environment
 	skipProviderRegistration bool
@@ -75,32 +76,32 @@ type ArmClient struct {
 }
 
 func (c *ArmClient) configureClient(client *autorest.Client, auth autorest.Authorizer) {
-	setUserAgent(client)
+	setUserAgent(client, c.terraformVersion)
 	client.Authorizer = auth
 	client.Sender = sender.BuildSender("AzureStack")
 	client.SkipResourceProviderRegistration = c.skipProviderRegistration
 	client.PollingDuration = 60 * time.Minute
 }
 
-func setUserAgent(client *autorest.Client) {
-	tfVersion := fmt.Sprintf("HashiCorp-Terraform-v%s", terraform.VersionString())
+func setUserAgent(client *autorest.Client, tfVersion string) {
+	tfUserAgent := httpclient.TerraformUserAgent(tfVersion)
 
 	// if the user agent already has a value append the Terraform user agent string
 	if curUserAgent := client.UserAgent; curUserAgent != "" {
-		client.UserAgent = fmt.Sprintf("%s;%s", curUserAgent, tfVersion)
+		client.UserAgent = fmt.Sprintf("%s %s", curUserAgent, tfUserAgent)
 	} else {
-		client.UserAgent = tfVersion
+		client.UserAgent = tfUserAgent
 	}
 
 	// append the CloudShell version to the user agent if it exists
 	if azureAgent := os.Getenv("AZURE_HTTP_USER_AGENT"); azureAgent != "" {
-		client.UserAgent = fmt.Sprintf("%s;%s", client.UserAgent, azureAgent)
+		client.UserAgent = fmt.Sprintf("%s %s", client.UserAgent, azureAgent)
 	}
 }
 
 // getArmClient is a helper method which returns a fully instantiated
 // *ArmClient based on the Config's current settings.
-func getArmClient(authCfg *authentication.Config, skipProviderRegistration bool) (*ArmClient, error) {
+func getArmClient(authCfg *authentication.Config, tfVersion string, skipProviderRegistration bool) (*ArmClient, error) {
 	env, err := authentication.LoadEnvironmentFromUrl(authCfg.CustomResourceManagerEndpoint)
 	if err != nil {
 		return nil, err
@@ -111,6 +112,7 @@ func getArmClient(authCfg *authentication.Config, skipProviderRegistration bool)
 		clientId:                 authCfg.ClientID,
 		tenantId:                 authCfg.TenantID,
 		subscriptionId:           authCfg.SubscriptionID,
+		terraformVersion:         tfVersion,
 		environment:              *env,
 		usingServicePrincipal:    authCfg.AuthenticatedAsAServicePrincipal,
 		skipProviderRegistration: skipProviderRegistration,
@@ -151,7 +153,7 @@ func getArmClient(authCfg *authentication.Config, skipProviderRegistration bool)
 
 func (c *ArmClient) registerAuthentication(graphEndpoint, tenantId string, graphAuth autorest.Authorizer, sender autorest.Sender) {
 	servicePrincipalsClient := graphrbac.NewServicePrincipalsClientWithBaseURI(graphEndpoint, tenantId)
-	setUserAgent(&servicePrincipalsClient.Client)
+	setUserAgent(&servicePrincipalsClient.Client, c.terraformVersion)
 	servicePrincipalsClient.Authorizer = graphAuth
 	servicePrincipalsClient.Sender = sender
 	servicePrincipalsClient.SkipResourceProviderRegistration = c.skipProviderRegistration

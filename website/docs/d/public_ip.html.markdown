@@ -1,4 +1,5 @@
 ---
+subcategory: ""
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_public_ip"
 sidebar_current: "docs-azurestack-datasource-public-ip-x"
@@ -20,11 +21,11 @@ data "azurestack_public_ip" "test" {
 }
 
 output "domain_name_label" {
-  value = "${data.azurestack_public_ip.test.domain_name_label}"
+  value = data.azurestack_public_ip.test.domain_name_label
 }
 
 output "public_ip_address" {
-  value = "${data.azurestack_public_ip.test.ip_address}"
+  value = data.azurestack_public_ip.test.ip_address
 }
 ```
 
@@ -39,21 +40,21 @@ resource "azurestack_resource_group" "test" {
 resource "azurestack_virtual_network" "test" {
   name                = "test-network"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 }
 
 resource "azurestack_subnet" "test" {
   name                 = "acctsub"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  resource_group_name  = azurestack_resource_group.test.name
+  virtual_network_name = azurestack_virtual_network.test.name
   address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_public_ip" "test" {
   name                         = "test-pip"
-  location                     = "${azurestack_resource_group.test.location}"
-  resource_group_name          = "${azurestack_resource_group.test.name}"
+  location                     = azurestack_resource_group.test.location
+  resource_group_name          = azurestack_resource_group.test.name
   public_ip_address_allocation = "Dynamic"
   idle_timeout_in_minutes      = 30
 
@@ -64,34 +65,34 @@ resource "azurestack_public_ip" "test" {
 
 resource "azurestack_network_interface" "test" {
   name                = "test-nic"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   ip_configuration {
     name                          = "testconfiguration1"
-    subnet_id                     = "${azurestack_subnet.test.id}"
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "static"
     private_ip_address            = "10.0.2.5"
-    public_ip_address_id          = "${azurestack_public_ip.test.id}"
+    public_ip_address_id          = azurestack_public_ip.test.id
   }
 }
 
 resource "azurestack_virtual_machine" "test" {
   name                  = "test-vm"
-  location              = "${azurestack_resource_group.test.location}"
-  resource_group_name   = "${azurestack_resource_group.test.name}"
-  network_interface_ids = ["${azurestack_network_interface.test.id}"]
+  location              = azurestack_resource_group.test.location
+  resource_group_name   = azurestack_resource_group.test.name
+  network_interface_ids = [ azurestack_network_interface.test.id ]
 
   # ...
 }
 
 data "azurestack_public_ip" "test" {
-  name                = "${azurestack_public_ip.test.name}"
-  resource_group_name = "${azurestack_virtual_machine.test.resource_group_name}"
+  name                = azurestack_public_ip.test.name
+  resource_group_name = azurestack_virtual_machine.test.resource_group_name
 }
 
 output "public_ip_address" {
-  value = "${data.azurestack_public_ip.test.ip_address}"
+  value = data.azurestack_public_ip.test.ip_address
 }
 ```
 

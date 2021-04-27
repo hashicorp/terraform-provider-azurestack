@@ -1,4 +1,5 @@
 ---
+subcategory: ""
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_platform_image"
 sidebar_current: "docs-azurestack-datasource-platform-image"
@@ -21,7 +22,7 @@ data "azurestack_platform_image" "test" {
 }
 
 output "version" {
-  value = "${data.azurestack_platform_image.test.version}"
+  value = data.azurestack_platform_image.test.version
 }
 ```
 

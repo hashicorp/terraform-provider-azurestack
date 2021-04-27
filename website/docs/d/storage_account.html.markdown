@@ -1,4 +1,5 @@
 ---
+subcategory: ""
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_storage_account"
 sidebar_current: "docs-azurestack-datasource-storage-account"
@@ -19,7 +20,7 @@ data "azurestack_storage_account" "test" {
 }
 
 output "storage_account_tier" {
-  value = "${data.azurestack_storage_account.test.account_tier}"
+  value = data.azurestack_storage_account.test.account_tier
 }
 ```
 

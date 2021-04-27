@@ -1,4 +1,5 @@
 ---
+subcategory: "Compute"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_virtual_machine"
 sidebar_current: "docs-azurestack-resource-compute-virtual-machine"
@@ -23,34 +24,34 @@ resource "azurestack_resource_group" "test" {
 resource "azurestack_virtual_network" "test" {
   name                = "acctvn"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 }
 
 resource "azurestack_subnet" "test" {
   name                 = "acctsub"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_network_name = "${azurestack_virtual_network.test.name}"
+  resource_group_name  = azurestack_resource_group.test.name
+  virtual_network_name = azurestack_virtual_network.test.name
   address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_network_interface" "test" {
   name                = "acctni"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   ip_configuration {
     name                          = "testconfiguration1"
-    subnet_id                     = "${azurestack_subnet.test.id}"
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "dynamic"
   }
 }
 
 resource "azurestack_virtual_machine" "test" {
   name                  = "acctvm"
-  location              = "${azurestack_resource_group.test.location}"
-  resource_group_name   = "${azurestack_resource_group.test.name}"
-  network_interface_ids = ["${azurestack_network_interface.test.id}"]
+  location              = azurestack_resource_group.test.location
+  resource_group_name   = azurestack_resource_group.test.name
+  network_interface_ids = [ azurestack_network_interface.test.id ]
   vm_size               = "Standard_F2"
 
   # Uncomment this line to delete the OS disk automatically when deleting the VM
@@ -80,7 +81,7 @@ resource "azurestack_virtual_machine" "test" {
   os_profile_linux_config {
     disable_password_authentication = false
   }
-  tags {
+  tags = {
     environment = "staging"
   }
 }
@@ -102,7 +103,7 @@ resource "azurestack_public_ip" "test" {
   resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "static"
 
-  tags {
+  tags = {
     environment = "Production"
   }
 }
@@ -168,7 +169,7 @@ resource "azurestack_virtual_machine" "test" {
   os_profile_linux_config {
     disable_password_authentication = false
   }
-  tags {
+  tags = {
     environment = "staging"
   }
 }

@@ -1,4 +1,5 @@
 ---
+subcategory: ""
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_network_interface"
 sidebar_current: "docs-azurestack-datasource-network-interface"
@@ -19,7 +20,7 @@ data "azurestack_network_interface" "test" {
 }
 
 output "network_interface_id" {
-  value = "${data.azurestack_network_interface.test.id}"
+  value = data.azurestack_network_interface.test.id
 }
 ```
 

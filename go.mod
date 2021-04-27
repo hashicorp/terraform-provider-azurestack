@@ -1,10 +1,11 @@
 module github.com/terraform-providers/terraform-provider-azurestack
 
-go 1.12
+go 1.16
 
 require (
 	github.com/Azure/azure-sdk-for-go v33.2.0+incompatible
 	github.com/Azure/go-autorest/autorest v0.9.0
+	github.com/Azure/go-autorest/autorest/adal v0.6.0 // indirect
 	github.com/davecgh/go-spew v1.1.1
 	github.com/dnaeon/go-vcr v1.0.1 // indirect
 	github.com/hashicorp/errwrap v1.0.0

@@ -358,6 +358,7 @@ github.com/spf13/afero/mem
 # github.com/terraform-providers/terraform-provider-azurerm v1.44.1-0.20200911233120-57b2bfc9d42c => github.com/openshift/terraform-provider-azurerm v1.40.1-0.20210224232508-7509319df0f4
 ## explicit
 github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress
+github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/tf
 github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/validate
 github.com/terraform-providers/terraform-provider-azurerm/azurerm/internal/tf/suppress
 github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils

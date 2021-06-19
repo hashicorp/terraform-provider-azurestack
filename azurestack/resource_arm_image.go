@@ -1,19 +1,16 @@
-package azurerm
+package azurestack
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2019-07-01/compute"
+	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/tf"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/internal/tags"
-
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/azure"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/validate"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
 )
 
 func resourceArmImage() *schema.Resource {
@@ -33,9 +30,9 @@ func resourceArmImage() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"location": azure.SchemaLocation(),
+			"location": locationSchema(),
 
-			"resource_group_name": azure.SchemaResourceGroupName(),
+			"resource_group_name": resourceGroupNameSchema(),
 
 			"zone_resilient": {
 				Type:     schema.TypeBool,
@@ -90,7 +87,7 @@ func resourceArmImage() *schema.Resource {
 							Optional:     true,
 							Computed:     true,
 							ForceNew:     true,
-							ValidateFunc: validate.URLIsHTTPOrHTTPS,
+							ValidateFunc: validation.IsURLWithHTTPorHTTPS,
 						},
 
 						"caching": {
@@ -137,7 +134,7 @@ func resourceArmImage() *schema.Resource {
 							Type:         schema.TypeString,
 							Optional:     true,
 							Computed:     true,
-							ValidateFunc: validate.URLIsHTTPOrHTTPS,
+							ValidateFunc: validation.IsURLWithHTTPorHTTPS,
 						},
 
 						"caching": {
@@ -162,13 +159,13 @@ func resourceArmImage() *schema.Resource {
 				},
 			},
 
-			"tags": tags.Schema(),
+			"tags": tagsSchema(),
 		},
 	}
 }
 
 func resourceArmImageCreateUpdate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*ArmClient).compute.ImagesClient
+	client := meta.(*ArmClient).imagesClient
 	ctx := meta.(*ArmClient).StopContext
 
 	log.Printf("[INFO] preparing arguments for AzureRM Image creation.")
@@ -177,7 +174,7 @@ func resourceArmImageCreateUpdate(d *schema.ResourceData, meta interface{}) erro
 	resGroup := d.Get("resource_group_name").(string)
 	zoneResilient := d.Get("zone_resilient").(bool)
 
-	if features.ShouldResourcesBeImported() && d.IsNewResource() {
+	if d.IsNewResource() {
 		existing, err := client.Get(ctx, resGroup, name, "")
 		if err != nil {
 			if !utils.ResponseWasNotFound(existing.Response) {
@@ -186,12 +183,12 @@ func resourceArmImageCreateUpdate(d *schema.ResourceData, meta interface{}) erro
 		}
 
 		if existing.ID != nil && *existing.ID != "" {
-			return tf.ImportAsExistsError("azurerm_image", *existing.ID)
+			return tf.ImportAsExistsError("azurestack_image", *existing.ID)
 		}
 	}
 
-	location := azure.NormalizeLocation(d.Get("location").(string))
-	expandedTags := tags.Expand(d.Get("tags").(map[string]interface{}))
+	location := azureStackNormalizeLocation(d.Get("location").(string))
+	expandedTags := expandTags(d.Get("tags").(map[string]interface{}))
 
 	properties := compute.ImageProperties{}
 
@@ -239,7 +236,7 @@ func resourceArmImageCreateUpdate(d *schema.ResourceData, meta interface{}) erro
 	createImage := compute.Image{
 		Name:            &name,
 		Location:        &location,
-		Tags:            expandedTags,
+		Tags:            *expandedTags,
 		ImageProperties: &properties,
 	}
 
@@ -266,7 +263,7 @@ func resourceArmImageCreateUpdate(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceArmImageRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*ArmClient).compute.ImagesClient
+	client := meta.(*ArmClient).imagesClient
 	ctx := meta.(*ArmClient).StopContext
 
 	id, err := azure.ParseAzureResourceID(d.Id())
@@ -288,7 +285,7 @@ func resourceArmImageRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("name", resp.Name)
 	d.Set("resource_group_name", resGroup)
 	if location := resp.Location; location != nil {
-		d.Set("location", azure.NormalizeLocation(*location))
+		d.Set("location", azureStackNormalizeLocation(*location))
 	}
 
 	//either source VM or storage profile can be specified, but not both
@@ -309,11 +306,13 @@ func resourceArmImageRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("zone_resilient", resp.StorageProfile.ZoneResilient)
 	}
 
-	return tags.FlattenAndSet(d, resp.Tags)
+	flattenAndSetTags(d, &resp.Tags)
+
+	return nil
 }
 
 func resourceArmImageDelete(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*ArmClient).compute.ImagesClient
+	client := meta.(*ArmClient).imagesClient
 	ctx := meta.(*ArmClient).StopContext
 
 	id, err := azure.ParseAzureResourceID(d.Id())

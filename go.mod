@@ -14,4 +14,4 @@ require (
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
 )
 
-// replace github.com/terraform-providers/terraform-provider-azurerm => github.com/openshift/terraform-provider-azurerm v1.40.1-0.20210224232508-7509319df0f4 // Pin to openshift fork with tag v2.48.0-openshift
+replace github.com/terraform-providers/terraform-provider-azurerm => github.com/openshift/terraform-provider-azurerm v1.40.1-0.20210224232508-7509319df0f4 // Pin to openshift fork with tag v2.48.0-openshift

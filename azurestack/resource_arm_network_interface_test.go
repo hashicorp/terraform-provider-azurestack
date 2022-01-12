@@ -1040,7 +1040,7 @@ resource "azurestack_network_interface" "test" {
 func testAccAzureStackNetworkInterface_bug7986(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 

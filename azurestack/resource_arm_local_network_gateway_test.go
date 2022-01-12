@@ -310,7 +310,7 @@ func testCheckAzureStackLocalNetworkGatewayDestroy(s *terraform.State) error {
 func testAccAzureStackLocalNetworkGatewayConfig_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -327,7 +327,7 @@ resource "azurestack_local_network_gateway" "test" {
 func testAccAzureStackLocalNetworkGatewayConfig_tags(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -348,7 +348,7 @@ resource "azurestack_local_network_gateway" "test" {
 func testAccAzureStackLocalNetworkGatewayConfig_bgpSettings(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -370,7 +370,7 @@ resource "azurestack_local_network_gateway" "test" {
 func testAccAzureStackLocalNetworkGatewayConfig_bgpSettingsComplete(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 

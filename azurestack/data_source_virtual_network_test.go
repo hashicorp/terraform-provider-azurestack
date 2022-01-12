@@ -65,7 +65,7 @@ func TestAccDataSourceArmVirtualNetwork_peering(t *testing.T) {
 func testAccDataSourceArmVirtualNetwork_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest%d-rg"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -92,7 +92,7 @@ data "azurestack_virtual_network" "test" {
 func testAccDataSourceArmVirtualNetwork_peering(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest%d-rg"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -122,7 +122,7 @@ resource "azurestack_virtual_network_peering" "test1" {
 func testAccDataSourceArmVirtualNetwork_peeringWithDataSource(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest%d-rg"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 

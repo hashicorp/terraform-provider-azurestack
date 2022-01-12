@@ -541,7 +541,7 @@ resource "azurestack_route_table" "test" {
 func testAccAzureStackSubnet_networkSecurityGroup(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest%d-rg"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -583,7 +583,7 @@ resource "azurestack_subnet" "test" {
 func testAccAzureStackSubnet_networkSecurityGroupDetached(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest%d-rg"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -624,7 +624,7 @@ resource "azurestack_subnet" "test" {
 func testAccAzureStackSubnet_bug7986(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest%d-rg"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 

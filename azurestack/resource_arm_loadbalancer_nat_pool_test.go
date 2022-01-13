@@ -160,8 +160,8 @@ func testCheckAzureStackLoadBalancerNatPoolDisappears(natPoolName string, lb *ne
 			return fmt.Errorf("A Nat Pool with name %q cannot be found.", natPoolName)
 		}
 
-		currentPools := *lb.LoadBalancerPropertiesFormat.InboundNatPools
-		pools := append(currentPools[:i], currentPools[i+1:]...)
+		pools := *lb.LoadBalancerPropertiesFormat.InboundNatPools
+		pools = append(pools[:i], pools[i+1:]...)
 		lb.LoadBalancerPropertiesFormat.InboundNatPools = &pools
 
 		id, err := parseAzureResourceID(*lb.ID)

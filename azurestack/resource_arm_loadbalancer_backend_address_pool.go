@@ -109,7 +109,7 @@ func resourceArmLoadBalancerBackendAddressPoolCreate(d *schema.ResourceData, met
 	}
 
 	var poolId string
-	for _, BackendAddressPool := range *(*read.LoadBalancerPropertiesFormat).BackendAddressPools {
+	for _, BackendAddressPool := range *read.LoadBalancerPropertiesFormat.BackendAddressPools {
 		if *BackendAddressPool.Name == d.Get("name").(string) {
 			poolId = *BackendAddressPool.ID
 		}
@@ -208,9 +208,9 @@ func resourceArmLoadBalancerBackendAddressPoolDelete(d *schema.ResourceData, met
 		return nil
 	}
 
-	oldBackEndPools := *loadBalancer.LoadBalancerPropertiesFormat.BackendAddressPools
-	newBackEndPools := append(oldBackEndPools[:index], oldBackEndPools[index+1:]...)
-	loadBalancer.LoadBalancerPropertiesFormat.BackendAddressPools = &newBackEndPools
+	pools := *loadBalancer.LoadBalancerPropertiesFormat.BackendAddressPools
+	pools = append(pools[:index], pools[index+1:]...)
+	loadBalancer.LoadBalancerPropertiesFormat.BackendAddressPools = &pools
 
 	resGroup, loadBalancerName, err := resourceGroupAndLBNameFromId(d.Get("loadbalancer_id").(string))
 	if err != nil {

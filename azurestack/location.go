@@ -29,7 +29,7 @@ func locationForDataSourceSchema() *schema.Schema {
 // to the canonical form than the other way around.
 func azureStackNormalizeLocation(location interface{}) string {
 	input := location.(string)
-	return strings.Replace(strings.ToLower(input), " ", "", -1)
+	return strings.ReplaceAll(strings.ToLower(input), " ", "")
 }
 
 func azureStackSuppressLocationDiff(k, old, new string, d *schema.ResourceData) bool {

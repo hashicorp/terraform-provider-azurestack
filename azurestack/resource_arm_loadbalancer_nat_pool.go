@@ -141,7 +141,7 @@ func resourceArmLoadBalancerNatPoolCreateUpdate(d *schema.ResourceData, meta int
 	}
 
 	var natPoolId string
-	for _, InboundNatPool := range *(*read.LoadBalancerPropertiesFormat).InboundNatPools {
+	for _, InboundNatPool := range *read.LoadBalancerPropertiesFormat.InboundNatPools {
 		if *InboundNatPool.Name == d.Get("name").(string) {
 			natPoolId = *InboundNatPool.ID
 		}
@@ -237,9 +237,9 @@ func resourceArmLoadBalancerNatPoolDelete(d *schema.ResourceData, meta interface
 		return nil
 	}
 
-	oldNatPools := *loadBalancer.LoadBalancerPropertiesFormat.InboundNatPools
-	newNatPools := append(oldNatPools[:index], oldNatPools[index+1:]...)
-	loadBalancer.LoadBalancerPropertiesFormat.InboundNatPools = &newNatPools
+	pools := *loadBalancer.LoadBalancerPropertiesFormat.InboundNatPools
+	pools = append(pools[:index], pools[index+1:]...)
+	loadBalancer.LoadBalancerPropertiesFormat.InboundNatPools = &pools
 
 	resGroup, loadBalancerName, err := resourceGroupAndLBNameFromId(d.Get("loadbalancer_id").(string))
 	if err != nil {

@@ -220,7 +220,6 @@ func resourceArmVirtualNetworkGateway() *schema.Resource {
 							Elem: &schema.Schema{
 								Type: schema.TypeString,
 								ValidateFunc: validation.StringInSlice([]string{
-
 									// Enums are not defined on 2017-03-09 service, using simple
 									// strings
 									"IkeV2",

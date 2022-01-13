@@ -7,5 +7,6 @@ import (
 
 func main() {
 	plugin.Serve(&plugin.ServeOpts{
-		ProviderFunc: azurestack.Provider})
+		ProviderFunc: azurestack.Provider,
+	})
 }

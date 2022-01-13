@@ -267,14 +267,14 @@ func resourceArmStorageAccountCreate(d *schema.ResourceData, meta interface{}) e
 		if enableBlobEncryption {
 			// if the encryption is enabled, then set the arguments
 			storageAccountEncryptionSource := d.Get("account_encryption_source").(string)
-			parameters.AccountPropertiesCreateParameters.Encryption =
-				&storage.Encryption{
-					Services: &storage.EncryptionServices{
-						Blob: &storage.EncryptionService{
-							Enabled: utils.Bool(enableBlobEncryption),
-						}},
-					KeySource: storage.KeySource(storageAccountEncryptionSource),
-				}
+			parameters.AccountPropertiesCreateParameters.Encryption = &storage.Encryption{
+				Services: &storage.EncryptionServices{
+					Blob: &storage.EncryptionService{
+						Enabled: utils.Bool(enableBlobEncryption),
+					},
+				},
+				KeySource: storage.KeySource(storageAccountEncryptionSource),
+			}
 		}
 	}
 
@@ -618,8 +618,10 @@ func validateArmStorageAccountName(v interface{}, k string) (ws []string, es []e
 }
 
 func validateArmStorageAccountType(v interface{}, k string) (ws []string, es []error) {
-	validAccountTypes := []string{"standard_lrs", "standard_zrs",
-		"standard_grs", "standard_ragrs", "premium_lrs"}
+	validAccountTypes := []string{
+		"standard_lrs", "standard_zrs",
+		"standard_grs", "standard_ragrs", "premium_lrs",
+	}
 
 	input := strings.ToLower(v.(string))
 

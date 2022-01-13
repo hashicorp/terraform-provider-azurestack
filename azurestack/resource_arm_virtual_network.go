@@ -313,7 +313,6 @@ func getExistingSubnet(ctx context.Context, resGroup string, vnetName string, su
 	existingSubnet := network.Subnet{}
 	subnetClient := meta.(*ArmClient).subnetClient
 	resp, err := subnetClient.Get(ctx, resGroup, vnetName, subnetName, "")
-
 	if err != nil {
 		if resp.StatusCode == http.StatusNotFound {
 			return &existingSubnet, nil

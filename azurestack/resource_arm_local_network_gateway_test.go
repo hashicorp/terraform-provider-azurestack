@@ -293,7 +293,6 @@ func testCheckAzureStackLocalNetworkGatewayDestroy(s *terraform.State) error {
 		client := testAccProvider.Meta().(*ArmClient).localNetConnClient
 		ctx := testAccProvider.Meta().(*ArmClient).StopContext
 		resp, err := client.Get(ctx, resourceGroup, localNetName)
-
 		if err != nil {
 			if utils.ResponseWasNotFound(resp.Response) {
 				return nil

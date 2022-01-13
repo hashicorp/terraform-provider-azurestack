@@ -190,7 +190,6 @@ func testCheckAzureStackStorageContainerDestroy(s *terraform.State) error {
 			Prefix:  name,
 			Timeout: 90,
 		})
-
 		if err != nil {
 			return nil
 		}

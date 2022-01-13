@@ -221,7 +221,6 @@ func testCheckAzureStackAvailabilitySetDestroy(s *terraform.State) error {
 		client := testAccProvider.Meta().(*ArmClient).availSetClient
 		ctx := testAccProvider.Meta().(*ArmClient).StopContext
 		resp, err := client.Get(ctx, resourceGroup, name)
-
 		if err != nil {
 			if utils.ResponseWasNotFound(resp.Response) {
 				return nil

@@ -25,8 +25,6 @@ func TestAccAzureStackVirtualMachineScaleSet_basic(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackVirtualMachineScaleSetExists(resourceName),
-					// testing default scaleset values
-					testCheckAzureStackVirtualMachineScaleSetSinglePlacementGroup(resourceName, true),
 				),
 			},
 			{
@@ -52,8 +50,7 @@ func TestAccAzureStackVirtualMachineScaleSet_basicPublicIP(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackVirtualMachineScaleSetExists(resourceName),
-					testCheckAzureStackVirtualMachineScaleSetIsPrimary(resourceName, true),
-					testCheckAzureStackVirtualMachineScaleSetPublicIPName(resourceName, "TestPublicIPConfiguration"),
+					testCheckAzureStackVirtualMachineScaleSetIsPrimary(resourceName),
 				),
 			},
 		},
@@ -92,9 +89,6 @@ func TestAccAzureStackVirtualMachineScaleSet_basicWindows(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackVirtualMachineScaleSetExists(resourceName),
-
-					// single placement group should default to true
-					testCheckAzureStackVirtualMachineScaleSetSinglePlacementGroup(resourceName, true),
 				),
 			},
 		},
@@ -305,7 +299,6 @@ func TestAccAzureStackVirtualMachineScaleSet_overprovision(t *testing.T) {
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackVirtualMachineScaleSetExists(resourceName),
-					testCheckAzureStackVirtualMachineScaleSetOverprovision(resourceName),
 				),
 			},
 		},
@@ -537,7 +530,7 @@ func testCheckAzureStackVirtualMachineScaleSetHasLoadbalancer(name string) resou
 	}
 }
 
-func testCheckAzureStackVirtualMachineScaleSetIsPrimary(name string, boolean bool) resource.TestCheckFunc {
+func testCheckAzureStackVirtualMachineScaleSetIsPrimary(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resp, err := testGetAzureStackVirtualMachineScaleSet(s, name)
 		if err != nil {
@@ -557,62 +550,6 @@ func testCheckAzureStackVirtualMachineScaleSetIsPrimary(name string, boolean boo
 		// primary := *(*ip)[0].Primary
 		// if primary != boolean {
 		// 	return fmt.Errorf("Bad: Primary set incorrectly for scale set %v\n Wanted: %+v Received: %+v", name, boolean, primary)
-		// }
-
-		return nil
-	}
-}
-
-func testCheckAzureStackVirtualMachineScaleSetPublicIPName(name, publicIPName string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		resp, err := testGetAzureStackVirtualMachineScaleSet(s, name)
-		if err != nil {
-			return err
-		}
-
-		n := resp.VirtualMachineProfile.NetworkProfile.NetworkInterfaceConfigurations
-		if n == nil || len(*n) == 0 {
-			return fmt.Errorf("Bad: Could not get network interface configurations for scale set %v", name)
-		}
-
-		ip := (*n)[0].IPConfigurations
-		if ip == nil || len(*ip) == 0 {
-			return fmt.Errorf("Bad: Could not get ip configurations for scale set %v", name)
-		}
-
-		// publicIPConfigName := *(*ip)[0].PublicIPAddressConfiguration.Name
-		// if publicIPConfigName != publicIPName {
-		// 	return fmt.Errorf("Bad: Public IP Config Name set incorrectly for scale set %v\n Wanted: %+v Received: %+v", name, publicIPName, publicIPConfigName)
-		// }
-
-		return nil
-	}
-}
-
-func testCheckAzureStackVirtualMachineScaleSetOverprovision(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		// resp, err := testGetAzureStackVirtualMachineScaleSet(s, name)
-		// if err != nil {
-		// 	return err
-		// }
-
-		// if *resp.Overprovision {
-		// 	return fmt.Errorf("Bad: Overprovision should have been false for scale set %v", name)
-		// }
-
-		return nil
-	}
-}
-
-func testCheckAzureStackVirtualMachineScaleSetSinglePlacementGroup(name string, expectedSinglePlacementGroup bool) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		// resp, err := testGetAzureStackVirtualMachineScaleSet(s, name)
-		// if err != nil {
-		// 	return err
-		// }
-
-		// if *resp.SinglePlacementGroup != expectedSinglePlacementGroup {
-		// 	return fmt.Errorf("Bad: SinglePlacementGroup should have been %t for scale set %v", expectedSinglePlacementGroup, name)
 		// }
 
 		return nil

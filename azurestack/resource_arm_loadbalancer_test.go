@@ -39,7 +39,7 @@ func TestResourceAzureStackLoadBalancerPrivateIpAddressAllocation_validation(t *
 	}
 
 	for _, tc := range cases {
-		_, errors := validateLoadBalancerPrivateIpAddressAllocation(tc.Value)
+		errors := validateLoadBalancerPrivateIpAddressAllocation(tc.Value)
 
 		if len(errors) != tc.ErrCount {
 			t.Fatalf("Expected the Azure RM LoadBalancer private_ip_address_allocation to trigger a validation error")

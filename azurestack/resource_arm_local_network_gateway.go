@@ -84,10 +84,7 @@ func resourceArmLocalNetworkGatewayCreate(d *schema.ResourceData, meta interface
 
 	addressSpaces := expandLocalNetworkGatewayAddressSpaces(d)
 
-	bgpSettings, err := expandLocalNetworkGatewayBGPSettings(d)
-	if err != nil {
-		return err
-	}
+	bgpSettings := expandLocalNetworkGatewayBGPSettings(d)
 
 	tags := d.Get("tags").(map[string]interface{})
 
@@ -212,10 +209,10 @@ func resourceGroupAndLocalNetworkGatewayFromId(localNetworkGatewayId string) (st
 	return resGroup, name, nil
 }
 
-func expandLocalNetworkGatewayBGPSettings(d *schema.ResourceData) (*network.BgpSettings, error) {
+func expandLocalNetworkGatewayBGPSettings(d *schema.ResourceData) *network.BgpSettings {
 	v, exists := d.GetOk("bgp_settings")
 	if !exists {
-		return nil, nil
+		return nil
 	}
 
 	settings := v.([]interface{})
@@ -227,7 +224,7 @@ func expandLocalNetworkGatewayBGPSettings(d *schema.ResourceData) (*network.BgpS
 		PeerWeight:        utils.Int32(int32(setting["peer_weight"].(int))),
 	}
 
-	return &bgpSettings, nil
+	return &bgpSettings
 }
 
 func expandLocalNetworkGatewayAddressSpaces(d *schema.ResourceData) []string {

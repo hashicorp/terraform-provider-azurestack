@@ -640,10 +640,7 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 	tags := d.Get("tags").(map[string]interface{})
 	// zones := expandZones(d.Get("zones").([]interface{}))
 
-	sku, err := expandVirtualMachineScaleSetSku(d)
-	if err != nil {
-		return err
-	}
+	sku := expandVirtualMachineScaleSetSku(d)
 
 	storageProfile := compute.VirtualMachineScaleSetStorageProfile{}
 	osDisk, err := expandAzureStackVirtualMachineScaleSetsStorageProfileOsDisk(d)
@@ -654,10 +651,8 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 
 	// Not supported
 	if _, ok := d.GetOk("storage_profile_data_disk"); ok {
-		dataDisks, err := expandAzureStackVirtualMachineScaleSetsStorageProfileDataDisk(d)
-		if err != nil {
-			return err
-		}
+		dataDisks := expandAzureStackVirtualMachineScaleSetsStorageProfileDataDisk(d)
+
 		storageProfile.DataDisks = &dataDisks
 	}
 
@@ -669,10 +664,7 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 		storageProfile.ImageReference = imageRef
 	}
 
-	osProfile, err := expandAzureStackVirtualMachineScaleSetsOsProfile(d)
-	if err != nil {
-		return err
-	}
+	osProfile := expandAzureStackVirtualMachineScaleSetsOsProfile(d)
 
 	extensions, err := expandAzureStackVirtualMachineScaleSetExtensions(d)
 	if err != nil {
@@ -1307,7 +1299,7 @@ func resourceArmVirtualMachineScaleSetExtensionHash(v interface{}) int {
 	return hashcode.String(buf.String())
 }
 
-func expandVirtualMachineScaleSetSku(d *schema.ResourceData) (*compute.Sku, error) {
+func expandVirtualMachineScaleSetSku(d *schema.ResourceData) *compute.Sku {
 	skuConfig := d.Get("sku").(*schema.Set).List()
 
 	config := skuConfig[0].(map[string]interface{})
@@ -1325,7 +1317,7 @@ func expandVirtualMachineScaleSetSku(d *schema.ResourceData) (*compute.Sku, erro
 		sku.Tier = &tier
 	}
 
-	return sku, nil
+	return sku
 }
 
 func expandAzureRmVirtualMachineScaleSetNetworkProfile(d *schema.ResourceData) *compute.VirtualMachineScaleSetNetworkProfile {
@@ -1409,7 +1401,7 @@ func expandAzureRmVirtualMachineScaleSetNetworkProfile(d *schema.ResourceData) *
 	}
 }
 
-func expandAzureStackVirtualMachineScaleSetsOsProfile(d *schema.ResourceData) (*compute.VirtualMachineScaleSetOSProfile, error) {
+func expandAzureStackVirtualMachineScaleSetsOsProfile(d *schema.ResourceData) *compute.VirtualMachineScaleSetOSProfile {
 	osProfileConfigs := d.Get("os_profile").([]interface{})
 
 	osProfileConfig := osProfileConfigs[0].(map[string]interface{})
@@ -1440,24 +1432,18 @@ func expandAzureStackVirtualMachineScaleSetsOsProfile(d *schema.ResourceData) (*
 	}
 
 	if _, ok := d.GetOk("os_profile_linux_config"); ok {
-		linuxConfig, err := expandAzureRmVirtualMachineScaleSetOsProfileLinuxConfig(d)
-		if err != nil {
-			return nil, err
-		}
+		linuxConfig := expandAzureRmVirtualMachineScaleSetOsProfileLinuxConfig(d)
 		osProfile.LinuxConfiguration = linuxConfig
 	}
 
 	if _, ok := d.GetOk("os_profile_windows_config"); ok {
-		winConfig, err := expandAzureRmVirtualMachineScaleSetOsProfileWindowsConfig(d)
-		if err != nil {
-			return nil, err
-		}
+		winConfig := expandAzureRmVirtualMachineScaleSetOsProfileWindowsConfig(d)
 		if winConfig != nil {
 			osProfile.WindowsConfiguration = winConfig
 		}
 	}
 
-	return osProfile, nil
+	return osProfile
 }
 
 func expandAzureRmVirtualMachineScaleSetIdentity(d *schema.ResourceData) *compute.VirtualMachineScaleSetIdentity {
@@ -1533,7 +1519,7 @@ func expandAzureStackVirtualMachineScaleSetsStorageProfileOsDisk(d *schema.Resou
 	return osDisk, nil
 }
 
-func expandAzureStackVirtualMachineScaleSetsStorageProfileDataDisk(d *schema.ResourceData) ([]compute.VirtualMachineScaleSetDataDisk, error) {
+func expandAzureStackVirtualMachineScaleSetsStorageProfileDataDisk(d *schema.ResourceData) []compute.VirtualMachineScaleSetDataDisk {
 	disks := d.Get("storage_profile_data_disk").([]interface{})
 	dataDisks := make([]compute.VirtualMachineScaleSetDataDisk, 0, len(disks))
 	for _, diskConfig := range disks {
@@ -1570,7 +1556,7 @@ func expandAzureStackVirtualMachineScaleSetsStorageProfileDataDisk(d *schema.Res
 		dataDisks = append(dataDisks, dataDisk)
 	}
 
-	return dataDisks, nil
+	return dataDisks
 }
 
 func expandAzureRmVirtualMachineScaleSetStorageProfileImageReference(d *schema.ResourceData) (*compute.ImageReference, error) {
@@ -1599,7 +1585,7 @@ func expandAzureRmVirtualMachineScaleSetStorageProfileImageReference(d *schema.R
 	return &imageReference, nil
 }
 
-func expandAzureRmVirtualMachineScaleSetOsProfileLinuxConfig(d *schema.ResourceData) (*compute.LinuxConfiguration, error) {
+func expandAzureRmVirtualMachineScaleSetOsProfileLinuxConfig(d *schema.ResourceData) *compute.LinuxConfiguration {
 	osProfilesLinuxConfig := d.Get("os_profile_linux_config").(*schema.Set).List()
 
 	linuxConfig := osProfilesLinuxConfig[0].(map[string]interface{})
@@ -1630,10 +1616,10 @@ func expandAzureRmVirtualMachineScaleSetOsProfileLinuxConfig(d *schema.ResourceD
 		},
 	}
 
-	return config, nil
+	return config
 }
 
-func expandAzureRmVirtualMachineScaleSetOsProfileWindowsConfig(d *schema.ResourceData) (*compute.WindowsConfiguration, error) {
+func expandAzureRmVirtualMachineScaleSetOsProfileWindowsConfig(d *schema.ResourceData) *compute.WindowsConfiguration {
 	osProfilesWindowsConfig := d.Get("os_profile_windows_config").(*schema.Set).List()
 
 	osProfileConfig := osProfilesWindowsConfig[0].(map[string]interface{})
@@ -1697,7 +1683,7 @@ func expandAzureRmVirtualMachineScaleSetOsProfileWindowsConfig(d *schema.Resourc
 			config.AdditionalUnattendContent = &additionalConfigContent
 		}
 	}
-	return config, nil
+	return config
 }
 
 func expandAzureRmVirtualMachineScaleSetOsProfileSecrets(d *schema.ResourceData) *[]compute.VaultSecretGroup {

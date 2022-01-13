@@ -593,10 +593,7 @@ func resourceArmVirtualMachineCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	if _, ok := d.GetOk("plan"); ok {
-		plan, err := expandAzureStackVirtualMachinePlan(d)
-		if err != nil {
-			return err
-		}
+		plan := expandAzureStackVirtualMachinePlan(d)
 
 		vm.Plan = plan
 	}
@@ -779,17 +776,15 @@ func resourceArmVirtualMachineDelete(d *schema.ResourceData, meta interface{}) e
 			return fmt.Errorf("expanding OS Disk: %s", err)
 		}
 
+		// nolint:gocritic
 		if osDisk.Vhd != nil && osDisk.Vhd.URI != nil {
-
 			if err = resourceArmVirtualMachineDeleteVhd(*osDisk.Vhd.URI, meta); err != nil {
 				return fmt.Errorf("deleting OS Disk VHD: %+v", err)
 			}
-
 		} else if osDisk.ManagedDisk != nil && osDisk.ManagedDisk.ID != nil {
 			if err = resourceArmVirtualMachineDeleteManagedDisk(*osDisk.ManagedDisk.ID, meta); err != nil {
 				return fmt.Errorf("deleting OS Managed Disk: %+v", err)
 			}
-
 		} else {
 			return fmt.Errorf("Unable to locate OS managed disk properties from %s", name)
 		}
@@ -805,6 +800,7 @@ func resourceArmVirtualMachineDelete(d *schema.ResourceData, meta interface{}) e
 		}
 
 		for _, disk := range disks {
+			// nolint:gocritic
 			if disk.Vhd != nil {
 				if err = resourceArmVirtualMachineDeleteVhd(*disk.Vhd.URI, meta); err != nil {
 					return fmt.Errorf("deleting Data Disk VHD: %+v", err)
@@ -1140,7 +1136,7 @@ func flattenAzureRmVirtualMachineReviseDiskInfo(result map[string]interface{}, d
 	}
 }
 
-func expandAzureStackVirtualMachinePlan(d *schema.ResourceData) (*compute.Plan, error) {
+func expandAzureStackVirtualMachinePlan(d *schema.ResourceData) *compute.Plan {
 	planConfigs := d.Get("plan").([]interface{})
 
 	planConfig := planConfigs[0].(map[string]interface{})
@@ -1153,7 +1149,7 @@ func expandAzureStackVirtualMachinePlan(d *schema.ResourceData) (*compute.Plan, 
 		Publisher: &publisher,
 		Name:      &name,
 		Product:   &product,
-	}, nil
+	}
 }
 
 func expandAzureStackVirtualMachineIdentity(d *schema.ResourceData) *compute.VirtualMachineIdentity {
@@ -1185,20 +1181,16 @@ func expandAzureStackVirtualMachineOsProfile(d *schema.ResourceData) (*compute.O
 	}
 
 	if _, ok := d.GetOk("os_profile_windows_config"); ok {
-		winConfig, err := expandAzureStackVirtualMachineOsProfileWindowsConfig(d)
-		if err != nil {
-			return nil, err
-		}
+		winConfig := expandAzureStackVirtualMachineOsProfileWindowsConfig(d)
+
 		if winConfig != nil {
 			profile.WindowsConfiguration = winConfig
 		}
 	}
 
 	if _, ok := d.GetOk("os_profile_linux_config"); ok {
-		linuxConfig, err := expandAzureStackVirtualMachineOsProfileLinuxConfig(d)
-		if err != nil {
-			return nil, err
-		}
+		linuxConfig := expandAzureStackVirtualMachineOsProfileLinuxConfig(d)
+
 		if linuxConfig != nil {
 			profile.LinuxConfiguration = linuxConfig
 		}
@@ -1262,7 +1254,7 @@ func expandAzureStackVirtualMachineOsProfileSecrets(d *schema.ResourceData) *[]c
 	return &secrets
 }
 
-func expandAzureStackVirtualMachineOsProfileLinuxConfig(d *schema.ResourceData) (*compute.LinuxConfiguration, error) {
+func expandAzureStackVirtualMachineOsProfileLinuxConfig(d *schema.ResourceData) *compute.LinuxConfiguration {
 	osProfilesLinuxConfig := d.Get("os_profile_linux_config").(*schema.Set).List()
 
 	linuxConfig := osProfilesLinuxConfig[0].(map[string]interface{})
@@ -1296,10 +1288,10 @@ func expandAzureStackVirtualMachineOsProfileLinuxConfig(d *schema.ResourceData) 
 		}
 	}
 
-	return config, nil
+	return config
 }
 
-func expandAzureStackVirtualMachineOsProfileWindowsConfig(d *schema.ResourceData) (*compute.WindowsConfiguration, error) {
+func expandAzureStackVirtualMachineOsProfileWindowsConfig(d *schema.ResourceData) *compute.WindowsConfiguration {
 	osProfilesWindowsConfig := d.Get("os_profile_windows_config").(*schema.Set).List()
 
 	osProfileConfig := osProfilesWindowsConfig[0].(map[string]interface{})
@@ -1363,7 +1355,7 @@ func expandAzureStackVirtualMachineOsProfileWindowsConfig(d *schema.ResourceData
 			config.AdditionalUnattendContent = &additionalConfigContent
 		}
 	}
-	return config, nil
+	return config
 }
 
 func expandAzureStackVirtualMachineDataDisk(d *schema.ResourceData) ([]compute.DataDisk, error) {

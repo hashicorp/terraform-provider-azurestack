@@ -495,9 +495,7 @@ func TestAccAzureStackVirtualMachine_optionalOSProfile(t *testing.T) {
 			{
 				Destroy: false,
 				Config:  prepConfig,
-				Check: func(s *terraform.State) error {
-					return testCheckAzureStackVirtualMachineDestroy(s)
-				},
+				Check:   testCheckAzureStackVirtualMachineDestroy,
 			},
 			{
 				Config: config,

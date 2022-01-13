@@ -60,10 +60,7 @@ func resourceArmDnsARecordCreateOrUpdate(d *schema.ResourceData, meta interface{
 	ttl := int64(d.Get("ttl").(int))
 	tags := d.Get("tags").(map[string]interface{})
 
-	records, err := expandAzureStackDnsARecords(d)
-	if err != nil {
-		return err
-	}
+	records := expandAzureStackDnsARecords(d)
 
 	parameters := dns.RecordSet{
 		Name: &name,
@@ -158,7 +155,7 @@ func flattenAzureStackDnsARecords(records *[]dns.ARecord) []string {
 	return results
 }
 
-func expandAzureStackDnsARecords(d *schema.ResourceData) ([]dns.ARecord, error) {
+func expandAzureStackDnsARecords(d *schema.ResourceData) []dns.ARecord {
 	recordStrings := d.Get("records").(*schema.Set).List()
 	records := make([]dns.ARecord, len(recordStrings))
 
@@ -169,5 +166,5 @@ func expandAzureStackDnsARecords(d *schema.ResourceData) ([]dns.ARecord, error) 
 		}
 	}
 
-	return records, nil
+	return records
 }

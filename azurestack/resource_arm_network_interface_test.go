@@ -433,12 +433,12 @@ func testCheckAzureStackNetworkInterfaceDisappears(name string) resource.TestChe
 
 		future, err := client.Delete(ctx, resourceGroup, name)
 		if err != nil {
-			return fmt.Errorf("Error deleting Network Interface %q (Resource Group %q): %+v", name, resourceGroup, err)
+			return fmt.Errorf("deleting Network Interface %q (Resource Group %q): %+v", name, resourceGroup, err)
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for the deletion of Network Interface %q (Resource Group %q): %+v", name, resourceGroup, err)
+			return fmt.Errorf("waiting for the deletion of Network Interface %q (Resource Group %q): %+v", name, resourceGroup, err)
 		}
 
 		return nil

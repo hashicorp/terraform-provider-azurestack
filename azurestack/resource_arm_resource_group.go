@@ -44,12 +44,12 @@ func resourceArmResourceGroupCreateUpdate(d *schema.ResourceData, meta interface
 	}
 	_, err := client.CreateOrUpdate(ctx, name, parameters)
 	if err != nil {
-		return fmt.Errorf("Error creating resource group: %+v", err)
+		return fmt.Errorf("creating resource group: %+v", err)
 	}
 
 	resp, err := client.Get(ctx, name)
 	if err != nil {
-		return fmt.Errorf("Error retrieving resource group: %+v", err)
+		return fmt.Errorf("retrieving resource group: %+v", err)
 	}
 
 	d.SetId(*resp.ID)
@@ -63,7 +63,7 @@ func resourceArmResourceGroupRead(d *schema.ResourceData, meta interface{}) erro
 
 	id, err := parseAzureResourceID(d.Id())
 	if err != nil {
-		return fmt.Errorf("Error parsing Azure Resource ID %q: %+v", d.Id(), err)
+		return fmt.Errorf("parsing Azure Resource ID %q: %+v", d.Id(), err)
 	}
 
 	name := id.ResourceGroup
@@ -76,7 +76,7 @@ func resourceArmResourceGroupRead(d *schema.ResourceData, meta interface{}) erro
 			return nil
 		}
 
-		return fmt.Errorf("Error reading resource group: %+v", err)
+		return fmt.Errorf("reading resource group: %+v", err)
 	}
 
 	d.Set("name", resp.Name)
@@ -92,7 +92,7 @@ func resourceArmResourceGroupExists(d *schema.ResourceData, meta interface{}) (b
 
 	id, err := parseAzureResourceID(d.Id())
 	if err != nil {
-		return false, fmt.Errorf("Error parsing Azure Resource ID %q: %+v", d.Id(), err)
+		return false, fmt.Errorf("parsing Azure Resource ID %q: %+v", d.Id(), err)
 	}
 
 	name := id.ResourceGroup
@@ -103,7 +103,7 @@ func resourceArmResourceGroupExists(d *schema.ResourceData, meta interface{}) (b
 			return false, nil
 		}
 
-		return false, fmt.Errorf("Error reading resource group: %+v", err)
+		return false, fmt.Errorf("reading resource group: %+v", err)
 	}
 
 	return true, nil
@@ -115,7 +115,7 @@ func resourceArmResourceGroupDelete(d *schema.ResourceData, meta interface{}) er
 
 	id, err := parseAzureResourceID(d.Id())
 	if err != nil {
-		return fmt.Errorf("Error parsing Azure Resource ID %q: %+v", d.Id(), err)
+		return fmt.Errorf("parsing Azure Resource ID %q: %+v", d.Id(), err)
 	}
 
 	name := id.ResourceGroup
@@ -126,7 +126,7 @@ func resourceArmResourceGroupDelete(d *schema.ResourceData, meta interface{}) er
 			return nil
 		}
 
-		return fmt.Errorf("Error deleting Resource Group %q: %+v", name, err)
+		return fmt.Errorf("deleting Resource Group %q: %+v", name, err)
 	}
 
 	err = deleteFuture.WaitForCompletionRef(ctx, client.Client)
@@ -135,7 +135,7 @@ func resourceArmResourceGroupDelete(d *schema.ResourceData, meta interface{}) er
 			return nil
 		}
 
-		return fmt.Errorf("Error deleting Resource Group %q: %+v", name, err)
+		return fmt.Errorf("deleting Resource Group %q: %+v", name, err)
 	}
 
 	return nil

@@ -121,12 +121,12 @@ func resourceArmVirtualNetworkCreate(d *schema.ResourceData, meta interface{}) e
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, vnet)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating Virtual Network %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("Creating/Updating Virtual Network %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for completion of Virtual Network %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for completion of Virtual Network %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, name, "")
@@ -159,7 +159,7 @@ func resourceArmVirtualNetworkRead(d *schema.ResourceData, meta interface{}) err
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Virtual Network %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("making Read request on Virtual Network %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	vnet := *resp.VirtualNetworkPropertiesFormat
@@ -219,12 +219,12 @@ func resourceArmVirtualNetworkDelete(d *schema.ResourceData, meta interface{}) e
 
 	future, err := client.Delete(ctx, resGroup, name)
 	if err != nil {
-		return fmt.Errorf("Error deleting Virtual Network %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("deleting Virtual Network %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for deletion of Virtual Network %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for deletion of Virtual Network %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	return nil

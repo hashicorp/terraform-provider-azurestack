@@ -713,7 +713,7 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 	}
 
 	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("Error Creating/Updating Virtual Machine Scale Set %s (resource group %s) ID: %+v", name, resGroup, err)
+		return fmt.Errorf("Creating/Updating Virtual Machine Scale Set %s (resource group %s) ID: %+v", name, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, name)
@@ -747,7 +747,7 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Azure Virtual Machine Scale Set %s: %+v", name, err)
+		return fmt.Errorf("making Read request on Azure Virtual Machine Scale Set %s: %+v", name, err)
 	}
 
 	d.Set("name", resp.Name)
@@ -865,7 +865,7 @@ func resourceArmVirtualMachineScaleSetDelete(d *schema.ResourceData, meta interf
 	}
 
 	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("Error Deleting Virtual Machine Scale Set %s (resource group %s) ID: %+v", name, resGroup, err)
+		return fmt.Errorf("Deleting Virtual Machine Scale Set %s (resource group %s) ID: %+v", name, resGroup, err)
 	}
 
 	return nil

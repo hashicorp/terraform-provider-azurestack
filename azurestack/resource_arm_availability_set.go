@@ -120,7 +120,7 @@ func resourceArmAvailabilitySetRead(d *schema.ResourceData, meta interface{}) er
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Azure Availability Set %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("making Read request on Azure Availability Set %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	availSet := *resp.AvailabilitySetProperties

@@ -109,7 +109,7 @@ func resourceArmDnsARecordRead(d *schema.ResourceData, meta interface{}) error {
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error reading DNS A record %s: %+v", name, err)
+		return fmt.Errorf("reading DNS A record %s: %+v", name, err)
 	}
 
 	d.Set("name", name)
@@ -140,7 +140,7 @@ func resourceArmDnsARecordDelete(d *schema.ResourceData, meta interface{}) error
 
 	resp, error := dnsClient.Delete(ctx, resGroup, zoneName, name, dns.A, "")
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("Error deleting DNS A Record %s: %+v", name, error)
+		return fmt.Errorf("deleting DNS A Record %s: %+v", name, error)
 	}
 
 	return nil

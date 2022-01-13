@@ -122,22 +122,22 @@ func resourceArmLoadBalancerNatRuleCreateUpdate(d *schema.ResourceData, meta int
 	loadBalancer.LoadBalancerPropertiesFormat.InboundNatRules = &natRules
 	resGroup, loadBalancerName, err := resourceGroupAndLBNameFromId(d.Get("loadbalancer_id").(string))
 	if err != nil {
-		return fmt.Errorf("Error Getting LoadBalancer Name and Group: %+v", err)
+		return fmt.Errorf("Getting LoadBalancer Name and Group: %+v", err)
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, loadBalancerName, *loadBalancer)
 	if err != nil {
-		return fmt.Errorf("Error Creating / Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("Creating / Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for completion of Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("waiting for completion of Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, loadBalancerName, "")
 	if err != nil {
-		return fmt.Errorf("Error retrieving LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("retrieving LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	if read.ID == nil {
@@ -166,7 +166,7 @@ func resourceArmLoadBalancerNatRuleCreateUpdate(d *schema.ResourceData, meta int
 		Timeout: 10 * time.Minute,
 	}
 	if _, err := stateConf.WaitForState(); err != nil {
-		return fmt.Errorf("Error waiting for LoadBalancer (%s) to become available: %s", loadBalancerName, err)
+		return fmt.Errorf("waiting for LoadBalancer (%s) to become available: %s", loadBalancerName, err)
 	}
 
 	return resourceArmLoadBalancerNatRuleRead(d, meta)
@@ -181,7 +181,7 @@ func resourceArmLoadBalancerNatRuleRead(d *schema.ResourceData, meta interface{}
 
 	loadBalancer, exists, err := retrieveLoadBalancerById(d.Get("loadbalancer_id").(string), meta)
 	if err != nil {
-		return fmt.Errorf("Error Getting LoadBalancer By ID: %+v", err)
+		return fmt.Errorf("Getting LoadBalancer By ID: %+v", err)
 	}
 	if !exists {
 		d.SetId("")
@@ -233,7 +233,7 @@ func resourceArmLoadBalancerNatRuleDelete(d *schema.ResourceData, meta interface
 
 	loadBalancer, exists, err := retrieveLoadBalancerById(loadBalancerID, meta)
 	if err != nil {
-		return fmt.Errorf("Error Getting LoadBalancer By ID: %+v", err)
+		return fmt.Errorf("Getting LoadBalancer By ID: %+v", err)
 	}
 	if !exists {
 		d.SetId("")
@@ -251,22 +251,22 @@ func resourceArmLoadBalancerNatRuleDelete(d *schema.ResourceData, meta interface
 
 	resGroup, loadBalancerName, err := resourceGroupAndLBNameFromId(d.Get("loadbalancer_id").(string))
 	if err != nil {
-		return fmt.Errorf("Error Getting LoadBalancer Name and Group: %+v", err)
+		return fmt.Errorf("Getting LoadBalancer Name and Group: %+v", err)
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, loadBalancerName, *loadBalancer)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q) %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("Creating/Updating LoadBalancer %q (Resource Group %q) %+v", loadBalancerName, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for the completion of LoadBalancer updates for %q (Resource Group %q) %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("waiting for the completion of LoadBalancer updates for %q (Resource Group %q) %+v", loadBalancerName, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, loadBalancerName, "")
 	if err != nil {
-		return fmt.Errorf("Error retrieving LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("retrieving LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 	if read.ID == nil {
 		return fmt.Errorf("Cannot read LoadBalancer %q (resource group %q) ID", loadBalancerName, resGroup)

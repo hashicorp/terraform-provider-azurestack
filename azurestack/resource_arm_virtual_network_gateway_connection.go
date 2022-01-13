@@ -129,11 +129,11 @@ func resourceArmVirtualNetworkGatewayConnectionCreateUpdate(d *schema.ResourceDa
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, connection)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating AzureStack Virtual Network Gateway Connection %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("Creating/Updating AzureStack Virtual Network Gateway Connection %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("Error waiting for completion of Virtual Network Gateway Connection %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for completion of Virtual Network Gateway Connection %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, name)
@@ -164,7 +164,7 @@ func resourceArmVirtualNetworkGatewayConnectionRead(d *schema.ResourceData, meta
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on AzureStack Virtual Network Gateway Connection %q: %+v", name, err)
+		return fmt.Errorf("making Read request on AzureStack Virtual Network Gateway Connection %q: %+v", name, err)
 	}
 
 	conn := *resp.VirtualNetworkGatewayConnectionPropertiesFormat
@@ -214,7 +214,7 @@ func resourceArmVirtualNetworkGatewayConnectionRead(d *schema.ResourceData, meta
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making GetSharedKey request on AzureStack Virtual Network Gateway Connection %q: %+v", name, err)
+		return fmt.Errorf("making GetSharedKey request on AzureStack Virtual Network Gateway Connection %q: %+v", name, err)
 	}
 
 	if sharedKeyResp.Value != nil {
@@ -237,11 +237,11 @@ func resourceArmVirtualNetworkGatewayConnectionDelete(d *schema.ResourceData, me
 
 	future, err := client.Delete(ctx, resGroup, name)
 	if err != nil {
-		return fmt.Errorf("Error Deleting Virtual Network Gateway Connection %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("Deleting Virtual Network Gateway Connection %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("Error waiting for deletion of Virtual Network Gateway Connection %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for deletion of Virtual Network Gateway Connection %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	return nil
@@ -258,7 +258,7 @@ func getArmVirtualNetworkGatewayConnectionProperties(d *schema.ResourceData) (*n
 		virtualNetworkGatewayId := v.(string)
 		_, name, err := resourceGroupAndVirtualNetworkGatewayFromId(virtualNetworkGatewayId)
 		if err != nil {
-			return nil, fmt.Errorf("Error Getting VirtualNetworkGateway Name and Group:: %+v", err)
+			return nil, fmt.Errorf("Getting VirtualNetworkGateway Name and Group:: %+v", err)
 		}
 
 		props.VirtualNetworkGateway1 = &network.VirtualNetworkGateway{
@@ -286,7 +286,7 @@ func getArmVirtualNetworkGatewayConnectionProperties(d *schema.ResourceData) (*n
 		peerVirtualNetworkGatewayId := v.(string)
 		_, name, err := resourceGroupAndVirtualNetworkGatewayFromId(peerVirtualNetworkGatewayId)
 		if err != nil {
-			return nil, fmt.Errorf("Error Getting VirtualNetworkGateway Name and Group:: %+v", err)
+			return nil, fmt.Errorf("Getting VirtualNetworkGateway Name and Group:: %+v", err)
 		}
 
 		props.VirtualNetworkGateway2 = &network.VirtualNetworkGateway{
@@ -302,7 +302,7 @@ func getArmVirtualNetworkGatewayConnectionProperties(d *schema.ResourceData) (*n
 		localNetworkGatewayId := v.(string)
 		_, name, err := resourceGroupAndLocalNetworkGatewayFromId(localNetworkGatewayId)
 		if err != nil {
-			return nil, fmt.Errorf("Error Getting LocalNetworkGateway Name and Group:: %+v", err)
+			return nil, fmt.Errorf("Getting LocalNetworkGateway Name and Group:: %+v", err)
 		}
 
 		props.LocalNetworkGateway2 = &network.LocalNetworkGateway{

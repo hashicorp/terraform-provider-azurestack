@@ -2959,14 +2959,14 @@ func testCheckAzureStackVirtualMachineVHDExistence(name string, shouldExist bool
 			ctx := armClient.StopContext
 			storageClient, _, err := armClient.getBlobStorageClientForStorageAccount(ctx, resourceGroup, storageAccountName)
 			if err != nil {
-				return fmt.Errorf("Error creating Blob storage client: %+v", err)
+				return fmt.Errorf("creating Blob storage client: %+v", err)
 			}
 
 			container := storageClient.GetContainerReference(containerName)
 			blob := container.GetBlobReference(name)
 			exists, err := blob.Exists()
 			if err != nil {
-				return fmt.Errorf("Error checking if Disk VHD Blob exists: %+v", err)
+				return fmt.Errorf("checking if Disk VHD Blob exists: %+v", err)
 			}
 
 			if exists && !shouldExist {

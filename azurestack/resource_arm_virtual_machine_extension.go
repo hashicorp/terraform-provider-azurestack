@@ -160,7 +160,7 @@ func resourceArmVirtualMachineExtensionsRead(d *schema.ResourceData, meta interf
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Virtual Machine Extension %s: %s", name, err)
+		return fmt.Errorf("making Read request on Virtual Machine Extension %s: %s", name, err)
 	}
 
 	d.Set("name", resp.Name)

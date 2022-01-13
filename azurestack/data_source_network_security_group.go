@@ -144,7 +144,7 @@ func dataSourceArmNetworkSecurityGroupRead(d *schema.ResourceData, meta interfac
 		if utils.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 		}
-		return fmt.Errorf("Error making Read request on Network Security Group %q (Resource Group %q): %+v", name, resourceGroup, err)
+		return fmt.Errorf("making Read request on Network Security Group %q (Resource Group %q): %+v", name, resourceGroup, err)
 	}
 
 	d.SetId(*resp.ID)
@@ -158,7 +158,7 @@ func dataSourceArmNetworkSecurityGroupRead(d *schema.ResourceData, meta interfac
 	if props := resp.SecurityGroupPropertiesFormat; props != nil {
 		flattenedRules := flattenNetworkSecurityRules(props.SecurityRules)
 		if err := d.Set("security_rule", flattenedRules); err != nil {
-			return fmt.Errorf("Error flattening `security_rule`: %+v", err)
+			return fmt.Errorf("flattening `security_rule`: %+v", err)
 		}
 	}
 

@@ -641,7 +641,7 @@ func resourceArmVirtualMachineRead(d *schema.ResourceData, meta interface{}) err
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Azure Virtual Machine %s: %+v", name, err)
+		return fmt.Errorf("making Read request on Azure Virtual Machine %s: %+v", name, err)
 	}
 
 	d.Set("name", resp.Name)
@@ -776,19 +776,19 @@ func resourceArmVirtualMachineDelete(d *schema.ResourceData, meta interface{}) e
 
 		osDisk, err := expandAzureStackVirtualMachineOsDisk(d)
 		if err != nil {
-			return fmt.Errorf("Error expanding OS Disk: %s", err)
+			return fmt.Errorf("expanding OS Disk: %s", err)
 		}
 
 		if osDisk.Vhd != nil {
 			if osDisk.Vhd.URI != nil {
 				if err = resourceArmVirtualMachineDeleteVhd(*osDisk.Vhd.URI, meta); err != nil {
-					return fmt.Errorf("Error deleting OS Disk VHD: %+v", err)
+					return fmt.Errorf("deleting OS Disk VHD: %+v", err)
 				}
 			}
 		} else if osDisk.ManagedDisk != nil {
 			if osDisk.ManagedDisk.ID != nil {
 				if err = resourceArmVirtualMachineDeleteManagedDisk(*osDisk.ManagedDisk.ID, meta); err != nil {
-					return fmt.Errorf("Error deleting OS Managed Disk: %+v", err)
+					return fmt.Errorf("deleting OS Managed Disk: %+v", err)
 				}
 			}
 		} else {
@@ -802,17 +802,17 @@ func resourceArmVirtualMachineDelete(d *schema.ResourceData, meta interface{}) e
 
 		disks, err := expandAzureStackVirtualMachineDataDisk(d)
 		if err != nil {
-			return fmt.Errorf("Error expanding Data Disks: %s", err)
+			return fmt.Errorf("expanding Data Disks: %s", err)
 		}
 
 		for _, disk := range disks {
 			if disk.Vhd != nil {
 				if err = resourceArmVirtualMachineDeleteVhd(*disk.Vhd.URI, meta); err != nil {
-					return fmt.Errorf("Error deleting Data Disk VHD: %+v", err)
+					return fmt.Errorf("deleting Data Disk VHD: %+v", err)
 				}
 			} else if disk.ManagedDisk != nil {
 				if err = resourceArmVirtualMachineDeleteManagedDisk(*disk.ManagedDisk.ID, meta); err != nil {
-					return fmt.Errorf("Error deleting Data Managed Disk: %+v", err)
+					return fmt.Errorf("deleting Data Managed Disk: %+v", err)
 				}
 			} else {
 				return fmt.Errorf("Unable to locate data managed disk properties from %s", name)
@@ -839,7 +839,7 @@ func resourceArmVirtualMachineDeleteVhd(uri string, meta interface{}) error {
 
 	storageAccountResourceGroupName, err := findStorageAccountResourceGroup(meta, storageAccountName)
 	if err != nil {
-		return fmt.Errorf("Error finding resource group for storage account %s: %+v", storageAccountName, err)
+		return fmt.Errorf("finding resource group for storage account %s: %+v", storageAccountName, err)
 	}
 
 	armClient := meta.(*ArmClient)
@@ -847,7 +847,7 @@ func resourceArmVirtualMachineDeleteVhd(uri string, meta interface{}) error {
 	// For some reason the storage account does not need the context
 	blobClient, saExists, err := armClient.getBlobStorageClientForStorageAccount(ctx, storageAccountResourceGroupName, storageAccountName)
 	if err != nil {
-		return fmt.Errorf("Error creating blob store client for VHD deletion: %+v", err)
+		return fmt.Errorf("creating blob store client for VHD deletion: %+v", err)
 	}
 
 	if !saExists {
@@ -861,7 +861,7 @@ func resourceArmVirtualMachineDeleteVhd(uri string, meta interface{}) error {
 	options := &storage.DeleteBlobOptions{}
 	err = blob.Delete(options)
 	if err != nil {
-		return fmt.Errorf("Error deleting VHD blob: %+v", err)
+		return fmt.Errorf("deleting VHD blob: %+v", err)
 	}
 
 	return nil
@@ -880,11 +880,11 @@ func resourceArmVirtualMachineDeleteManagedDisk(managedDiskID string, meta inter
 
 	future, err := client.Delete(ctx, resGroup, name)
 	if err != nil {
-		return fmt.Errorf("Error deleting Managed Disk (%s %s) %+v", name, resGroup, err)
+		return fmt.Errorf("deleting Managed Disk (%s %s) %+v", name, resGroup, err)
 	}
 
 	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("Error deleting Managed Disk (%s %s) %+v", name, resGroup, err)
+		return fmt.Errorf("deleting Managed Disk (%s %s) %+v", name, resGroup, err)
 	}
 
 	return nil
@@ -1600,7 +1600,7 @@ func findStorageAccountResourceGroup(meta interface{}, storageAccountName string
 
 	rf, err := client.List(ctx, filter, expand, pager)
 	if err != nil {
-		return "", fmt.Errorf("Error making resource request for query %s: %+v", filter, err)
+		return "", fmt.Errorf("making resource request for query %s: %+v", filter, err)
 	}
 
 	results := rf.Values()
@@ -1681,14 +1681,14 @@ func resourceArmVirtualMachineGetManagedDiskInfo(disk *compute.ManagedDiskParame
 	diskId := *disk.ID
 	id, err := parseAzureResourceID(diskId)
 	if err != nil {
-		return nil, fmt.Errorf("Error parsing Disk ID %q: %+v", diskId, err)
+		return nil, fmt.Errorf("parsing Disk ID %q: %+v", diskId, err)
 	}
 
 	resourceGroup := id.ResourceGroup
 	name := id.Path["disks"]
 	diskResp, err := client.Get(ctx, resourceGroup, name)
 	if err != nil {
-		return nil, fmt.Errorf("Error retrieving Disk %q (Resource Group %q): %+v", name, resourceGroup, err)
+		return nil, fmt.Errorf("retrieving Disk %q (Resource Group %q): %+v", name, resourceGroup, err)
 	}
 
 	return &diskResp, nil

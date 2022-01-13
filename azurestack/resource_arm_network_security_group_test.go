@@ -259,11 +259,11 @@ func testCheckAzureStackNetworkSecurityGroupDisappears(name string) resource.Tes
 		ctx := testAccProvider.Meta().(*ArmClient).StopContext
 		future, err := client.Delete(ctx, resourceGroup, sgName)
 		if err != nil {
-			return fmt.Errorf("Error deleting NSG %q (Resource Group %q): %+v", sgName, resourceGroup, err)
+			return fmt.Errorf("deleting NSG %q (Resource Group %q): %+v", sgName, resourceGroup, err)
 		}
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error deleting NSG %q (Resource Group %q): %+v", sgName, resourceGroup, err)
+			return fmt.Errorf("deleting NSG %q (Resource Group %q): %+v", sgName, resourceGroup, err)
 		}
 
 		return nil

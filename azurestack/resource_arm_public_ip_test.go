@@ -311,12 +311,12 @@ func testCheckAzureStackPublicIpDisappears(name string) resource.TestCheckFunc {
 		ctx := testAccProvider.Meta().(*ArmClient).StopContext
 		future, err := client.Delete(ctx, resourceGroup, publicIpName)
 		if err != nil {
-			return fmt.Errorf("Error deleting Public IP %q (Resource Group %q): %+v", publicIpName, resourceGroup, err)
+			return fmt.Errorf("deleting Public IP %q (Resource Group %q): %+v", publicIpName, resourceGroup, err)
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for deletion of Public IP %q (Resource Group %q): %+v", publicIpName, resourceGroup, err)
+			return fmt.Errorf("waiting for deletion of Public IP %q (Resource Group %q): %+v", publicIpName, resourceGroup, err)
 		}
 
 		return nil

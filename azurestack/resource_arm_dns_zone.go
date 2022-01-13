@@ -99,7 +99,7 @@ func resourceArmDnsZoneRead(d *schema.ResourceData, meta interface{}) error {
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error reading DNS zone %s (resource group %s): %+v", name, resGroup, err)
+		return fmt.Errorf("reading DNS zone %s (resource group %s): %+v", name, resGroup, err)
 	}
 
 	d.Set("name", name)
@@ -109,7 +109,7 @@ func resourceArmDnsZoneRead(d *schema.ResourceData, meta interface{}) error {
 
 	if nameServers := resp.NameServers; nameServers != nil {
 		if err := d.Set("name_servers", *nameServers); err != nil {
-			return fmt.Errorf("Error setting `name_servers`: %+v", err)
+			return fmt.Errorf("setting `name_servers`: %+v", err)
 		}
 	}
 
@@ -136,7 +136,7 @@ func resourceArmDnsZoneDelete(d *schema.ResourceData, meta interface{}) error {
 		if response.WasNotFound(future.Response()) {
 			return nil
 		}
-		return fmt.Errorf("Error deleting DNS zone %s (resource group %s): %+v", name, resGroup, err)
+		return fmt.Errorf("deleting DNS zone %s (resource group %s): %+v", name, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
@@ -144,7 +144,7 @@ func resourceArmDnsZoneDelete(d *schema.ResourceData, meta interface{}) error {
 		if response.WasNotFound(future.Response()) {
 			return nil
 		}
-		return fmt.Errorf("Error deleting DNS zone %s (resource group %s): %+v", name, resGroup, err)
+		return fmt.Errorf("deleting DNS zone %s (resource group %s): %+v", name, resGroup, err)
 	}
 
 	return nil

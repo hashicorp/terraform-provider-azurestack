@@ -125,16 +125,16 @@ func resourceArmTemplateDeploymentCreate(d *schema.ResourceData, meta interface{
 
 	future, err := deployClient.CreateOrUpdate(ctx, resourceGroup, name, deployment)
 	if err != nil {
-		return fmt.Errorf("Error creating Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
+		return fmt.Errorf("creating Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
 	}
 
 	if err = future.WaitForCompletionRef(ctx, deployClient.Client); err != nil {
-		return fmt.Errorf("Error creating Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
+		return fmt.Errorf("creating Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
 	}
 
 	read, err := deployClient.Get(ctx, resourceGroup, name)
 	if err != nil {
-		return fmt.Errorf("Error retrieving Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
+		return fmt.Errorf("retrieving Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
 	}
 	if read.ID == nil {
 		return fmt.Errorf("Cannot read Template Deployment %s (resource group %s) ID", name, resourceGroup)
@@ -163,7 +163,7 @@ func resourceArmTemplateDeploymentRead(d *schema.ResourceData, meta interface{})
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Azure RM Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
+		return fmt.Errorf("making Read request on Azure RM Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
 	}
 
 	outputs := make(map[string]string)
@@ -221,7 +221,7 @@ func resourceArmTemplateDeploymentDelete(d *schema.ResourceData, meta interface{
 	name := id.Path["deployments"]
 
 	if _, err = deployClient.Delete(ctx, resourceGroup, name); err != nil {
-		return fmt.Errorf("Error deleting Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
+		return fmt.Errorf("deleting Template Deployment %q (Resource Group %q): %+v", name, resourceGroup, err)
 	}
 
 	return waitForTemplateDeploymentToBeDeleted(ctx, deployClient, resourceGroup, name)
@@ -232,7 +232,7 @@ func expandParametersBody(body string) (map[string]interface{}, error) {
 	var parametersBody map[string]interface{}
 	err := json.Unmarshal([]byte(body), &parametersBody)
 	if err != nil {
-		return nil, fmt.Errorf("Error Expanding the parameters_body for Azure RM Template Deployment")
+		return nil, fmt.Errorf("Expanding the parameters_body for Azure RM Template Deployment")
 	}
 	return parametersBody, nil
 }
@@ -241,7 +241,7 @@ func expandTemplateBody(template string) (map[string]interface{}, error) {
 	var templateBody map[string]interface{}
 	err := json.Unmarshal([]byte(template), &templateBody)
 	if err != nil {
-		return nil, fmt.Errorf("Error Expanding the template_body for Azure RM Template Deployment")
+		return nil, fmt.Errorf("Expanding the template_body for Azure RM Template Deployment")
 	}
 	return templateBody, nil
 }
@@ -269,7 +269,7 @@ func waitForTemplateDeploymentToBeDeleted(ctx context.Context, client resources.
 		Timeout: 40 * time.Minute,
 	}
 	if _, err := stateConf.WaitForState(); err != nil {
-		return fmt.Errorf("Error waiting for Template Deployment (%q in Resource Group %q) to be deleted: %+v", name, resourceGroup, err)
+		return fmt.Errorf("waiting for Template Deployment (%q in Resource Group %q) to be deleted: %+v", name, resourceGroup, err)
 	}
 
 	return nil
@@ -285,7 +285,7 @@ func templateDeploymentStateStatusCodeRefreshFunc(ctx context.Context, client re
 			if utils.ResponseWasNotFound(res.Response) {
 				return res, strconv.Itoa(res.StatusCode), nil
 			}
-			return nil, "", fmt.Errorf("Error polling for the status of the Template Deployment %q (RG: %q): %+v", name, resourceGroup, err)
+			return nil, "", fmt.Errorf("polling for the status of the Template Deployment %q (RG: %q): %+v", name, resourceGroup, err)
 		}
 
 		return res, strconv.Itoa(res.StatusCode), nil

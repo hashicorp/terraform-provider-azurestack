@@ -83,29 +83,29 @@ func resourceArmLoadBalancerBackendAddressPoolCreate(d *schema.ResourceData, met
 	loadBalancer.LoadBalancerPropertiesFormat.BackendAddressPools = &backendAddressPools
 	resGroup, loadBalancerName, err := resourceGroupAndLBNameFromId(d.Get("loadbalancer_id").(string))
 	if err != nil {
-		return fmt.Errorf("Error parsing LoadBalancer Name and Group: %+v", err)
+		return fmt.Errorf("parsing LoadBalancer Name and Group: %+v", err)
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, loadBalancerName, *loadBalancer)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("Creating/Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("Creating/Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, loadBalancerName, "")
 	if err != nil {
-		return fmt.Errorf("Error retrieving Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("retrieving Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 	if read.ID == nil {
 		return fmt.Errorf("Cannot read LoadBalancer %q (Resource Group %q) ID", loadBalancerName, resGroup)
 	}
 
 	if read.LoadBalancerPropertiesFormat == nil {
-		return fmt.Errorf("Error creating LoadBalancer (%q Resource Group %q)", loadBalancerName, resGroup)
+		return fmt.Errorf("creating LoadBalancer (%q Resource Group %q)", loadBalancerName, resGroup)
 	}
 
 	var poolId string
@@ -130,7 +130,7 @@ func resourceArmLoadBalancerBackendAddressPoolCreate(d *schema.ResourceData, met
 		Timeout: 10 * time.Minute,
 	}
 	if _, err := stateConf.WaitForState(); err != nil {
-		return fmt.Errorf("Error waiting for LoadBalancer (%q Resource Group %q) to become available: %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("waiting for LoadBalancer (%q Resource Group %q) to become available: %+v", loadBalancerName, resGroup, err)
 	}
 
 	return resourceArmLoadBalancerBackendAddressPoolRead(d, meta)
@@ -145,7 +145,7 @@ func resourceArmLoadBalancerBackendAddressPoolRead(d *schema.ResourceData, meta 
 
 	loadBalancer, exists, err := retrieveLoadBalancerById(d.Get("loadbalancer_id").(string), meta)
 	if err != nil {
-		return fmt.Errorf("Error retrieving Load Balancer by ID: %+v", err)
+		return fmt.Errorf("retrieving Load Balancer by ID: %+v", err)
 	}
 	if !exists {
 		d.SetId("")
@@ -196,7 +196,7 @@ func resourceArmLoadBalancerBackendAddressPoolDelete(d *schema.ResourceData, met
 
 	loadBalancer, exists, err := retrieveLoadBalancerById(loadBalancerID, meta)
 	if err != nil {
-		return fmt.Errorf("Error retrieving Load Balancer by ID: %+v", err)
+		return fmt.Errorf("retrieving Load Balancer by ID: %+v", err)
 	}
 	if !exists {
 		d.SetId("")
@@ -219,17 +219,17 @@ func resourceArmLoadBalancerBackendAddressPoolDelete(d *schema.ResourceData, met
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, loadBalancerName, *loadBalancer)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating LoadBalancer: %+v", err)
+		return fmt.Errorf("Creating/Updating LoadBalancer: %+v", err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for the completion for the LoadBalancer: %+v", err)
+		return fmt.Errorf("waiting for the completion for the LoadBalancer: %+v", err)
 	}
 
 	read, err := client.Get(ctx, resGroup, loadBalancerName, "")
 	if err != nil {
-		return fmt.Errorf("Error retrieving the LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("retrieving the LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 	if read.ID == nil {
 		return fmt.Errorf("Cannot read LoadBalancer %q (resource group %q) ID", loadBalancerName, resGroup)

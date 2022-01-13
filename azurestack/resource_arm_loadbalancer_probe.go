@@ -97,7 +97,7 @@ func resourceArmLoadBalancerProbeCreateUpdate(d *schema.ResourceData, meta inter
 
 	loadBalancer, exists, err := retrieveLoadBalancerById(loadBalancerID, meta)
 	if err != nil {
-		return fmt.Errorf("Error Getting LoadBalancer By ID: %+v", err)
+		return fmt.Errorf("Getting LoadBalancer By ID: %+v", err)
 	}
 	if !exists {
 		d.SetId("")
@@ -119,22 +119,22 @@ func resourceArmLoadBalancerProbeCreateUpdate(d *schema.ResourceData, meta inter
 	loadBalancer.LoadBalancerPropertiesFormat.Probes = &probes
 	resGroup, loadBalancerName, err := resourceGroupAndLBNameFromId(d.Get("loadbalancer_id").(string))
 	if err != nil {
-		return fmt.Errorf("Error Getting LoadBalancer Name and Group: %+v", err)
+		return fmt.Errorf("Getting LoadBalancer Name and Group: %+v", err)
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, loadBalancerName, *loadBalancer)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("Creating/Updating Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for completion of Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("waiting for completion of Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, loadBalancerName, "")
 	if err != nil {
-		return fmt.Errorf("Error retrieving Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("retrieving Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 	if read.ID == nil {
 		return fmt.Errorf("Cannot read LoadBalancer %q (resource group %q) ID", loadBalancerName, resGroup)
@@ -161,7 +161,7 @@ func resourceArmLoadBalancerProbeCreateUpdate(d *schema.ResourceData, meta inter
 		Timeout: 10 * time.Minute,
 	}
 	if _, err := stateConf.WaitForState(); err != nil {
-		return fmt.Errorf("Error waiting for LoadBalancer (%q - Resource Group %q) to become available: %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("waiting for LoadBalancer (%q - Resource Group %q) to become available: %+v", loadBalancerName, resGroup, err)
 	}
 
 	return resourceArmLoadBalancerProbeRead(d, meta)
@@ -223,7 +223,7 @@ func resourceArmLoadBalancerProbeDelete(d *schema.ResourceData, meta interface{}
 
 	loadBalancer, exists, err := retrieveLoadBalancerById(loadBalancerID, meta)
 	if err != nil {
-		return fmt.Errorf("Error Getting LoadBalancer By ID: %+v", err)
+		return fmt.Errorf("Getting LoadBalancer By ID: %+v", err)
 	}
 	if !exists {
 		d.SetId("")
@@ -246,12 +246,12 @@ func resourceArmLoadBalancerProbeDelete(d *schema.ResourceData, meta interface{}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, loadBalancerName, *loadBalancer)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("Creating/Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for completion of LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("waiting for completion of LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, loadBalancerName, "")

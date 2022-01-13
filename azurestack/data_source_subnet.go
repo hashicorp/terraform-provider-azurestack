@@ -64,7 +64,7 @@ func dataSourceArmSubnetRead(d *schema.ResourceData, meta interface{}) error {
 		if utils.ResponseWasNotFound(resp.Response) {
 			return fmt.Errorf("Error: Subnet %q (Virtual Network %q / Resource Group %q) was not found", name, resourceGroup, virtualNetworkName)
 		}
-		return fmt.Errorf("Error making Read request on Azure Subnet %q: %+v", name, err)
+		return fmt.Errorf("making Read request on Azure Subnet %q: %+v", name, err)
 	}
 	d.SetId(*resp.ID)
 

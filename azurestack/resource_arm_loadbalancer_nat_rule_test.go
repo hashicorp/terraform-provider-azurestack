@@ -231,12 +231,12 @@ func testCheckAzureStackLoadBalancerNatRuleDisappears(natRuleName string, lb *ne
 
 		future, err := client.CreateOrUpdate(ctx, id.ResourceGroup, *lb.Name, *lb)
 		if err != nil {
-			return fmt.Errorf("Error Creating/Updating LoadBalancer %+v", err)
+			return fmt.Errorf("Creating/Updating LoadBalancer %+v", err)
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for the completion of LoadBalancer %q (Resource Group %q): %+v", *lb.Name, id.ResourceGroup, err)
+			return fmt.Errorf("waiting for the completion of LoadBalancer %q (Resource Group %q): %+v", *lb.Name, id.ResourceGroup, err)
 		}
 
 		_, err = client.Get(ctx, id.ResourceGroup, *lb.Name, "")

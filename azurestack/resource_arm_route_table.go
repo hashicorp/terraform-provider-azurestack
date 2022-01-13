@@ -114,11 +114,11 @@ func resourceArmRouteTableCreateUpdate(d *schema.ResourceData, meta interface{})
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, routeSet)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating Route Table %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("Creating/Updating Route Table %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("Error waiting for completion of Route Table %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for completion of Route Table %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, name, "")
@@ -151,7 +151,7 @@ func resourceArmRouteTableRead(d *schema.ResourceData, meta interface{}) error {
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Azure Route Table %q: %+v", name, err)
+		return fmt.Errorf("making Read request on Azure Route Table %q: %+v", name, err)
 	}
 
 	d.Set("name", name)
@@ -189,12 +189,12 @@ func resourceArmRouteTableDelete(d *schema.ResourceData, meta interface{}) error
 	future, err := client.Delete(ctx, resGroup, name)
 	if err != nil {
 		if !response.WasNotFound(future.Response()) {
-			return fmt.Errorf("Error deleting Route Table %q (Resource Group %q): %+v", name, resGroup, err)
+			return fmt.Errorf("deleting Route Table %q (Resource Group %q): %+v", name, resGroup, err)
 		}
 	}
 
 	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("Error waiting for deletion of Route Table %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for deletion of Route Table %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	return nil

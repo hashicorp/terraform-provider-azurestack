@@ -140,7 +140,7 @@ func testCheckAzureStackNetworkSecurityRuleExists(name string) resource.TestChec
 			if utils.ResponseWasNotFound(resp.Response) {
 				return fmt.Errorf("Bad: Network Security Rule %q (resource group: %q) (network security group: %q) does not exist", sgrName, sgName, resourceGroup)
 			}
-			return fmt.Errorf("Error retrieving Network Security Rule %q (NSG %q / Resource Group %q): %+v", sgrName, sgName, resourceGroup, err)
+			return fmt.Errorf("retrieving Network Security Rule %q (NSG %q / Resource Group %q): %+v", sgrName, sgName, resourceGroup, err)
 		}
 
 		return nil
@@ -166,13 +166,13 @@ func testCheckAzureStackNetworkSecurityRuleDisappears(name string) resource.Test
 		future, err := client.Delete(ctx, resourceGroup, sgName, sgrName)
 		if err != nil {
 			if !response.WasNotFound(future.Response()) {
-				return fmt.Errorf("Error deleting Network Security Rule %q (NSG %q / Resource Group %q): %+v", sgrName, sgName, resourceGroup, err)
+				return fmt.Errorf("deleting Network Security Rule %q (NSG %q / Resource Group %q): %+v", sgrName, sgName, resourceGroup, err)
 			}
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for the deletion of Network Security Rule %q (NSG %q / Resource Group %q): %+v", sgrName, sgName, resourceGroup, err)
+			return fmt.Errorf("waiting for the deletion of Network Security Rule %q (NSG %q / Resource Group %q): %+v", sgrName, sgName, resourceGroup, err)
 		}
 
 		return nil

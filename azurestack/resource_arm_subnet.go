@@ -120,7 +120,7 @@ func resourceArmSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 	// Not supported for 2017-03-09 profile
 	// serviceEndpoints, serviceEndpointsErr := expandAzureStackServiceEndpoints(d)
 	// if serviceEndpointsErr != nil {
-	// 	return fmt.Errorf("Error Building list of Service Endpoints: %+v", serviceEndpointsErr)
+	// 	return fmt.Errorf("Building list of Service Endpoints: %+v", serviceEndpointsErr)
 	// }
 
 	// properties.ServiceEndpoints = &serviceEndpoints
@@ -132,12 +132,12 @@ func resourceArmSubnetCreate(d *schema.ResourceData, meta interface{}) error {
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, vnetName, name, subnet)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
+		return fmt.Errorf("Creating/Updating Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for completion of Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
+		return fmt.Errorf("waiting for completion of Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, vnetName, name, "")
@@ -172,7 +172,7 @@ func resourceArmSubnetRead(d *schema.ResourceData, meta interface{}) error {
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Azure Subnet %q: %+v", name, err)
+		return fmt.Errorf("making Read request on Azure Subnet %q: %+v", name, err)
 	}
 
 	d.Set("name", name)
@@ -257,7 +257,7 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 				d.SetId("")
 				return nil
 			}
-			return fmt.Errorf("Error making Read request on Azure Subnet %q: %+v", name, err)
+			return fmt.Errorf("making Read request on Azure Subnet %q: %+v", name, err)
 		}
 
 		// Set the route table to nil
@@ -268,23 +268,23 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 		// Dissasociate the subnet
 		future, err := client.CreateOrUpdate(ctx, resGroup, vnetName, name, resp)
 		if err != nil {
-			return fmt.Errorf("Error Dissasociating Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
+			return fmt.Errorf("Dissasociating Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for completion of Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
+			return fmt.Errorf("waiting for completion of Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
 		}
 	}
 
 	future, err := client.Delete(ctx, resGroup, vnetName, name)
 	if err != nil {
-		return fmt.Errorf("Error deleting Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
+		return fmt.Errorf("deleting Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for completion for Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
+		return fmt.Errorf("waiting for completion for Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
 	}
 
 	return nil

@@ -232,7 +232,7 @@ func testCheckAzureStackLocalNetworkGatewayExists(name string) resource.TestChec
 				return fmt.Errorf("Local network gateway %q (resource group %q) does not exist on Azure.", localNetName, resGrp)
 			}
 
-			return fmt.Errorf("Error reading the state of local network gateway %q: %+v", localNetName, err)
+			return fmt.Errorf("reading the state of local network gateway %q: %+v", localNetName, err)
 		}
 
 		return nil
@@ -264,12 +264,12 @@ func testCheckAzureStackLocalNetworkGatewayDisappears(name string) resource.Test
 			if response.WasNotFound(future.Response()) {
 				return fmt.Errorf("Local network gateway %q (resource group %q) does not exist on Azure.", localNetName, resourceGroup)
 			}
-			return fmt.Errorf("Error deleting the state of local network gateway %q: %+v", localNetName, err)
+			return fmt.Errorf("deleting the state of local network gateway %q: %+v", localNetName, err)
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for deletion of the local network gateway %q to complete: %+v", localNetName, err)
+			return fmt.Errorf("waiting for deletion of the local network gateway %q to complete: %+v", localNetName, err)
 		}
 
 		return nil

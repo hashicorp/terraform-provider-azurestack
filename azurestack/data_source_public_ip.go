@@ -57,7 +57,7 @@ func dataSourceArmPublicIPRead(d *schema.ResourceData, meta interface{}) error {
 		if utils.ResponseWasNotFound(resp.Response) {
 			return fmt.Errorf("Error: Public IP %q (Resource Group %q) was not found", name, resGroup)
 		}
-		return fmt.Errorf("Error making Read request on Azure public ip %s: %s", name, err)
+		return fmt.Errorf("making Read request on Azure public ip %s: %s", name, err)
 	}
 
 	d.SetId(*resp.ID)

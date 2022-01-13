@@ -159,7 +159,7 @@ func resourceArmLoadBalancerRuleCreateUpdate(d *schema.ResourceData, meta interf
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for completion for LoadBalancer updates: %+v", err)
+		return fmt.Errorf("waiting for completion for LoadBalancer updates: %+v", err)
 	}
 
 	read, err := client.Get(ctx, resGroup, loadBalancerName, "")
@@ -191,7 +191,7 @@ func resourceArmLoadBalancerRuleCreateUpdate(d *schema.ResourceData, meta interf
 		Timeout: 10 * time.Minute,
 	}
 	if _, err := stateConf.WaitForState(); err != nil {
-		return fmt.Errorf("Error waiting for LoadBalancer (%s) to become available: %s", loadBalancerName, err)
+		return fmt.Errorf("waiting for LoadBalancer (%s) to become available: %s", loadBalancerName, err)
 	}
 
 	return resourceArmLoadBalancerRuleRead(d, meta)
@@ -296,12 +296,12 @@ func resourceArmLoadBalancerRuleDelete(d *schema.ResourceData, meta interface{})
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, loadBalancerName, *loadBalancer)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("Creating/Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for completion of LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("waiting for completion of LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, loadBalancerName, "")

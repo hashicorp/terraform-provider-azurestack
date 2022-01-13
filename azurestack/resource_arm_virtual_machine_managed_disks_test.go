@@ -1259,7 +1259,7 @@ func testCheckAzureStackVirtualMachineManagedDiskExists(managedDiskID *string, s
 	return func(s *terraform.State) error {
 		d, err := testGetAzureStackVirtualMachineManagedDisk(managedDiskID)
 		if err != nil {
-			return fmt.Errorf("Error trying to retrieve Managed Disk %s, %+v", *managedDiskID, err)
+			return fmt.Errorf("trying to retrieve Managed Disk %s, %+v", *managedDiskID, err)
 		}
 		if d.StatusCode == http.StatusNotFound && shouldExist {
 			return fmt.Errorf("Unable to find Managed Disk %s", *managedDiskID)

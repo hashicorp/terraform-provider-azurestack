@@ -305,13 +305,13 @@ func testCheckAzureStackSubnetDisappears(name string) resource.TestCheckFunc {
 		future, err := client.Delete(ctx, resourceGroup, vnetName, name)
 		if err != nil {
 			if !response.WasNotFound(future.Response()) {
-				return fmt.Errorf("Error deleting Subnet %q (Network %q / Resource Group %q): %+v", name, vnetName, resourceGroup, err)
+				return fmt.Errorf("deleting Subnet %q (Network %q / Resource Group %q): %+v", name, vnetName, resourceGroup, err)
 			}
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for completion of Subnet %q (Network %q / Resource Group %q): %+v", name, vnetName, resourceGroup, err)
+			return fmt.Errorf("waiting for completion of Subnet %q (Network %q / Resource Group %q): %+v", name, vnetName, resourceGroup, err)
 		}
 
 		return nil

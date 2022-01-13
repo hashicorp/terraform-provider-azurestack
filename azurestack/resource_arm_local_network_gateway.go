@@ -106,12 +106,12 @@ func resourceArmLocalNetworkGatewayCreate(d *schema.ResourceData, meta interface
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, gateway)
 	if err != nil {
-		return fmt.Errorf("Error creating Local Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("creating Local Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for completion of Local Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for completion of Local Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, name)
@@ -143,7 +143,7 @@ func resourceArmLocalNetworkGatewayRead(d *schema.ResourceData, meta interface{}
 			return nil
 		}
 
-		return fmt.Errorf("Error reading the state of Local Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("reading the state of Local Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	d.Set("name", resp.Name)
@@ -186,7 +186,7 @@ func resourceArmLocalNetworkGatewayDelete(d *schema.ResourceData, meta interface
 			return nil
 		}
 
-		return fmt.Errorf("Error issuing delete request for local network gateway %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("issuing delete request for local network gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
@@ -195,7 +195,7 @@ func resourceArmLocalNetworkGatewayDelete(d *schema.ResourceData, meta interface
 			return nil
 		}
 
-		return fmt.Errorf("Error waiting for completion of local network gateway %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for completion of local network gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	return nil

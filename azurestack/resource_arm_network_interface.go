@@ -262,7 +262,7 @@ func resourceArmNetworkInterfaceCreateUpdate(d *schema.ResourceData, meta interf
 
 	ipConfigs, subnetnToLock, vnnToLock, sgErr := expandAzureStackNetworkInterfaceIpConfigurations(d)
 	if sgErr != nil {
-		return fmt.Errorf("Error Building list of Network Interface IP Configurations: %+v", sgErr)
+		return fmt.Errorf("Building list of Network Interface IP Configurations: %+v", sgErr)
 	}
 
 	azureStackLockMultipleByName(subnetnToLock, subnetResourceName)
@@ -324,7 +324,7 @@ func resourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{}) e
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Azure Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("making Read request on Azure Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	d.Set("name", resp.Name)
@@ -353,13 +353,13 @@ func resourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{}) e
 			}
 
 			if err := d.Set("private_ip_addresses", addresses); err != nil {
-				return fmt.Errorf("Error setting `private_ip_addresses`: %+v", err)
+				return fmt.Errorf("setting `private_ip_addresses`: %+v", err)
 			}
 		}
 
 		if iface.IPConfigurations != nil {
 			if err := d.Set("ip_configuration", flattenNetworkInterfaceIPConfigurations(iface.IPConfigurations)); err != nil {
-				return fmt.Errorf("Error setting `ip_configuration`: %+v", err)
+				return fmt.Errorf("setting `ip_configuration`: %+v", err)
 			}
 		}
 
@@ -445,12 +445,12 @@ func resourceArmNetworkInterfaceDelete(d *schema.ResourceData, meta interface{})
 
 	future, err := client.Delete(ctx, resGroup, name)
 	if err != nil {
-		return fmt.Errorf("Error deleting Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("deleting Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for the deletion of Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for the deletion of Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	return err

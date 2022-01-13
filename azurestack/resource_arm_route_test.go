@@ -132,12 +132,12 @@ func testCheckAzureStackRouteDisappears(name string) resource.TestCheckFunc {
 
 		future, err := client.Delete(ctx, resourceGroup, rtName, name)
 		if err != nil {
-			return fmt.Errorf("Error deleting Route %q (Route Table %q / Resource Group %q): %+v", name, rtName, resourceGroup, err)
+			return fmt.Errorf("deleting Route %q (Route Table %q / Resource Group %q): %+v", name, rtName, resourceGroup, err)
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for deletion of Route %q (Route Table %q / Resource Group %q): %+v", name, rtName, resourceGroup, err)
+			return fmt.Errorf("waiting for deletion of Route %q (Route Table %q / Resource Group %q): %+v", name, rtName, resourceGroup, err)
 		}
 
 		return nil

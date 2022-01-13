@@ -202,12 +202,12 @@ func testCheckAzureStackLoadBalancerProbeDisappears(addressPoolName string, lb *
 
 		future, err := client.CreateOrUpdate(ctx, id.ResourceGroup, *lb.Name, *lb)
 		if err != nil {
-			return fmt.Errorf("Error Creating/Updating LoadBalancer: %+v", err)
+			return fmt.Errorf("Creating/Updating LoadBalancer: %+v", err)
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for completion for LoadBalancer: %+v", err)
+			return fmt.Errorf("waiting for completion for LoadBalancer: %+v", err)
 		}
 
 		_, err = client.Get(ctx, id.ResourceGroup, *lb.Name, "")

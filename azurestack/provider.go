@@ -142,7 +142,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 		}
 		config, err := builder.Build()
 		if err != nil {
-			return nil, fmt.Errorf("Error building ARM Client: %+v", err)
+			return nil, fmt.Errorf("building ARM Client: %+v", err)
 		}
 
 		skipCredentialsValidation := d.Get("skip_credentials_validation").(bool)

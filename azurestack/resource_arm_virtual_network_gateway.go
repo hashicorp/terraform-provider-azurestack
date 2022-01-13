@@ -295,11 +295,11 @@ func resourceArmVirtualNetworkGatewayCreateUpdate(d *schema.ResourceData, meta i
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, gateway)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating AzureStack Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("Creating/Updating AzureStack Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("Error waiting for completion of AzureStack Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for completion of AzureStack Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, name)
@@ -330,7 +330,7 @@ func resourceArmVirtualNetworkGatewayRead(d *schema.ResourceData, meta interface
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on AzureStack Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("making Read request on AzureStack Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	d.Set("name", resp.Name)
@@ -359,17 +359,17 @@ func resourceArmVirtualNetworkGatewayRead(d *schema.ResourceData, meta interface
 		}
 
 		if err := d.Set("ip_configuration", flattenArmVirtualNetworkGatewayIPConfigurations(gw.IPConfigurations)); err != nil {
-			return fmt.Errorf("Error setting `ip_configuration`: %+v", err)
+			return fmt.Errorf("setting `ip_configuration`: %+v", err)
 		}
 
 		vpnConfigFlat := flattenArmVirtualNetworkGatewayVpnClientConfig(gw.VpnClientConfiguration)
 		if err := d.Set("vpn_client_configuration", vpnConfigFlat); err != nil {
-			return fmt.Errorf("Error setting `vpn_client_configuration`: %+v", err)
+			return fmt.Errorf("setting `vpn_client_configuration`: %+v", err)
 		}
 
 		bgpSettingsFlat := flattenArmVirtualNetworkGatewayBgpSettings(gw.BgpSettings)
 		if err := d.Set("bgp_settings", bgpSettingsFlat); err != nil {
-			return fmt.Errorf("Error setting `bgp_settings`: %+v", err)
+			return fmt.Errorf("setting `bgp_settings`: %+v", err)
 		}
 	}
 
@@ -389,11 +389,11 @@ func resourceArmVirtualNetworkGatewayDelete(d *schema.ResourceData, meta interfa
 
 	future, err := client.Delete(ctx, resGroup, name)
 	if err != nil {
-		return fmt.Errorf("Error deleting Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("deleting Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("Error waiting for deletion of Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for deletion of Virtual Network Gateway %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	return nil

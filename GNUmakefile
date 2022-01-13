@@ -71,7 +71,6 @@ whitespace:
 	golangci-lint run ./... --no-config --disable-all --enable=whitespace --fix
 
 test: fmtcheck
-	@TEST=$(TEST) ./scripts/run-gradually-deprecated.sh
 	@TEST=$(TEST) ./scripts/run-test.sh
 
 test-compile:

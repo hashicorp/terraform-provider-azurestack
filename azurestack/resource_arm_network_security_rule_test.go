@@ -98,26 +98,6 @@ func TestAccAzureStackNetworkSecurityRule_augmented(t *testing.T) {
 	})
 }
 
-// azurestack_application_security_group not in scope, skipping
-func TestAccAzureStackNetworkSecurityRule_applicationSecurityGroups(t *testing.T) {
-	t.Skip()
-
-	rInt := acctest.RandInt()
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackNetworkSecurityRuleDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureStackNetworkSecurityRule_applicationSecurityGroups(rInt, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackNetworkSecurityRuleExists("azurestack_network_security_rule.test1"),
-				),
-			},
-		},
-	})
-}
-
 func testCheckAzureStackNetworkSecurityRuleExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
@@ -334,45 +314,4 @@ resource "azurestack_network_security_rule" "test1" {
   network_security_group_name = "${azurestack_network_security_group.test1.name}"
 }
 `, rInt, location)
-}
-
-func testAccAzureStackNetworkSecurityRule_applicationSecurityGroups(rInt int, location string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_application_security_group" "first" {
-  name                = "acctest-first%d"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_application_security_group" "second" {
-  name                = "acctest-second%d"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_network_security_group" "test" {
-  name                = "acctestnsg-%d"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_network_security_rule" "test1" {
-  name                                       = "test123"
-  resource_group_name                        = "${azurestack_resource_group.test.name}"
-  network_security_group_name                = "${azurestack_network_security_group.test.name}"
-  priority                                   = 100
-  direction                                  = "Outbound"
-  access                                     = "Allow"
-  protocol                                   = "Tcp"
-  source_application_security_group_ids      = ["${azurestack_application_security_group.first.id}"]
-  destination_application_security_group_ids = ["${azurestack_application_security_group.second.id}"]
-  source_port_ranges                         = ["10000-40000"]
-  destination_port_ranges                    = ["80", "443", "8080", "8190"]
-}
-`, rInt, location, rInt, rInt, rInt)
 }

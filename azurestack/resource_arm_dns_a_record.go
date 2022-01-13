@@ -147,7 +147,7 @@ func resourceArmDnsARecordDelete(d *schema.ResourceData, meta interface{}) error
 }
 
 func flattenAzureStackDnsARecords(records *[]dns.ARecord) []string {
-	results := make([]string, 0, len(*records))
+	results := make([]string, 0)
 
 	if records != nil {
 		for _, record := range *records {

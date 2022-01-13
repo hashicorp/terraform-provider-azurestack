@@ -343,28 +343,6 @@ func testCheckAzureStackSubnetDestroy(s *terraform.State) error {
 	return nil
 }
 
-// Not supported for 2017-03-09 profile
-func TestAccAzureStackSubnet_serviceEndpoints(t *testing.T) {
-	t.Skip()
-
-	ri := acctest.RandInt()
-	config := testAccAzureStackSubnet_serviceEndpoints(ri, testLocation())
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackSubnetDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackSubnetExists("azurestack_subnet.test"),
-				),
-			},
-		},
-	})
-}
-
 func testAccAzureStackSubnet_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
@@ -706,28 +684,4 @@ resource "azurestack_subnet" "test" {
   network_security_group_id = "${azurestack_network_security_group.test.id}"
 }
 `, rInt, location, rInt, rInt, rInt, rInt)
-}
-
-func testAccAzureStackSubnet_serviceEndpoints(rInt int, location string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctestvirtnet%d"
-  address_space       = ["10.0.0.0/16"]
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctestsubnet%d"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix       = "10.0.2.0/24"
-  service_endpoints    = ["Microsoft.Sql", "Microsoft.Storage"]
-}
-`, rInt, location, rInt, rInt)
 }

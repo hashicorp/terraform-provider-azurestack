@@ -10,26 +10,41 @@ linters:
   disable-all: true
   enable:
     - asciicheck
+    - bidichk
     - deadcode
+    - durationcheck
+    - errname
     - errcheck
+    - exhaustive
+    - exportloopref
     - gocritic
     - gofmt
+    #- gofumpt
     - goimports
     - gosimple
     - govet
+    - gosec
+    #- godot
     - ineffassign
+    - ifshort
     - nakedret
+    - nilnil
+    - nolintlint
+    - makezero
     - misspell
     - staticcheck
     - structcheck
+    #- stylecheck
     - typecheck
+    - tenv
     - unused
     - unconvert
     - unparam
     - varcheck
     - vet
     - vetshadow
-    # - whitespace # Disabled for performance reasons - Ignores cache and takes 12+ minutes to run on the repo for _any_ change
+    - whitespace
+    #- wsl
 
 linters-settings:
   errcheck:

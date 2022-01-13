@@ -1666,7 +1666,7 @@ func resourceArmVirtualMachineGetManagedDiskInfo(disk *compute.ManagedDiskParame
 	ctx := meta.(*ArmClient).StopContext
 
 	if disk == nil || disk.ID == nil {
-		return nil, nil
+		return nil, fmt.Errorf("disk or disk.id is nil")
 	}
 
 	diskId := *disk.ID

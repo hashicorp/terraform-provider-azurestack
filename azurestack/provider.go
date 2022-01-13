@@ -1,7 +1,7 @@
 package azurestack
 
 import (
-	"crypto/sha1"
+	"crypto/sha1" // nolint:gosec
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
@@ -208,7 +208,7 @@ func userDataStateFunc(v interface{}) string {
 	switch s := v.(type) {
 	case string:
 		s = base64Encode(s)
-		hash := sha1.Sum([]byte(s))
+		hash := sha1.Sum([]byte(s)) // nolint:gosec
 		return hex.EncodeToString(hash[:])
 	default:
 		return ""

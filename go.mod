@@ -13,5 +13,5 @@ require (
 	github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93 // indirect
 	github.com/hashicorp/terraform-plugin-sdk v1.1.1
 	github.com/terraform-providers/terraform-provider-azurerm v1.35.1-0.20191007093506-4b6a5b0c7b16
-	golang.org/x/crypto v0.0.0-20190820162420-60c769a6c586
+	golang.org/x/crypto v0.0.0-20190820162420-60c769a6c586 // indirect
 )

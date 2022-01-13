@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func resourceArmNetworkInterface() *schema.Resource {
@@ -215,7 +214,7 @@ func resourceArmNetworkInterfaceCreateUpdate(d *schema.ResourceData, meta interf
 
 	properties := network.InterfacePropertiesFormat{
 		EnableIPForwarding: &enableIpForwarding,
-		Primary:            utils.Bool(true),
+		Primary:            pointer.FromBool(true),
 		// EnableAcceleratedNetworking: &enableAcceleratedNetworking,
 	}
 

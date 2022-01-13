@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 const blobStorageAccountDefaultAccessTier = "Hot"
@@ -406,7 +405,7 @@ func resourceArmStorageAccountUpdate(d *schema.ResourceData, meta interface{}) e
 		if d.HasChange("enable_blob_encryption") {
 			enableEncryption := d.Get("enable_blob_encryption").(bool)
 			opts.Encryption.Services.Blob = &storage.EncryptionService{
-				Enabled: utils.Bool(enableEncryption),
+				Enabled: pointer.FromBool(enableEncryption),
 			}
 
 			d.SetPartial("enable_blob_encryption")
@@ -596,7 +595,7 @@ func expandStorageAccountCustomDomain(d *schema.ResourceData) *storage.CustomDom
 	useSubDomain := domain["use_subdomain"].(bool)
 	return &storage.CustomDomain{
 		Name:             pointer.FromString(name),
-		UseSubDomainName: utils.Bool(useSubDomain),
+		UseSubDomainName: pointer.FromBool(useSubDomain),
 	}
 }
 

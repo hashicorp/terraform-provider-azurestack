@@ -12,8 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/validate"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/validate"
 
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
 )
@@ -322,7 +321,7 @@ func expandAzureRmLoadBalancerRule(d *schema.ResourceData, lb *network.LoadBalan
 		Protocol:         network.TransportProtocol(d.Get("protocol").(string)),
 		FrontendPort:     pointer.FromInt32(d.Get("frontend_port").(int)),
 		BackendPort:      pointer.FromInt32(d.Get("backend_port").(int)),
-		EnableFloatingIP: utils.Bool(d.Get("enable_floating_ip").(bool)),
+		EnableFloatingIP: pointer.FromBool(d.Get("enable_floating_ip").(bool)),
 	}
 
 	if v, ok := d.GetOk("idle_timeout_in_minutes"); ok {

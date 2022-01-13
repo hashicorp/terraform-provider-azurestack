@@ -7,12 +7,10 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
-
-	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/suppress"
 )
 
 func resourceArmVirtualNetworkGatewayConnection() *schema.Resource {
@@ -317,7 +315,7 @@ func getArmVirtualNetworkGatewayConnectionProperties(d *schema.ResourceData) (*n
 		}
 	}
 
-	props.EnableBgp = utils.Bool(d.Get("enable_bgp").(bool))
+	props.EnableBgp = pointer.FromBool(d.Get("enable_bgp").(bool))
 
 	if v, ok := d.GetOk("routing_weight"); ok {
 		routingWeight := int32(v.(int))

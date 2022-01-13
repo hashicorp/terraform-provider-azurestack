@@ -14,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func resourceArmVirtualMachine() *schema.Resource {
@@ -1416,7 +1415,7 @@ func expandAzureStackVirtualMachineDataDisk(d *schema.ResourceData) ([]compute.D
 		}
 
 		if v, ok := config["write_accelerator_enabled"].(bool); ok {
-			data_disk.WriteAcceleratorEnabled = utils.Bool(v)
+			data_disk.WriteAcceleratorEnabled = pointer.FromBool(v)
 		}
 
 		data_disks = append(data_disks, data_disk)
@@ -1433,7 +1432,7 @@ func expandAzureStackVirtualMachineDiagnosticsProfile(d *schema.ResourceData) *c
 		bootDiagnostic := bootDiagnostics[0].(map[string]interface{})
 
 		diagnostic := &compute.BootDiagnostics{
-			Enabled:    utils.Bool(bootDiagnostic["enabled"].(bool)),
+			Enabled:    pointer.FromBool(bootDiagnostic["enabled"].(bool)),
 			StorageURI: pointer.FromString(bootDiagnostic["storage_uri"].(string)),
 		}
 
@@ -1578,7 +1577,7 @@ func expandAzureStackVirtualMachineOsDisk(d *schema.ResourceData) (*compute.OSDi
 	}
 
 	if v, ok := config["write_accelerator_enabled"].(bool); ok {
-		osDisk.WriteAcceleratorEnabled = utils.Bool(v)
+		osDisk.WriteAcceleratorEnabled = pointer.FromBool(v)
 	}
 
 	return osDisk, nil

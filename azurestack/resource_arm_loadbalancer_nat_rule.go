@@ -11,8 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/validate"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/validate"
 )
 
 func resourceArmLoadBalancerNatRule() *schema.Resource {
@@ -284,7 +283,7 @@ func expandAzureRmLoadBalancerNatRule(d *schema.ResourceData, lb *network.LoadBa
 	}
 
 	if v, ok := d.GetOk("enable_floating_ip"); ok {
-		properties.EnableFloatingIP = utils.Bool(v.(bool))
+		properties.EnableFloatingIP = pointer.FromBool(v.(bool))
 	}
 
 	if v := d.Get("frontend_ip_configuration_name").(string); v != "" {

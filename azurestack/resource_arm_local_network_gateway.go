@@ -7,7 +7,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func resourceArmLocalNetworkGateway() *schema.Resource {
@@ -220,7 +219,7 @@ func expandLocalNetworkGatewayBGPSettings(d *schema.ResourceData) *network.BgpSe
 	setting := settings[0].(map[string]interface{})
 
 	bgpSettings := network.BgpSettings{
-		Asn:               utils.Int64(int64(setting["asn"].(int))),
+		Asn:               pointer.FromInt64(int64(setting["asn"].(int))),
 		BgpPeeringAddress: pointer.FromString(setting["bgp_peering_address"].(string)),
 		PeerWeight:        pointer.FromInt32(setting["peer_weight"].(int)),
 	}

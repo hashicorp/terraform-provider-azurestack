@@ -190,7 +190,7 @@ func resourceArmVirtualNetworkRead(d *schema.ResourceData, meta interface{}) err
 	d.Set("subnet", subnets)
 
 	if vnet.DhcpOptions != nil && vnet.DhcpOptions.DNSServers != nil {
-		d.Set("dns_servers", *vnet.DhcpOptions.DNSServers)
+		d.Set("dns_servers", vnet.DhcpOptions.DNSServers)
 	}
 
 	flattenAndSetTags(d, &resp.Tags)

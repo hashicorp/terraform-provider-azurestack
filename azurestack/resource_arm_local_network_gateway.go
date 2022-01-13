@@ -154,7 +154,7 @@ func resourceArmLocalNetworkGatewayRead(d *schema.ResourceData, meta interface{}
 
 		if lnas := props.LocalNetworkAddressSpace; lnas != nil {
 			if prefixes := lnas.AddressPrefixes; prefixes != nil {
-				d.Set("address_space", *prefixes)
+				d.Set("address_space", prefixes)
 			}
 		}
 		flattenedSettings := flattenLocalNetworkGatewayBGPSettings(props.BgpSettings)

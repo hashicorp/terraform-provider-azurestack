@@ -108,7 +108,7 @@ func resourceArmDnsZoneRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("max_number_of_record_sets", resp.MaxNumberOfRecordSets)
 
 	if nameServers := resp.NameServers; nameServers != nil {
-		if err := d.Set("name_servers", *nameServers); err != nil {
+		if err := d.Set("name_servers", nameServers); err != nil {
 			return fmt.Errorf("setting `name_servers`: %+v", err)
 		}
 	}

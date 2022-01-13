@@ -13,6 +13,9 @@ func tagsSchema() *schema.Schema {
 		Optional:     true,
 		Computed:     true,
 		ValidateFunc: validateAzureStackTags,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
 	}
 }
 
@@ -20,6 +23,9 @@ func tagsForDataSourceSchema() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeMap,
 		Computed: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
 	}
 }
 

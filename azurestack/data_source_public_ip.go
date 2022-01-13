@@ -78,7 +78,7 @@ func dataSourceArmPublicIPRead(d *schema.ResourceData, meta interface{}) error {
 		}
 
 		if v := props.IdleTimeoutInMinutes; v != nil {
-			d.Set("idle_timeout_in_minutes", *resp.PublicIPAddressPropertiesFormat.IdleTimeoutInMinutes)
+			d.Set("idle_timeout_in_minutes", resp.PublicIPAddressPropertiesFormat.IdleTimeoutInMinutes)
 		}
 	}
 

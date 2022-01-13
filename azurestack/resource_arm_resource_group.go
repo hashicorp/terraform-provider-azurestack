@@ -15,7 +15,6 @@ func resourceArmResourceGroup() *schema.Resource {
 		Create: resourceArmResourceGroupCreateUpdate,
 		Read:   resourceArmResourceGroupRead,
 		Update: resourceArmResourceGroupCreateUpdate,
-		Exists: resourceArmResourceGroupExists,
 		Delete: resourceArmResourceGroupDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -84,29 +83,6 @@ func resourceArmResourceGroupRead(d *schema.ResourceData, meta interface{}) erro
 	flattenAndSetTags(d, &resp.Tags)
 
 	return nil
-}
-
-func resourceArmResourceGroupExists(d *schema.ResourceData, meta interface{}) (bool, error) {
-	client := meta.(*ArmClient).resourceGroupsClient
-	ctx := meta.(*ArmClient).StopContext
-
-	id, err := parseAzureResourceID(d.Id())
-	if err != nil {
-		return false, fmt.Errorf("parsing Azure Resource ID %q: %+v", d.Id(), err)
-	}
-
-	name := id.ResourceGroup
-
-	resp, err := client.Get(ctx, name)
-	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
-			return false, nil
-		}
-
-		return false, fmt.Errorf("reading resource group: %+v", err)
-	}
-
-	return true, nil
 }
 
 func resourceArmResourceGroupDelete(d *schema.ResourceData, meta interface{}) error {

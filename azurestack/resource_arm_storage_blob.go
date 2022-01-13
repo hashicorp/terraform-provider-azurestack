@@ -20,7 +20,6 @@ func resourceArmStorageBlob() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceArmStorageBlobCreate,
 		Read:   resourceArmStorageBlobRead,
-		Exists: resourceArmStorageBlobExists,
 		Delete: resourceArmStorageBlobDelete,
 
 		Schema: map[string]*schema.Schema{

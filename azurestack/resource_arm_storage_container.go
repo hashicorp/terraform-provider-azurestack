@@ -16,7 +16,6 @@ func resourceArmStorageContainer() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceArmStorageContainerCreate,
 		Read:   resourceArmStorageContainerRead,
-		Exists: resourceArmStorageContainerExists,
 		Delete: resourceArmStorageContainerDelete,
 
 		Schema: map[string]*schema.Schema{
@@ -42,6 +41,9 @@ func resourceArmStorageContainer() *schema.Resource {
 			"properties": {
 				Type:     schema.TypeMap,
 				Computed: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 		},
 	}
@@ -186,40 +188,6 @@ func resourceArmStorageContainerRead(d *schema.ResourceData, meta interface{}) e
 	}
 
 	return nil
-}
-
-func resourceArmStorageContainerExists(d *schema.ResourceData, meta interface{}) (bool, error) {
-	armClient := meta.(*ArmClient)
-	ctx := armClient.StopContext
-
-	resourceGroupName := d.Get("resource_group_name").(string)
-	storageAccountName := d.Get("storage_account_name").(string)
-
-	blobClient, accountExists, err := armClient.getBlobStorageClientForStorageAccount(ctx, resourceGroupName, storageAccountName)
-	if err != nil {
-		return false, err
-	}
-	if !accountExists {
-		log.Printf("[DEBUG] Storage account %q not found, removing container %q from state", storageAccountName, d.Id())
-		d.SetId("")
-		return false, nil
-	}
-
-	name := d.Get("name").(string)
-
-	log.Printf("[INFO] Checking existence of storage container %q in storage account %q", name, storageAccountName)
-	reference := blobClient.GetContainerReference(name)
-	exists, err := reference.Exists()
-	if err != nil {
-		return false, fmt.Errorf("querying existence of storage container %q in storage account %q: %s", name, storageAccountName, err)
-	}
-
-	if !exists {
-		log.Printf("[INFO] Storage container %q does not exist in account %q, removing from state...", name, storageAccountName)
-		d.SetId("")
-	}
-
-	return exists, nil
 }
 
 // resourceAzureStorageContainerDelete does all the necessary API calls to

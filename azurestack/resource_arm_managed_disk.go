@@ -220,7 +220,7 @@ func resourceArmManagedDiskRead(d *schema.ResourceData, meta interface{}) error 
 
 	if props := resp.DiskProperties; props != nil {
 		if diskSize := props.DiskSizeGB; diskSize != nil {
-			d.Set("disk_size_gb", *diskSize)
+			d.Set("disk_size_gb", diskSize)
 		}
 		if osType := props.OsType; osType != "" {
 			d.Set("os_type", string(osType))
@@ -265,12 +265,12 @@ func resourceArmManagedDiskDelete(d *schema.ResourceData, meta interface{}) erro
 func flattenAzureRmManagedDiskCreationData(d *schema.ResourceData, creationData *compute.CreationData) {
 	d.Set("create_option", string(creationData.CreateOption))
 	if ref := creationData.ImageReference; ref != nil {
-		d.Set("image_reference_id", *ref.ID)
+		d.Set("image_reference_id", ref.ID)
 	}
 	if id := creationData.SourceResourceID; id != nil {
-		d.Set("source_resource_id", *id)
+		d.Set("source_resource_id", id)
 	}
 	if creationData.SourceURI != nil {
-		d.Set("source_uri", *creationData.SourceURI)
+		d.Set("source_uri", creationData.SourceURI)
 	}
 }

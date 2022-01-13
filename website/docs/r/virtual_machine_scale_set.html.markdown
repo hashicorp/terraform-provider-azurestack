@@ -2,7 +2,6 @@
 subcategory: "Compute"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_virtual_machine_scale_set"
-sidebar_current: "docs-azurestack-resource-compute-virtualmachine-scale-set"
 description: |-
   Manages a Virtual Machine scale set.
 ---

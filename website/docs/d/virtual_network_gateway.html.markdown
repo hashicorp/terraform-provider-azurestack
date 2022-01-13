@@ -1,8 +1,7 @@
 ---
-subcategory: ""
+subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Stack: azurestack_virtual_network_gateway"
-sidebar_current: "docs-azurestack-datasource-virtual-network-x"
 description: |-
   Get information about the specified Virtual Network Gateway.
 ---

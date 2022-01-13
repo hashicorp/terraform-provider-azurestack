@@ -2,7 +2,6 @@
 subcategory: "Storage"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_storage_container"
-sidebar_current: "docs-azurestack-resource-storage-container"
 description: |-
   Manages a Azure Storage Container.
 ---

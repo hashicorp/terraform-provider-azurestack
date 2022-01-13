@@ -2,7 +2,6 @@
 subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_virtual_network"
-sidebar_current: "docs-azurestack-resource-network-virtual-network"
 description: |-
   Creates a new virtual network including any configured subnets. Each subnet can optionally be configured with a security group to be associated with the subnet.
 ---

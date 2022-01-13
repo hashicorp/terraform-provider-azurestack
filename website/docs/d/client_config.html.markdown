@@ -1,7 +1,7 @@
 ---
+subcategory: "Base"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_client_config"
-sidebar_current: "docs-azurestack-datasource-client-config"
 description: |-
   Get information about the configuration of the azurestack provider.
 ---

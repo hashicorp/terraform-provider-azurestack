@@ -1,8 +1,7 @@
 ---
-subcategory: ""
+subcategory: "Base"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_resource_group"
-sidebar_current: "docs-azurestack-datasource-resource-group"
 description: |-
   Get information about the specified resource group.
 ---

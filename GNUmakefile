@@ -91,7 +91,7 @@ acctests: fmtcheck
 debugacc: fmtcheck
 	TF_ACC=1 dlv test $(TEST) --headless --listen=:2345 --api-version=2 -- -test.v $(TESTARGS)
 
-website-lint:
+docs-lint:
 	@echo "==> Checking documentation for .html.markdown extension present"
 	@if ! find website/docs -type f -not -name "*.html.markdown" -print -exec false {} +; then \
 		echo "ERROR: file extension should be .html.markdown"; \
@@ -116,6 +116,6 @@ teamcity-test:
 	@$(MAKE) -C .teamcity test
 
 
-pr-check: generate build test lint tflint website-lint
+pr-check: generate build test lint tflint docs-lint
 
 .PHONY: build test testacc vet fmt fmtcheck errcheck pr-check test-compile website website-test validate-examples

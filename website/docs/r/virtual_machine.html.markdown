@@ -2,7 +2,6 @@
 subcategory: "Compute"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_virtual_machine"
-sidebar_current: "docs-azurestack-resource-compute-virtual-machine"
 description: |-
   Manages a Virtual Machine.
 ---

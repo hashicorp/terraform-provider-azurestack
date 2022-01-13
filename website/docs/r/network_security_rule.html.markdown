@@ -2,7 +2,6 @@
 subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_network_security_rule"
-sidebar_current: "docs-azurestack-resource-network-security-rule"
 description: |-
   Manages a Network Security Rule.
 

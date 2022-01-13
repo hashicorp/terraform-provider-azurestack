@@ -2,7 +2,6 @@
 subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Stack: azurestack_virtual_network_gateway_connection"
-sidebar_current: "docs-azurestack-resource-network-virtual-network-gateway-connection"
 description: |-
   Manages a connection in an existing Virtual Network Gateway.
 ---

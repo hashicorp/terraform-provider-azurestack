@@ -1,8 +1,7 @@
 ---
-subcategory: ""
+subcategory: "Compute"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_platform_image"
-sidebar_current: "docs-azurestack-datasource-platform-image"
 description: |-
   Gets information about a Platform Image.
 ---

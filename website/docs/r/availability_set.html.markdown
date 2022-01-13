@@ -2,7 +2,6 @@
 subcategory: "Compute"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_availability_set"
-sidebar_current: "docs-azurestack-resource-compute-availability-set"
 description: |-
   Manages an availability set for virtual machines.
 

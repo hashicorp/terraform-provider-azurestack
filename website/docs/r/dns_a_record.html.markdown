@@ -2,7 +2,6 @@
 subcategory: "DNS"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_dns_a_record"
-sidebar_current: "docs-azurestack-resource-dns-a-record"
 description: |-
   Manages a DNS A Record.
 ---

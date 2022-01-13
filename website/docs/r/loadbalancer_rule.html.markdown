@@ -2,7 +2,6 @@
 subcategory: "Load Balancer"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_lb_rule"
-sidebar_current: "docs-azurestack-resource-loadbalancer-rule"
 description: |-
   Manages a Load Balancer Rule.
 ---

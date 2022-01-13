@@ -1,8 +1,7 @@
 ---
-subcategory: ""
+subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_subnet"
-sidebar_current: "docs-azurestack-datasource-subnet"
 description: |-
   Get information about the specified Subnet located within a Virtual Network.
 ---

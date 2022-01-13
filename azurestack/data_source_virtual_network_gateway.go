@@ -216,7 +216,7 @@ func dataSourceArmVirtualNetworkGatewayRead(d *schema.ResourceData, meta interfa
 		d.Set("enable_bgp", gw.EnableBgp)
 
 		// ActiveActive not yet supported on 2017-03-09 service
-		//d.Set("active_active", gw.ActiveActive)
+		// d.Set("active_active", gw.ActiveActive)
 
 		if string(gw.VpnType) != "" {
 			d.Set("vpn_type", string(gw.VpnType))

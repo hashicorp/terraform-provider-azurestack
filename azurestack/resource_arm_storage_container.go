@@ -47,7 +47,7 @@ func resourceArmStorageContainer() *schema.Resource {
 	}
 }
 
-//Following the naming convention as laid out in the docs
+// Following the naming convention as laid out in the docs
 func validateArmStorageContainerName(v interface{}, k string) (ws []string, errors []error) {
 	value := v.(string)
 	if !regexp.MustCompile(`^\$root$|^[0-9a-z-]+$`).MatchString(value) {

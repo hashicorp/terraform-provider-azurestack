@@ -251,7 +251,7 @@ func getVirtualNetworkProperties(ctx context.Context, d *schema.ResourceData, me
 
 			name := subnet["name"].(string)
 			log.Printf("[INFO] setting subnets inside vNet, processing %q", name)
-			//since subnets can also be created outside of vNet definition (as root objects)
+			// since subnets can also be created outside of vNet definition (as root objects)
 			// do a GET on subnet properties from the server before setting them
 			resGroup := d.Get("resource_group_name").(string)
 			vnetName := d.Get("name").(string)
@@ -264,7 +264,7 @@ func getVirtualNetworkProperties(ctx context.Context, d *schema.ResourceData, me
 			prefix := subnet["address_prefix"].(string)
 			secGroup := subnet["security_group"].(string)
 
-			//set the props from config and leave the rest intact
+			// set the props from config and leave the rest intact
 			subnetObj.Name = &name
 			if subnetObj.SubnetPropertiesFormat == nil {
 				subnetObj.SubnetPropertiesFormat = &network.SubnetPropertiesFormat{}
@@ -309,7 +309,7 @@ func resourceAzureSubnetHash(v interface{}) int {
 }
 
 func getExistingSubnet(ctx context.Context, resGroup string, vnetName string, subnetName string, meta interface{}) (*network.Subnet, error) {
-	//attempt to retrieve existing subnet from the server
+	// attempt to retrieve existing subnet from the server
 	existingSubnet := network.Subnet{}
 	subnetClient := meta.(*ArmClient).subnetClient
 	resp, err := subnetClient.Get(ctx, resGroup, vnetName, subnetName, "")
@@ -318,7 +318,7 @@ func getExistingSubnet(ctx context.Context, resGroup string, vnetName string, su
 		if resp.StatusCode == http.StatusNotFound {
 			return &existingSubnet, nil
 		}
-		//raise an error if there was an issue other than 404 in getting subnet properties
+		// raise an error if there was an issue other than 404 in getting subnet properties
 		return nil, err
 	}
 

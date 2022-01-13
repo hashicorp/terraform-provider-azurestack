@@ -568,7 +568,7 @@ func expandAzureStackNetworkInterfaceIpConfigurations(d *schema.ResourceData) ([
 			properties.Primary = &b
 		}
 
-		//also this
+		// also this
 		// if v, ok := data["application_gateway_backend_address_pools_ids"]; ok {
 		// 	var ids []network.ApplicationGatewayBackendAddressPool
 		// 	pools := v.(*schema.Set).List()

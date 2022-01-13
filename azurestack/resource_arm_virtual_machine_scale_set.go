@@ -398,7 +398,7 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 				Set: resourceArmVirtualMachineScaleSetNetworkConfigurationHash,
 			},
 
-			//Not supported on profile: 2017-03-09
+			// Not supported on profile: 2017-03-09
 			// "boot_diagnostics": {
 			// 	Type:     schema.TypeList,
 			// 	Optional: true,
@@ -1520,7 +1520,7 @@ func expandAzureStackVirtualMachineScaleSetsStorageProfileOsDisk(d *schema.Resou
 		osDisk.ManagedDisk = managedDisk
 	}
 
-	//BEGIN: code to be removed after GH-13016 is merged
+	// BEGIN: code to be removed after GH-13016 is merged
 	if image != "" && managedDiskType != "" {
 		return nil, fmt.Errorf("[ERROR] Conflict between `image` and `managed_disk_type` on `storage_profile_os_disk` (only one or the other can be used)")
 	}
@@ -1528,7 +1528,7 @@ func expandAzureStackVirtualMachineScaleSetsStorageProfileOsDisk(d *schema.Resou
 	if len(vhd_containers) > 0 && managedDiskType != "" {
 		return nil, fmt.Errorf("[ERROR] Conflict between `vhd_containers` and `managed_disk_type` on `storage_profile_os_disk` (only one or the other can be used)")
 	}
-	//END: code to be removed after GH-13016 is merged
+	// END: code to be removed after GH-13016 is merged
 
 	return osDisk, nil
 }

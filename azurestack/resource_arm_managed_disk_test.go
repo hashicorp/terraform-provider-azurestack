@@ -70,7 +70,7 @@ func TestAccAzureStackManagedDisk_import(t *testing.T) {
 		CheckDestroy: testCheckAzureStackManagedDiskDestroy,
 		Steps: []resource.TestStep{
 			{
-				//need to create a vm and then delete it so we can use the vhd to test import
+				// need to create a vm and then delete it so we can use the vhd to test import
 				Config:             testAccAzureStackVirtualMachine_basicLinuxMachine(ri, location),
 				Destroy:            false,
 				ExpectNonEmptyPlan: true,

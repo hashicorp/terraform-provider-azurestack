@@ -1321,7 +1321,7 @@ func testGetAzureStackVirtualMachineManagedDisk(managedDiskID *string) (*compute
 	client := testAccProvider.Meta().(*ArmClient).diskClient
 	ctx := testAccProvider.Meta().(*ArmClient).StopContext
 	d, err := client.Get(ctx, resourceGroup, name)
-	//check status first since sdk client returns error if not 200
+	// check status first since sdk client returns error if not 200
 	if d.Response.StatusCode == http.StatusNotFound {
 		return &d, nil
 	}

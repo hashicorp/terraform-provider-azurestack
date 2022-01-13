@@ -64,7 +64,7 @@ func TestAccAzureStackVirtualMachineScaleSet_basicPublicIP(t *testing.T) {
 	})
 }
 
-//Not supported accelerated networking
+// Not supported accelerated networking
 func TestAccAzureStackVirtualMachineScaleSet_basicAcceleratedNetworking(t *testing.T) {
 	t.Skip()
 	resourceName := "azurestack_virtual_machine_scale_set.test"
@@ -255,7 +255,7 @@ func TestAccAzureStackVirtualMachineScaleSet_linuxUpdated(t *testing.T) {
 	})
 }
 
-//Update customData is not allowed by the backend
+// Update customData is not allowed by the backend
 func TestAccAzureStackVirtualMachineScaleSet_customDataUpdated(t *testing.T) {
 	t.Skip()
 	resourceName := "azurestack_virtual_machine_scale_set.test"
@@ -408,7 +408,7 @@ func TestAccAzureStackVirtualMachineScaleSet_planManagedDisk(t *testing.T) {
 	})
 }
 
-//Not supported yet.
+// Not supported yet.
 func TestAccAzureStackVirtualMachineScaleSet_customImage(t *testing.T) {
 	t.Skip()
 	resourceName := "azurestack_virtual_machine_scale_set.test"
@@ -427,7 +427,7 @@ func TestAccAzureStackVirtualMachineScaleSet_customImage(t *testing.T) {
 		CheckDestroy: testCheckAzureStackVirtualMachineScaleSetDestroy,
 		Steps: []resource.TestStep{
 			{
-				//need to create a vm and then reference it in the image creation
+				// need to create a vm and then reference it in the image creation
 				Config:  preConfig,
 				Destroy: false,
 				Check: resource.ComposeTestCheckFunc(
@@ -446,7 +446,7 @@ func TestAccAzureStackVirtualMachineScaleSet_customImage(t *testing.T) {
 	})
 }
 
-//Provider doesn't not supported application gateway
+// Provider doesn't not supported application gateway
 func TestAccAzureStackVirtualMachineScaleSet_applicationGateway(t *testing.T) {
 	t.Skip()
 	resourceName := "azurestack_virtual_machine_scale_set.test"
@@ -548,7 +548,7 @@ func TestAccAzureStackVirtualMachineScaleSet_priority(t *testing.T) {
 	})
 }
 
-//Backend doesn't support identity field
+// Backend doesn't support identity field
 func TestAccAzureStackVirtualMachineScaleSet_MSI(t *testing.T) {
 	t.Skip()
 	resourceName := "azurestack_virtual_machine_scale_set.test"
@@ -3942,7 +3942,7 @@ func testCheckAzureStackImageExists(name string, shouldExist bool) resource.Test
 }
 
 func deprovisionVM(userName string, password string, hostName string, port string) error {
-	//SSH into the machine and execute a waagent deprovisioning command
+	// SSH into the machine and execute a waagent deprovisioning command
 	var b bytes.Buffer
 	cmd := "sudo waagent -verbose -deprovision+user -force"
 

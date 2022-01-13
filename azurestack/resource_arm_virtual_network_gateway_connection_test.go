@@ -34,7 +34,7 @@ func TestAccAzureStackVirtualNetworkGatewayConnection_sitetosite(t *testing.T) {
 	})
 }
 
-//Vnet to VnetConnection is not supported yet.
+// Vnet to VnetConnection is not supported yet.
 func TestAccAzureStackVirtualNetworkGatewayConnection_vnettonet(t *testing.T) {
 	t.Skip()
 	firstResourceName := "azurestack_virtual_network_gateway_connection.test_1"
@@ -63,7 +63,7 @@ func TestAccAzureStackVirtualNetworkGatewayConnection_vnettonet(t *testing.T) {
 	})
 }
 
-//Vnet to VnetConnection is not supported yet.
+// Vnet to VnetConnection is not supported yet.
 func TestAccAzureStackVirtualNetworkGatewayConnection_ipsecpolicy(t *testing.T) {
 	t.Skip()
 	ri := acctest.RandInt()
@@ -84,7 +84,7 @@ func TestAccAzureStackVirtualNetworkGatewayConnection_ipsecpolicy(t *testing.T) 
 	})
 }
 
-//Vnet to VnetConnection is not supported yet.
+// Vnet to VnetConnection is not supported yet.
 func TestAccAzureStackVirtualNetworkGatewayConnection_updatingSharedKey(t *testing.T) {
 	t.Skip()
 	firstResourceName := "azurestack_virtual_network_gateway_connection.test_1"

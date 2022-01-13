@@ -304,7 +304,7 @@ func (armClient *ArmClient) getKeyForStorageAccount(ctx context.Context, resourc
 		}
 
 		keys := *accountKeys.Keys
-		if len(keys) <= 0 {
+		if len(keys) == 0 {
 			return "", false, fmt.Errorf("No keys returned for storage account %q", storageAccountName)
 		}
 

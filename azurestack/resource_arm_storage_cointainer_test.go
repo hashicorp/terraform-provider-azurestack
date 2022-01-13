@@ -179,7 +179,7 @@ func testCheckAzureStackStorageContainerDestroy(s *terraform.State) error {
 		ctx := armClient.StopContext
 		blobClient, accountExists, err := armClient.getBlobStorageClientForStorageAccount(ctx, resourceGroup, storageAccountName)
 		if err != nil {
-			//If we can't get keys then the blob can't exist
+			// If we can't get keys then the blob can't exist
 			return nil
 		}
 		if !accountExists {

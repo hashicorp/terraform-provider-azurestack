@@ -57,7 +57,7 @@ func TestAccAzureStackVirtualNetworkGateway_lowerCaseSubnetName(t *testing.T) {
 	})
 }
 
-//VpnGw1 sku is not supported yet.
+// VpnGw1 sku is not supported yet.
 func TestAccAzureStackVirtualNetworkGateway_vpnGw1(t *testing.T) {
 	t.Skip()
 	ri := acctest.RandInt()
@@ -78,7 +78,7 @@ func TestAccAzureStackVirtualNetworkGateway_vpnGw1(t *testing.T) {
 	})
 }
 
-//VpnGw1 sku an activeActive are not supported yet.
+// VpnGw1 sku an activeActive are not supported yet.
 func TestAccAzureStackVirtualNetworkGateway_activeActive(t *testing.T) {
 	t.Skip()
 
@@ -121,7 +121,7 @@ func TestAccAzureStackVirtualNetworkGateway_standard(t *testing.T) {
 	})
 }
 
-//VpnGw2 sku is not supported yet.
+// VpnGw2 sku is not supported yet.
 func TestAccAzureStackVirtualNetworkGateway_vpnGw2(t *testing.T) {
 	t.Skip()
 
@@ -145,7 +145,7 @@ func TestAccAzureStackVirtualNetworkGateway_vpnGw2(t *testing.T) {
 	})
 }
 
-//VpnGw3 sku is not supported yet.
+// VpnGw3 sku is not supported yet.
 func TestAccAzureStackVirtualNetworkGateway_vpnGw3(t *testing.T) {
 	t.Skip()
 
@@ -184,8 +184,8 @@ func TestAccAzureStackVirtualNetworkGateway_vpnClientConfig(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckAzureStackVirtualNetworkGatewayExists(resourceName),
 					resource.TestCheckResourceAttr(resourceName, "vpn_client_configuration.0.address_space.0", "10.2.0.0/24"),
-					//resource.TestCheckResourceAttr(resourceName, "vpn_client_configuration.0.radius_server_address", "1.2.3.4"),
-					//resource.TestCheckResourceAttr(resourceName, "vpn_client_configuration.0.vpn_client_protocols.#", "2"),
+					// resource.TestCheckResourceAttr(resourceName, "vpn_client_configuration.0.radius_server_address", "1.2.3.4"),
+					// resource.TestCheckResourceAttr(resourceName, "vpn_client_configuration.0.vpn_client_protocols.#", "2"),
 				),
 			},
 		},

@@ -119,6 +119,7 @@ func TestAccAzureStackVirtualNetwork_bug373(t *testing.T) {
 	})
 }
 
+// nolint:unparam
 func testCheckAzureStackVirtualNetworkExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API

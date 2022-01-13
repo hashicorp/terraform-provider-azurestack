@@ -215,6 +215,7 @@ func TestAccAzureStackStorageAccount_NonStandardCasing(t *testing.T) {
 	})
 }
 
+// nolint:unparam
 func testCheckAzureStackStorageAccountExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API

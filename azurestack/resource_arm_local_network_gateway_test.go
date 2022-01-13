@@ -206,6 +206,7 @@ func TestAccAzureStackLocalNetworkGateway_bgpSettingsComplete(t *testing.T) {
 // testCheckAzureStackLocalNetworkGatewayExists returns the resource.TestCheckFunc
 // which checks whether or not the expected local network gateway exists both
 // in the schema, and on Azure.
+// nolint:unparam
 func testCheckAzureStackLocalNetworkGatewayExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// first check within the schema for the local network gateway:

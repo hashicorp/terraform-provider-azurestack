@@ -164,6 +164,7 @@ func TestAccAzureStackManagedDisk_update(t *testing.T) {
 	})
 }
 
+// nolint:unparam
 func testCheckAzureStackManagedDiskExists(resourceName string, d *compute.Disk, shouldExist bool) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]

@@ -440,6 +440,7 @@ func testGetAzureStackVirtualMachineScaleSet(s *terraform.State, resourceName st
 	return &vmss, err
 }
 
+// nolint:unparam
 func testCheckAzureStackVirtualMachineScaleSetExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		_, err := testGetAzureStackVirtualMachineScaleSet(s, name)
@@ -556,6 +557,7 @@ func testCheckAzureStackVirtualMachineScaleSetIsPrimary(name string) resource.Te
 	}
 }
 
+// nolint:unparam
 func testCheckAzureStackVirtualMachineScaleSetExtension(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resp, err := testGetAzureStackVirtualMachineScaleSet(s, name)

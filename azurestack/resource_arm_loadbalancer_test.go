@@ -153,6 +153,7 @@ func TestAccAzureStackLoadBalancer_tags(t *testing.T) {
 	})
 }
 
+// nolint:unparam
 func testCheckAzureStackLoadBalancerExists(name string, lb *network.LoadBalancer) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]

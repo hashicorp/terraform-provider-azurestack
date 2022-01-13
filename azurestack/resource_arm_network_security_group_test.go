@@ -170,6 +170,7 @@ func TestAccAzureStackNetworkSecurityGroup_addingExtraRules(t *testing.T) {
 	})
 }
 
+// nolint:unparam
 func testCheckAzureStackNetworkSecurityGroupExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]

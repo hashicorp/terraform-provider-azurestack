@@ -152,6 +152,7 @@ func TestAccAzureStackAvailabilitySet_managed(t *testing.T) {
 	})
 }
 
+// nolint:unparam
 func testCheckAzureStackAvailabilitySetExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API

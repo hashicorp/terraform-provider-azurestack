@@ -67,7 +67,6 @@ func TestAccAzureStackVirtualMachineExtension_concurrent(t *testing.T) {
 
 // The extension is not available on test account
 func TestAccAzureStackVirtualMachineExtension_linuxDiagnostics(t *testing.T) {
-
 	t.Skip()
 
 	ri := acctest.RandInt()

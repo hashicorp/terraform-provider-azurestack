@@ -335,7 +335,6 @@ func flattenLoadBalancerFrontendIpConfiguration(ipConfigs *[]network.FrontendIPC
 				}
 
 				ipConfig["inbound_nat_rules"] = schema.NewSet(schema.HashString, inboundNatRules)
-
 			}
 		}
 

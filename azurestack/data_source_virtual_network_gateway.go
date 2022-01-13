@@ -1,9 +1,8 @@
 package azurestack
 
 import (
-	"fmt"
-
 	"bytes"
+	"fmt"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"

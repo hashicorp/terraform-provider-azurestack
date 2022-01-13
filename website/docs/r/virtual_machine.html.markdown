@@ -51,7 +51,7 @@ resource "azurestack_virtual_machine" "test" {
   name                  = "acctvm"
   location              = azurestack_resource_group.test.location
   resource_group_name   = azurestack_resource_group.test.name
-  network_interface_ids = [ azurestack_network_interface.test.id ]
+  network_interface_ids = [azurestack_network_interface.test.id]
   vm_size               = "Standard_F2"
 
   # Uncomment this line to delete the OS disk automatically when deleting the VM

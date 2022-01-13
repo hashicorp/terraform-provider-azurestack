@@ -86,7 +86,6 @@ func TestAccAzureStackRoute_multipleRoutes(t *testing.T) {
 
 func testCheckAzureStackRouteExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %q", name)
@@ -116,7 +115,6 @@ func testCheckAzureStackRouteExists(name string) resource.TestCheckFunc {
 
 func testCheckAzureStackRouteDisappears(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %s", name)

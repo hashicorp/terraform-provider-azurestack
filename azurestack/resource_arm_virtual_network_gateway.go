@@ -371,7 +371,6 @@ func resourceArmVirtualNetworkGatewayRead(d *schema.ResourceData, meta interface
 		if err := d.Set("bgp_settings", bgpSettingsFlat); err != nil {
 			return fmt.Errorf("Error setting `bgp_settings`: %+v", err)
 		}
-
 	}
 
 	flattenAndSetTags(d, &resp.Tags)
@@ -783,7 +782,6 @@ func validateArmVirtualNetworkGatewayExpressRouteSku() schema.SchemaValidateFunc
 }
 
 func resourceArmVirtualNetworkGatewayCustomizeDiff(diff *schema.ResourceDiff, v interface{}) error {
-
 	if vpnClient, ok := diff.GetOk("vpn_client_configuration"); ok {
 		if vpnClientConfig, ok := vpnClient.([]interface{})[0].(map[string]interface{}); ok {
 			hasRadiusAddress := vpnClientConfig["radius_server_address"] != ""

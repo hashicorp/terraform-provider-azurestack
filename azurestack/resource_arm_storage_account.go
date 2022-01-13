@@ -211,7 +211,6 @@ func resourceArmStorageAccount() *schema.Resource {
 			"tags": tagsSchema(),
 		},
 	}
-
 }
 
 func resourceArmStorageAccountCreate(d *schema.ResourceData, meta interface{}) error {
@@ -277,7 +276,6 @@ func resourceArmStorageAccountCreate(d *schema.ResourceData, meta interface{}) e
 					KeySource: storage.KeySource(storageAccountEncryptionSource),
 				}
 		}
-
 	}
 
 	// Create

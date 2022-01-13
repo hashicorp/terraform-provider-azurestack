@@ -767,14 +767,12 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 	}
 
 	if properties := resp.VirtualMachineScaleSetProperties; properties != nil {
-
 		if upgradePolicy := properties.UpgradePolicy; upgradePolicy != nil {
 			d.Set("upgrade_policy_mode", upgradePolicy.Mode)
 		}
 		d.Set("overprovision", properties.Overprovision)
 
 		if profile := properties.VirtualMachineProfile; profile != nil {
-
 			osProfile := flattenAzureStackVirtualMachineScaleSetOsProfile(d, profile.OsProfile)
 			if err := d.Set("os_profile", osProfile); err != nil {
 				return fmt.Errorf("[DEBUG] Error setting `os_profile`: %#v", err)
@@ -793,7 +791,6 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 					if err := d.Set("os_profile_secrets", flattenedSecrets); err != nil {
 						return fmt.Errorf("[DEBUG] Error setting `os_profile_secrets`: %#v", err)
 					}
-
 				}
 
 				if windowsConfiguration := osProfile.WindowsConfiguration; windowsConfiguration != nil {
@@ -812,7 +809,6 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 			}
 
 			if storageProfile := profile.StorageProfile; storageProfile != nil {
-
 				if dataDisks := resp.VirtualMachineProfile.StorageProfile.DataDisks; dataDisks != nil {
 					flattenedDataDisks := flattenAzureStackVirtualMachineScaleSetStorageProfileDataDisk(dataDisks)
 					if err := d.Set("storage_profile_data_disk", flattenedDataDisks); err != nil {
@@ -870,7 +866,6 @@ func resourceArmVirtualMachineScaleSetDelete(d *schema.ResourceData, meta interf
 
 	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
 		return fmt.Errorf("Error Deleting Virtual Machine Scale Set %s (resource group %s) ID: %+v", name, resGroup, err)
-
 	}
 
 	return nil

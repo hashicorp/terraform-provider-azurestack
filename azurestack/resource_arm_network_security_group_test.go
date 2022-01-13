@@ -172,7 +172,6 @@ func TestAccAzureStackNetworkSecurityGroup_addingExtraRules(t *testing.T) {
 
 // Not supported by the profile by now
 func TestAccAzureStackNetworkSecurityGroup_augmented(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_network_security_group.test"
@@ -195,7 +194,6 @@ func TestAccAzureStackNetworkSecurityGroup_augmented(t *testing.T) {
 
 // application security group not in scope
 func TestAccAzureStackNetworkSecurityGroup_applicationSecurityGroup(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_network_security_group.test"
@@ -218,7 +216,6 @@ func TestAccAzureStackNetworkSecurityGroup_applicationSecurityGroup(t *testing.T
 
 func testCheckAzureStackNetworkSecurityGroupExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %q", name)
@@ -246,9 +243,7 @@ func testCheckAzureStackNetworkSecurityGroupExists(name string) resource.TestChe
 }
 
 func testCheckAzureStackNetworkSecurityGroupDisappears(name string) resource.TestCheckFunc {
-
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %s", name)

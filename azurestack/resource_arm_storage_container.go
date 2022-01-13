@@ -3,10 +3,9 @@ package azurestack
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 	"time"
-
-	"regexp"
 
 	"github.com/Azure/azure-sdk-for-go/storage"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"

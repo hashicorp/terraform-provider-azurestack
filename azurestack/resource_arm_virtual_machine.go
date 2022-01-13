@@ -1077,7 +1077,6 @@ func flattenAzureStackVirtualMachineOsProfileWindowsConfiguration(config *comput
 }
 
 func flattenAzureStackVirtualMachineOsProfileLinuxConfiguration(config *compute.LinuxConfiguration) []interface{} {
-
 	result := make(map[string]interface{})
 	result["disable_password_authentication"] = *config.DisablePasswordAuthentication
 
@@ -1277,7 +1276,6 @@ func expandAzureStackVirtualMachineOsProfileLinuxConfig(d *schema.ResourceData) 
 	linuxKeys := linuxConfig["ssh_keys"].([]interface{})
 	sshPublicKeys := []compute.SSHPublicKey{}
 	for _, key := range linuxKeys {
-
 		sshKey, ok := key.(map[string]interface{})
 		if !ok {
 			continue

@@ -114,7 +114,6 @@ func TestAccAzureStackNetworkInterface_removeNetworkSecurityGroupId(t *testing.T
 // Not supported by the account
 // Microsoft.Network/AllowMultipleIpConfigurationsPerNic
 func TestAccAzureStackNetworkInterface_multipleSubnets(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_network_interface.test"
@@ -143,7 +142,6 @@ func TestAccAzureStackNetworkInterface_multipleSubnets(t *testing.T) {
 // required to carry out the requested operation.
 
 func TestAccAzureStackNetworkInterface_multipleSubnetsPrimary(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_network_interface.test"
@@ -208,7 +206,6 @@ func TestAccAzureStackNetworkInterface_enableIPForwarding(t *testing.T) {
 
 // enableAcceleratedNetworking not in the profile
 func TestAccAzureStackNetworkInterface_enableAcceleratedNetworking(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_network_interface.test"
@@ -237,7 +234,6 @@ func TestAccAzureStackNetworkInterface_enableAcceleratedNetworking(t *testing.T)
 // Will skip this until I add LB
 
 func TestAccAzureStackNetworkInterface_multipleLoadBalancers(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_network_interface.test"
@@ -264,7 +260,6 @@ func TestAccAzureStackNetworkInterface_multipleLoadBalancers(t *testing.T) {
 }
 
 func TestAccAzureStackNetworkInterface_applicationGateway(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_network_interface.test"
@@ -326,7 +321,6 @@ func TestAccAzureStackNetworkInterface_withTags(t *testing.T) {
 
 // missing public ip
 func TestAccAzureStackNetworkInterface_bug7986(t *testing.T) {
-
 	t.Skip()
 
 	rInt := acctest.RandInt()
@@ -348,7 +342,6 @@ func TestAccAzureStackNetworkInterface_bug7986(t *testing.T) {
 
 // app security group is not supported by the profile
 func TestAccAzureStackNetworkInterface_applicationSecurityGroups(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_network_interface.test"
@@ -371,7 +364,6 @@ func TestAccAzureStackNetworkInterface_applicationSecurityGroups(t *testing.T) {
 
 // Not enough configuration to run this.
 func TestAccAzureStackNetworkInterface_internalFQDN(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_network_interface.test"

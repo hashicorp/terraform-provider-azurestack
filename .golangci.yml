@@ -1,3 +1,7 @@
+run:
+  timeout: 60m
+  modules-download-mode: vendor
+
 issues:
   max-per-linter: 0
   max-same-issues: 0
@@ -5,13 +9,15 @@ issues:
 linters:
   disable-all: true
   enable:
+    - asciicheck
     - deadcode
     - errcheck
+    - gocritic
     - gofmt
+    - goimports
     - gosimple
     - govet
     - ineffassign
-    - interfacer
     - nakedret
     - misspell
     - staticcheck
@@ -19,14 +25,18 @@ linters:
     - typecheck
     - unused
     - unconvert
+    - unparam
     - varcheck
     - vet
     - vetshadow
+    # - whitespace # Disabled for performance reasons - Ignores cache and takes 12+ minutes to run on the repo for _any_ change
 
 linters-settings:
   errcheck:
-    ignore: github.com/hashicorp/terraform-plugin-sdk/helper/schema:ForceNew|Set,fmt:.*,io:Close
-
-run:
-  deadline: 10m10s
-  modules-download-mode: vendor
+    ignore: github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema:ForceNew|Set,fmt:.*,io:Close
+  misspell:
+    ignore-words:
+      - hdinsight
+      - exportfs
+  nakedret:
+    max-func-lines: 40

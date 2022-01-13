@@ -100,7 +100,6 @@ func TestAccAzureStackNetworkSecurityRule_augmented(t *testing.T) {
 
 // azurestack_application_security_group not in scope, skipping
 func TestAccAzureStackNetworkSecurityRule_applicationSecurityGroups(t *testing.T) {
-
 	t.Skip()
 
 	rInt := acctest.RandInt()
@@ -121,7 +120,6 @@ func TestAccAzureStackNetworkSecurityRule_applicationSecurityGroups(t *testing.T
 
 func testCheckAzureStackNetworkSecurityRuleExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %s", name)
@@ -151,7 +149,6 @@ func testCheckAzureStackNetworkSecurityRuleExists(name string) resource.TestChec
 
 func testCheckAzureStackNetworkSecurityRuleDisappears(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %q", name)
@@ -187,7 +184,6 @@ func testCheckAzureStackNetworkSecurityRuleDestroy(s *terraform.State) error {
 	ctx := testAccProvider.Meta().(*ArmClient).StopContext
 
 	for _, rs := range s.RootModule().Resources {
-
 		if rs.Type != "azurestack_network_security_rule" {
 			continue
 		}

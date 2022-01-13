@@ -388,7 +388,6 @@ func TestAccAzureStackVirtualMachine_ChangeComputerName(t *testing.T) {
 
 // AvailabilitySet not yet supported
 func TestAccAzureStackVirtualMachine_ChangeAvailabilitySet(t *testing.T) {
-
 	t.Skip()
 
 	var afterCreate, afterUpdate compute.VirtualMachine
@@ -484,7 +483,6 @@ func TestAccAzureStackVirtualMachine_changeOSDiskVhdUri(t *testing.T) {
 // Error code Code="VmProvisioningTimeout" Message="VM failed to provision with
 // timeout."
 func TestAccAzureStackVirtualMachine_plan(t *testing.T) {
-
 	t.Skip()
 
 	var vm compute.VirtualMachine

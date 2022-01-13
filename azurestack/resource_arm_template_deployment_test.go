@@ -50,7 +50,6 @@ func TestAccAzureStackTemplateDeployment_disappears(t *testing.T) {
 }
 
 func TestAccAzureStackTemplateDeployment_withParams(t *testing.T) {
-
 	ri := acctest.RandInt()
 	config := testAccAzureStackTemplateDeployment_withParams(ri, testLocation())
 	resource.ParallelTest(t, resource.TestCase{
@@ -70,7 +69,6 @@ func TestAccAzureStackTemplateDeployment_withParams(t *testing.T) {
 }
 
 func TestAccAzureStackTemplateDeployment_withParamsBody(t *testing.T) {
-
 	ri := acctest.RandInt()
 	config := testaccAzureStackTemplateDeployment_withParamsBody(ri, testLocation())
 	resource.ParallelTest(t, resource.TestCase{
@@ -87,11 +85,9 @@ func TestAccAzureStackTemplateDeployment_withParamsBody(t *testing.T) {
 			},
 		},
 	})
-
 }
 
 func TestAccAzureStackTemplateDeployment_withOutputs(t *testing.T) {
-
 	ri := acctest.RandInt()
 	config := testAccAzureStackTemplateDeployment_withOutputs(ri, testLocation())
 	resource.ParallelTest(t, resource.TestCase{
@@ -431,7 +427,6 @@ DEPLOY
   deployment_mode = "Complete"
 }
 `, rInt, location, rInt, rInt)
-
 }
 
 func testAccAzureStackTemplateDeployment_withParams(rInt int, location string) string {

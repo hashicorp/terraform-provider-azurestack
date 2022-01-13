@@ -157,7 +157,6 @@ func dataSourceArmStorageAccount() *schema.Resource {
 			"tags": tagsForDataSourceSchema(),
 		},
 	}
-
 }
 
 func dataSourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) error {

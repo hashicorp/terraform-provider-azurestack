@@ -89,7 +89,6 @@ func TestAccAzureStackVirtualMachineScaleSet_basicAcceleratedNetworking(t *testi
 // IP forwarding is currently not supported by AzureStack
 
 func TestAccAzureStackVirtualMachineScaleSet_basicIPForwarding(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_virtual_machine_scale_set.test"
@@ -116,7 +115,6 @@ func TestAccAzureStackVirtualMachineScaleSet_basicIPForwarding(t *testing.T) {
 
 // DNS Settings is not supported by the AzureStack
 func TestAccAzureStackVirtualMachineScaleSet_basicDNSSettings(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_virtual_machine_scale_set.test"
@@ -144,7 +142,6 @@ func TestAccAzureStackVirtualMachineScaleSet_basicDNSSettings(t *testing.T) {
 
 // Not supported by Azurestack
 func TestAccAzureStackVirtualMachineScaleSet_bootDiagnostic(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_virtual_machine_scale_set.test"
@@ -209,7 +206,6 @@ func TestAccAzureStackVirtualMachineScaleSet_basicWindows(t *testing.T) {
 
 // Not supportted by AzureStack
 func TestAccAzureStackVirtualMachineScaleSet_singlePlacementGroupFalse(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_virtual_machine_scale_set.test"
@@ -3913,7 +3909,6 @@ func testGeneralizeVMImage(resourceGroup string, vmName string, userName string,
 
 func testCheckAzureStackImageExists(name string, shouldExist bool) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		// log.Printf("[INFO] testing MANAGED IMAGE EXISTS - BEGIN.")
 
 		// rs, ok := s.RootModule().Resources[name]

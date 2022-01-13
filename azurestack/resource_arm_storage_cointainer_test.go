@@ -83,7 +83,6 @@ func TestAccAzureStackStorageContainer_root(t *testing.T) {
 
 func testCheckAzureStackStorageContainerExists(name string, c *storage.Container) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %s", name)

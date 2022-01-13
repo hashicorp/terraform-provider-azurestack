@@ -72,7 +72,7 @@ resource "azurestack_virtual_machine" "test" {
   name                  = "acctvm"
   location              = "West US"
   resource_group_name   = azurestack_resource_group.test.name
-  network_interface_ids = [ azurestack_network_interface.test.id ]
+  network_interface_ids = [azurestack_network_interface.test.id]
   vm_size               = "Standard_A0"
 
   storage_image_reference {

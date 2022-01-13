@@ -73,7 +73,6 @@ func TestAccAzureStackPublicIpStatic_basic(t *testing.T) {
 
 // Sku not supported in the profile, skipping
 func TestAccAzureStackPublicIpStatic_standard(t *testing.T) {
-
 	t.Skip()
 
 	resourceName := "azurestack_public_ip.test"

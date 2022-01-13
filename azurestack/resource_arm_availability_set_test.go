@@ -127,7 +127,6 @@ func TestAccAzureStackAvailabilitySet_withDomainCounts(t *testing.T) {
 }
 
 func TestAccAzureStackAvailabilitySet_managed(t *testing.T) {
-
 	resourceName := "azurestack_availability_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackAvailabilitySet_managed(ri, testLocation())

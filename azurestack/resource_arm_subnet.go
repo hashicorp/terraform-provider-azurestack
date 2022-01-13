@@ -275,7 +275,6 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 		if err != nil {
 			return fmt.Errorf("Error waiting for completion of Subnet %q (VN %q / Resource Group %q): %+v", name, vnetName, resGroup, err)
 		}
-
 	}
 
 	future, err := client.Delete(ctx, resGroup, vnetName, name)

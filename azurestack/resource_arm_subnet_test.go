@@ -14,7 +14,6 @@ import (
 )
 
 func TestAccAzureStackSubnet_basic(t *testing.T) {
-
 	resourceName := "azurestack_subnet.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackSubnet_basic(ri, testLocation())
@@ -40,7 +39,6 @@ func TestAccAzureStackSubnet_basic(t *testing.T) {
 }
 
 func TestAccAzureStackSubnet_routeTableUpdate(t *testing.T) {
-
 	resourceName := "azurestack_subnet.test"
 	ri := acctest.RandInt()
 	location := testLocation()
@@ -76,7 +74,6 @@ func TestAccAzureStackSubnet_routeTableUpdate(t *testing.T) {
 }
 
 func TestAccAzureStackSubnet_routeTableRemove(t *testing.T) {
-
 	resourceName := "azurestack_subnet.test"
 	ri := acctest.RandInt()
 	location := testLocation()
@@ -145,7 +142,6 @@ func TestAccAzureStackSubnet_removeNetworkSecurityGroup(t *testing.T) {
 }
 
 func TestAccAzureStackSubnet_bug7986(t *testing.T) {
-
 	ri := acctest.RandInt()
 	initConfig := testAccAzureStackSubnet_bug7986(ri, testLocation())
 
@@ -166,7 +162,6 @@ func TestAccAzureStackSubnet_bug7986(t *testing.T) {
 }
 
 func TestAccAzureStackSubnet_bug15204(t *testing.T) {
-
 	ri := acctest.RandInt()
 	initConfig := testAccAzureStackSubnet_bug15204(ri, testLocation())
 
@@ -350,7 +345,6 @@ func testCheckAzureStackSubnetDestroy(s *terraform.State) error {
 
 // Not supported for 2017-03-09 profile
 func TestAccAzureStackSubnet_serviceEndpoints(t *testing.T) {
-
 	t.Skip()
 
 	ri := acctest.RandInt()

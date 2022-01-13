@@ -34,7 +34,6 @@ func TestAccDataSourceArmVirtualNetwork_basic(t *testing.T) {
 
 // Peering not in scope
 func TestAccDataSourceArmVirtualNetwork_peering(t *testing.T) {
-
 	t.Skip()
 
 	dataSourceName := "data.azurestack_virtual_network.test"

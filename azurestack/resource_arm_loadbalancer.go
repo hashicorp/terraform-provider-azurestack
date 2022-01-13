@@ -13,7 +13,7 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/suppress"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/validate"
+	`github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/validate`
 )
 
 func resourceArmLoadBalancer() *schema.Resource {

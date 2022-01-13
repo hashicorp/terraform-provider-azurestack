@@ -8,7 +8,8 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func resourceArmAvailabilitySet() *schema.Resource {
@@ -80,8 +81,8 @@ func resourceArmAvailabilitySetCreate(d *schema.ResourceData, meta interface{}) 
 		Name:     &name,
 		Location: &location,
 		AvailabilitySetProperties: &compute.AvailabilitySetProperties{
-			PlatformFaultDomainCount:  utils.Int32(int32(faultDomainCount)),
-			PlatformUpdateDomainCount: utils.Int32(int32(updateDomainCount)),
+			PlatformFaultDomainCount:  pointer.FromInt32(faultDomainCount),
+			PlatformUpdateDomainCount: pointer.FromInt32(updateDomainCount),
 		},
 		Tags: *expandTags(tags),
 	}
@@ -116,7 +117,7 @@ func resourceArmAvailabilitySetRead(d *schema.ResourceData, meta interface{}) er
 
 	resp, err := client.Get(ctx, resGroup, name)
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}

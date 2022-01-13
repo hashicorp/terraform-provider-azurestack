@@ -9,6 +9,8 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/storage/mgmt/storage"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
@@ -270,7 +272,7 @@ func resourceArmStorageAccountCreate(d *schema.ResourceData, meta interface{}) e
 			parameters.AccountPropertiesCreateParameters.Encryption = &storage.Encryption{
 				Services: &storage.EncryptionServices{
 					Blob: &storage.EncryptionService{
-						Enabled: utils.Bool(enableBlobEncryption),
+						Enabled: pointer.FromBool(enableBlobEncryption),
 					},
 				},
 				KeySource: storage.KeySource(storageAccountEncryptionSource),
@@ -455,7 +457,7 @@ func resourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) err
 
 	resp, err := client.GetProperties(ctx, resGroup, name)
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
@@ -585,7 +587,7 @@ func expandStorageAccountCustomDomain(d *schema.ResourceData) *storage.CustomDom
 	domains := d.Get("custom_domain").([]interface{})
 	if len(domains) == 0 {
 		return &storage.CustomDomain{
-			Name: utils.String(""),
+			Name: pointer.FromString(""),
 		}
 	}
 
@@ -593,7 +595,7 @@ func expandStorageAccountCustomDomain(d *schema.ResourceData) *storage.CustomDom
 	name := domain["name"].(string)
 	useSubDomain := domain["use_subdomain"].(bool)
 	return &storage.CustomDomain{
-		Name:             utils.String(name),
+		Name:             pointer.FromString(name),
 		UseSubDomainName: utils.Bool(useSubDomain),
 	}
 }

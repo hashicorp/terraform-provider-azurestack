@@ -12,6 +12,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
@@ -634,7 +636,7 @@ func resourceArmVirtualMachineRead(d *schema.ResourceData, meta interface{}) err
 
 	resp, err := vmClient.Get(ctx, resGroup, name, "")
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
@@ -1410,7 +1412,7 @@ func expandAzureStackVirtualMachineDataDisk(d *schema.ResourceData) ([]compute.D
 		}
 
 		if v, ok := config["disk_size_gb"].(int); ok {
-			data_disk.DiskSizeGB = utils.Int32(int32(v))
+			data_disk.DiskSizeGB = pointer.FromInt32(v)
 		}
 
 		if v, ok := config["write_accelerator_enabled"].(bool); ok {
@@ -1432,7 +1434,7 @@ func expandAzureStackVirtualMachineDiagnosticsProfile(d *schema.ResourceData) *c
 
 		diagnostic := &compute.BootDiagnostics{
 			Enabled:    utils.Bool(bootDiagnostic["enabled"].(bool)),
-			StorageURI: utils.String(bootDiagnostic["storage_uri"].(string)),
+			StorageURI: pointer.FromString(bootDiagnostic["storage_uri"].(string)),
 		}
 
 		diagnosticsProfile.BootDiagnostics = diagnostic
@@ -1468,7 +1470,7 @@ func expandAzureStackVirtualMachineImageReference(d *schema.ResourceData) (*comp
 	}
 
 	// if imageID != "" {
-	// 	imageReference.ID = utils.String(storageImageRef["id"].(string))
+	// 	imageReference.ID = pointer.FromString(storageImageRef["id"].(string))
 	// } else {
 	// 	offer := storageImageRef["offer"].(string)
 	// 	sku := storageImageRef["sku"].(string)
@@ -1572,7 +1574,7 @@ func expandAzureStackVirtualMachineOsDisk(d *schema.ResourceData) (*compute.OSDi
 	}
 
 	if v := config["disk_size_gb"].(int); v != 0 {
-		osDisk.DiskSizeGB = utils.Int32(int32(v))
+		osDisk.DiskSizeGB = pointer.FromInt32(v)
 	}
 
 	if v, ok := config["write_accelerator_enabled"].(bool); ok {

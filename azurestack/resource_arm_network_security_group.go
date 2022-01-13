@@ -6,7 +6,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 var networkSecurityGroupResourceName = "azurestack_network_security_group"
@@ -225,7 +225,7 @@ func resourceArmNetworkSecurityGroupRead(d *schema.ResourceData, meta interface{
 
 	resp, err := client.Get(ctx, resGroup, name, "")
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
@@ -352,7 +352,7 @@ func expandAzureStackSecurityRules(d *schema.ResourceData) []network.SecurityRul
 		// 	var sourceApplicationSecurityGroups []network.ApplicationSecurityGroup
 		// 	for _, v := range r.List() {
 		// 		sg := network.ApplicationSecurityGroup{
-		// 			ID: utils.String(v.(string)),
+		// 			ID: pointer.FromString(v.(string)),
 		// 		}
 		// 		sourceApplicationSecurityGroups = append(sourceApplicationSecurityGroups, sg)
 		// 	}
@@ -363,7 +363,7 @@ func expandAzureStackSecurityRules(d *schema.ResourceData) []network.SecurityRul
 		// 	var destinationApplicationSecurityGroups []network.ApplicationSecurityGroup
 		// 	for _, v := range r.List() {
 		// 		sg := network.ApplicationSecurityGroup{
-		// 			ID: utils.String(v.(string)),
+		// 			ID: pointer.FromString(v.(string)),
 		// 		}
 		// 		destinationApplicationSecurityGroups = append(destinationApplicationSecurityGroups, sg)
 		// 	}

@@ -7,8 +7,8 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2017-10-01/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 var routeTableResourceName = "azurestack_route_table"
@@ -147,7 +147,7 @@ func resourceArmRouteTableRead(d *schema.ResourceData, meta interface{}) error {
 
 	resp, err := client.Get(ctx, resGroup, name, "")
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
@@ -211,7 +211,7 @@ func expandRouteTableRoutes(d *schema.ResourceData) []network.Route {
 		route := network.Route{
 			Name: &name,
 			RoutePropertiesFormat: &network.RoutePropertiesFormat{
-				AddressPrefix: utils.String(data["address_prefix"].(string)),
+				AddressPrefix: pointer.FromString(data["address_prefix"].(string)),
 				NextHopType:   network.RouteNextHopType(data["next_hop_type"].(string)),
 			},
 		}

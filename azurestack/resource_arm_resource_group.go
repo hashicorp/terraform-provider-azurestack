@@ -6,8 +6,8 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func resourceArmResourceGroup() *schema.Resource {
@@ -38,7 +38,7 @@ func resourceArmResourceGroupCreateUpdate(d *schema.ResourceData, meta interface
 	location := d.Get("location").(string)
 	tags := d.Get("tags").(map[string]interface{})
 	parameters := resources.Group{
-		Location: utils.String(location),
+		Location: pointer.FromString(location),
 		Tags:     *expandTags(tags),
 	}
 	_, err := client.CreateOrUpdate(ctx, name, parameters)
@@ -69,7 +69,7 @@ func resourceArmResourceGroupRead(d *schema.ResourceData, meta interface{}) erro
 
 	resp, err := client.Get(ctx, name)
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			log.Printf("[INFO] Error reading resource group %q - removing from state", d.Id())
 			d.SetId("")
 			return nil

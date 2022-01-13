@@ -9,8 +9,9 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func resourceArmPublicIp() *schema.Resource {
@@ -139,7 +140,7 @@ func resourceArmPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
 		Location: &location,
 		PublicIPAddressPropertiesFormat: &network.PublicIPAddressPropertiesFormat{
 			PublicIPAllocationMethod: network.IPAllocationMethod(ipAllocationMethod),
-			IdleTimeoutInMinutes:     utils.Int32(int32(idleTimeout)),
+			IdleTimeoutInMinutes:     pointer.FromInt32(idleTimeout),
 		},
 		Tags: *expandTags(tags),
 		// Not supported for 2017-03-09 profile
@@ -201,7 +202,7 @@ func resourceArmPublicIpRead(d *schema.ResourceData, meta interface{}) error {
 
 	resp, err := client.Get(ctx, resGroup, name, "")
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}

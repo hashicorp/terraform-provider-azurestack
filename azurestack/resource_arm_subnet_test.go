@@ -9,8 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func TestAccAzureStackSubnet_basic(t *testing.T) {
@@ -223,7 +222,7 @@ func testCheckAzureStackSubnetExists(name string) resource.TestCheckFunc {
 
 		resp, err := client.Get(ctx, resourceGroup, vnetName, name, "")
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return fmt.Errorf("Bad: Subnet %q (resource group: %q) does not exist", name, resourceGroup)
 			}
 
@@ -266,7 +265,7 @@ func testCheckAzureStackSubnetRouteTableExists(subnetName string, routeTableId s
 
 		resp, err := subnetsClient.Get(ctx, resourceGroup, vnetName, name, "")
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return fmt.Errorf("Bad: Subnet %q (resource group: %q) does not exist", subnetName, resourceGroup)
 			}
 
@@ -304,7 +303,7 @@ func testCheckAzureStackSubnetDisappears(name string) resource.TestCheckFunc {
 		ctx := testAccProvider.Meta().(*ArmClient).StopContext
 		future, err := client.Delete(ctx, resourceGroup, vnetName, name)
 		if err != nil {
-			if !response.WasNotFound(future.Response()) {
+			if !response.ResponseWasNotFound(future.Response()) {
 				return fmt.Errorf("deleting Subnet %q (Network %q / Resource Group %q): %+v", name, vnetName, resourceGroup, err)
 			}
 		}
@@ -333,7 +332,7 @@ func testCheckAzureStackSubnetDestroy(s *terraform.State) error {
 
 		resp, err := client.Get(ctx, resourceGroup, vnetName, name, "")
 		if err != nil {
-			if !utils.ResponseWasNotFound(resp.Response) {
+			if !response.ResponseWasNotFound(resp.Response) {
 				return fmt.Errorf("Subnet still exists:\n%#v", resp.SubnetPropertiesFormat)
 			}
 			return nil

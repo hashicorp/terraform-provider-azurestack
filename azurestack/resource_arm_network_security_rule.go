@@ -6,7 +6,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2017-10-01/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func resourceArmNetworkSecurityRule() *schema.Resource {
@@ -260,7 +260,7 @@ func resourceArmNetworkSecurityRuleCreate(d *schema.ResourceData, meta interface
 	// 	var sourceApplicationSecurityGroups []network.ApplicationSecurityGroup
 	// 	for _, v := range r.(*schema.Set).List() {
 	// 		sg := network.ApplicationSecurityGroup{
-	// 			ID: utils.String(v.(string)),
+	// 			ID: pointer.FromString(v.(string)),
 	// 		}
 	// 		sourceApplicationSecurityGroups = append(sourceApplicationSecurityGroups, sg)
 	// 	}
@@ -271,7 +271,7 @@ func resourceArmNetworkSecurityRuleCreate(d *schema.ResourceData, meta interface
 	// 	var destinationApplicationSecurityGroups []network.ApplicationSecurityGroup
 	// 	for _, v := range r.(*schema.Set).List() {
 	// 		sg := network.ApplicationSecurityGroup{
-	// 			ID: utils.String(v.(string)),
+	// 			ID: pointer.FromString(v.(string)),
 	// 		}
 	// 		destinationApplicationSecurityGroups = append(destinationApplicationSecurityGroups, sg)
 	// 	}
@@ -315,7 +315,7 @@ func resourceArmNetworkSecurityRuleRead(d *schema.ResourceData, meta interface{}
 
 	resp, err := client.Get(ctx, resGroup, networkSGName, sgRuleName)
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}

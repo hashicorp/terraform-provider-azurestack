@@ -5,7 +5,8 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
@@ -135,7 +136,7 @@ func resourceArmLocalNetworkGatewayRead(d *schema.ResourceData, meta interface{}
 
 	resp, err := client.Get(ctx, resGroup, name)
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
@@ -220,8 +221,8 @@ func expandLocalNetworkGatewayBGPSettings(d *schema.ResourceData) *network.BgpSe
 
 	bgpSettings := network.BgpSettings{
 		Asn:               utils.Int64(int64(setting["asn"].(int))),
-		BgpPeeringAddress: utils.String(setting["bgp_peering_address"].(string)),
-		PeerWeight:        utils.Int32(int32(setting["peer_weight"].(int))),
+		BgpPeeringAddress: pointer.FromString(setting["bgp_peering_address"].(string)),
+		PeerWeight:        pointer.FromInt32(setting["peer_weight"].(int)),
 	}
 
 	return &bgpSettings

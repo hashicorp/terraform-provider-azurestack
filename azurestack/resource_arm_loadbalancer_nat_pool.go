@@ -10,8 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/validate"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
 func resourceArmLoadBalancerNatPool() *schema.Resource {
@@ -270,9 +270,9 @@ func resourceArmLoadBalancerNatPoolDelete(d *schema.ResourceData, meta interface
 func expandAzureRmLoadBalancerNatPool(d *schema.ResourceData, lb *network.LoadBalancer) (*network.InboundNatPool, error) {
 	properties := network.InboundNatPoolPropertiesFormat{
 		Protocol:               network.TransportProtocol(d.Get("protocol").(string)),
-		FrontendPortRangeStart: utils.Int32(int32(d.Get("frontend_port_start").(int))),
-		FrontendPortRangeEnd:   utils.Int32(int32(d.Get("frontend_port_end").(int))),
-		BackendPort:            utils.Int32(int32(d.Get("backend_port").(int))),
+		FrontendPortRangeStart: pointer.FromInt32(d.Get("frontend_port_start").(int)),
+		FrontendPortRangeEnd:   pointer.FromInt32(d.Get("frontend_port_end").(int)),
+		BackendPort:            pointer.FromInt32(d.Get("backend_port").(int)),
 	}
 
 	if v := d.Get("frontend_ip_configuration_name").(string); v != "" {
@@ -287,7 +287,7 @@ func expandAzureRmLoadBalancerNatPool(d *schema.ResourceData, lb *network.LoadBa
 	}
 
 	return &network.InboundNatPool{
-		Name:                           utils.String(d.Get("name").(string)),
+		Name:                           pointer.FromString(d.Get("name").(string)),
 		InboundNatPoolPropertiesFormat: &properties,
 	}, nil
 }

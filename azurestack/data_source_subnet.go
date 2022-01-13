@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func dataSourceArmSubnet() *schema.Resource {
@@ -61,7 +61,7 @@ func dataSourceArmSubnetRead(d *schema.ResourceData, meta interface{}) error {
 
 	resp, err := client.Get(ctx, resourceGroup, virtualNetworkName, name, "")
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			return fmt.Errorf("Error: Subnet %q (Virtual Network %q / Resource Group %q) was not found", name, resourceGroup, virtualNetworkName)
 		}
 		return fmt.Errorf("making Read request on Azure Subnet %q: %+v", name, err)

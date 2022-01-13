@@ -6,7 +6,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 var subnetResourceName = "azurestack_subnet"
@@ -167,7 +167,7 @@ func resourceArmSubnetRead(d *schema.ResourceData, meta interface{}) error {
 
 	resp, err := client.Get(ctx, resGroup, vnetName, name, "")
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
@@ -252,7 +252,7 @@ func resourceArmSubnetDelete(d *schema.ResourceData, meta interface{}) error {
 
 		resp, err := client.Get(ctx, resGroup, vnetName, name, "")
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				d.SetId("")
 				return nil
 			}

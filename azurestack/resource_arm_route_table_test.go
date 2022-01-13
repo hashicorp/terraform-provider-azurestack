@@ -7,8 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func TestAccAzureStackRouteTable_basic(t *testing.T) {
@@ -286,7 +285,7 @@ func testCheckAzureStackRouteTableExists(name string) resource.TestCheckFunc {
 
 		resp, err := client.Get(ctx, resourceGroup, name, "")
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return fmt.Errorf("Bad: Route Table %q (resource group: %q) does not exist", name, resourceGroup)
 			}
 
@@ -343,7 +342,7 @@ func testCheckAzureStackRouteTableDestroy(s *terraform.State) error {
 
 		resp, err := client.Get(ctx, resourceGroup, name, "")
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return nil
 			}
 

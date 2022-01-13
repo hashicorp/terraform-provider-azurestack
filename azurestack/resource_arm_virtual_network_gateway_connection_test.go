@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func TestAccAzureStackVirtualNetworkGatewayConnection_sitetosite(t *testing.T) {
@@ -49,7 +49,7 @@ func testCheckAzureStackVirtualNetworkGatewayConnectionExists(name string) resou
 			return fmt.Errorf("Bad: Get on vnetGatewayConnectionsClient: %+v", err)
 		}
 
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			return fmt.Errorf("Bad: Virtual Network Gateway Connection %q (resource group: %q) does not exist", name, resourceGroup)
 		}
 
@@ -74,7 +74,7 @@ func testCheckAzureStackVirtualNetworkGatewayConnectionDestroy(s *terraform.Stat
 			return nil
 		}
 
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			return fmt.Errorf("Virtual Network Gateway Connection still exists: %#v", resp.VirtualNetworkGatewayConnectionPropertiesFormat)
 		}
 	}

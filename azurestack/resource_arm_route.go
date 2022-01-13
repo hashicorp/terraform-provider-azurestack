@@ -6,7 +6,8 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2017-10-01/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func resourceArmRoute() *schema.Resource {
@@ -86,7 +87,7 @@ func resourceArmRouteCreateUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if v, ok := d.GetOk("next_hop_in_ip_address"); ok {
-		route.RoutePropertiesFormat.NextHopIPAddress = utils.String(v.(string))
+		route.RoutePropertiesFormat.NextHopIPAddress = pointer.FromString(v.(string))
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, rtName, name, route)
@@ -124,7 +125,7 @@ func resourceArmRouteRead(d *schema.ResourceData, meta interface{}) error {
 
 	resp, err := client.Get(ctx, resGroup, rtName, routeName)
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}

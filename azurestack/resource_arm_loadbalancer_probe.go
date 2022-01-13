@@ -10,8 +10,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
 )
 
 func resourceArmLoadBalancerProbe() *schema.Resource {
@@ -267,9 +268,9 @@ func resourceArmLoadBalancerProbeDelete(d *schema.ResourceData, meta interface{}
 
 func expandAzureRmLoadBalancerProbe(d *schema.ResourceData) *network.Probe {
 	properties := network.ProbePropertiesFormat{
-		NumberOfProbes:    utils.Int32(int32(d.Get("number_of_probes").(int))),
-		IntervalInSeconds: utils.Int32(int32(d.Get("interval_in_seconds").(int))),
-		Port:              utils.Int32(int32(d.Get("port").(int))),
+		NumberOfProbes:    pointer.FromInt32(d.Get("number_of_probes").(int)),
+		IntervalInSeconds: pointer.FromInt32(d.Get("interval_in_seconds").(int)),
+		Port:              pointer.FromInt32(d.Get("port").(int)),
 	}
 
 	if v, ok := d.GetOk("protocol"); ok {
@@ -277,11 +278,11 @@ func expandAzureRmLoadBalancerProbe(d *schema.ResourceData) *network.Probe {
 	}
 
 	if v, ok := d.GetOk("request_path"); ok {
-		properties.RequestPath = utils.String(v.(string))
+		properties.RequestPath = pointer.FromString(v.(string))
 	}
 
 	return &network.Probe{
-		Name:                  utils.String(d.Get("name").(string)),
+		Name:                  pointer.FromString(d.Get("name").(string)),
 		ProbePropertiesFormat: &properties,
 	}
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/validate"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
@@ -278,8 +279,8 @@ func resourceArmLoadBalancerNatRuleDelete(d *schema.ResourceData, meta interface
 func expandAzureRmLoadBalancerNatRule(d *schema.ResourceData, lb *network.LoadBalancer) (*network.InboundNatRule, error) {
 	properties := network.InboundNatRulePropertiesFormat{
 		Protocol:     network.TransportProtocol(d.Get("protocol").(string)),
-		FrontendPort: utils.Int32(int32(d.Get("frontend_port").(int))),
-		BackendPort:  utils.Int32(int32(d.Get("backend_port").(int))),
+		FrontendPort: pointer.FromInt32(d.Get("frontend_port").(int)),
+		BackendPort:  pointer.FromInt32(d.Get("backend_port").(int)),
 	}
 
 	if v, ok := d.GetOk("enable_floating_ip"); ok {
@@ -298,7 +299,7 @@ func expandAzureRmLoadBalancerNatRule(d *schema.ResourceData, lb *network.LoadBa
 	}
 
 	natRule := network.InboundNatRule{
-		Name:                           utils.String(d.Get("name").(string)),
+		Name:                           pointer.FromString(d.Get("name").(string)),
 		InboundNatRulePropertiesFormat: &properties,
 	}
 

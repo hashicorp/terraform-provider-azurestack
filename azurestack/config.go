@@ -19,7 +19,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/go-azure-helpers/sender"
 	"github.com/hashicorp/terraform-plugin-sdk/httpclient"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 // ArmClient contains the handles to all the specific Azure Resource Manager
@@ -290,7 +290,7 @@ func (armClient *ArmClient) getKeyForStorageAccount(ctx context.Context, resourc
 	key, ok = storageKeyCache[cacheIndex]
 	if !ok {
 		accountKeys, err := armClient.storageServiceClient.ListKeys(ctx, resourceGroupName, storageAccountName)
-		if utils.ResponseWasNotFound(accountKeys.Response) {
+		if response.ResponseWasNotFound(accountKeys.Response) {
 			return "", false, nil
 		}
 		if err != nil {

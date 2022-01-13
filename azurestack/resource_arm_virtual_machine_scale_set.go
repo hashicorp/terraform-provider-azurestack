@@ -11,9 +11,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
+
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
 )
 
 func resourceArmVirtualMachineScaleSet() *schema.Resource {
@@ -734,7 +736,7 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 
 	resp, err := client.Get(ctx, resGroup, name)
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			log.Printf("[INFO] AzureStack Virtual Machine Scale Set (%s) Not Found. Removing from State", name)
 			d.SetId("")
 			return nil
@@ -1577,10 +1579,10 @@ func expandAzureRmVirtualMachineScaleSetStorageProfileImageReference(d *schema.R
 	sku := storageImageRef["sku"].(string)
 	version := storageImageRef["version"].(string)
 
-	imageReference.Publisher = utils.String(publisher)
-	imageReference.Offer = utils.String(offer)
-	imageReference.Sku = utils.String(sku)
-	imageReference.Version = utils.String(version)
+	imageReference.Publisher = pointer.FromString(publisher)
+	imageReference.Offer = pointer.FromString(offer)
+	imageReference.Sku = pointer.FromString(sku)
+	imageReference.Version = pointer.FromString(version)
 
 	return &imageReference, nil
 }

@@ -11,9 +11,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/validate"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
+
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
 )
 
 func resourceArmLoadBalancerRule() *schema.Resource {
@@ -318,13 +320,13 @@ func resourceArmLoadBalancerRuleDelete(d *schema.ResourceData, meta interface{})
 func expandAzureRmLoadBalancerRule(d *schema.ResourceData, lb *network.LoadBalancer) (*network.LoadBalancingRule, error) {
 	properties := network.LoadBalancingRulePropertiesFormat{
 		Protocol:         network.TransportProtocol(d.Get("protocol").(string)),
-		FrontendPort:     utils.Int32(int32(d.Get("frontend_port").(int))),
-		BackendPort:      utils.Int32(int32(d.Get("backend_port").(int))),
+		FrontendPort:     pointer.FromInt32(d.Get("frontend_port").(int)),
+		BackendPort:      pointer.FromInt32(d.Get("backend_port").(int)),
 		EnableFloatingIP: utils.Bool(d.Get("enable_floating_ip").(bool)),
 	}
 
 	if v, ok := d.GetOk("idle_timeout_in_minutes"); ok {
-		properties.IdleTimeoutInMinutes = utils.Int32(int32(v.(int)))
+		properties.IdleTimeoutInMinutes = pointer.FromInt32(v.(int))
 	}
 
 	if v := d.Get("load_distribution").(string); v != "" {
@@ -355,7 +357,7 @@ func expandAzureRmLoadBalancerRule(d *schema.ResourceData, lb *network.LoadBalan
 	}
 
 	return &network.LoadBalancingRule{
-		Name:                              utils.String(d.Get("name").(string)),
+		Name:                              pointer.FromString(d.Get("name").(string)),
 		LoadBalancingRulePropertiesFormat: &properties,
 	}, nil
 }

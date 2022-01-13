@@ -779,18 +779,17 @@ func resourceArmVirtualMachineDelete(d *schema.ResourceData, meta interface{}) e
 			return fmt.Errorf("expanding OS Disk: %s", err)
 		}
 
-		if osDisk.Vhd != nil {
-			if osDisk.Vhd.URI != nil {
-				if err = resourceArmVirtualMachineDeleteVhd(*osDisk.Vhd.URI, meta); err != nil {
-					return fmt.Errorf("deleting OS Disk VHD: %+v", err)
-				}
+		if osDisk.Vhd != nil && osDisk.Vhd.URI != nil {
+
+			if err = resourceArmVirtualMachineDeleteVhd(*osDisk.Vhd.URI, meta); err != nil {
+				return fmt.Errorf("deleting OS Disk VHD: %+v", err)
 			}
-		} else if osDisk.ManagedDisk != nil {
-			if osDisk.ManagedDisk.ID != nil {
-				if err = resourceArmVirtualMachineDeleteManagedDisk(*osDisk.ManagedDisk.ID, meta); err != nil {
-					return fmt.Errorf("deleting OS Managed Disk: %+v", err)
-				}
+
+		} else if osDisk.ManagedDisk != nil && osDisk.ManagedDisk.ID != nil {
+			if err = resourceArmVirtualMachineDeleteManagedDisk(*osDisk.ManagedDisk.ID, meta); err != nil {
+				return fmt.Errorf("deleting OS Managed Disk: %+v", err)
 			}
+
 		} else {
 			return fmt.Errorf("Unable to locate OS managed disk properties from %s", name)
 		}
@@ -1405,13 +1404,13 @@ func expandAzureStackVirtualMachineDataDisk(d *schema.ResourceData) ([]compute.D
 		}
 
 		if vhdURI != "" && managedDiskID != "" {
-			return nil, fmt.Errorf("[ERROR] Conflict between `vhd_uri` and `managed_disk_id` (only one or the other can be used)")
+			return nil, fmt.Errorf("Conflict between `vhd_uri` and `managed_disk_id` (only one or the other can be used)")
 		}
 		if vhdURI != "" && managedDiskType != "" {
-			return nil, fmt.Errorf("[ERROR] Conflict between `vhd_uri` and `managed_disk_type` (only one or the other can be used)")
+			return nil, fmt.Errorf("Conflict between `vhd_uri` and `managed_disk_type` (only one or the other can be used)")
 		}
 		if managedDiskID == "" && vhdURI == "" && strings.EqualFold(string(data_disk.CreateOption), string(compute.Attach)) {
-			return nil, fmt.Errorf("[ERROR] Must specify `vhd_uri` or `managed_disk_id` to attach")
+			return nil, fmt.Errorf("Must specify `vhd_uri` or `managed_disk_id` to attach")
 		}
 
 		if v := config["caching"].(string); v != "" {
@@ -1462,7 +1461,7 @@ func expandAzureStackVirtualMachineImageReference(d *schema.ResourceData) (*comp
 	imageReference := compute.ImageReference{}
 
 	if imageID != "" && publisher != "" {
-		return nil, fmt.Errorf("[ERROR] Conflict between `id` and `publisher` (only one or the other can be used)")
+		return nil, fmt.Errorf("Conflict between `id` and `publisher` (only one or the other can be used)")
 	}
 
 	offer := storageImageRef["offer"].(string)
@@ -1556,14 +1555,14 @@ func expandAzureStackVirtualMachineOsDisk(d *schema.ResourceData) (*compute.OSDi
 
 	// BEGIN: code to be removed after GH-13016 is merged
 	if vhdURI != "" && managedDiskID != "" {
-		return nil, fmt.Errorf("[ERROR] Conflict between `vhd_uri` and `managed_disk_id` (only one or the other can be used)")
+		return nil, fmt.Errorf("Conflict between `vhd_uri` and `managed_disk_id` (only one or the other can be used)")
 	}
 	if vhdURI != "" && managedDiskType != "" {
-		return nil, fmt.Errorf("[ERROR] Conflict between `vhd_uri` and `managed_disk_type` (only one or the other can be used)")
+		return nil, fmt.Errorf("Conflict between `vhd_uri` and `managed_disk_type` (only one or the other can be used)")
 	}
 	// END: code to be removed after GH-13016 is merged
 	if managedDiskID == "" && vhdURI == "" && strings.EqualFold(string(osDisk.CreateOption), string(compute.Attach)) {
-		return nil, fmt.Errorf("[ERROR] Must specify `vhd_uri` or `managed_disk_id` to attach")
+		return nil, fmt.Errorf("Must specify `vhd_uri` or `managed_disk_id` to attach")
 	}
 
 	if v := config["image_uri"].(string); v != "" {

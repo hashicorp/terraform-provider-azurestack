@@ -257,8 +257,8 @@ func testCheckAzureStackLoadBalancerRuleDisappears(ruleName string, lb *network.
 			return fmt.Errorf("A Rule with name %q cannot be found.", ruleName)
 		}
 
-		currentRules := *lb.LoadBalancerPropertiesFormat.LoadBalancingRules
-		rules := append(currentRules[:i], currentRules[i+1:]...)
+		rules := *lb.LoadBalancerPropertiesFormat.LoadBalancingRules
+		rules = append(rules[:i], rules[i+1:]...)
 		lb.LoadBalancerPropertiesFormat.LoadBalancingRules = &rules
 
 		id, err := parseAzureResourceID(*lb.ID)

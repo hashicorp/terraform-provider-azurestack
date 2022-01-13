@@ -256,7 +256,7 @@ func normalizeJson(jsonString interface{}) string {
 		return fmt.Sprintf("Error parsing JSON: %+v", err)
 	}
 	b, _ := json.Marshal(j)
-	return string(b[:])
+	return string(b)
 }
 
 func waitForTemplateDeploymentToBeDeleted(ctx context.Context, client resources.DeploymentsClient, resourceGroup, name string) error {

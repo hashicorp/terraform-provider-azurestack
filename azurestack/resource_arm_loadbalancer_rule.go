@@ -285,9 +285,9 @@ func resourceArmLoadBalancerRuleDelete(d *schema.ResourceData, meta interface{})
 		return nil
 	}
 
-	oldLbRules := *loadBalancer.LoadBalancerPropertiesFormat.LoadBalancingRules
-	newLbRules := append(oldLbRules[:index], oldLbRules[index+1:]...)
-	loadBalancer.LoadBalancerPropertiesFormat.LoadBalancingRules = &newLbRules
+	rules := *loadBalancer.LoadBalancerPropertiesFormat.LoadBalancingRules
+	rules = append(rules[:index], rules[index+1:]...)
+	loadBalancer.LoadBalancerPropertiesFormat.LoadBalancingRules = &rules
 
 	resGroup, loadBalancerName, err := resourceGroupAndLBNameFromId(d.Get("loadbalancer_id").(string))
 	if err != nil {
@@ -334,7 +334,7 @@ func expandAzureRmLoadBalancerRule(d *schema.ResourceData, lb *network.LoadBalan
 	if v := d.Get("frontend_ip_configuration_name").(string); v != "" {
 		rule, exists := findLoadBalancerFrontEndIpConfigurationByName(lb, v)
 		if !exists {
-			return nil, fmt.Errorf("[ERROR] Cannot find FrontEnd IP Configuration with the name %s", v)
+			return nil, fmt.Errorf("Cannot find FrontEnd IP Configuration with the name %s", v)
 		}
 
 		properties.FrontendIPConfiguration = &network.SubResource{

@@ -220,8 +220,8 @@ func testCheckAzureStackLoadBalancerNatRuleDisappears(natRuleName string, lb *ne
 			return fmt.Errorf("A Nat Rule with name %q cannot be found.", natRuleName)
 		}
 
-		currentRules := *lb.LoadBalancerPropertiesFormat.InboundNatRules
-		rules := append(currentRules[:i], currentRules[i+1:]...)
+		rules := *lb.LoadBalancerPropertiesFormat.InboundNatRules
+		rules = append(rules[:i], rules[i+1:]...)
 		lb.LoadBalancerPropertiesFormat.InboundNatRules = &rules
 
 		id, err := parseAzureResourceID(*lb.ID)

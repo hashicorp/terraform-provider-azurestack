@@ -454,7 +454,7 @@ func resourceArmStorageBlobBlockSplit(file *os.File) ([]storage.Block, []resourc
 		return nil, nil, fmt.Errorf("stating source file %q: %s", file.Name(), err)
 	}
 
-	for i := int64(0); i < info.Size(); i = i + blockSize {
+	for i := int64(0); i < info.Size(); i += blockSize {
 		entropy := make([]byte, idSize)
 		_, err = rand.Read(entropy)
 		if err != nil {

@@ -191,8 +191,8 @@ func testCheckAzureStackLoadBalancerProbeDisappears(addressPoolName string, lb *
 			return fmt.Errorf("A Probe with name %q cannot be found.", addressPoolName)
 		}
 
-		currentProbes := *lb.LoadBalancerPropertiesFormat.Probes
-		probes := append(currentProbes[:i], currentProbes[i+1:]...)
+		probes := *lb.LoadBalancerPropertiesFormat.Probes
+		probes = append(probes[:i], probes[i+1:]...)
 		lb.LoadBalancerPropertiesFormat.Probes = &probes
 
 		id, err := parseAzureResourceID(*lb.ID)

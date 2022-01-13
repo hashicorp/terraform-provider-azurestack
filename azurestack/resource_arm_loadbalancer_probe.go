@@ -235,9 +235,9 @@ func resourceArmLoadBalancerProbeDelete(d *schema.ResourceData, meta interface{}
 		return nil
 	}
 
-	oldProbes := *loadBalancer.LoadBalancerPropertiesFormat.Probes
-	newProbes := append(oldProbes[:index], oldProbes[index+1:]...)
-	loadBalancer.LoadBalancerPropertiesFormat.Probes = &newProbes
+	probes := *loadBalancer.LoadBalancerPropertiesFormat.Probes
+	probes = append(probes[:index], probes[index+1:]...)
+	loadBalancer.LoadBalancerPropertiesFormat.Probes = &probes
 
 	resGroup, loadBalancerName, err := resourceGroupAndLBNameFromId(d.Get("loadbalancer_id").(string))
 	if err != nil {

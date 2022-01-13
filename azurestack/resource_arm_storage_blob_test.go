@@ -232,7 +232,7 @@ func TestAccAzureStackStorageBlobPage_source(t *testing.T) {
 		t.Fatalf("Failed to truncate file to 25M")
 	}
 
-	for i := int64(0); i < 20; i = i + 2 {
+	for i := int64(0); i < 20; i += 2 {
 		randomBytes := make([]byte, 1*1024*1024)
 		_, err = rand.Read(randomBytes)
 		if err != nil {

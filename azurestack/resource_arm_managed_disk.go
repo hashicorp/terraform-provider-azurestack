@@ -3,7 +3,6 @@ package azurestack
 import (
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -141,26 +140,29 @@ func resourceArmManagedDiskCreateUpdate(d *schema.ResourceData, meta interface{}
 		CreateOption: compute.DiskCreateOption(createOption),
 	}
 
-	if strings.EqualFold(createOption, string(compute.Import)) {
+	switch createOption {
+	case string(compute.Import):
 		if sourceUri := d.Get("source_uri").(string); sourceUri != "" {
 			createDisk.CreationData.SourceURI = &sourceUri
 		} else {
-			return fmt.Errorf("[ERROR] source_uri must be specified when create_option is `%s`", compute.Import)
+			return fmt.Errorf("source_uri must be specified when create_option is `%s`", compute.Import)
 		}
-	} else if strings.EqualFold(createOption, string(compute.Copy)) {
+	case string(compute.Copy):
 		if sourceResourceId := d.Get("source_resource_id").(string); sourceResourceId != "" {
 			createDisk.CreationData.SourceResourceID = &sourceResourceId
 		} else {
-			return fmt.Errorf("[ERROR] source_resource_id must be specified when create_option is `%s`", compute.Copy)
+			return fmt.Errorf("source_resource_id must be specified when create_option is `%s`", compute.Copy)
 		}
-	} else if strings.EqualFold(createOption, string(compute.FromImage)) {
+	case string(compute.FromImage):
 		if imageReferenceId := d.Get("image_reference_id").(string); imageReferenceId != "" {
 			createDisk.CreationData.ImageReference = &compute.ImageDiskReference{
 				ID: utils.String(imageReferenceId),
 			}
 		} else {
-			return fmt.Errorf("[ERROR] image_reference_id must be specified when create_option is `%s`", compute.FromImage)
+			return fmt.Errorf("image_reference_id must be specified when create_option is `%s`", compute.FromImage)
 		}
+	default:
+		return fmt.Errorf("unknown create option is `%s`", createOption)
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, createDisk)
@@ -177,7 +179,7 @@ func resourceArmManagedDiskCreateUpdate(d *schema.ResourceData, meta interface{}
 		return err
 	}
 	if read.ID == nil {
-		return fmt.Errorf("[ERROR] Cannot read Managed Disk %s (resource group %s) ID", name, resGroup)
+		return fmt.Errorf("Cannot read Managed Disk %s (resource group %s) ID", name, resGroup)
 	}
 
 	d.SetId(*read.ID)
@@ -202,7 +204,7 @@ func resourceArmManagedDiskRead(d *schema.ResourceData, meta interface{}) error 
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("[ERROR] Error making Read request on Azure Managed Disk %s (resource group %s): %s", name, resGroup, err)
+		return fmt.Errorf("Error making Read request on Azure Managed Disk %s (resource group %s): %s", name, resGroup, err)
 	}
 
 	d.Set("name", resp.Name)

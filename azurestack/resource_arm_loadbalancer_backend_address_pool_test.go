@@ -120,8 +120,8 @@ func testCheckAzureStackLoadBalancerBackEndAddressPoolDisappears(addressPoolName
 			return fmt.Errorf("A BackEnd Address Pool with name %q cannot be found.", addressPoolName)
 		}
 
-		currentPools := *lb.LoadBalancerPropertiesFormat.BackendAddressPools
-		pools := append(currentPools[:i], currentPools[i+1:]...)
+		pools := *lb.LoadBalancerPropertiesFormat.BackendAddressPools
+		pools = append(pools[:i], pools[i+1:]...)
 		lb.LoadBalancerPropertiesFormat.BackendAddressPools = &pools
 
 		id, err := parseAzureResourceID(*lb.ID)

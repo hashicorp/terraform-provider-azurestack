@@ -1483,7 +1483,7 @@ func expandAzureStackVirtualMachineScaleSetsStorageProfileOsDisk(d *schema.Resou
 	managedDiskType := osDiskConfig["managed_disk_type"].(string)
 
 	if managedDiskType == "" && name == "" {
-		return nil, fmt.Errorf("[ERROR] `name` must be set in `storage_profile_os_disk` for unmanaged disk")
+		return nil, fmt.Errorf("`name` must be set in `storage_profile_os_disk` for unmanaged disk")
 	}
 
 	osDisk := &compute.VirtualMachineScaleSetOSDisk{
@@ -1512,7 +1512,7 @@ func expandAzureStackVirtualMachineScaleSetsStorageProfileOsDisk(d *schema.Resou
 
 	if managedDiskType != "" {
 		if name != "" {
-			return nil, fmt.Errorf("[ERROR] Conflict between `name` and `managed_disk_type` on `storage_profile_os_disk` (please remove name or set it to blank)")
+			return nil, fmt.Errorf("Conflict between `name` and `managed_disk_type` on `storage_profile_os_disk` (please remove name or set it to blank)")
 		}
 
 		osDisk.Name = nil
@@ -1522,11 +1522,11 @@ func expandAzureStackVirtualMachineScaleSetsStorageProfileOsDisk(d *schema.Resou
 
 	// BEGIN: code to be removed after GH-13016 is merged
 	if image != "" && managedDiskType != "" {
-		return nil, fmt.Errorf("[ERROR] Conflict between `image` and `managed_disk_type` on `storage_profile_os_disk` (only one or the other can be used)")
+		return nil, fmt.Errorf("Conflict between `image` and `managed_disk_type` on `storage_profile_os_disk` (only one or the other can be used)")
 	}
 
 	if len(vhd_containers) > 0 && managedDiskType != "" {
-		return nil, fmt.Errorf("[ERROR] Conflict between `vhd_containers` and `managed_disk_type` on `storage_profile_os_disk` (only one or the other can be used)")
+		return nil, fmt.Errorf("Conflict between `vhd_containers` and `managed_disk_type` on `storage_profile_os_disk` (only one or the other can be used)")
 	}
 	// END: code to be removed after GH-13016 is merged
 
@@ -1584,7 +1584,7 @@ func expandAzureRmVirtualMachineScaleSetStorageProfileImageReference(d *schema.R
 	imageReference := compute.ImageReference{}
 
 	if imageID != "" && publisher != "" {
-		return nil, fmt.Errorf("[ERROR] Conflict between `id` and `publisher` (only one or the other can be used)")
+		return nil, fmt.Errorf("Conflict between `id` and `publisher` (only one or the other can be used)")
 	}
 
 	offer := storageImageRef["offer"].(string)

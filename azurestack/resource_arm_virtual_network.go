@@ -211,7 +211,7 @@ func resourceArmVirtualNetworkDelete(d *schema.ResourceData, meta interface{}) e
 
 	nsgNames, err := expandAzureStackVirtualNetworkVirtualNetworkSecurityGroupNames(d)
 	if err != nil {
-		return fmt.Errorf("[ERROR] Error parsing Network Security Group ID's: %+v", err)
+		return fmt.Errorf("Error parsing Network Security Group ID's: %+v", err)
 	}
 
 	azureStackLockMultipleByName(&nsgNames, virtualNetworkResourceName)
@@ -348,7 +348,7 @@ func expandAzureStackVirtualNetworkVirtualNetworkSecurityGroupNames(d *schema.Re
 		for _, subnet := range subnets {
 			subnet, ok := subnet.(map[string]interface{})
 			if !ok {
-				return nil, fmt.Errorf("[ERROR] Subnet should be a Hash - was '%+v'", subnet)
+				return nil, fmt.Errorf("Subnet should be a Hash - was '%+v'", subnet)
 			}
 
 			networkSecurityGroupId := subnet["security_group"].(string)

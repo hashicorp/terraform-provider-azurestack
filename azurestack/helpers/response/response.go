@@ -43,7 +43,7 @@ func ResponseErrorIsRetryable(err error) bool {
 		err = arerr.Original
 	}
 
-	// nolint gocritic
+	// nolint:gocritic
 	switch e := err.(type) {
 	case net.Error:
 		if e.Temporary() || e.Timeout() {
@@ -54,7 +54,7 @@ func ResponseErrorIsRetryable(err error) bool {
 	return false
 }
 
-func ResponseWasStatusCode(resp autorest.Response, statusCode int) bool { // nolint: unparam
+func ResponseWasStatusCode(resp autorest.Response, statusCode int) bool {
 	if r := resp.Response; r != nil {
 		if r.StatusCode == statusCode {
 			return true

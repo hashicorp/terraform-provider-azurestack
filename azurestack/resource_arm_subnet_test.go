@@ -303,7 +303,7 @@ func testCheckAzureStackSubnetDisappears(name string) resource.TestCheckFunc {
 		ctx := testAccProvider.Meta().(*ArmClient).StopContext
 		future, err := client.Delete(ctx, resourceGroup, vnetName, name)
 		if err != nil {
-			if !response.ResponseWasNotFound(future.Response()) {
+			if !response.WasNotFound(future.Response()) {
 				return fmt.Errorf("deleting Subnet %q (Network %q / Resource Group %q): %+v", name, vnetName, resourceGroup, err)
 			}
 		}

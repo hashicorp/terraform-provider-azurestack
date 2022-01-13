@@ -9,8 +9,7 @@ import (
 )
 
 func TestResponseNotFound_DroppedConnection(t *testing.T) {
-	resp := autorest.Response{}
-	if ResponseWasNotFound(resp) {
+	if ResponseWasNotFound(autorest.Response{}) {
 		t.Fatalf("responseWasNotFound should return `false` for a dropped connection")
 	}
 }

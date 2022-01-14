@@ -43,10 +43,7 @@ func testAzureStackClientConfigAttr(name, key, value string) resource.TestCheckF
 
 func testAzureStackClientConfigGUIDAttr(name, key string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		r, err := regexp.Compile("^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$")
-		if err != nil {
-			return err
-		}
+		r := regexp.MustCompile("^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$")
 
 		return resource.TestMatchResourceAttr(name, key, r)(s)
 	}

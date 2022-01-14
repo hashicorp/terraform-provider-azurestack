@@ -9,7 +9,8 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func resourceArmNetworkInterface() *schema.Resource {
@@ -213,7 +214,7 @@ func resourceArmNetworkInterfaceCreateUpdate(d *schema.ResourceData, meta interf
 
 	properties := network.InterfacePropertiesFormat{
 		EnableIPForwarding: &enableIpForwarding,
-		Primary:            utils.Bool(true),
+		Primary:            pointer.FromBool(true),
 		// EnableAcceleratedNetworking: &enableAcceleratedNetworking,
 	}
 
@@ -254,7 +255,7 @@ func resourceArmNetworkInterfaceCreateUpdate(d *schema.ResourceData, meta interf
 		}
 
 		if hasFQDN {
-			ifaceDnsSettings.InternalFqdn = utils.String(fqdn.(string))
+			ifaceDnsSettings.InternalFqdn = pointer.FromString(fqdn.(string))
 		}
 
 		properties.DNSSettings = &ifaceDnsSettings
@@ -262,7 +263,7 @@ func resourceArmNetworkInterfaceCreateUpdate(d *schema.ResourceData, meta interf
 
 	ipConfigs, subnetnToLock, vnnToLock, sgErr := expandAzureStackNetworkInterfaceIpConfigurations(d)
 	if sgErr != nil {
-		return fmt.Errorf("Error Building list of Network Interface IP Configurations: %+v", sgErr)
+		return fmt.Errorf("Building list of Network Interface IP Configurations: %+v", sgErr)
 	}
 
 	azureStackLockMultipleByName(subnetnToLock, subnetResourceName)
@@ -320,11 +321,11 @@ func resourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{}) e
 
 	resp, err := client.Get(ctx, resGroup, name, "")
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Azure Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("making Read request on Azure Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	d.Set("name", resp.Name)
@@ -353,13 +354,13 @@ func resourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{}) e
 			}
 
 			if err := d.Set("private_ip_addresses", addresses); err != nil {
-				return fmt.Errorf("Error setting `private_ip_addresses`: %+v", err)
+				return fmt.Errorf("setting `private_ip_addresses`: %+v", err)
 			}
 		}
 
 		if iface.IPConfigurations != nil {
 			if err := d.Set("ip_configuration", flattenNetworkInterfaceIPConfigurations(iface.IPConfigurations)); err != nil {
-				return fmt.Errorf("Error setting `ip_configuration`: %+v", err)
+				return fmt.Errorf("setting `ip_configuration`: %+v", err)
 			}
 		}
 
@@ -445,12 +446,12 @@ func resourceArmNetworkInterfaceDelete(d *schema.ResourceData, meta interface{})
 
 	future, err := client.Delete(ctx, resGroup, name)
 	if err != nil {
-		return fmt.Errorf("Error deleting Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("deleting Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for the deletion of Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for the deletion of Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	return err
@@ -568,7 +569,7 @@ func expandAzureStackNetworkInterfaceIpConfigurations(d *schema.ResourceData) ([
 			properties.Primary = &b
 		}
 
-		//also this
+		// also this
 		// if v, ok := data["application_gateway_backend_address_pools_ids"]; ok {
 		// 	var ids []network.ApplicationGatewayBackendAddressPool
 		// 	pools := v.(*schema.Set).List()

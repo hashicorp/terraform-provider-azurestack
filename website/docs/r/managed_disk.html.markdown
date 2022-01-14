@@ -2,7 +2,6 @@
 subcategory: "Compute"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_managed_disk"
-sidebar_current: "docs-azurestack-resource-compute-managed-disk"
 description: |-
   Manages a Managed Disk.
 ---

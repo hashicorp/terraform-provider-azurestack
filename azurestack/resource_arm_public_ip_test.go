@@ -71,35 +71,6 @@ func TestAccAzureStackPublicIpStatic_basic(t *testing.T) {
 	})
 }
 
-// Sku not supported in the profile, skipping
-func TestAccAzureStackPublicIpStatic_standard(t *testing.T) {
-
-	t.Skip()
-
-	resourceName := "azurestack_public_ip.test"
-	ri := acctest.RandInt()
-	config := testAccAzureStackPublicIPStatic_standard(ri, testLocation())
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackPublicIpDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackPublicIpExists(resourceName),
-				),
-			},
-			{
-				ResourceName:      resourceName,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
 func TestAccAzureStackPublicIpStatic_disappears(t *testing.T) {
 	resourceName := "azurestack_public_ip.test"
 	ri := acctest.RandInt()
@@ -264,6 +235,7 @@ func TestAccAzureStackPublicIpStatic_importIdError(t *testing.T) {
 	})
 }
 
+// nolint:unparam
 func testCheckAzureStackPublicIpExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
@@ -312,12 +284,12 @@ func testCheckAzureStackPublicIpDisappears(name string) resource.TestCheckFunc {
 		ctx := testAccProvider.Meta().(*ArmClient).StopContext
 		future, err := client.Delete(ctx, resourceGroup, publicIpName)
 		if err != nil {
-			return fmt.Errorf("Error deleting Public IP %q (Resource Group %q): %+v", publicIpName, resourceGroup, err)
+			return fmt.Errorf("deleting Public IP %q (Resource Group %q): %+v", publicIpName, resourceGroup, err)
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for deletion of Public IP %q (Resource Group %q): %+v", publicIpName, resourceGroup, err)
+			return fmt.Errorf("waiting for deletion of Public IP %q (Resource Group %q): %+v", publicIpName, resourceGroup, err)
 		}
 
 		return nil
@@ -337,7 +309,6 @@ func testCheckAzureStackPublicIpDestroy(s *terraform.State) error {
 		resourceGroup := rs.Primary.Attributes["resource_group_name"]
 
 		resp, err := client.Get(ctx, resourceGroup, name, "")
-
 		if err != nil {
 			return nil
 		}
@@ -362,23 +333,6 @@ resource "azurestack_public_ip" "test" {
   location                     = "${azurestack_resource_group.test.location}"
   resource_group_name          = "${azurestack_resource_group.test.name}"
   public_ip_address_allocation = "static"
-}
-`, rInt, location, rInt)
-}
-
-func testAccAzureStackPublicIPStatic_standard(rInt int, location string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_public_ip" "test" {
-  name                         = "acctestpublicip-%d"
-  location                     = "${azurestack_resource_group.test.location}"
-  resource_group_name          = "${azurestack_resource_group.test.name}"
-  public_ip_address_allocation = "static"
-  sku                          = "standard"
 }
 `, rInt, location, rInt)
 }

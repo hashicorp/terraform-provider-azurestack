@@ -160,8 +160,8 @@ func testCheckAzureStackLoadBalancerNatPoolDisappears(natPoolName string, lb *ne
 			return fmt.Errorf("A Nat Pool with name %q cannot be found.", natPoolName)
 		}
 
-		currentPools := *lb.LoadBalancerPropertiesFormat.InboundNatPools
-		pools := append(currentPools[:i], currentPools[i+1:]...)
+		pools := *lb.LoadBalancerPropertiesFormat.InboundNatPools
+		pools = append(pools[:i], pools[i+1:]...)
 		lb.LoadBalancerPropertiesFormat.InboundNatPools = &pools
 
 		id, err := parseAzureResourceID(*lb.ID)
@@ -171,12 +171,12 @@ func testCheckAzureStackLoadBalancerNatPoolDisappears(natPoolName string, lb *ne
 
 		future, err := client.CreateOrUpdate(ctx, id.ResourceGroup, *lb.Name, *lb)
 		if err != nil {
-			return fmt.Errorf("Error Creating/Updating LoadBalancer %+v", err)
+			return fmt.Errorf("Creating/Updating LoadBalancer %+v", err)
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for the completion of LoadBalancer %+v", err)
+			return fmt.Errorf("waiting for the completion of LoadBalancer %+v", err)
 		}
 
 		_, err = client.Get(ctx, id.ResourceGroup, *lb.Name, "")

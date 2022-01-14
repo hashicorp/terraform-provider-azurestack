@@ -91,6 +91,7 @@ func TestAccAzureStackDnsARecord_withTags(t *testing.T) {
 	})
 }
 
+// nolint:unparam
 func testCheckAzureStackDnsARecordExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
@@ -135,7 +136,6 @@ func testCheckAzureStackDnsARecordDestroy(s *terraform.State) error {
 		resourceGroup := rs.Primary.Attributes["resource_group_name"]
 
 		resp, err := conn.Get(ctx, resourceGroup, zoneName, aName, dns.A)
-
 		if err != nil {
 			if resp.StatusCode == http.StatusNotFound {
 				return nil

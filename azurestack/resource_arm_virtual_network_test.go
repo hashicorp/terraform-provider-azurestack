@@ -119,6 +119,7 @@ func TestAccAzureStackVirtualNetwork_bug373(t *testing.T) {
 	})
 }
 
+// nolint:unparam
 func testCheckAzureStackVirtualNetworkExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
@@ -170,12 +171,12 @@ func testCheckAzureStackVirtualNetworkDisappears(name string) resource.TestCheck
 
 		future, err := client.Delete(ctx, resourceGroup, virtualNetworkName)
 		if err != nil {
-			return fmt.Errorf("Error deleting Virtual Network %q (RG %q): %+v", virtualNetworkName, resourceGroup, err)
+			return fmt.Errorf("deleting Virtual Network %q (RG %q): %+v", virtualNetworkName, resourceGroup, err)
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for deletion of Virtual Network %q (RG %q): %+v", virtualNetworkName, resourceGroup, err)
+			return fmt.Errorf("waiting for deletion of Virtual Network %q (RG %q): %+v", virtualNetworkName, resourceGroup, err)
 		}
 
 		return nil
@@ -195,7 +196,6 @@ func testCheckAzureStackVirtualNetworkDestroy(s *terraform.State) error {
 		resourceGroup := rs.Primary.Attributes["resource_group_name"]
 
 		resp, err := client.Get(ctx, resourceGroup, name, "")
-
 		if err != nil {
 			return nil
 		}

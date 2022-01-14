@@ -1,7 +1,7 @@
 package azurestack
 
 import (
-	"crypto/sha1"
+	"crypto/sha1" // nolint:gosec
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
@@ -142,7 +142,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 		}
 		config, err := builder.Build()
 		if err != nil {
-			return nil, fmt.Errorf("Error building ARM Client: %+v", err)
+			return nil, fmt.Errorf("building ARM Client: %+v", err)
 		}
 
 		skipCredentialsValidation := d.Get("skip_credentials_validation").(bool)
@@ -208,7 +208,7 @@ func userDataStateFunc(v interface{}) string {
 	switch s := v.(type) {
 	case string:
 		s = base64Encode(s)
-		hash := sha1.Sum([]byte(s))
+		hash := sha1.Sum([]byte(s)) // nolint:gosec
 		return hex.EncodeToString(hash[:])
 	default:
 		return ""

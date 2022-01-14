@@ -6,7 +6,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2017-10-01/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func resourceArmNetworkSecurityRule() *schema.Resource {
@@ -260,7 +260,7 @@ func resourceArmNetworkSecurityRuleCreate(d *schema.ResourceData, meta interface
 	// 	var sourceApplicationSecurityGroups []network.ApplicationSecurityGroup
 	// 	for _, v := range r.(*schema.Set).List() {
 	// 		sg := network.ApplicationSecurityGroup{
-	// 			ID: utils.String(v.(string)),
+	// 			ID: pointer.FromString(v.(string)),
 	// 		}
 	// 		sourceApplicationSecurityGroups = append(sourceApplicationSecurityGroups, sg)
 	// 	}
@@ -271,7 +271,7 @@ func resourceArmNetworkSecurityRuleCreate(d *schema.ResourceData, meta interface
 	// 	var destinationApplicationSecurityGroups []network.ApplicationSecurityGroup
 	// 	for _, v := range r.(*schema.Set).List() {
 	// 		sg := network.ApplicationSecurityGroup{
-	// 			ID: utils.String(v.(string)),
+	// 			ID: pointer.FromString(v.(string)),
 	// 		}
 	// 		destinationApplicationSecurityGroups = append(destinationApplicationSecurityGroups, sg)
 	// 	}
@@ -280,12 +280,12 @@ func resourceArmNetworkSecurityRuleCreate(d *schema.ResourceData, meta interface
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, nsgName, name, rule)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating Network Security Rule %q (NSG %q / Resource Group %q): %+v", name, nsgName, resGroup, err)
+		return fmt.Errorf("Creating/Updating Network Security Rule %q (NSG %q / Resource Group %q): %+v", name, nsgName, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for completion of Network Security Rule %q (NSG %q / Resource Group %q): %+v", name, nsgName, resGroup, err)
+		return fmt.Errorf("waiting for completion of Network Security Rule %q (NSG %q / Resource Group %q): %+v", name, nsgName, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, nsgName, name)
@@ -315,11 +315,11 @@ func resourceArmNetworkSecurityRuleRead(d *schema.ResourceData, meta interface{}
 
 	resp, err := client.Get(ctx, resGroup, networkSGName, sgRuleName)
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Azure Network Security Rule %q: %+v", sgRuleName, err)
+		return fmt.Errorf("making Read request on Azure Network Security Rule %q: %+v", sgRuleName, err)
 	}
 
 	d.Set("name", resp.Name)
@@ -364,12 +364,12 @@ func resourceArmNetworkSecurityRuleDelete(d *schema.ResourceData, meta interface
 
 	future, err := client.Delete(ctx, resGroup, nsgName, sgRuleName)
 	if err != nil {
-		return fmt.Errorf("Error Deleting Network Security Rule %q (NSG %q / Resource Group %q): %+v", sgRuleName, nsgName, resGroup, err)
+		return fmt.Errorf("Deleting Network Security Rule %q (NSG %q / Resource Group %q): %+v", sgRuleName, nsgName, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for the deletion of Network Security Rule %q (NSG %q / Resource Group %q): %+v", sgRuleName, nsgName, resGroup, err)
+		return fmt.Errorf("waiting for the deletion of Network Security Rule %q (NSG %q / Resource Group %q): %+v", sgRuleName, nsgName, resGroup, err)
 	}
 
 	return err

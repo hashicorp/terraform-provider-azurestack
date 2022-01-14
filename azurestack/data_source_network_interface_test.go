@@ -37,7 +37,7 @@ func TestAccDataSourceArmVirtualNetworkInterface_basic(t *testing.T) {
 func testAccDataSourceArmVirtualNetworkInterface_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest-%d-rg"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -83,7 +83,7 @@ resource "azurestack_network_interface" "test" {
 func testAccDataSourceArmVirtualNetworkInterface_withDataSource(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest-%d-rg"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 

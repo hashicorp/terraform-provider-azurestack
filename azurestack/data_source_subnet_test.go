@@ -80,7 +80,7 @@ func TestAccDataSourceArmSubnet_routeTable(t *testing.T) {
 func testAccDataSourceArmSubnet_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest%d-rg"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -109,7 +109,7 @@ data "azurestack_subnet" "test" {
 func testAccDataSourceArmSubnet_networkSecurityGroup(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest%d-rg"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 

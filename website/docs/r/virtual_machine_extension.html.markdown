@@ -2,7 +2,6 @@
 subcategory: "Compute"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_virtual_machine_extension"
-sidebar_current: "docs-azurestack-resource-compute-virtualmachine-extension"
 description: |-
     Creates a new Virtual Machine Extension to provide post deployment
     configuration and run automated tasks.
@@ -72,7 +71,7 @@ resource "azurestack_virtual_machine" "test" {
   name                  = "acctvm"
   location              = "West US"
   resource_group_name   = azurestack_resource_group.test.name
-  network_interface_ids = [ azurestack_network_interface.test.id ]
+  network_interface_ids = [azurestack_network_interface.test.id]
   vm_size               = "Standard_A0"
 
   storage_image_reference {

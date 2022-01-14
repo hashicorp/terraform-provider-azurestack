@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func dataSourceArmNetworkSecurityGroup() *schema.Resource {
@@ -141,10 +141,10 @@ func dataSourceArmNetworkSecurityGroupRead(d *schema.ResourceData, meta interfac
 
 	resp, err := client.Get(ctx, resourceGroup, name, "")
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 		}
-		return fmt.Errorf("Error making Read request on Network Security Group %q (Resource Group %q): %+v", name, resourceGroup, err)
+		return fmt.Errorf("making Read request on Network Security Group %q (Resource Group %q): %+v", name, resourceGroup, err)
 	}
 
 	d.SetId(*resp.ID)
@@ -158,7 +158,7 @@ func dataSourceArmNetworkSecurityGroupRead(d *schema.ResourceData, meta interfac
 	if props := resp.SecurityGroupPropertiesFormat; props != nil {
 		flattenedRules := flattenNetworkSecurityRules(props.SecurityRules)
 		if err := d.Set("security_rule", flattenedRules); err != nil {
-			return fmt.Errorf("Error flattening `security_rule`: %+v", err)
+			return fmt.Errorf("flattening `security_rule`: %+v", err)
 		}
 	}
 

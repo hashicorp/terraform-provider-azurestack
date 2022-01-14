@@ -38,7 +38,7 @@ func retrieveLoadBalancerById(loadBalancerId string, meta interface{}) (*network
 		if resp.StatusCode == http.StatusNotFound {
 			return nil, false, nil
 		}
-		return nil, false, fmt.Errorf("Error making Read request on Azure LoadBalancer %s: %s", name, err)
+		return nil, false, fmt.Errorf("making Read request on Azure LoadBalancer %s: %s", name, err)
 	}
 
 	return &resp, true, nil
@@ -132,14 +132,14 @@ func loadbalancerStateRefreshFunc(ctx context.Context, client network.LoadBalanc
 	return func() (interface{}, string, error) {
 		res, err := client.Get(ctx, resourceGroupName, loadbalancer, "")
 		if err != nil {
-			return nil, "", fmt.Errorf("Error issuing read request in loadbalancerStateRefreshFunc to Azure ARM for LoadBalancer '%s' (RG: '%s'): %s", loadbalancer, resourceGroupName, err)
+			return nil, "", fmt.Errorf("issuing read request in loadbalancerStateRefreshFunc to Azure ARM for LoadBalancer '%s' (RG: '%s'): %s", loadbalancer, resourceGroupName, err)
 		}
 
 		return res, *res.LoadBalancerPropertiesFormat.ProvisioningState, nil
 	}
 }
 
-func validateLoadBalancerPrivateIpAddressAllocation(v interface{}, k string) (ws []string, errors []error) {
+func validateLoadBalancerPrivateIpAddressAllocation(v interface{}) (errors []error) {
 	value := strings.ToLower(v.(string))
 	if value != "static" && value != "dynamic" {
 		errors = append(errors, fmt.Errorf("LoadBalancer Allocations can only be Static or Dynamic"))
@@ -149,10 +149,7 @@ func validateLoadBalancerPrivateIpAddressAllocation(v interface{}, k string) (ws
 
 // sets the loadbalancer_id in the ResourceData from the sub resources full id
 func loadBalancerSubResourceStateImporter(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
-	r, err := regexp.Compile(`.+\/loadBalancers\/.+?\/`)
-	if err != nil {
-		return nil, err
-	}
+	r := regexp.MustCompile(`.+\/loadBalancers\/.+?\/`)
 
 	lbID := strings.TrimSuffix(r.FindString(d.Id()), "/")
 	parsed, err := parseAzureResourceID(lbID)

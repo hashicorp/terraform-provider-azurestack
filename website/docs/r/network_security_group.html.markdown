@@ -2,7 +2,6 @@
 subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_network_security_group"
-sidebar_current: "docs-azurestack-resource-network-security-group"
 description: |-
   Manages a network security group that contains a list of network security rules. Network security groups enable inbound or outbound traffic to be enabled or denied.
 

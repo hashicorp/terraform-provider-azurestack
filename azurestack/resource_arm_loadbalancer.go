@@ -10,10 +10,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/validate"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/suppress"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/validate"
 )
 
 func resourceArmLoadBalancer() *schema.Resource {
@@ -143,25 +143,25 @@ func resourceArmLoadBalancerCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	loadBalancer := network.LoadBalancer{
-		Name:                         utils.String(name),
-		Location:                     utils.String(location),
+		Name:                         pointer.FromString(name),
+		Location:                     pointer.FromString(location),
 		Tags:                         *expandedTags,
 		LoadBalancerPropertiesFormat: &properties,
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, loadBalancer)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("Creating/Updating LoadBalancer %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("Creating/Updating LoadBalancer %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, name, "")
 	if err != nil {
-		return fmt.Errorf("Error Retrieving LoadBalancer %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("Retrieving LoadBalancer %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 	if read.ID == nil {
 		return fmt.Errorf("Cannot read LoadBalancer %q (resource group %q) ID", name, resGroup)
@@ -178,7 +178,7 @@ func resourceArmLoadBalancerCreate(d *schema.ResourceData, meta interface{}) err
 		Timeout: 10 * time.Minute,
 	}
 	if _, err := stateConf.WaitForState(); err != nil {
-		return fmt.Errorf("Error waiting for LoadBalancer (%q - Resource Group %q) to become available: %s", name, resGroup, err)
+		return fmt.Errorf("waiting for LoadBalancer (%q - Resource Group %q) to become available: %s", name, resGroup, err)
 	}
 
 	return resourceArmLoadBalancerRead(d, meta)
@@ -192,7 +192,7 @@ func resourceArmLoadBalancerRead(d *schema.ResourceData, meta interface{}) error
 
 	loadBalancer, exists, err := retrieveLoadBalancerById(d.Id(), meta)
 	if err != nil {
-		return fmt.Errorf("Error retrieving Load Balancer by ID %q: %+v", d.Id(), err)
+		return fmt.Errorf("retrieving Load Balancer by ID %q: %+v", d.Id(), err)
 	}
 	if !exists {
 		d.SetId("")
@@ -247,12 +247,12 @@ func resourceArmLoadBalancerDelete(d *schema.ResourceData, meta interface{}) err
 
 	future, err := client.Delete(ctx, resGroup, name)
 	if err != nil {
-		return fmt.Errorf("Error deleting Load Balancer %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("deleting Load Balancer %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for the deleting Load Balancer %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for the deleting Load Balancer %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	return nil
@@ -335,7 +335,6 @@ func flattenLoadBalancerFrontendIpConfiguration(ipConfigs *[]network.FrontendIPC
 				}
 
 				ipConfig["inbound_nat_rules"] = schema.NewSet(schema.HashString, inboundNatRules)
-
 			}
 		}
 

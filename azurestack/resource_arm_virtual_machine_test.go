@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
+// nolint:unparam
 func testCheckAzureStackVirtualMachineExists(name string, vm *compute.VirtualMachine) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
@@ -54,7 +55,6 @@ func testCheckAzureStackVirtualMachineDestroy(s *terraform.State) error {
 		resourceGroup := rs.Primary.Attributes["resource_group_name"]
 
 		resp, err := client.Get(ctx, resourceGroup, name, "")
-
 		if err != nil {
 			if resp.StatusCode == http.StatusNotFound {
 				return nil

@@ -9,12 +9,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func TestAccAzureStackSubnet_basic(t *testing.T) {
-
 	resourceName := "azurestack_subnet.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackSubnet_basic(ri, testLocation())
@@ -40,7 +38,6 @@ func TestAccAzureStackSubnet_basic(t *testing.T) {
 }
 
 func TestAccAzureStackSubnet_routeTableUpdate(t *testing.T) {
-
 	resourceName := "azurestack_subnet.test"
 	ri := acctest.RandInt()
 	location := testLocation()
@@ -76,7 +73,6 @@ func TestAccAzureStackSubnet_routeTableUpdate(t *testing.T) {
 }
 
 func TestAccAzureStackSubnet_routeTableRemove(t *testing.T) {
-
 	resourceName := "azurestack_subnet.test"
 	ri := acctest.RandInt()
 	location := testLocation()
@@ -145,7 +141,6 @@ func TestAccAzureStackSubnet_removeNetworkSecurityGroup(t *testing.T) {
 }
 
 func TestAccAzureStackSubnet_bug7986(t *testing.T) {
-
 	ri := acctest.RandInt()
 	initConfig := testAccAzureStackSubnet_bug7986(ri, testLocation())
 
@@ -166,7 +161,6 @@ func TestAccAzureStackSubnet_bug7986(t *testing.T) {
 }
 
 func TestAccAzureStackSubnet_bug15204(t *testing.T) {
-
 	ri := acctest.RandInt()
 	initConfig := testAccAzureStackSubnet_bug15204(ri, testLocation())
 
@@ -228,7 +222,7 @@ func testCheckAzureStackSubnetExists(name string) resource.TestCheckFunc {
 
 		resp, err := client.Get(ctx, resourceGroup, vnetName, name, "")
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return fmt.Errorf("Bad: Subnet %q (resource group: %q) does not exist", name, resourceGroup)
 			}
 
@@ -271,7 +265,7 @@ func testCheckAzureStackSubnetRouteTableExists(subnetName string, routeTableId s
 
 		resp, err := subnetsClient.Get(ctx, resourceGroup, vnetName, name, "")
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return fmt.Errorf("Bad: Subnet %q (resource group: %q) does not exist", subnetName, resourceGroup)
 			}
 
@@ -310,13 +304,13 @@ func testCheckAzureStackSubnetDisappears(name string) resource.TestCheckFunc {
 		future, err := client.Delete(ctx, resourceGroup, vnetName, name)
 		if err != nil {
 			if !response.WasNotFound(future.Response()) {
-				return fmt.Errorf("Error deleting Subnet %q (Network %q / Resource Group %q): %+v", name, vnetName, resourceGroup, err)
+				return fmt.Errorf("deleting Subnet %q (Network %q / Resource Group %q): %+v", name, vnetName, resourceGroup, err)
 			}
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for completion of Subnet %q (Network %q / Resource Group %q): %+v", name, vnetName, resourceGroup, err)
+			return fmt.Errorf("waiting for completion of Subnet %q (Network %q / Resource Group %q): %+v", name, vnetName, resourceGroup, err)
 		}
 
 		return nil
@@ -338,7 +332,7 @@ func testCheckAzureStackSubnetDestroy(s *terraform.State) error {
 
 		resp, err := client.Get(ctx, resourceGroup, vnetName, name, "")
 		if err != nil {
-			if !utils.ResponseWasNotFound(resp.Response) {
+			if !response.ResponseWasNotFound(resp.Response) {
 				return fmt.Errorf("Subnet still exists:\n%#v", resp.SubnetPropertiesFormat)
 			}
 			return nil
@@ -346,29 +340,6 @@ func testCheckAzureStackSubnetDestroy(s *terraform.State) error {
 	}
 
 	return nil
-}
-
-// Not supported for 2017-03-09 profile
-func TestAccAzureStackSubnet_serviceEndpoints(t *testing.T) {
-
-	t.Skip()
-
-	ri := acctest.RandInt()
-	config := testAccAzureStackSubnet_serviceEndpoints(ri, testLocation())
-
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackSubnetDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackSubnetExists("azurestack_subnet.test"),
-				),
-			},
-		},
-	})
 }
 
 func testAccAzureStackSubnet_basic(rInt int, location string) string {
@@ -541,7 +512,7 @@ resource "azurestack_route_table" "test" {
 func testAccAzureStackSubnet_networkSecurityGroup(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest%d-rg"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -583,7 +554,7 @@ resource "azurestack_subnet" "test" {
 func testAccAzureStackSubnet_networkSecurityGroupDetached(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest%d-rg"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -624,7 +595,7 @@ resource "azurestack_subnet" "test" {
 func testAccAzureStackSubnet_bug7986(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest%d-rg"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -680,7 +651,7 @@ resource "azurestack_subnet" "second" {
 func testAccAzureStackSubnet_bug15204(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -712,28 +683,4 @@ resource "azurestack_subnet" "test" {
   network_security_group_id = "${azurestack_network_security_group.test.id}"
 }
 `, rInt, location, rInt, rInt, rInt, rInt)
-}
-
-func testAccAzureStackSubnet_serviceEndpoints(rInt int, location string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctestvirtnet%d"
-  address_space       = ["10.0.0.0/16"]
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctestsubnet%d"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix       = "10.0.2.0/24"
-  service_endpoints    = ["Microsoft.Sql", "Microsoft.Storage"]
-}
-`, rInt, location, rInt, rInt)
 }

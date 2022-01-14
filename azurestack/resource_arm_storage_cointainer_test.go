@@ -83,7 +83,6 @@ func TestAccAzureStackStorageContainer_root(t *testing.T) {
 
 func testCheckAzureStackStorageContainerExists(name string, c *storage.Container) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %s", name)
@@ -180,7 +179,7 @@ func testCheckAzureStackStorageContainerDestroy(s *terraform.State) error {
 		ctx := armClient.StopContext
 		blobClient, accountExists, err := armClient.getBlobStorageClientForStorageAccount(ctx, resourceGroup, storageAccountName)
 		if err != nil {
-			//If we can't get keys then the blob can't exist
+			// If we can't get keys then the blob can't exist
 			return nil
 		}
 		if !accountExists {
@@ -191,7 +190,6 @@ func testCheckAzureStackStorageContainerDestroy(s *terraform.State) error {
 			Prefix:  name,
 			Timeout: 90,
 		})
-
 		if err != nil {
 			return nil
 		}

@@ -20,7 +20,6 @@ func resourceArmStorageBlob() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceArmStorageBlobCreate,
 		Read:   resourceArmStorageBlobRead,
-		Exists: resourceArmStorageBlobExists,
 		Delete: resourceArmStorageBlobDelete,
 
 		Schema: map[string]*schema.Schema{
@@ -87,20 +86,16 @@ func resourceArmStorageBlob() *schema.Resource {
 	}
 }
 
-func validateArmStorageBlobParallelism(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(int)
-
-	if value <= 0 {
+func validateArmStorageBlobParallelism(v interface{}, _ string) (ws []string, errors []error) {
+	if value := v.(int); value <= 0 {
 		errors = append(errors, fmt.Errorf("Blob Parallelism %q is invalid, must be greater than 0", value))
 	}
 
 	return
 }
 
-func validateArmStorageBlobAttempts(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(int)
-
-	if value <= 0 {
+func validateArmStorageBlobAttempts(v interface{}, _ string) (ws []string, errors []error) {
+	if value := v.(int); value <= 0 {
 		errors = append(errors, fmt.Errorf("Blob Attempts %q is invalid, must be greater than 0", value))
 	}
 
@@ -157,7 +152,7 @@ func resourceArmStorageBlobCreate(d *schema.ResourceData, meta interface{}) erro
 		blob := container.GetBlobReference(name)
 		err := blob.Copy(sourceUri, options)
 		if err != nil {
-			return fmt.Errorf("Error creating storage blob on Azure: %s", err)
+			return fmt.Errorf("creating storage blob on Azure: %s", err)
 		}
 	} else {
 		switch strings.ToLower(blobType) {
@@ -167,7 +162,7 @@ func resourceArmStorageBlobCreate(d *schema.ResourceData, meta interface{}) erro
 			blob := container.GetBlobReference(name)
 			err := blob.CreateBlockBlob(options)
 			if err != nil {
-				return fmt.Errorf("Error creating storage blob on Azure: %s", err)
+				return fmt.Errorf("creating storage blob on Azure: %s", err)
 			}
 
 			source := d.Get("source").(string)
@@ -175,7 +170,7 @@ func resourceArmStorageBlobCreate(d *schema.ResourceData, meta interface{}) erro
 				parallelism := d.Get("parallelism").(int)
 				attempts := d.Get("attempts").(int)
 				if err := resourceArmStorageBlobBlockUploadFromSource(cont, name, source, blobClient, parallelism, attempts); err != nil {
-					return fmt.Errorf("Error creating storage blob on Azure: %s", err)
+					return fmt.Errorf("creating storage blob on Azure: %s", err)
 				}
 			}
 		case "page":
@@ -184,7 +179,7 @@ func resourceArmStorageBlobCreate(d *schema.ResourceData, meta interface{}) erro
 				parallelism := d.Get("parallelism").(int)
 				attempts := d.Get("attempts").(int)
 				if err := resourceArmStorageBlobPageUploadFromSource(cont, name, source, blobClient, parallelism, attempts); err != nil {
-					return fmt.Errorf("Error creating storage blob on Azure: %s", err)
+					return fmt.Errorf("creating storage blob on Azure: %s", err)
 				}
 			} else {
 				size := int64(d.Get("size").(int))
@@ -195,7 +190,7 @@ func resourceArmStorageBlobCreate(d *schema.ResourceData, meta interface{}) erro
 				blob.Properties.ContentLength = size
 				err := blob.PutPageBlob(options)
 				if err != nil {
-					return fmt.Errorf("Error creating storage blob on Azure: %s", err)
+					return fmt.Errorf("creating storage blob on Azure: %s", err)
 				}
 			}
 		}
@@ -215,13 +210,13 @@ func resourceArmStorageBlobPageUploadFromSource(container, name, source string, 
 
 	file, err := os.Open(source)
 	if err != nil {
-		return fmt.Errorf("Error opening source file for upload %q: %s", source, err)
+		return fmt.Errorf("opening source file for upload %q: %s", source, err)
 	}
 	defer deferredCloseLogError(file, fmt.Sprintf("[ERROR] Unable to close file `%s` after upload", source))
 
 	blobSize, pageList, err := resourceArmStorageBlobPageSplit(file)
 	if err != nil {
-		return fmt.Errorf("Error splitting source file %q into pages: %s", source, err)
+		return fmt.Errorf("splitting source file %q into pages: %s", source, err)
 	}
 
 	options := &storage.PutBlobOptions{}
@@ -230,7 +225,7 @@ func resourceArmStorageBlobPageUploadFromSource(container, name, source string, 
 	blob.Properties.ContentLength = blobSize
 	err = blob.PutPageBlob(options)
 	if err != nil {
-		return fmt.Errorf("Error creating storage blob on Azure: %s", err)
+		return fmt.Errorf("creating storage blob on Azure: %s", err)
 	}
 
 	pages := make(chan resourceArmStorageBlobPage, len(pageList))
@@ -262,7 +257,7 @@ func resourceArmStorageBlobPageUploadFromSource(container, name, source string, 
 	wg.Wait()
 
 	if len(errors) > 0 {
-		return fmt.Errorf("Error while uploading source file %q: %s", source, <-errors)
+		return fmt.Errorf("while uploading source file %q: %s", source, <-errors)
 	}
 
 	return nil
@@ -353,7 +348,7 @@ func resourceArmStorageBlobPageUploadWorker(ctx resourceArmStorageBlobPageUpload
 		chunk := make([]byte, size)
 		_, err := page.section.Read(chunk)
 		if err != nil && err != io.EOF {
-			ctx.errors <- fmt.Errorf("Error reading source file %q at offset %d: %s", ctx.source, page.offset, err)
+			ctx.errors <- fmt.Errorf("reading source file %q at offset %d: %s", ctx.source, page.offset, err)
 			ctx.wg.Done()
 			continue
 		}
@@ -373,7 +368,7 @@ func resourceArmStorageBlobPageUploadWorker(ctx resourceArmStorageBlobPageUpload
 			}
 		}
 		if err != nil {
-			ctx.errors <- fmt.Errorf("Error writing page at offset %d for file %q: %s", page.offset, ctx.source, err)
+			ctx.errors <- fmt.Errorf("writing page at offset %d for file %q: %s", page.offset, ctx.source, err)
 			ctx.wg.Done()
 			continue
 		}
@@ -392,13 +387,13 @@ func resourceArmStorageBlobBlockUploadFromSource(container, name, source string,
 
 	file, err := os.Open(source)
 	if err != nil {
-		return fmt.Errorf("Error opening source file for upload %q: %s", source, err)
+		return fmt.Errorf("opening source file for upload %q: %s", source, err)
 	}
 	defer deferredCloseLogError(file, fmt.Sprintf("[ERROR] Unable to close file `%s` after upload", source))
 
 	blockList, parts, err := resourceArmStorageBlobBlockSplit(file)
 	if err != nil {
-		return fmt.Errorf("Error reading and splitting source file for upload %q: %s", source, err)
+		return fmt.Errorf("reading and splitting source file for upload %q: %s", source, err)
 	}
 
 	wg := &sync.WaitGroup{}
@@ -427,7 +422,7 @@ func resourceArmStorageBlobBlockUploadFromSource(container, name, source string,
 	wg.Wait()
 
 	if len(errors) > 0 {
-		return fmt.Errorf("Error while uploading source file %q: %s", source, <-errors)
+		return fmt.Errorf("while uploading source file %q: %s", source, <-errors)
 	}
 
 	containerReference := client.GetContainerReference(container)
@@ -435,7 +430,7 @@ func resourceArmStorageBlobBlockUploadFromSource(container, name, source string,
 	options := &storage.PutBlockListOptions{}
 	err = blobReference.PutBlockList(blockList, options)
 	if err != nil {
-		return fmt.Errorf("Error updating block list for source file %q: %s", source, err)
+		return fmt.Errorf("updating block list for source file %q: %s", source, err)
 	}
 
 	return nil
@@ -451,14 +446,14 @@ func resourceArmStorageBlobBlockSplit(file *os.File) ([]storage.Block, []resourc
 
 	info, err := file.Stat()
 	if err != nil {
-		return nil, nil, fmt.Errorf("Error stating source file %q: %s", file.Name(), err)
+		return nil, nil, fmt.Errorf("stating source file %q: %s", file.Name(), err)
 	}
 
-	for i := int64(0); i < info.Size(); i = i + blockSize {
+	for i := int64(0); i < info.Size(); i += blockSize {
 		entropy := make([]byte, idSize)
 		_, err = rand.Read(entropy)
 		if err != nil {
-			return nil, nil, fmt.Errorf("Error generating a random block ID for source file %q: %s", file.Name(), err)
+			return nil, nil, fmt.Errorf("generating a random block ID for source file %q: %s", file.Name(), err)
 		}
 
 		sectionSize := blockSize
@@ -500,7 +495,7 @@ func resourceArmStorageBlobBlockUploadWorker(ctx resourceArmStorageBlobBlockUplo
 
 		_, err := block.section.Read(buffer)
 		if err != nil {
-			ctx.errors <- fmt.Errorf("Error reading source file %q: %s", ctx.source, err)
+			ctx.errors <- fmt.Errorf("reading source file %q: %s", ctx.source, err)
 			ctx.wg.Done()
 			continue
 		}
@@ -515,7 +510,7 @@ func resourceArmStorageBlobBlockUploadWorker(ctx resourceArmStorageBlobBlockUplo
 			}
 		}
 		if err != nil {
-			ctx.errors <- fmt.Errorf("Error uploading block %q for source file %q: %s", block.id, ctx.source, err)
+			ctx.errors <- fmt.Errorf("uploading block %q for source file %q: %s", block.id, ctx.source, err)
 			ctx.wg.Done()
 			continue
 		}
@@ -590,7 +585,7 @@ func resourceArmStorageBlobExists(d *schema.ResourceData, meta interface{}) (boo
 	blob := container.GetBlobReference(name)
 	exists, err := blob.Exists()
 	if err != nil {
-		return false, fmt.Errorf("error testing existence of storage blob %q: %s", name, err)
+		return false, fmt.Errorf("testing existence of storage blob %q: %s", name, err)
 	}
 
 	if !exists {
@@ -626,7 +621,7 @@ func resourceArmStorageBlobDelete(d *schema.ResourceData, meta interface{}) erro
 	blob := container.GetBlobReference(name)
 	_, err = blob.DeleteIfExists(options)
 	if err != nil {
-		return fmt.Errorf("Error deleting storage blob %q: %s", name, err)
+		return fmt.Errorf("deleting storage blob %q: %s", name, err)
 	}
 
 	d.SetId("")

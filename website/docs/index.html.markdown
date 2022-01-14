@@ -1,7 +1,6 @@
 ---
 layout: "azurestack"
 page_title: "Provider: Azure Stack"
-sidebar_current: "docs-azurestack-index"
 description: |-
   The Azure Stack Provider is used to manage resources in Azure Stack via the Azure Resource Manager API's.
 

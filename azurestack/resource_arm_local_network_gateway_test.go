@@ -7,8 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func TestAccAzureStackLocalNetworkGateway_basic(t *testing.T) {
@@ -206,6 +205,7 @@ func TestAccAzureStackLocalNetworkGateway_bgpSettingsComplete(t *testing.T) {
 // testCheckAzureStackLocalNetworkGatewayExists returns the resource.TestCheckFunc
 // which checks whether or not the expected local network gateway exists both
 // in the schema, and on Azure.
+// nolint:unparam
 func testCheckAzureStackLocalNetworkGatewayExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// first check within the schema for the local network gateway:
@@ -228,11 +228,11 @@ func testCheckAzureStackLocalNetworkGatewayExists(name string) resource.TestChec
 
 		resp, err := client.Get(ctx, resGrp, localNetName)
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return fmt.Errorf("Local network gateway %q (resource group %q) does not exist on Azure.", localNetName, resGrp)
 			}
 
-			return fmt.Errorf("Error reading the state of local network gateway %q: %+v", localNetName, err)
+			return fmt.Errorf("reading the state of local network gateway %q: %+v", localNetName, err)
 		}
 
 		return nil
@@ -264,12 +264,12 @@ func testCheckAzureStackLocalNetworkGatewayDisappears(name string) resource.Test
 			if response.WasNotFound(future.Response()) {
 				return fmt.Errorf("Local network gateway %q (resource group %q) does not exist on Azure.", localNetName, resourceGroup)
 			}
-			return fmt.Errorf("Error deleting the state of local network gateway %q: %+v", localNetName, err)
+			return fmt.Errorf("deleting the state of local network gateway %q: %+v", localNetName, err)
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for deletion of the local network gateway %q to complete: %+v", localNetName, err)
+			return fmt.Errorf("waiting for deletion of the local network gateway %q to complete: %+v", localNetName, err)
 		}
 
 		return nil
@@ -292,9 +292,8 @@ func testCheckAzureStackLocalNetworkGatewayDestroy(s *terraform.State) error {
 		client := testAccProvider.Meta().(*ArmClient).localNetConnClient
 		ctx := testAccProvider.Meta().(*ArmClient).StopContext
 		resp, err := client.Get(ctx, resourceGroup, localNetName)
-
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return nil
 			}
 
@@ -310,7 +309,7 @@ func testCheckAzureStackLocalNetworkGatewayDestroy(s *terraform.State) error {
 func testAccAzureStackLocalNetworkGatewayConfig_basic(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -327,7 +326,7 @@ resource "azurestack_local_network_gateway" "test" {
 func testAccAzureStackLocalNetworkGatewayConfig_tags(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -348,7 +347,7 @@ resource "azurestack_local_network_gateway" "test" {
 func testAccAzureStackLocalNetworkGatewayConfig_bgpSettings(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 
@@ -370,7 +369,7 @@ resource "azurestack_local_network_gateway" "test" {
 func testAccAzureStackLocalNetworkGatewayConfig_bgpSettingsComplete(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
-  name     = "acctest-%d"
+  name     = "acctestRG-%d"
   location = "%s"
 }
 

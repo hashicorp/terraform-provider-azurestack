@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func dataSourceArmNetworkInterface() *schema.Resource {
@@ -172,11 +172,11 @@ func dataSourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{})
 
 	resp, err := client.Get(ctx, resGroup, name, "")
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Azure Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("making Read request on Azure Network Interface %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	d.SetId(*resp.ID)
@@ -207,13 +207,13 @@ func dataSourceArmNetworkInterfaceRead(d *schema.ResourceData, meta interface{})
 			}
 
 			if err := d.Set("private_ip_addresses", addresses); err != nil {
-				return fmt.Errorf("Error setting `private_ip_addresses`: %+v", err)
+				return fmt.Errorf("setting `private_ip_addresses`: %+v", err)
 			}
 		}
 
 		if iface.IPConfigurations != nil {
 			if err := d.Set("ip_configuration", flattenNetworkInterfaceIPConfigurations(iface.IPConfigurations)); err != nil {
-				return fmt.Errorf("Error setting `ip_configuration`: %+v", err)
+				return fmt.Errorf("setting `ip_configuration`: %+v", err)
 			}
 		}
 

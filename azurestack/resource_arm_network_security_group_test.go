@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func TestAccAzureStackNetworkSecurityGroup_basic(t *testing.T) {
@@ -170,55 +170,9 @@ func TestAccAzureStackNetworkSecurityGroup_addingExtraRules(t *testing.T) {
 	})
 }
 
-// Not supported by the profile by now
-func TestAccAzureStackNetworkSecurityGroup_augmented(t *testing.T) {
-
-	t.Skip()
-
-	resourceName := "azurestack_network_security_group.test"
-	rInt := acctest.RandInt()
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureStackNetworkSecurityGroup_augmented(rInt, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "security_rule.#", "1"),
-				),
-			},
-		},
-	})
-}
-
-// application security group not in scope
-func TestAccAzureStackNetworkSecurityGroup_applicationSecurityGroup(t *testing.T) {
-
-	t.Skip()
-
-	resourceName := "azurestack_network_security_group.test"
-	rInt := acctest.RandInt()
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackNetworkSecurityGroupDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccAzureStackNetworkSecurityGroup_applicationSecurityGroup(rInt, testLocation()),
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackNetworkSecurityGroupExists(resourceName),
-					resource.TestCheckResourceAttr(resourceName, "security_rule.#", "1"),
-				),
-			},
-		},
-	})
-}
-
+// nolint:unparam
 func testCheckAzureStackNetworkSecurityGroupExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %q", name)
@@ -234,7 +188,7 @@ func testCheckAzureStackNetworkSecurityGroupExists(name string) resource.TestChe
 		ctx := testAccProvider.Meta().(*ArmClient).StopContext
 		resp, err := client.Get(ctx, resourceGroup, sgName, "")
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return fmt.Errorf("Bad: Network Security Group %q (resource group: %q) does not exist", name, resourceGroup)
 			}
 
@@ -246,9 +200,7 @@ func testCheckAzureStackNetworkSecurityGroupExists(name string) resource.TestChe
 }
 
 func testCheckAzureStackNetworkSecurityGroupDisappears(name string) resource.TestCheckFunc {
-
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %s", name)
@@ -264,11 +216,11 @@ func testCheckAzureStackNetworkSecurityGroupDisappears(name string) resource.Tes
 		ctx := testAccProvider.Meta().(*ArmClient).StopContext
 		future, err := client.Delete(ctx, resourceGroup, sgName)
 		if err != nil {
-			return fmt.Errorf("Error deleting NSG %q (Resource Group %q): %+v", sgName, resourceGroup, err)
+			return fmt.Errorf("deleting NSG %q (Resource Group %q): %+v", sgName, resourceGroup, err)
 		}
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error deleting NSG %q (Resource Group %q): %+v", sgName, resourceGroup, err)
+			return fmt.Errorf("deleting NSG %q (Resource Group %q): %+v", sgName, resourceGroup, err)
 		}
 
 		return nil
@@ -288,9 +240,8 @@ func testCheckAzureStackNetworkSecurityGroupDestroy(s *terraform.State) error {
 		resourceGroup := rs.Primary.Attributes["resource_group_name"]
 
 		resp, err := client.Get(ctx, resourceGroup, name, "")
-
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return nil
 			}
 			return err
@@ -444,70 +395,4 @@ resource "azurestack_network_security_group" "test" {
   }
 }
 `, rInt, location)
-}
-
-func testAccAzureStackNetworkSecurityGroup_augmented(rInt int, location string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_network_security_group" "test" {
-  name                = "acceptanceTestSecurityGroup1"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-
-  security_rule {
-    name                         = "test123"
-    priority                     = 100
-    direction                    = "Inbound"
-    access                       = "Allow"
-    protocol                     = "Tcp"
-    source_port_ranges           = ["10000-40000"]
-    destination_port_ranges      = ["80", "443", "8080", "8190"]
-    source_address_prefixes      = ["10.0.0.0/8", "192.168.0.0/16"]
-    destination_address_prefixes = ["172.16.0.0/20", "8.8.8.8"]
-  }
-}
-`, rInt, location)
-}
-
-func testAccAzureStackNetworkSecurityGroup_applicationSecurityGroup(rInt int, location string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_application_security_group" "first" {
-  name                = "acctest-first%d"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_application_security_group" "second" {
-  name                = "acctest-second%d"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_network_security_group" "test" {
-  name                = "acctestnsg-%d"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-
-  security_rule {
-    name                                       = "test123"
-    priority                                   = 100
-    direction                                  = "Inbound"
-    access                                     = "Allow"
-    protocol                                   = "Tcp"
-    source_application_security_group_ids      = ["${azurestack_application_security_group.first.id}"]
-    destination_application_security_group_ids = ["${azurestack_application_security_group.second.id}"]
-    source_port_ranges                         = ["10000-40000"]
-    destination_port_ranges                    = ["80", "443", "8080", "8190"]
-  }
-}
-`, rInt, location, rInt, rInt, rInt)
 }

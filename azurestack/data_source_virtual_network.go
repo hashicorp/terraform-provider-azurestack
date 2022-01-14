@@ -5,7 +5,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func dataSourceArmVirtualNetwork() *schema.Resource {
@@ -64,8 +64,8 @@ func dataSourceArmVnetRead(d *schema.ResourceData, meta interface{}) error {
 
 	resp, err := client.Get(ctx, resGroup, name, "")
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
-			return fmt.Errorf("Error making Read request on Azure virtual network %q (resource group %q): %+v", name, resGroup, err)
+		if response.ResponseWasNotFound(resp.Response) {
+			return fmt.Errorf("making Read request on Azure virtual network %q (resource group %q): %+v", name, resGroup, err)
 		}
 		return err
 	}

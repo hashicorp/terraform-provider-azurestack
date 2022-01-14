@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"testing"
-
 	"strings"
+	"testing"
 
 	"github.com/Azure/azure-sdk-for-go/storage"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
@@ -233,7 +232,7 @@ func TestAccAzureStackStorageBlobPage_source(t *testing.T) {
 		t.Fatalf("Failed to truncate file to 25M")
 	}
 
-	for i := int64(0); i < 20; i = i + 2 {
+	for i := int64(0); i < 20; i += 2 {
 		randomBytes := make([]byte, 1*1024*1024)
 		_, err = rand.Read(randomBytes)
 		if err != nil {
@@ -316,7 +315,6 @@ func TestAccAzureStackStorageBlob_source_uri(t *testing.T) {
 
 func testCheckAzureStackStorageBlobExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %s", name)
@@ -357,7 +355,6 @@ func testCheckAzureStackStorageBlobExists(name string) resource.TestCheckFunc {
 
 func testCheckAzureStackStorageBlobDisappears(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %s", name)
@@ -391,7 +388,6 @@ func testCheckAzureStackStorageBlobDisappears(name string) resource.TestCheckFun
 
 func testCheckAzureStackStorageBlobMatchesFile(name string, kind storage.BlobType, filePath string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %s", name)

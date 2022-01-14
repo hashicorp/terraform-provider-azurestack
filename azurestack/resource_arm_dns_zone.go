@@ -5,8 +5,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/services/dns/mgmt/2016-04-01/dns"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func resourceArmDnsZone() *schema.Resource {
@@ -95,11 +94,11 @@ func resourceArmDnsZoneRead(d *schema.ResourceData, meta interface{}) error {
 
 	resp, err := zonesClient.Get(ctx, resGroup, name)
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error reading DNS zone %s (resource group %s): %+v", name, resGroup, err)
+		return fmt.Errorf("reading DNS zone %s (resource group %s): %+v", name, resGroup, err)
 	}
 
 	d.Set("name", name)
@@ -108,8 +107,8 @@ func resourceArmDnsZoneRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("max_number_of_record_sets", resp.MaxNumberOfRecordSets)
 
 	if nameServers := resp.NameServers; nameServers != nil {
-		if err := d.Set("name_servers", *nameServers); err != nil {
-			return fmt.Errorf("Error setting `name_servers`: %+v", err)
+		if err := d.Set("name_servers", nameServers); err != nil {
+			return fmt.Errorf("setting `name_servers`: %+v", err)
 		}
 	}
 
@@ -136,7 +135,7 @@ func resourceArmDnsZoneDelete(d *schema.ResourceData, meta interface{}) error {
 		if response.WasNotFound(future.Response()) {
 			return nil
 		}
-		return fmt.Errorf("Error deleting DNS zone %s (resource group %s): %+v", name, resGroup, err)
+		return fmt.Errorf("deleting DNS zone %s (resource group %s): %+v", name, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
@@ -144,7 +143,7 @@ func resourceArmDnsZoneDelete(d *schema.ResourceData, meta interface{}) error {
 		if response.WasNotFound(future.Response()) {
 			return nil
 		}
-		return fmt.Errorf("Error deleting DNS zone %s (resource group %s): %+v", name, resGroup, err)
+		return fmt.Errorf("deleting DNS zone %s (resource group %s): %+v", name, resGroup, err)
 	}
 
 	return nil

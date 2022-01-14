@@ -1,8 +1,7 @@
 ---
-subcategory: ""
+subcategory: "Storage"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_storage_account"
-sidebar_current: "docs-azurestack-datasource-storage-account"
 description: |-
   Get information about the specified Storage Account.
 ---

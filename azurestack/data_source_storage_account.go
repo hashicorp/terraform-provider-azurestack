@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func dataSourceArmStorageAccount() *schema.Resource {
@@ -50,7 +50,6 @@ func dataSourceArmStorageAccount() *schema.Resource {
 			"custom_domain": {
 				Type:     schema.TypeList,
 				Computed: true,
-				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
@@ -157,7 +156,6 @@ func dataSourceArmStorageAccount() *schema.Resource {
 			"tags": tagsForDataSourceSchema(),
 		},
 	}
-
 }
 
 func dataSourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) error {
@@ -170,11 +168,11 @@ func dataSourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) e
 
 	resp, err := client.GetProperties(ctx, resourceGroup, name)
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error reading the state of AzureStack Storage Account %q: %+v", name, err)
+		return fmt.Errorf("reading the state of AzureStack Storage Account %q: %+v", name, err)
 	}
 
 	d.SetId(*resp.ID)
@@ -204,7 +202,7 @@ func dataSourceArmStorageAccountRead(d *schema.ResourceData, meta interface{}) e
 
 		if customDomain := props.CustomDomain; customDomain != nil {
 			if err := d.Set("custom_domain", flattenStorageAccountCustomDomain(customDomain)); err != nil {
-				return fmt.Errorf("Error flattening `custom_domain`: %+v", err)
+				return fmt.Errorf("flattening `custom_domain`: %+v", err)
 			}
 		}
 

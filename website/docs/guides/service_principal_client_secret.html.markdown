@@ -2,7 +2,6 @@
 subcategory: "Authentication"
 layout: "azurestack"
 page_title: "Authenticating via a Service Principal using a Client Secret"
-sidebar_current: "docs-azurestack-auth-service-principal-client-secret"
 description: |-
   This guide explains how to use a Service Principal and a Client Secret to authenticate with the Azure Stack Provider.
 

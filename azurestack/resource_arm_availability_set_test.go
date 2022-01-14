@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func TestAccAzureStackAvailabilitySet_basic(t *testing.T) {
@@ -127,7 +127,6 @@ func TestAccAzureStackAvailabilitySet_withDomainCounts(t *testing.T) {
 }
 
 func TestAccAzureStackAvailabilitySet_managed(t *testing.T) {
-
 	resourceName := "azurestack_availability_set.test"
 	ri := acctest.RandInt()
 	config := testAccAzureStackAvailabilitySet_managed(ri, testLocation())
@@ -153,6 +152,7 @@ func TestAccAzureStackAvailabilitySet_managed(t *testing.T) {
 	})
 }
 
+// nolint:unparam
 func testCheckAzureStackAvailabilitySetExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		// Ensure we have enough information in state to look up in API
@@ -171,7 +171,7 @@ func testCheckAzureStackAvailabilitySetExists(name string) resource.TestCheckFun
 		ctx := testAccProvider.Meta().(*ArmClient).StopContext
 		resp, err := client.Get(ctx, resourceGroup, availSetName)
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return fmt.Errorf("Bad: Availability Set %q (resource group: %q) does not exist", name, resourceGroup)
 			}
 
@@ -200,7 +200,7 @@ func testCheckAzureStackAvailabilitySetDisappears(name string) resource.TestChec
 		ctx := testAccProvider.Meta().(*ArmClient).StopContext
 		resp, err := client.Delete(ctx, resourceGroup, availSetName)
 		if err != nil {
-			if !utils.ResponseWasNotFound(resp.Response) {
+			if !response.ResponseWasNotFound(resp.Response) {
 				return fmt.Errorf("Bad: Delete on availSetClient: %+v", err)
 			}
 		}
@@ -221,9 +221,8 @@ func testCheckAzureStackAvailabilitySetDestroy(s *terraform.State) error {
 		client := testAccProvider.Meta().(*ArmClient).availSetClient
 		ctx := testAccProvider.Meta().(*ArmClient).StopContext
 		resp, err := client.Get(ctx, resourceGroup, name)
-
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return nil
 			}
 			return err

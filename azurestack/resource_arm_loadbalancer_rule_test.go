@@ -257,8 +257,8 @@ func testCheckAzureStackLoadBalancerRuleDisappears(ruleName string, lb *network.
 			return fmt.Errorf("A Rule with name %q cannot be found.", ruleName)
 		}
 
-		currentRules := *lb.LoadBalancerPropertiesFormat.LoadBalancingRules
-		rules := append(currentRules[:i], currentRules[i+1:]...)
+		rules := *lb.LoadBalancerPropertiesFormat.LoadBalancingRules
+		rules = append(rules[:i], rules[i+1:]...)
 		lb.LoadBalancerPropertiesFormat.LoadBalancingRules = &rules
 
 		id, err := parseAzureResourceID(*lb.ID)
@@ -268,12 +268,12 @@ func testCheckAzureStackLoadBalancerRuleDisappears(ruleName string, lb *network.
 
 		future, err := client.CreateOrUpdate(ctx, id.ResourceGroup, *lb.Name, *lb)
 		if err != nil {
-			return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q): %+v", *lb.Name, id.ResourceGroup, err)
+			return fmt.Errorf("Creating/Updating LoadBalancer %q (Resource Group %q): %+v", *lb.Name, id.ResourceGroup, err)
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for completion of LoadBalancer %q (Resource Group %q): %+v", *lb.Name, id.ResourceGroup, err)
+			return fmt.Errorf("waiting for completion of LoadBalancer %q (Resource Group %q): %+v", *lb.Name, id.ResourceGroup, err)
 		}
 
 		_, err = client.Get(ctx, id.ResourceGroup, *lb.Name, "")

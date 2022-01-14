@@ -2,7 +2,6 @@
 subcategory: "Load Balancer"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_lb_probe"
-sidebar_current: "docs-azurestack-resource-loadbalancer-probe"
 description: |-
   Manages a LoadBalancer Probe Resource.
 ---

@@ -167,8 +167,8 @@ func TestAccAzureStackVirtualMachine_tags(t *testing.T) {
 	})
 }
 
-//This is a regression test around https://github.com/hashicorp/terraform/issues/6517
-//Because we use CreateOrUpdate, we were sending an empty password on update requests
+// This is a regression test around https://github.com/hashicorp/terraform/issues/6517
+// Because we use CreateOrUpdate, we were sending an empty password on update requests
 func TestAccAzureStackVirtualMachine_updateMachineSize(t *testing.T) {
 	var vm compute.VirtualMachine
 
@@ -386,40 +386,6 @@ func TestAccAzureStackVirtualMachine_ChangeComputerName(t *testing.T) {
 	})
 }
 
-// AvailabilitySet not yet supported
-func TestAccAzureStackVirtualMachine_ChangeAvailabilitySet(t *testing.T) {
-
-	t.Skip()
-
-	var afterCreate, afterUpdate compute.VirtualMachine
-
-	ri := acctest.RandInt()
-	preConfig := testAccAzureStackVirtualMachine_withAvailabilitySet(ri, testLocation())
-	postConfig := testAccAzureStackVirtualMachine_updateAvailabilitySet(ri, testLocation())
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: preConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackVirtualMachineExists("azurestack_virtual_machine.test", &afterCreate),
-				),
-			},
-
-			{
-				Config: postConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackVirtualMachineExists("azurestack_virtual_machine.test", &afterUpdate),
-					testAccCheckVirtualMachineRecreated(
-						t, &afterCreate, &afterUpdate),
-				),
-			},
-		},
-	})
-}
-
 func TestAccAzureStackVirtualMachine_changeStorageImageReference(t *testing.T) {
 	var afterCreate, afterUpdate compute.VirtualMachine
 
@@ -480,31 +446,6 @@ func TestAccAzureStackVirtualMachine_changeOSDiskVhdUri(t *testing.T) {
 	})
 }
 
-// This test fails and succeeds mostly because of a timeout
-// Error code Code="VmProvisioningTimeout" Message="VM failed to provision with
-// timeout."
-func TestAccAzureStackVirtualMachine_plan(t *testing.T) {
-
-	t.Skip()
-
-	var vm compute.VirtualMachine
-	ri := acctest.RandInt()
-	config := testAccAzureStackVirtualMachine_plan(ri, testLocation())
-	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckAzureStackVirtualMachineDestroy,
-		Steps: []resource.TestStep{
-			{
-				Config: config,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAzureStackVirtualMachineExists("azurestack_virtual_machine.test", &vm),
-				),
-			},
-		},
-	})
-}
-
 func TestAccAzureStackVirtualMachine_changeSSHKey(t *testing.T) {
 	var vm compute.VirtualMachine
 	rs := strings.ToLower(acctest.RandString(10))
@@ -554,9 +495,7 @@ func TestAccAzureStackVirtualMachine_optionalOSProfile(t *testing.T) {
 			{
 				Destroy: false,
 				Config:  prepConfig,
-				Check: func(s *terraform.State) error {
-					return testCheckAzureStackVirtualMachineDestroy(s)
-				},
+				Check:   testCheckAzureStackVirtualMachineDestroy,
 			},
 			{
 				Config: config,
@@ -1890,194 +1829,6 @@ resource "azurestack_virtual_machine" "test" {
 `, rInt, location, rInt, rInt, rInt, rInt, rInt)
 }
 
-func testAccAzureStackVirtualMachine_withAvailabilitySet(rInt int, location string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%d"
-  address_space       = ["10.0.0.0/16"]
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%d"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_network_interface" "test" {
-  name                = "acctni-%d"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-
-  ip_configuration {
-    name                          = "testconfiguration1"
-    subnet_id                     = "${azurestack_subnet.test.id}"
-    private_ip_address_allocation = "dynamic"
-  }
-}
-
-resource "azurestack_storage_account" "test" {
-  name                     = "accsa%d"
-  resource_group_name      = "${azurestack_resource_group.test.name}"
-  location                 = "${azurestack_resource_group.test.location}"
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  tags = {
-    environment = "staging"
-  }
-}
-
-resource "azurestack_availability_set" "test" {
-  name                = "availabilityset%d"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_storage_container" "test" {
-  name                  = "vhds"
-  resource_group_name   = "${azurestack_resource_group.test.name}"
-  storage_account_name  = "${azurestack_storage_account.test.name}"
-  container_access_type = "private"
-}
-
-resource "azurestack_virtual_machine" "test" {
-  name                          = "acctvm-%d"
-  location                      = "${azurestack_resource_group.test.location}"
-  resource_group_name           = "${azurestack_resource_group.test.name}"
-  network_interface_ids         = ["${azurestack_network_interface.test.id}"]
-  vm_size                       = "Standard_D1_v2"
-  availability_set_id           = "${azurestack_availability_set.test.id}"
-  delete_os_disk_on_termination = true
-
-  storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-
-  storage_os_disk {
-    name          = "myosdisk1"
-    vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
-    caching       = "ReadWrite"
-    create_option = "FromImage"
-  }
-
-  os_profile {
-    computer_name  = "hn%d"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = false
-  }
-}
-`, rInt, location, rInt, rInt, rInt, rInt, rInt, rInt, rInt)
-}
-
-func testAccAzureStackVirtualMachine_updateAvailabilitySet(rInt int, location string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%d"
-  address_space       = ["10.0.0.0/16"]
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%d"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_network_interface" "test" {
-  name                = "acctni-%d"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-
-  ip_configuration {
-    name                          = "testconfiguration1"
-    subnet_id                     = "${azurestack_subnet.test.id}"
-    private_ip_address_allocation = "dynamic"
-  }
-}
-
-resource "azurestack_storage_account" "test" {
-  name                     = "accsa%d"
-  resource_group_name      = "${azurestack_resource_group.test.name}"
-  location                 = "${azurestack_resource_group.test.location}"
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  tags = {
-    environment = "staging"
-  }
-}
-
-resource "azurestack_availability_set" "test" {
-  name                = "updatedAvailabilitySet%d"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_storage_container" "test" {
-  name                  = "vhds"
-  resource_group_name   = "${azurestack_resource_group.test.name}"
-  storage_account_name  = "${azurestack_storage_account.test.name}"
-  container_access_type = "private"
-}
-
-resource "azurestack_virtual_machine" "test" {
-  name                          = "acctvm-%d"
-  location                      = "${azurestack_resource_group.test.location}"
-  resource_group_name           = "${azurestack_resource_group.test.name}"
-  network_interface_ids         = ["${azurestack_network_interface.test.id}"]
-  vm_size                       = "Standard_D1_v2"
-  availability_set_id           = "${azurestack_availability_set.test.id}"
-  delete_os_disk_on_termination = true
-
-  storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-
-  storage_os_disk {
-    name          = "myosdisk1"
-    vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
-    caching       = "ReadWrite"
-    create_option = "FromImage"
-  }
-
-  os_profile {
-    computer_name  = "hn%d"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = false
-  }
-}
-`, rInt, location, rInt, rInt, rInt, rInt, rInt, rInt, rInt)
-}
-
 func testAccAzureStackVirtualMachine_updateMachineName(rInt int, location string) string {
 	return fmt.Sprintf(`
 resource "azurestack_resource_group" "test" {
@@ -2433,104 +2184,6 @@ resource "azurestack_virtual_machine" "test" {
 
   os_profile_linux_config {
     disable_password_authentication = false
-  }
-
-  tags = {
-    environment = "Production"
-    cost-center = "Ops"
-  }
-}
-`, rInt, location, rInt, rInt, rInt, rInt, rInt, rInt)
-}
-
-func testAccAzureStackVirtualMachine_plan(rInt int, location string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%d"
-  address_space       = ["10.0.0.0/16"]
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%d"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_network_interface" "test" {
-  name                = "acctni-%d"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-
-  ip_configuration {
-    name                          = "testconfiguration1"
-    subnet_id                     = "${azurestack_subnet.test.id}"
-    private_ip_address_allocation = "dynamic"
-  }
-}
-
-resource "azurestack_storage_account" "test" {
-  name                     = "accsa%d"
-  resource_group_name      = "${azurestack_resource_group.test.name}"
-  location                 = "${azurestack_resource_group.test.location}"
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  tags = {
-    environment = "staging"
-  }
-}
-
-resource "azurestack_storage_container" "test" {
-  name                  = "vhds"
-  resource_group_name   = "${azurestack_resource_group.test.name}"
-  storage_account_name  = "${azurestack_storage_account.test.name}"
-  container_access_type = "private"
-}
-
-resource "azurestack_virtual_machine" "test" {
-  name                  = "acctvm-%d"
-  location              = "${azurestack_resource_group.test.location}"
-  resource_group_name   = "${azurestack_resource_group.test.name}"
-  network_interface_ids = ["${azurestack_network_interface.test.id}"]
-  vm_size               = "Standard_DS1_v2"
-
-  storage_image_reference {
-    publisher = "kemptech"
-    offer     = "vlm-azure"
-    sku       = "basic-byol"
-    version   = "7.2.390115589"
-  }
-
-  storage_os_disk {
-    name          = "myosdisk1"
-    vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
-    caching       = "ReadWrite"
-    create_option = "FromImage"
-    disk_size_gb  = "45"
-  }
-
-  os_profile {
-    computer_name  = "hn%d"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = false
-  }
-
-  plan {
-    name      = "basic-byol"
-    publisher = "kemptech"
-    product   = "vlm-azure"
   }
 
   tags = {
@@ -2961,14 +2614,14 @@ func testCheckAzureStackVirtualMachineVHDExistence(name string, shouldExist bool
 			ctx := armClient.StopContext
 			storageClient, _, err := armClient.getBlobStorageClientForStorageAccount(ctx, resourceGroup, storageAccountName)
 			if err != nil {
-				return fmt.Errorf("Error creating Blob storage client: %+v", err)
+				return fmt.Errorf("creating Blob storage client: %+v", err)
 			}
 
 			container := storageClient.GetContainerReference(containerName)
 			blob := container.GetBlobReference(name)
 			exists, err := blob.Exists()
 			if err != nil {
-				return fmt.Errorf("Error checking if Disk VHD Blob exists: %+v", err)
+				return fmt.Errorf("checking if Disk VHD Blob exists: %+v", err)
 			}
 
 			if exists && !shouldExist {

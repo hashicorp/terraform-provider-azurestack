@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func resourceArmVirtualMachineExtensions() *schema.Resource {
@@ -60,7 +60,7 @@ func resourceArmVirtualMachineExtensions() *schema.Resource {
 			"settings": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateFunc:     validation.ValidateJsonString,
+				ValidateFunc:     validation.StringIsJSON,
 				DiffSuppressFunc: structure.SuppressJsonDiff,
 			},
 
@@ -69,7 +69,7 @@ func resourceArmVirtualMachineExtensions() *schema.Resource {
 				Type:             schema.TypeString,
 				Optional:         true,
 				Sensitive:        true,
-				ValidateFunc:     validation.ValidateJsonString,
+				ValidateFunc:     validation.StringIsJSON,
 				DiffSuppressFunc: structure.SuppressJsonDiff,
 			},
 
@@ -156,11 +156,11 @@ func resourceArmVirtualMachineExtensionsRead(d *schema.ResourceData, meta interf
 
 	resp, err := client.Get(ctx, resGroup, vmName, name, "")
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Virtual Machine Extension %s: %s", name, err)
+		return fmt.Errorf("making Read request on Virtual Machine Extension %s: %s", name, err)
 	}
 
 	d.Set("name", resp.Name)

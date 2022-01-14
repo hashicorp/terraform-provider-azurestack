@@ -39,7 +39,7 @@ func TestResourceAzureStackLoadBalancerPrivateIpAddressAllocation_validation(t *
 	}
 
 	for _, tc := range cases {
-		_, errors := validateLoadBalancerPrivateIpAddressAllocation(tc.Value, "azurestack_lb")
+		errors := validateLoadBalancerPrivateIpAddressAllocation(tc.Value)
 
 		if len(errors) != tc.ErrCount {
 			t.Fatalf("Expected the Azure RM LoadBalancer private_ip_address_allocation to trigger a validation error")
@@ -153,6 +153,7 @@ func TestAccAzureStackLoadBalancer_tags(t *testing.T) {
 	})
 }
 
+// nolint:unparam
 func testCheckAzureStackLoadBalancerExists(name string, lb *network.LoadBalancer) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
@@ -197,7 +198,6 @@ func testCheckAzureStackLoadBalancerDestroy(s *terraform.State) error {
 		resourceGroup := rs.Primary.Attributes["resource_group_name"]
 
 		resp, err := client.Get(ctx, resourceGroup, name, "")
-
 		if err != nil {
 			return nil
 		}

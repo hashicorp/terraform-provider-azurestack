@@ -1,8 +1,7 @@
 ---
-subcategory: ""
+subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_public_ip"
-sidebar_current: "docs-azurestack-datasource-public-ip-x"
 description: |-
   Retrieves information about the specified public IP address.
 
@@ -81,7 +80,7 @@ resource "azurestack_virtual_machine" "test" {
   name                  = "test-vm"
   location              = azurestack_resource_group.test.location
   resource_group_name   = azurestack_resource_group.test.name
-  network_interface_ids = [ azurestack_network_interface.test.id ]
+  network_interface_ids = [azurestack_network_interface.test.id]
 
   # ...
 }

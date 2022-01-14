@@ -13,6 +13,9 @@ func tagsSchema() *schema.Schema {
 		Optional:     true,
 		Computed:     true,
 		ValidateFunc: validateAzureStackTags,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
 	}
 }
 
@@ -20,6 +23,9 @@ func tagsForDataSourceSchema() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeMap,
 		Computed: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
 	}
 }
 
@@ -61,7 +67,7 @@ func expandTags(tagsMap map[string]interface{}) *map[string]*string {
 	output := make(map[string]*string, len(tagsMap))
 
 	for i, v := range tagsMap {
-		//Validate should have ignored this error already
+		// Validate should have ignored this error already
 		value, _ := tagValueToString(v)
 		output[i] = &value
 	}

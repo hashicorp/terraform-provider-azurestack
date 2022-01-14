@@ -1,8 +1,7 @@
 ---
-subcategory: ""
+subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_route_table"
-sidebar_current: "docs-azurestack-data-source-route-table"
 description: |-
   Gets information about a Route Table
 

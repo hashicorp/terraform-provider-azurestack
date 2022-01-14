@@ -120,8 +120,8 @@ func testCheckAzureStackLoadBalancerBackEndAddressPoolDisappears(addressPoolName
 			return fmt.Errorf("A BackEnd Address Pool with name %q cannot be found.", addressPoolName)
 		}
 
-		currentPools := *lb.LoadBalancerPropertiesFormat.BackendAddressPools
-		pools := append(currentPools[:i], currentPools[i+1:]...)
+		pools := *lb.LoadBalancerPropertiesFormat.BackendAddressPools
+		pools = append(pools[:i], pools[i+1:]...)
 		lb.LoadBalancerPropertiesFormat.BackendAddressPools = &pools
 
 		id, err := parseAzureResourceID(*lb.ID)
@@ -131,12 +131,12 @@ func testCheckAzureStackLoadBalancerBackEndAddressPoolDisappears(addressPoolName
 
 		future, err := client.CreateOrUpdate(ctx, id.ResourceGroup, *lb.Name, *lb)
 		if err != nil {
-			return fmt.Errorf("Error Creating/Updating LoadBalancer %+v", err)
+			return fmt.Errorf("Creating/Updating LoadBalancer %+v", err)
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error Creating/Updating LoadBalancer %+v", err)
+			return fmt.Errorf("Creating/Updating LoadBalancer %+v", err)
 		}
 
 		_, err = client.Get(ctx, id.ResourceGroup, *lb.Name, "")

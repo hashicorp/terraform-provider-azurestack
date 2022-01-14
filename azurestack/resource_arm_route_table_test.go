@@ -7,8 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/response"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func TestAccAzureStackRouteTable_basic(t *testing.T) {
@@ -270,7 +269,6 @@ func TestAccAzureStackRouteTable_withTagsSubnet(t *testing.T) {
 
 func testCheckAzureStackRouteTableExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
 			return fmt.Errorf("Not found: %q", name)
@@ -287,7 +285,7 @@ func testCheckAzureStackRouteTableExists(name string) resource.TestCheckFunc {
 
 		resp, err := client.Get(ctx, resourceGroup, name, "")
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return fmt.Errorf("Bad: Route Table %q (resource group: %q) does not exist", name, resourceGroup)
 			}
 
@@ -317,13 +315,13 @@ func testCheckAzureStackRouteTableDisappears(name string) resource.TestCheckFunc
 		future, err := client.Delete(ctx, resourceGroup, name)
 		if err != nil {
 			if !response.WasNotFound(future.Response()) {
-				return fmt.Errorf("Error deleting Route Table %q (Resource Group %q): %+v", name, resourceGroup, err)
+				return fmt.Errorf("deleting Route Table %q (Resource Group %q): %+v", name, resourceGroup, err)
 			}
 		}
 
 		err = future.WaitForCompletionRef(ctx, client.Client)
 		if err != nil {
-			return fmt.Errorf("Error waiting for deletion of Route Table %q (Resource Group %q): %+v", name, resourceGroup, err)
+			return fmt.Errorf("waiting for deletion of Route Table %q (Resource Group %q): %+v", name, resourceGroup, err)
 		}
 
 		return nil
@@ -344,7 +342,7 @@ func testCheckAzureStackRouteTableDestroy(s *terraform.State) error {
 
 		resp, err := client.Get(ctx, resourceGroup, name, "")
 		if err != nil {
-			if utils.ResponseWasNotFound(resp.Response) {
+			if response.ResponseWasNotFound(resp.Response) {
 				return nil
 			}
 

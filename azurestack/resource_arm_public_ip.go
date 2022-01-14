@@ -9,8 +9,9 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/suppress"
 )
 
 func resourceArmPublicIp() *schema.Resource {
@@ -28,7 +29,7 @@ func resourceArmPublicIp() *schema.Resource {
 				}
 				name := id.Path["publicIPAddresses"]
 				if name == "" {
-					return nil, fmt.Errorf("Error parsing supplied resource id. Please check it and rerun:\n %s", d.Id())
+					return nil, fmt.Errorf("parsing supplied resource id. Please check it and rerun:\n %s", d.Id())
 				}
 				return []*schema.ResourceData{d}, nil
 			},
@@ -139,7 +140,7 @@ func resourceArmPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
 		Location: &location,
 		PublicIPAddressPropertiesFormat: &network.PublicIPAddressPropertiesFormat{
 			PublicIPAllocationMethod: network.IPAllocationMethod(ipAllocationMethod),
-			IdleTimeoutInMinutes:     utils.Int32(int32(idleTimeout)),
+			IdleTimeoutInMinutes:     pointer.FromInt32(idleTimeout),
 		},
 		Tags: *expandTags(tags),
 		// Not supported for 2017-03-09 profile
@@ -168,11 +169,11 @@ func resourceArmPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, name, publicIp)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating Public IP %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("Creating/Updating Public IP %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("Error waiting for completion of Public IP %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for completion of Public IP %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, name, "")
@@ -201,12 +202,12 @@ func resourceArmPublicIpRead(d *schema.ResourceData, meta interface{}) error {
 
 	resp, err := client.Get(ctx, resGroup, name, "")
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
 
-		return fmt.Errorf("Error making Read request on Public IP %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("making Read request on Public IP %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	d.Set("name", resp.Name)
@@ -251,11 +252,11 @@ func resourceArmPublicIpDelete(d *schema.ResourceData, meta interface{}) error {
 
 	future, err := client.Delete(ctx, resGroup, name)
 	if err != nil {
-		return fmt.Errorf("Error deleting Public IP %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("deleting Public IP %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("Error waiting for deletion of Public IP %q (Resource Group %q): %+v", name, resGroup, err)
+		return fmt.Errorf("waiting for deletion of Public IP %q (Resource Group %q): %+v", name, resGroup, err)
 	}
 
 	return nil

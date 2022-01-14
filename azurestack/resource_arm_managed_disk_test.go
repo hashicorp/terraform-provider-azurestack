@@ -70,7 +70,7 @@ func TestAccAzureStackManagedDisk_import(t *testing.T) {
 		CheckDestroy: testCheckAzureStackManagedDiskDestroy,
 		Steps: []resource.TestStep{
 			{
-				//need to create a vm and then delete it so we can use the vhd to test import
+				// need to create a vm and then delete it so we can use the vhd to test import
 				Config:             testAccAzureStackVirtualMachine_basicLinuxMachine(ri, location),
 				Destroy:            false,
 				ExpectNonEmptyPlan: true,
@@ -164,6 +164,7 @@ func TestAccAzureStackManagedDisk_update(t *testing.T) {
 	})
 }
 
+// nolint:unparam
 func testCheckAzureStackManagedDiskExists(resourceName string, d *compute.Disk, shouldExist bool) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[resourceName]
@@ -211,7 +212,6 @@ func testCheckAzureStackManagedDiskDestroy(s *terraform.State) error {
 		resourceGroup := rs.Primary.Attributes["resource_group_name"]
 
 		resp, err := client.Get(ctx, resourceGroup, name)
-
 		if err != nil {
 			return nil
 		}

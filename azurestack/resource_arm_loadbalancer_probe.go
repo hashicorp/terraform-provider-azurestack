@@ -10,8 +10,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
 )
 
 func resourceArmLoadBalancerProbe() *schema.Resource {
@@ -97,7 +98,7 @@ func resourceArmLoadBalancerProbeCreateUpdate(d *schema.ResourceData, meta inter
 
 	loadBalancer, exists, err := retrieveLoadBalancerById(loadBalancerID, meta)
 	if err != nil {
-		return fmt.Errorf("Error Getting LoadBalancer By ID: %+v", err)
+		return fmt.Errorf("Getting LoadBalancer By ID: %+v", err)
 	}
 	if !exists {
 		d.SetId("")
@@ -119,29 +120,29 @@ func resourceArmLoadBalancerProbeCreateUpdate(d *schema.ResourceData, meta inter
 	loadBalancer.LoadBalancerPropertiesFormat.Probes = &probes
 	resGroup, loadBalancerName, err := resourceGroupAndLBNameFromId(d.Get("loadbalancer_id").(string))
 	if err != nil {
-		return fmt.Errorf("Error Getting LoadBalancer Name and Group: %+v", err)
+		return fmt.Errorf("Getting LoadBalancer Name and Group: %+v", err)
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, loadBalancerName, *loadBalancer)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("Creating/Updating Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for completion of Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("waiting for completion of Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, loadBalancerName, "")
 	if err != nil {
-		return fmt.Errorf("Error retrieving Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("retrieving Load Balancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 	if read.ID == nil {
 		return fmt.Errorf("Cannot read LoadBalancer %q (resource group %q) ID", loadBalancerName, resGroup)
 	}
 
 	var createdProbeId string
-	for _, Probe := range *(*read.LoadBalancerPropertiesFormat).Probes {
+	for _, Probe := range *read.LoadBalancerPropertiesFormat.Probes {
 		if *Probe.Name == d.Get("name").(string) {
 			createdProbeId = *Probe.ID
 		}
@@ -161,7 +162,7 @@ func resourceArmLoadBalancerProbeCreateUpdate(d *schema.ResourceData, meta inter
 		Timeout: 10 * time.Minute,
 	}
 	if _, err := stateConf.WaitForState(); err != nil {
-		return fmt.Errorf("Error waiting for LoadBalancer (%q - Resource Group %q) to become available: %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("waiting for LoadBalancer (%q - Resource Group %q) to become available: %+v", loadBalancerName, resGroup, err)
 	}
 
 	return resourceArmLoadBalancerProbeRead(d, meta)
@@ -223,7 +224,7 @@ func resourceArmLoadBalancerProbeDelete(d *schema.ResourceData, meta interface{}
 
 	loadBalancer, exists, err := retrieveLoadBalancerById(loadBalancerID, meta)
 	if err != nil {
-		return fmt.Errorf("Error Getting LoadBalancer By ID: %+v", err)
+		return fmt.Errorf("Getting LoadBalancer By ID: %+v", err)
 	}
 	if !exists {
 		d.SetId("")
@@ -235,9 +236,9 @@ func resourceArmLoadBalancerProbeDelete(d *schema.ResourceData, meta interface{}
 		return nil
 	}
 
-	oldProbes := *loadBalancer.LoadBalancerPropertiesFormat.Probes
-	newProbes := append(oldProbes[:index], oldProbes[index+1:]...)
-	loadBalancer.LoadBalancerPropertiesFormat.Probes = &newProbes
+	probes := *loadBalancer.LoadBalancerPropertiesFormat.Probes
+	probes = append(probes[:index], probes[index+1:]...)
+	loadBalancer.LoadBalancerPropertiesFormat.Probes = &probes
 
 	resGroup, loadBalancerName, err := resourceGroupAndLBNameFromId(d.Get("loadbalancer_id").(string))
 	if err != nil {
@@ -246,12 +247,12 @@ func resourceArmLoadBalancerProbeDelete(d *schema.ResourceData, meta interface{}
 
 	future, err := client.CreateOrUpdate(ctx, resGroup, loadBalancerName, *loadBalancer)
 	if err != nil {
-		return fmt.Errorf("Error Creating/Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("Creating/Updating LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	err = future.WaitForCompletionRef(ctx, client.Client)
 	if err != nil {
-		return fmt.Errorf("Error waiting for completion of LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
+		return fmt.Errorf("waiting for completion of LoadBalancer %q (Resource Group %q): %+v", loadBalancerName, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, loadBalancerName, "")
@@ -266,11 +267,10 @@ func resourceArmLoadBalancerProbeDelete(d *schema.ResourceData, meta interface{}
 }
 
 func expandAzureRmLoadBalancerProbe(d *schema.ResourceData) *network.Probe {
-
 	properties := network.ProbePropertiesFormat{
-		NumberOfProbes:    utils.Int32(int32(d.Get("number_of_probes").(int))),
-		IntervalInSeconds: utils.Int32(int32(d.Get("interval_in_seconds").(int))),
-		Port:              utils.Int32(int32(d.Get("port").(int))),
+		NumberOfProbes:    pointer.FromInt32(d.Get("number_of_probes").(int)),
+		IntervalInSeconds: pointer.FromInt32(d.Get("interval_in_seconds").(int)),
+		Port:              pointer.FromInt32(d.Get("port").(int)),
 	}
 
 	if v, ok := d.GetOk("protocol"); ok {
@@ -278,11 +278,11 @@ func expandAzureRmLoadBalancerProbe(d *schema.ResourceData) *network.Probe {
 	}
 
 	if v, ok := d.GetOk("request_path"); ok {
-		properties.RequestPath = utils.String(v.(string))
+		properties.RequestPath = pointer.FromString(v.(string))
 	}
 
 	return &network.Probe{
-		Name:                  utils.String(d.Get("name").(string)),
+		Name:                  pointer.FromString(d.Get("name").(string)),
 		ProbePropertiesFormat: &properties,
 	}
 }

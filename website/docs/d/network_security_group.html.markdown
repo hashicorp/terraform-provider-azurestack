@@ -1,8 +1,7 @@
 ---
-subcategory: ""
+subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_network_security_group"
-sidebar_current: "docs-azurestack-datasource-network-security-group"
 description: |-
   Get information about the specified Network Security Group.
 ---

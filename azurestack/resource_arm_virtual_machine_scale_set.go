@@ -11,9 +11,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/suppress"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/suppress"
+
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
 )
 
 func resourceArmVirtualMachineScaleSet() *schema.Resource {
@@ -398,7 +400,7 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 				Set: resourceArmVirtualMachineScaleSetNetworkConfigurationHash,
 			},
 
-			//Not supported on profile: 2017-03-09
+			// Not supported on profile: 2017-03-09
 			// "boot_diagnostics": {
 			// 	Type:     schema.TypeList,
 			// 	Optional: true,
@@ -607,7 +609,7 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 						"settings": {
 							Type:             schema.TypeString,
 							Optional:         true,
-							ValidateFunc:     validation.ValidateJsonString,
+							ValidateFunc:     validation.StringIsJSON,
 							DiffSuppressFunc: structure.SuppressJsonDiff,
 						},
 
@@ -615,7 +617,7 @@ func resourceArmVirtualMachineScaleSet() *schema.Resource {
 							Type:             schema.TypeString,
 							Optional:         true,
 							Sensitive:        true,
-							ValidateFunc:     validation.ValidateJsonString,
+							ValidateFunc:     validation.StringIsJSON,
 							DiffSuppressFunc: structure.SuppressJsonDiff,
 						},
 					},
@@ -640,10 +642,7 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 	tags := d.Get("tags").(map[string]interface{})
 	// zones := expandZones(d.Get("zones").([]interface{}))
 
-	sku, err := expandVirtualMachineScaleSetSku(d)
-	if err != nil {
-		return err
-	}
+	sku := expandVirtualMachineScaleSetSku(d)
 
 	storageProfile := compute.VirtualMachineScaleSetStorageProfile{}
 	osDisk, err := expandAzureStackVirtualMachineScaleSetsStorageProfileOsDisk(d)
@@ -654,10 +653,8 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 
 	// Not supported
 	if _, ok := d.GetOk("storage_profile_data_disk"); ok {
-		dataDisks, err := expandAzureStackVirtualMachineScaleSetsStorageProfileDataDisk(d)
-		if err != nil {
-			return err
-		}
+		dataDisks := expandAzureStackVirtualMachineScaleSetsStorageProfileDataDisk(d)
+
 		storageProfile.DataDisks = &dataDisks
 	}
 
@@ -669,10 +666,7 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 		storageProfile.ImageReference = imageRef
 	}
 
-	osProfile, err := expandAzureStackVirtualMachineScaleSetsOsProfile(d)
-	if err != nil {
-		return err
-	}
+	osProfile := expandAzureStackVirtualMachineScaleSetsOsProfile(d)
 
 	extensions, err := expandAzureStackVirtualMachineScaleSetExtensions(d)
 	if err != nil {
@@ -713,7 +707,7 @@ func resourceArmVirtualMachineScaleSetCreate(d *schema.ResourceData, meta interf
 	}
 
 	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("Error Creating/Updating Virtual Machine Scale Set %s (resource group %s) ID: %+v", name, resGroup, err)
+		return fmt.Errorf("Creating/Updating Virtual Machine Scale Set %s (resource group %s) ID: %+v", name, resGroup, err)
 	}
 
 	read, err := client.Get(ctx, resGroup, name)
@@ -742,12 +736,12 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 
 	resp, err := client.Get(ctx, resGroup, name)
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			log.Printf("[INFO] AzureStack Virtual Machine Scale Set (%s) Not Found. Removing from State", name)
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("Error making Read request on Azure Virtual Machine Scale Set %s: %+v", name, err)
+		return fmt.Errorf("making Read request on Azure Virtual Machine Scale Set %s: %+v", name, err)
 	}
 
 	d.Set("name", resp.Name)
@@ -767,14 +761,12 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 	}
 
 	if properties := resp.VirtualMachineScaleSetProperties; properties != nil {
-
 		if upgradePolicy := properties.UpgradePolicy; upgradePolicy != nil {
 			d.Set("upgrade_policy_mode", upgradePolicy.Mode)
 		}
 		d.Set("overprovision", properties.Overprovision)
 
 		if profile := properties.VirtualMachineProfile; profile != nil {
-
 			osProfile := flattenAzureStackVirtualMachineScaleSetOsProfile(d, profile.OsProfile)
 			if err := d.Set("os_profile", osProfile); err != nil {
 				return fmt.Errorf("[DEBUG] Error setting `os_profile`: %#v", err)
@@ -793,7 +785,6 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 					if err := d.Set("os_profile_secrets", flattenedSecrets); err != nil {
 						return fmt.Errorf("[DEBUG] Error setting `os_profile_secrets`: %#v", err)
 					}
-
 				}
 
 				if windowsConfiguration := osProfile.WindowsConfiguration; windowsConfiguration != nil {
@@ -812,7 +803,6 @@ func resourceArmVirtualMachineScaleSetRead(d *schema.ResourceData, meta interfac
 			}
 
 			if storageProfile := profile.StorageProfile; storageProfile != nil {
-
 				if dataDisks := resp.VirtualMachineProfile.StorageProfile.DataDisks; dataDisks != nil {
 					flattenedDataDisks := flattenAzureStackVirtualMachineScaleSetStorageProfileDataDisk(dataDisks)
 					if err := d.Set("storage_profile_data_disk", flattenedDataDisks); err != nil {
@@ -869,8 +859,7 @@ func resourceArmVirtualMachineScaleSetDelete(d *schema.ResourceData, meta interf
 	}
 
 	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("Error Deleting Virtual Machine Scale Set %s (resource group %s) ID: %+v", name, resGroup, err)
-
+		return fmt.Errorf("Deleting Virtual Machine Scale Set %s (resource group %s) ID: %+v", name, resGroup, err)
 	}
 
 	return nil
@@ -1312,7 +1301,7 @@ func resourceArmVirtualMachineScaleSetExtensionHash(v interface{}) int {
 	return hashcode.String(buf.String())
 }
 
-func expandVirtualMachineScaleSetSku(d *schema.ResourceData) (*compute.Sku, error) {
+func expandVirtualMachineScaleSetSku(d *schema.ResourceData) *compute.Sku {
 	skuConfig := d.Get("sku").(*schema.Set).List()
 
 	config := skuConfig[0].(map[string]interface{})
@@ -1330,7 +1319,7 @@ func expandVirtualMachineScaleSetSku(d *schema.ResourceData) (*compute.Sku, erro
 		sku.Tier = &tier
 	}
 
-	return sku, nil
+	return sku
 }
 
 func expandAzureRmVirtualMachineScaleSetNetworkProfile(d *schema.ResourceData) *compute.VirtualMachineScaleSetNetworkProfile {
@@ -1414,7 +1403,7 @@ func expandAzureRmVirtualMachineScaleSetNetworkProfile(d *schema.ResourceData) *
 	}
 }
 
-func expandAzureStackVirtualMachineScaleSetsOsProfile(d *schema.ResourceData) (*compute.VirtualMachineScaleSetOSProfile, error) {
+func expandAzureStackVirtualMachineScaleSetsOsProfile(d *schema.ResourceData) *compute.VirtualMachineScaleSetOSProfile {
 	osProfileConfigs := d.Get("os_profile").([]interface{})
 
 	osProfileConfig := osProfileConfigs[0].(map[string]interface{})
@@ -1445,24 +1434,18 @@ func expandAzureStackVirtualMachineScaleSetsOsProfile(d *schema.ResourceData) (*
 	}
 
 	if _, ok := d.GetOk("os_profile_linux_config"); ok {
-		linuxConfig, err := expandAzureRmVirtualMachineScaleSetOsProfileLinuxConfig(d)
-		if err != nil {
-			return nil, err
-		}
+		linuxConfig := expandAzureRmVirtualMachineScaleSetOsProfileLinuxConfig(d)
 		osProfile.LinuxConfiguration = linuxConfig
 	}
 
 	if _, ok := d.GetOk("os_profile_windows_config"); ok {
-		winConfig, err := expandAzureRmVirtualMachineScaleSetOsProfileWindowsConfig(d)
-		if err != nil {
-			return nil, err
-		}
+		winConfig := expandAzureRmVirtualMachineScaleSetOsProfileWindowsConfig(d)
 		if winConfig != nil {
 			osProfile.WindowsConfiguration = winConfig
 		}
 	}
 
-	return osProfile, nil
+	return osProfile
 }
 
 func expandAzureRmVirtualMachineScaleSetIdentity(d *schema.ResourceData) *compute.VirtualMachineScaleSetIdentity {
@@ -1488,7 +1471,7 @@ func expandAzureStackVirtualMachineScaleSetsStorageProfileOsDisk(d *schema.Resou
 	managedDiskType := osDiskConfig["managed_disk_type"].(string)
 
 	if managedDiskType == "" && name == "" {
-		return nil, fmt.Errorf("[ERROR] `name` must be set in `storage_profile_os_disk` for unmanaged disk")
+		return nil, fmt.Errorf("`name` must be set in `storage_profile_os_disk` for unmanaged disk")
 	}
 
 	osDisk := &compute.VirtualMachineScaleSetOSDisk{
@@ -1517,7 +1500,7 @@ func expandAzureStackVirtualMachineScaleSetsStorageProfileOsDisk(d *schema.Resou
 
 	if managedDiskType != "" {
 		if name != "" {
-			return nil, fmt.Errorf("[ERROR] Conflict between `name` and `managed_disk_type` on `storage_profile_os_disk` (please remove name or set it to blank)")
+			return nil, fmt.Errorf("Conflict between `name` and `managed_disk_type` on `storage_profile_os_disk` (please remove name or set it to blank)")
 		}
 
 		osDisk.Name = nil
@@ -1525,20 +1508,20 @@ func expandAzureStackVirtualMachineScaleSetsStorageProfileOsDisk(d *schema.Resou
 		osDisk.ManagedDisk = managedDisk
 	}
 
-	//BEGIN: code to be removed after GH-13016 is merged
+	// BEGIN: code to be removed after GH-13016 is merged
 	if image != "" && managedDiskType != "" {
-		return nil, fmt.Errorf("[ERROR] Conflict between `image` and `managed_disk_type` on `storage_profile_os_disk` (only one or the other can be used)")
+		return nil, fmt.Errorf("Conflict between `image` and `managed_disk_type` on `storage_profile_os_disk` (only one or the other can be used)")
 	}
 
 	if len(vhd_containers) > 0 && managedDiskType != "" {
-		return nil, fmt.Errorf("[ERROR] Conflict between `vhd_containers` and `managed_disk_type` on `storage_profile_os_disk` (only one or the other can be used)")
+		return nil, fmt.Errorf("Conflict between `vhd_containers` and `managed_disk_type` on `storage_profile_os_disk` (only one or the other can be used)")
 	}
-	//END: code to be removed after GH-13016 is merged
+	// END: code to be removed after GH-13016 is merged
 
 	return osDisk, nil
 }
 
-func expandAzureStackVirtualMachineScaleSetsStorageProfileDataDisk(d *schema.ResourceData) ([]compute.VirtualMachineScaleSetDataDisk, error) {
+func expandAzureStackVirtualMachineScaleSetsStorageProfileDataDisk(d *schema.ResourceData) []compute.VirtualMachineScaleSetDataDisk {
 	disks := d.Get("storage_profile_data_disk").([]interface{})
 	dataDisks := make([]compute.VirtualMachineScaleSetDataDisk, 0, len(disks))
 	for _, diskConfig := range disks {
@@ -1575,7 +1558,7 @@ func expandAzureStackVirtualMachineScaleSetsStorageProfileDataDisk(d *schema.Res
 		dataDisks = append(dataDisks, dataDisk)
 	}
 
-	return dataDisks, nil
+	return dataDisks
 }
 
 func expandAzureRmVirtualMachineScaleSetStorageProfileImageReference(d *schema.ResourceData) (*compute.ImageReference, error) {
@@ -1589,22 +1572,22 @@ func expandAzureRmVirtualMachineScaleSetStorageProfileImageReference(d *schema.R
 	imageReference := compute.ImageReference{}
 
 	if imageID != "" && publisher != "" {
-		return nil, fmt.Errorf("[ERROR] Conflict between `id` and `publisher` (only one or the other can be used)")
+		return nil, fmt.Errorf("Conflict between `id` and `publisher` (only one or the other can be used)")
 	}
 
 	offer := storageImageRef["offer"].(string)
 	sku := storageImageRef["sku"].(string)
 	version := storageImageRef["version"].(string)
 
-	imageReference.Publisher = utils.String(publisher)
-	imageReference.Offer = utils.String(offer)
-	imageReference.Sku = utils.String(sku)
-	imageReference.Version = utils.String(version)
+	imageReference.Publisher = pointer.FromString(publisher)
+	imageReference.Offer = pointer.FromString(offer)
+	imageReference.Sku = pointer.FromString(sku)
+	imageReference.Version = pointer.FromString(version)
 
 	return &imageReference, nil
 }
 
-func expandAzureRmVirtualMachineScaleSetOsProfileLinuxConfig(d *schema.ResourceData) (*compute.LinuxConfiguration, error) {
+func expandAzureRmVirtualMachineScaleSetOsProfileLinuxConfig(d *schema.ResourceData) *compute.LinuxConfiguration {
 	osProfilesLinuxConfig := d.Get("os_profile_linux_config").(*schema.Set).List()
 
 	linuxConfig := osProfilesLinuxConfig[0].(map[string]interface{})
@@ -1635,10 +1618,10 @@ func expandAzureRmVirtualMachineScaleSetOsProfileLinuxConfig(d *schema.ResourceD
 		},
 	}
 
-	return config, nil
+	return config
 }
 
-func expandAzureRmVirtualMachineScaleSetOsProfileWindowsConfig(d *schema.ResourceData) (*compute.WindowsConfiguration, error) {
+func expandAzureRmVirtualMachineScaleSetOsProfileWindowsConfig(d *schema.ResourceData) *compute.WindowsConfiguration {
 	osProfilesWindowsConfig := d.Get("os_profile_windows_config").(*schema.Set).List()
 
 	osProfileConfig := osProfilesWindowsConfig[0].(map[string]interface{})
@@ -1702,7 +1685,7 @@ func expandAzureRmVirtualMachineScaleSetOsProfileWindowsConfig(d *schema.Resourc
 			config.AdditionalUnattendContent = &additionalConfigContent
 		}
 	}
-	return config, nil
+	return config
 }
 
 func expandAzureRmVirtualMachineScaleSetOsProfileSecrets(d *schema.ResourceData) *[]compute.VaultSecretGroup {

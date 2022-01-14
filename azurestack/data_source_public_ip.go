@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 func dataSourceArmPublicIP() *schema.Resource {
@@ -54,10 +54,10 @@ func dataSourceArmPublicIPRead(d *schema.ResourceData, meta interface{}) error {
 
 	resp, err := client.Get(ctx, resGroup, name, "")
 	if err != nil {
-		if utils.ResponseWasNotFound(resp.Response) {
+		if response.ResponseWasNotFound(resp.Response) {
 			return fmt.Errorf("Error: Public IP %q (Resource Group %q) was not found", name, resGroup)
 		}
-		return fmt.Errorf("Error making Read request on Azure public ip %s: %s", name, err)
+		return fmt.Errorf("making Read request on Azure public ip %s: %s", name, err)
 	}
 
 	d.SetId(*resp.ID)
@@ -78,7 +78,7 @@ func dataSourceArmPublicIPRead(d *schema.ResourceData, meta interface{}) error {
 		}
 
 		if v := props.IdleTimeoutInMinutes; v != nil {
-			d.Set("idle_timeout_in_minutes", *resp.PublicIPAddressPropertiesFormat.IdleTimeoutInMinutes)
+			d.Set("idle_timeout_in_minutes", resp.PublicIPAddressPropertiesFormat.IdleTimeoutInMinutes)
 		}
 	}
 

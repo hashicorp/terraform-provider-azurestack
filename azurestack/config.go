@@ -19,7 +19,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/go-azure-helpers/sender"
 	"github.com/hashicorp/terraform-plugin-sdk/httpclient"
-	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
 // ArmClient contains the handles to all the specific Azure Resource Manager
@@ -290,13 +290,13 @@ func (armClient *ArmClient) getKeyForStorageAccount(ctx context.Context, resourc
 	key, ok = storageKeyCache[cacheIndex]
 	if !ok {
 		accountKeys, err := armClient.storageServiceClient.ListKeys(ctx, resourceGroupName, storageAccountName)
-		if utils.ResponseWasNotFound(accountKeys.Response) {
+		if response.ResponseWasNotFound(accountKeys.Response) {
 			return "", false, nil
 		}
 		if err != nil {
 			// We assume this is a transient error rather than a 404 (which is caught above),  so assume the
 			// account still exists.
-			return "", true, fmt.Errorf("Error retrieving keys for storage account %q: %s", storageAccountName, err)
+			return "", true, fmt.Errorf("retrieving keys for storage account %q: %s", storageAccountName, err)
 		}
 
 		if accountKeys.Keys == nil {
@@ -304,7 +304,7 @@ func (armClient *ArmClient) getKeyForStorageAccount(ctx context.Context, resourc
 		}
 
 		keys := *accountKeys.Keys
-		if len(keys) <= 0 {
+		if len(keys) == 0 {
 			return "", false, fmt.Errorf("No keys returned for storage account %q", storageAccountName)
 		}
 
@@ -332,7 +332,7 @@ func (armClient *ArmClient) getBlobStorageClientForStorageAccount(ctx context.Co
 	storageClient, err := mainStorage.NewClient(storageAccountName, key, armClient.environment.StorageEndpointSuffix,
 		"2016-05-31", true)
 	if err != nil {
-		return nil, true, fmt.Errorf("Error creating storage client for storage account %q: %s", storageAccountName, err)
+		return nil, true, fmt.Errorf("creating storage client for storage account %q: %s", storageAccountName, err)
 	}
 
 	blobClient := storageClient.GetBlobService()

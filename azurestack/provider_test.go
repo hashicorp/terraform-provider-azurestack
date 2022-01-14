@@ -11,8 +11,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
-var testAccProviders map[string]terraform.ResourceProvider
-var testAccProvider *schema.Provider
+var (
+	testAccProviders map[string]terraform.ResourceProvider
+	testAccProvider  *schema.Provider
+)
 
 func init() {
 	testAccProvider = Provider().(*schema.Provider)
@@ -28,7 +30,7 @@ func TestProvider(t *testing.T) {
 }
 
 func TestProvider_impl(t *testing.T) {
-	var _ terraform.ResourceProvider = Provider()
+	_ = Provider()
 }
 
 func testAccPreCheck(t *testing.T) {
@@ -52,9 +54,11 @@ func testLocation() string {
 	return os.Getenv("ARM_TEST_LOCATION")
 }
 
+/*
 func testAltLocation() string {
 	return os.Getenv("ARM_TEST_LOCATION_ALT")
 }
+*/
 
 func testGetAzureConfig(t *testing.T) *authentication.Config {
 	if os.Getenv(resource.TestEnvVar) == "" {

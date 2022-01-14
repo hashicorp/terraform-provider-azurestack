@@ -31,10 +31,7 @@ func parseAzureResourceID(id string) (*ResourceID, error) {
 
 	path = strings.TrimSpace(path)
 	path = strings.TrimPrefix(path, "/")
-
-	if strings.HasSuffix(path, "/") {
-		path = path[:len(path)-1]
-	}
+	path = strings.TrimSuffix(path, "/")
 
 	components := strings.Split(path, "/")
 
@@ -102,7 +99,7 @@ func parseAzureResourceID(id string) (*ResourceID, error) {
 func parseNetworkSecurityGroupName(networkSecurityGroupId string) (string, error) {
 	id, err := parseAzureResourceID(networkSecurityGroupId)
 	if err != nil {
-		return "", fmt.Errorf("[ERROR] Unable to Parse Network Security Group ID '%s': %+v", networkSecurityGroupId, err)
+		return "", fmt.Errorf("Unable to Parse Network Security Group ID '%s': %+v", networkSecurityGroupId, err)
 	}
 
 	return id.Path["networkSecurityGroups"], nil
@@ -111,7 +108,7 @@ func parseNetworkSecurityGroupName(networkSecurityGroupId string) (string, error
 func parseRouteTableName(routeTableId string) (string, error) {
 	id, err := parseAzureResourceID(routeTableId)
 	if err != nil {
-		return "", fmt.Errorf("[ERROR] Unable to parse Route Table ID '%s': %+v", routeTableId, err)
+		return "", fmt.Errorf("Unable to parse Route Table ID '%s': %+v", routeTableId, err)
 	}
 
 	return id.Path["routeTables"], nil

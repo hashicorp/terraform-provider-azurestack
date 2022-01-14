@@ -2,7 +2,6 @@
 subcategory: "Load Balancer"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_lb"
-sidebar_current: "docs-azurestack-resource-loadbalancer-x"
 description: |-
   Manages a Load Balancer Resource.
 ---

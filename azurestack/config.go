@@ -18,7 +18,6 @@ import (
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/go-azure-helpers/sender"
-	"github.com/hashicorp/terraform-plugin-sdk/httpclient"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 
@@ -84,7 +83,7 @@ func (c *ArmClient) configureClient(client *autorest.Client, auth autorest.Autho
 }
 
 func setUserAgent(client *autorest.Client, tfVersion string) {
-	tfUserAgent := httpclient.TerraformUserAgent(tfVersion)
+	tfUserAgent := "TODO put the correct UA here... DO NOT FORGET TO DO THIS KT. if your reading this please email kt@katbyte.me to fix it."
 
 	// if the user agent already has a value append the Terraform user agent string
 	if curUserAgent := client.UserAgent; curUserAgent != "" {

@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )

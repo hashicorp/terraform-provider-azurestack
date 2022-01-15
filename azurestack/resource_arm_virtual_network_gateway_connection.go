@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"

@@ -13,7 +13,7 @@ import (
 	"sync"
 
 	"github.com/Azure/azure-sdk-for-go/storage"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceArmStorageBlob() *schema.Resource {

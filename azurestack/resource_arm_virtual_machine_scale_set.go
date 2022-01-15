@@ -5,16 +5,13 @@ import (
 	"fmt"
 	"log"
 	"strings"
-
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/structure"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/suppress"
-
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
 )
 
@@ -1204,7 +1201,7 @@ func resourceArmVirtualMachineScaleSetStorageProfileImageReferenceHash(v interfa
 		}
 	}
 
-	return hashcode.String(buf.String())
+	return pluginsdk.HashString(buf.String())
 }
 
 func resourceArmVirtualMachineScaleSetSkuHash(v interface{}) int {
@@ -1219,7 +1216,7 @@ func resourceArmVirtualMachineScaleSetSkuHash(v interface{}) int {
 		}
 	}
 
-	return hashcode.String(buf.String())
+	return pluginsdk.HashString(buf.String())
 }
 
 func resourceArmVirtualMachineScaleSetStorageProfileOsDiskHash(v interface{}) int {
@@ -1233,7 +1230,7 @@ func resourceArmVirtualMachineScaleSetStorageProfileOsDiskHash(v interface{}) in
 		}
 	}
 
-	return hashcode.String(buf.String())
+	return pluginsdk.HashString(buf.String())
 }
 
 func resourceArmVirtualMachineScaleSetNetworkConfigurationHash(v interface{}) int {
@@ -1244,7 +1241,7 @@ func resourceArmVirtualMachineScaleSetNetworkConfigurationHash(v interface{}) in
 		// buf.WriteString(fmt.Sprintf("%t-", m["primary"].(bool)))
 	}
 
-	return hashcode.String(buf.String())
+	return pluginsdk.HashString(buf.String())
 }
 
 func resourceArmVirtualMachineScaleSetOsProfileLinuxConfigHash(v interface{}) int {
@@ -1254,7 +1251,7 @@ func resourceArmVirtualMachineScaleSetOsProfileLinuxConfigHash(v interface{}) in
 		buf.WriteString(fmt.Sprintf("%t-", m["disable_password_authentication"].(bool)))
 	}
 
-	return hashcode.String(buf.String())
+	return pluginsdk.HashString(buf.String())
 }
 
 func resourceArmVirtualMachineScaleSetOsProfileWindowsConfigHash(v interface{}) int {
@@ -1269,7 +1266,7 @@ func resourceArmVirtualMachineScaleSetOsProfileWindowsConfigHash(v interface{}) 
 		}
 	}
 
-	return hashcode.String(buf.String())
+	return pluginsdk.HashString(buf.String())
 }
 
 func resourceArmVirtualMachineScaleSetExtensionHash(v interface{}) int {
@@ -1298,7 +1295,7 @@ func resourceArmVirtualMachineScaleSetExtensionHash(v interface{}) int {
 		}
 	}
 
-	return hashcode.String(buf.String())
+	return pluginsdk.HashString(buf.String())
 }
 
 func expandVirtualMachineScaleSetSku(d *schema.ResourceData) *compute.Sku {

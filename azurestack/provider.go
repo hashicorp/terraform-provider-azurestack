@@ -8,9 +8,8 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-azure-helpers/authentication"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/mutexkv"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func Provider() terraform.ResourceProvider {
@@ -182,9 +181,6 @@ func providerConfigure(p *schema.Provider) schema.ConfigureFunc {
 		return client, nil
 	}
 }
-
-// armMutexKV is the instance of MutexKV for ARM resources
-var armMutexKV = mutexkv.NewMutexKV()
 
 // Resource group names can be capitalised, but we store them in lowercase.
 // Use a custom diff function to avoid creation of new resources.

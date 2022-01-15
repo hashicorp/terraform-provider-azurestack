@@ -3,7 +3,7 @@ package azurestack
 // handle the case of using the same name for different kinds of resources
 func azureStackLockByName(name string, resourceType string) {
 	updatedName := resourceType + "." + name
-	armMutexKV.Lock(updatedName)
+	locks.ByID(updatedName)
 }
 
 func azureStackLockMultipleByName(names *[]string, resourceType string) {
@@ -14,7 +14,7 @@ func azureStackLockMultipleByName(names *[]string, resourceType string) {
 
 func azureStackUnlockByName(name string, resourceType string) {
 	updatedName := resourceType + "." + name
-	armMutexKV.Unlock(updatedName)
+	locks.UnlockByID(updatedName)
 }
 
 func azureStackUnlockMultipleByName(names *[]string, resourceType string) {

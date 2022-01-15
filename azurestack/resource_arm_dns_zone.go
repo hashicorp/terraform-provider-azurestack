@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Azure/azure-sdk-for-go/services/dns/mgmt/2016-04-01/dns"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 )
 

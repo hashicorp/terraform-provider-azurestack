@@ -7,9 +7,10 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2017-10-01/network"
 	"github.com/hashicorp/errwrap"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/locks"
 )
 
 func resourceArmLoadBalancerBackendAddressPool() *schema.Resource {
@@ -58,8 +59,8 @@ func resourceArmLoadBalancerBackendAddressPoolCreate(d *schema.ResourceData, met
 	ctx := meta.(*ArmClient).StopContext
 
 	loadBalancerID := d.Get("loadbalancer_id").(string)
-	armMutexKV.Lock(loadBalancerID)
-	defer armMutexKV.Unlock(loadBalancerID)
+	locks.ByID(loadBalancerID)
+	defer locks.UnlockByID(loadBalancerID)
 
 	loadBalancer, exists, err := retrieveLoadBalancerById(loadBalancerID, meta)
 	if err != nil {
@@ -191,8 +192,8 @@ func resourceArmLoadBalancerBackendAddressPoolDelete(d *schema.ResourceData, met
 	ctx := meta.(*ArmClient).StopContext
 
 	loadBalancerID := d.Get("loadbalancer_id").(string)
-	armMutexKV.Lock(loadBalancerID)
-	defer armMutexKV.Unlock(loadBalancerID)
+	locks.ByID(loadBalancerID)
+	defer locks.UnlockByID(loadBalancerID)
 
 	loadBalancer, exists, err := retrieveLoadBalancerById(loadBalancerID, meta)
 	if err != nil {

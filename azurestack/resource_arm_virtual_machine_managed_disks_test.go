@@ -9,9 +9,9 @@ import (
 	"testing"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccAzureStackVirtualMachine_basicLinuxMachine_managedDisk_explicit(t *testing.T) {

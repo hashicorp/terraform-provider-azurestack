@@ -3,12 +3,11 @@ package azurestack
 import (
 	"bytes"
 	"fmt"
-
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
+	`github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk`
 )
 
 func dataSourceArmVirtualNetworkGateway() *schema.Resource {
@@ -376,7 +375,7 @@ func hashVirtualNetworkGatewayDataSourceRootCert(v interface{}) int {
 	buf.WriteString(fmt.Sprintf("%s-", m["name"].(string)))
 	buf.WriteString(fmt.Sprintf("%s-", m["public_cert_data"].(string)))
 
-	return hashcode.String(buf.String())
+	return pluginsdk.HashString(buf.String())
 }
 
 func hashVirtualNetworkGatewayDataSourceRevokedCert(v interface{}) int {
@@ -386,5 +385,5 @@ func hashVirtualNetworkGatewayDataSourceRevokedCert(v interface{}) int {
 	buf.WriteString(fmt.Sprintf("%s-", m["name"].(string)))
 	buf.WriteString(fmt.Sprintf("%s-", m["thumbprint"].(string)))
 
-	return hashcode.String(buf.String())
+	return pluginsdk.HashString(buf.String())
 }

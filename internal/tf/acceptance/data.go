@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/Azure/go-autorest/autorest/azure"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/features"
 )
 
 const (
@@ -75,14 +74,10 @@ func BuildTestData(t *testing.T, resourceType string, resourceLabel string) Test
 		resourceLabel: resourceLabel,
 	}
 
-	if features.UseDynamicTestLocations() {
-		testData.Locations = availableLocations()
-	} else {
-		testData.Locations = Regions{
-			Primary:   os.Getenv("ARM_TEST_LOCATION"),
-			Secondary: os.Getenv("ARM_TEST_LOCATION_ALT"),
-			Ternary:   os.Getenv("ARM_TEST_LOCATION_ALT2"),
-		}
+	testData.Locations = Regions{
+		Primary:   os.Getenv("ARM_TEST_LOCATION"),
+		Secondary: os.Getenv("ARM_TEST_LOCATION_ALT"),
+		Ternary:   os.Getenv("ARM_TEST_LOCATION_ALT2"),
 	}
 
 	return testData

@@ -6,8 +6,8 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/go-azure-helpers/resourceproviders"
+	rmResourceProviders "github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceproviders"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
-	rmResourceProviders "github.com/hashicorp/terraform-provider-azurestack/internal/resourceproviders"
 )
 
 // since this depends on GetAuthConfig which lives in this package
@@ -22,9 +22,7 @@ func TestAccEnsureRequiredResourceProvidersAreRegistered(t *testing.T) {
 	builder := clients.ClientBuilder{
 		AuthConfig:                  config,
 		TerraformVersion:            "0.0.0",
-		PartnerId:                   "",
 		DisableCorrelationRequestID: true,
-		DisableTerraformPartnerID:   false,
 		// this test intentionally checks all the RP's are registered - so this is intentional
 		SkipProviderRegistration: true,
 	}

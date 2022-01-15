@@ -56,13 +56,13 @@ func GetAuthConfig(t *testing.T) *authentication.Config {
 	environment := EnvironmentName()
 
 	builder := authentication.Builder{
-		SubscriptionID: os.Getenv("ARM_SUBSCRIPTION_ID"),
-		ClientID:       os.Getenv("ARM_CLIENT_ID"),
-		TenantID:       os.Getenv("ARM_TENANT_ID"),
-		ClientSecret:   os.Getenv("ARM_CLIENT_SECRET"),
-		EndPoint:       os.Getenv("ARM_ENDPOINT"),
-		Environment:    environment,
-		MetadataHost:   os.Getenv("ARM_METADATA_HOST"),
+		SubscriptionID:                os.Getenv("ARM_SUBSCRIPTION_ID"),
+		ClientID:                      os.Getenv("ARM_CLIENT_ID"),
+		TenantID:                      os.Getenv("ARM_TENANT_ID"),
+		ClientSecret:                  os.Getenv("ARM_CLIENT_SECRET"),
+		CustomResourceManagerEndpoint: os.Getenv("ARM_ENDPOINT"),
+		Environment:                   environment,
+		MetadataHost:                  os.Getenv("ARM_METADATA_HOST"),
 
 		// we intentionally only support Client Secret auth for tests (since those variables are used all over)
 		SupportsClientSecretAuth: true,

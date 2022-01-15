@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/hashicorp/terraform-provider-azurestack/utils"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 func TestFlatten(t *testing.T) {

@@ -7,11 +7,11 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/acceptance/check"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/acceptance/helpers"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/acceptance/testclient"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/acceptance/types"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/helpers"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/testclient"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/types"
 )
 
 // ApplyStep returns a Test Step which applies a Configuration and then check that the

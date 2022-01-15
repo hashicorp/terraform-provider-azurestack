@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/acceptance/types"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/types"
 )
 
 // CheckDestroyedFunc returns a TestCheckFunc which validates the resource no longer exists

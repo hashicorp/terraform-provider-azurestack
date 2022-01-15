@@ -7,10 +7,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/acceptance/helpers"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/acceptance/testclient"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/acceptance/types"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/provider"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/helpers"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/testclient"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/types"
 )
 
 func (td TestData) DataSourceTest(t *testing.T, steps []TestStep) {

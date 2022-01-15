@@ -36,7 +36,6 @@ linters:
     - structcheck
     #- stylecheck
     - typecheck
-    - tenv
     - unused
     - unconvert
     - unparam

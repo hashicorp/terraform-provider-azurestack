@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"fmt"
+	"os"
 	"reflect"
 	"testing"
 
@@ -11,7 +12,7 @@ import (
 )
 
 func TestAccPluginSDKAndDecoder(t *testing.T) {
-	t.Setenv("TF_ACC", "1")
+	os.Setenv("TF_ACC", "1")
 
 	type NestedType struct {
 		Key string `tfschema:"key"`
@@ -212,7 +213,7 @@ func TestAccPluginSDKAndDecoder(t *testing.T) {
 }
 
 func TestAccPluginSDKAndDecoderOptionalComputed(t *testing.T) {
-	t.Setenv("TF_ACC", "1")
+	os.Setenv("TF_ACC", "1")
 
 	type MyType struct {
 		Hello   string `tfschema:"hello"`
@@ -336,7 +337,7 @@ resource "validator_decoder_unspecified" "test" {}
 }
 
 func TestAccPluginSDKAndDecoderOptionalComputedOverride(t *testing.T) {
-	t.Setenv("TF_ACC", "1")
+	os.Setenv("TF_ACC", "1")
 
 	type MyType struct {
 		Hello   string `tfschema:"hello"`
@@ -440,7 +441,7 @@ resource "validator_decoder_override" "test" {
 }
 
 func TestAccPluginSDKAndDecoderSets(t *testing.T) {
-	t.Setenv("TF_ACC", "1")
+	os.Setenv("TF_ACC", "1")
 
 	type MyType struct {
 		SetOfStrings []string  `tfschema:"set_of_strings"`
@@ -620,7 +621,7 @@ func TestAccPluginSDKAndDecoderSets(t *testing.T) {
 }
 
 func TestAccPluginSDKAndEncoder(t *testing.T) {
-	t.Setenv("TF_ACC", "1")
+	os.Setenv("TF_ACC", "1")
 
 	type NestedType struct {
 		Key string `tfschema:"key"`
@@ -859,7 +860,7 @@ func TestAccPluginSDKAndEncoder(t *testing.T) {
 }
 
 func TestAccPluginSDKReturnsComputedFields(t *testing.T) {
-	t.Setenv("TF_ACC", "1")
+	os.Setenv("TF_ACC", "1")
 
 	resourceName := "validator_computed.test"
 	// lintignore:AT001

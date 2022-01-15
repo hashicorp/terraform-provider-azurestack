@@ -3,16 +3,16 @@ package azurestack
 import (
 	"bytes"
 	"fmt"
-	"log"
-	"strings"
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/structure"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/suppress"
-	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/azure"
+	"log"
+	"strings"
 )
 
 func resourceArmVirtualMachineScaleSet() *schema.Resource {

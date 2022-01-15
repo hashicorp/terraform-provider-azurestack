@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
-	`github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk`
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 )
 
 func dataSourceArmVirtualNetworkGateway() *schema.Resource {

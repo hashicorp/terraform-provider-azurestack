@@ -2,8 +2,6 @@ package azurestack
 
 import (
 	"fmt"
-	"log"
-	"time"
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2017-10-01/network"
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -11,6 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/validate"
+	"log"
+	"time"
 )
 
 func resourceArmLoadBalancerNatPool() *schema.Resource {

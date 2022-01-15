@@ -3,15 +3,15 @@ package azurestack
 import (
 	"bytes"
 	"fmt"
-	"log"
-	"net/url"
-	"strings"
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
 	"github.com/Azure/azure-sdk-for-go/storage"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
+	"log"
+	"net/url"
+	"strings"
 )
 
 func resourceArmVirtualMachine() *schema.Resource {

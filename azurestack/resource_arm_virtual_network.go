@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"log"
-	"net/http"
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-provider-azurestack/azurestack/helpers/response"
+	"log"
+	"net/http"
 )
 
 var virtualNetworkResourceName = "azurestack_virtual_network"

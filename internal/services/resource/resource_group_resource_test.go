@@ -3,7 +3,6 @@ package resource_test
 import (
 	"context"
 	"fmt"
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -72,6 +71,8 @@ func TestAccResourceGroup_withTags(t *testing.T) {
 	})
 }
 
+/*
+// todo put back in when we add vnets back in
 func TestAccResourceGroup_withNestedItemsAndFeatureFlag(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurerm_resource_group", "test")
 	r := ResourceGroupResource{}
@@ -98,7 +99,7 @@ func TestAccResourceGroup_withNestedItemsAndFeatureFlag(t *testing.T) {
 			Destroy: true,
 		},
 	})
-}
+}*/
 
 func (t ResourceGroupResource) Destroy(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
 	resourceGroup := state.Attributes["name"]

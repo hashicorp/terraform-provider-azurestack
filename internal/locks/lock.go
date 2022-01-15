@@ -4,13 +4,13 @@ package locks
 var armMutexKV = NewMutexKV()
 
 func ByID(id string) {
-	locks.ByID(id)
+	armMutexKV.Lock(id)
 }
 
 // handle the case of using the same name for different kinds of resources
 func ByName(name string, resourceType string) {
 	updatedName := resourceType + "." + name
-	locks.ByID(updatedName)
+	armMutexKV.Lock(updatedName)
 }
 
 func MultipleByName(names *[]string, resourceType string) {
@@ -22,12 +22,12 @@ func MultipleByName(names *[]string, resourceType string) {
 }
 
 func UnlockByID(id string) {
-	locks.UnlockByID(id)
+	armMutexKV.Unlock(id)
 }
 
 func UnlockByName(name string, resourceType string) {
 	updatedName := resourceType + "." + name
-	locks.UnlockByID(updatedName)
+	armMutexKV.Unlock(updatedName)
 }
 
 func UnlockMultipleByName(names *[]string, resourceType string) {

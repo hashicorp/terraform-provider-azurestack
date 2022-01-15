@@ -33,7 +33,7 @@ func (r Runner) tryRun() *resource.RetryError {
 		Auth: []ssh.AuthMethod{
 			ssh.Password(r.Password),
 		},
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(), // nolint:gosec
 	}
 
 	hostAddress := fmt.Sprintf("%s:%d", r.Hostname, r.Port)

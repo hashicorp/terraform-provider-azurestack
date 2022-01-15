@@ -24,7 +24,7 @@ type ClientBuilder struct {
 
 func Build(ctx context.Context, builder ClientBuilder) (*Client, error) {
 	// point folks towards the separate Azure Stack Provider when using Azure Stack
-	//if strings.EqualFold(builder.AuthConfig.Environment, "AZURESTACKCLOUD") {
+	// if strings.EqualFold(builder.AuthConfig.Environment, "AZURESTACKCLOUD") {
 
 	env, err := authentication.AzureEnvironmentByNameFromEndpoint(ctx, builder.AuthConfig.MetadataHost, builder.AuthConfig.Environment)
 	if err != nil {
@@ -85,7 +85,7 @@ func Build(ctx context.Context, builder ClientBuilder) (*Client, error) {
 	}
 
 	// Key Vault Endpoints
-	//keyVaultAuth := builder.AuthConfig.BearerAuthorizerCallback(ctx, sender, oauthConfig)
+	// keyVaultAuth := builder.AuthConfig.BearerAuthorizerCallback(ctx, sender, oauthConfig)
 
 	// Batch Management Endpoints
 	batchManagementAuth, err := builder.AuthConfig.GetADALToken(ctx, sender, oauthConfig, env.BatchManagementEndpoint)
@@ -99,7 +99,7 @@ func Build(ctx context.Context, builder ClientBuilder) (*Client, error) {
 		TerraformVersion: builder.TerraformVersion,
 		GraphAuthorizer:  graphAuth,
 		GraphEndpoint:    graphEndpoint,
-		//KeyVaultAuthorizer:          keyVaultAuth,
+		// KeyVaultAuthorizer:          keyVaultAuth,
 		ResourceManagerAuthorizer:   auth,
 		ResourceManagerEndpoint:     endpoint,
 		StorageAuthorizer:           storageAuth,

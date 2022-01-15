@@ -3,8 +3,6 @@ package resource
 import (
 	"fmt"
 	"log"
-	"sort"
-	"strings"
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
@@ -164,42 +162,4 @@ func resourceGroupDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 	}
 
 	return nil
-}
-
-func resourceGroupContainsItemsError(name string, nestedResourceIds []string) error {
-	formattedResourceUris := make([]string, 0)
-	for _, id := range nestedResourceIds {
-		formattedResourceUris = append(formattedResourceUris, fmt.Sprintf("* `%s`", id))
-	}
-	sort.Strings(formattedResourceUris)
-
-	message := fmt.Sprintf(`deleting Resource Group %[1]q: the Resource Group still contains Resources.
-
-Terraform is configured to check for Resources within the Resource Group when deleting the Resource Group - and
-raise an error if nested Resources still exist to avoid unintentionally deleting these Resources.
-
-Terraform has detected that the following Resources still exist within the Resource Group:
-
-%[2]s
-
-This feature is intended to avoid the unintentional destruction of nested Resources provisioned through some
-other means (for example, an ARM Template Deployment) - as such you must either remove these Resources, or
-disable this behaviour using the feature flag 'prevent_deletion_if_contains_resources' within the 'features'
-block when configuring the Provider, for example:
-
-provider "azurerm" {
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
-  }
-}
-
-When that feature flag is set, Terraform will skip checking for any Resources within the Resource Group and
-delete this using the Azure API directly (which will clear up any nested resources).
-
-More information on the 'features' block can be found in the documentation:
-https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#features
-`, name, strings.Join(formattedResourceUris, "\n"))
-	return fmt.Errorf(strings.ReplaceAll(message, "'", "`"))
 }

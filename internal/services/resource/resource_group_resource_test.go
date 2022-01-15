@@ -12,8 +12,7 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
-type ResourceGroupResource struct {
-}
+type ResourceGroupResource struct{}
 
 func TestAccResourceGroup_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurerm_resource_group", "test")
@@ -152,23 +151,6 @@ resource "azurerm_resource_group" "import" {
   location = azurerm_resource_group.test.location
 }
 `, template)
-}
-
-func (t ResourceGroupResource) withFeatureFlag(data acceptance.TestData, featureFlagEnabled bool) string {
-	return fmt.Sprintf(`
-provider "azurerm" {
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = %t
-    }
-  }
-}
-
-resource "azurerm_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-`, featureFlagEnabled, data.RandomInteger, data.Locations.Primary)
 }
 
 func (t ResourceGroupResource) withTagsConfig(data acceptance.TestData) string {

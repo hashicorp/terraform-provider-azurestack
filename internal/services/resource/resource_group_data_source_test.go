@@ -9,8 +9,7 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 )
 
-type ResourceGroupDataSource struct {
-}
+type ResourceGroupDataSource struct{}
 
 func TestAccDataSourceAzureRMResourceGroup_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurerm_resource_group", "test")

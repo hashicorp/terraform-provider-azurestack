@@ -78,7 +78,7 @@ func FlattenFloatRangeSlice(input *[][]float64) [][]interface{} {
 	result := make([][]interface{}, 0)
 	if input != nil {
 		for _, item := range *input {
-			result = append(result, FlattenFloatSlice(&item))
+			result = append(result, FlattenFloatSlice(&item)) // nolint:gosec
 		}
 	}
 	return result

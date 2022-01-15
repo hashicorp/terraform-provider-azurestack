@@ -10,7 +10,6 @@ func schemaFeatures() *pluginsdk.Schema {
 	// NOTE: if there's only one nested field these want to be Required (since there's no point
 	//       specifying the block otherwise) - however for 2+ they should be optional
 	featuresMap := map[string]*pluginsdk.Schema{
-
 		"resource_group": {
 			Type:     pluginsdk.TypeList,
 			Optional: true,

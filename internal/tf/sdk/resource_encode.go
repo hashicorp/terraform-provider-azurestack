@@ -49,6 +49,7 @@ func recurse(objType reflect.Type, objVal reflect.Value, fieldName string, debug
 		field := objType.Field(i)
 		fieldVal := objVal.Field(i)
 		if tfschemaTag, exists := field.Tag.Lookup("tfschema"); exists {
+			// nolint:exhaustive
 			switch field.Type.Kind() {
 			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 				iv := fieldVal.Int()

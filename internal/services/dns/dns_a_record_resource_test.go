@@ -14,8 +14,7 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
-type TestAccDnsARecordResource struct {
-}
+type TestAccDnsARecordResource struct{}
 
 func TestAccDnsARecord_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_dns_a_record", "test")

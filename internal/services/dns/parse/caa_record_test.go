@@ -24,7 +24,6 @@ func TestCaaRecordID(t *testing.T) {
 		Error    bool
 		Expected *CaaRecordId
 	}{
-
 		{
 			// empty
 			Input: "",

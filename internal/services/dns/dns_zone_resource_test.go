@@ -13,8 +13,7 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
-type DnsZoneResource struct {
-}
+type DnsZoneResource struct{}
 
 func TestAccDnsZone_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_dns_zone", "test")

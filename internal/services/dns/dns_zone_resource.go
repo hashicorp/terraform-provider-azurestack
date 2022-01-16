@@ -19,12 +19,12 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
-func resourceDnsZone() *pluginsdk.Resource {
+func dnsZone() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
-		Create: resourceDnsZoneCreateUpdate,
-		Read:   resourceDnsZoneRead,
-		Update: resourceDnsZoneCreateUpdate,
-		Delete: resourceDnsZoneDelete,
+		Create: dnsZoneCreateUpdate,
+		Read:   dnsZoneRead,
+		Update: dnsZoneCreateUpdate,
+		Delete: dnsZoneDelete,
 
 		SchemaVersion: 1,
 		StateUpgraders: pluginsdk.StateUpgrades(map[int]pluginsdk.StateUpgrade{
@@ -145,7 +145,7 @@ func resourceDnsZone() *pluginsdk.Resource {
 	}
 }
 
-func resourceDnsZoneCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
+func dnsZoneCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Dns.ZonesClient
 	recordSetsClient := meta.(*clients.Client).Dns.RecordSetsClient
 	subscriptionId := meta.(*clients.Client).Account.SubscriptionId
@@ -205,10 +205,10 @@ func resourceDnsZoneCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) er
 
 	d.SetId(resourceId.ID())
 
-	return resourceDnsZoneRead(d, meta)
+	return dnsZoneRead(d, meta)
 }
 
-func resourceDnsZoneRead(d *pluginsdk.ResourceData, meta interface{}) error {
+func dnsZoneRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	zonesClient := meta.(*clients.Client).Dns.ZonesClient
 	recordSetsClient := meta.(*clients.Client).Dns.RecordSetsClient
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
@@ -254,7 +254,7 @@ func resourceDnsZoneRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	return tags.FlattenAndSet(d, resp.Tags)
 }
 
-func resourceDnsZoneDelete(d *pluginsdk.ResourceData, meta interface{}) error {
+func dnsZoneDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Dns.ZonesClient
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()

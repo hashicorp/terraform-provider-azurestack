@@ -38,6 +38,6 @@ func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 		"azurestack_dns_ptr_record":   resourceDnsPtrRecord(),
 		"azurestack_dns_srv_record":   resourceDnsSrvRecord(),
 		"azurestack_dns_txt_record":   resourceDnsTxtRecord(),*/
-		"azurestack_dns_zone": resourceDnsZone(),
+		"azurestack_dns_zone": dnsZone(),
 	}
 }

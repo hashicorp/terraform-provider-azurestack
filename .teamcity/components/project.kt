@@ -1,7 +1,7 @@
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 
-const val providerName = "azurerm"
+const val providerName = "azurestack"
 
 fun AzureStack(environment: String, configuration : ClientConfiguration) : Project {
     return Project{

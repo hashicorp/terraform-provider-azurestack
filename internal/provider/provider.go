@@ -246,7 +246,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
 
 		config, err := builder.Build()
 		if err != nil {
-			return nil, diag.FromErr(fmt.Errorf("building AzureRM Client: %s", err))
+			return nil, diag.FromErr(fmt.Errorf("building Azurestack Client: %s", err))
 		}
 
 		terraformVersion := p.TerraformVersion
@@ -321,6 +321,6 @@ Could indicate either that the Resource Provider "Microsoft.Foo" requires regist
 but this could also indicate that this Azure Region doesn't support this API version.
 
 More information on the "skip_provider_registration" flag can be found here:
-https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#skip_provider_registration
+https://registry.terraform.io/providers/hashicorp/azurestack/latest/docs#skip_provider_registration
 
 Original Error: %s`

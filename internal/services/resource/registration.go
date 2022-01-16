@@ -29,14 +29,14 @@ func (r Registration) WebsiteCategories() []string {
 // SupportedDataSources returns the supported Data Sources supported by this Service
 func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
-		"azurerm_resource_group": resourceGroupDataSource(),
+		"azurestack_resource_group": resourceGroupDataSource(),
 	}
 }
 
 // SupportedResources returns the supported Resources supported by this Service
 func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
-		"azurerm_resource_group": resourceGroup(),
+		"azurestack_resource_group": resourceGroup(),
 	}
 }
 

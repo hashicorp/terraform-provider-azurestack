@@ -1,4 +1,4 @@
-import AzureRM
+import Azurestack
 import ClientConfiguration
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 

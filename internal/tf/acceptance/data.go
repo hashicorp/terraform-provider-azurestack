@@ -35,10 +35,10 @@ type TestData struct {
 
 	// ResourceName is the fully qualified resource name, comprising of the
 	// resource type and then the resource label
-	// e.g. `azurerm_resource_group.test`
+	// e.g. `azurestack_resource_group.test`
 	ResourceName string
 
-	// ResourceType is the Terraform Resource Type - `azurerm_resource_group`
+	// ResourceType is the Terraform Resource Type - `azurestack_resource_group`
 	ResourceType string
 
 	// Environment is a struct containing Details about the Azure Environment

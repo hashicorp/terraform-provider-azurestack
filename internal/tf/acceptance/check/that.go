@@ -14,7 +14,7 @@ import (
 )
 
 type thatType struct {
-	// resourceName being the full resource name e.g. azurerm_foo.bar
+	// resourceName being the full resource name e.g. azurestack_foo.bar
 	resourceName string
 }
 
@@ -56,7 +56,7 @@ func (t thatType) Key(key string) thatWithKeyType {
 }
 
 type thatWithKeyType struct {
-	// resourceName being the full resource name e.g. azurerm_foo.bar
+	// resourceName being the full resource name e.g. azurestack_foo.bar
 	resourceName string
 
 	// key being the specific field we're querying e.g. bar or a nested object ala foo.0.bar

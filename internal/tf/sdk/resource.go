@@ -22,7 +22,7 @@ type resourceBase interface {
 	// ModelObject is an instance of the object the Schema is decoded/encoded into
 	ModelObject() interface{}
 
-	// ResourceType is the exposed name of this resource (e.g. `azurerm_example`)
+	// ResourceType is the exposed name of this resource (e.g. `azurestack_example`)
 	ResourceType() string
 }
 

@@ -6,7 +6,7 @@ on:
     paths:
       - '.github/**'
       - '**.go'
-      - 'azurerm/**'
+      - 'azurestack/**'
       - '.github/workflows/**'
 
 concurrency:

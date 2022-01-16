@@ -104,14 +104,14 @@ func RunTestsInSequence(t *testing.T, tests map[string]map[string]func(t *testin
 }
 
 func (td TestData) runAcceptanceTest(t *testing.T, testCase resource.TestCase) {
-	testCase.ExternalProviders = td.externalProviders()
+	//	testCase.ExternalProviders = td.externalProviders()
 	testCase.ProviderFactories = td.providers()
 
 	resource.ParallelTest(t, testCase)
 }
 
 func (td TestData) runAcceptanceSequentialTest(t *testing.T, testCase resource.TestCase) {
-	testCase.ExternalProviders = td.externalProviders()
+	//	testCase.ExternalProviders = td.externalProviders()
 	testCase.ProviderFactories = td.providers()
 
 	resource.Test(t, testCase)
@@ -119,22 +119,18 @@ func (td TestData) runAcceptanceSequentialTest(t *testing.T, testCase resource.T
 
 func (td TestData) providers() map[string]func() (*schema.Provider, error) {
 	return map[string]func() (*schema.Provider, error){
-		"azurerm": func() (*schema.Provider, error) { //nolint:unparam
-			azurerm := provider.TestAzureProvider()
-			return azurerm, nil
-		},
-		"azurerm-alt": func() (*schema.Provider, error) { //nolint:unparam
-			azurerm := provider.TestAzureProvider()
-			return azurerm, nil
+		"azurestack": func() (*schema.Provider, error) { //nolint:unparam
+			azurestack := provider.TestAzureProvider()
+			return azurestack, nil
 		},
 	}
 }
 
-func (td TestData) externalProviders() map[string]resource.ExternalProvider {
+/*func (td TestData) externalProviders() map[string]resource.ExternalProvider {
 	return map[string]resource.ExternalProvider{
 		"azuread": {
 			VersionConstraint: "=2.8.0",
 			Source:            "registry.terraform.io/hashicorp/azuread",
 		},
 	}
-}
+}*/

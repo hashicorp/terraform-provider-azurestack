@@ -66,7 +66,7 @@ func (r ResourceGroupResource) Attributes() map[string]*pluginsdk.Schema {
 }
 
 func (r ResourceGroupResource) ResourceType() string {
-	return "azurerm_example"
+	return "azurestack_example"
 }
 
 func (r ResourceGroupResource) Create() sdk.ResourceFunc {

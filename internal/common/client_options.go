@@ -44,7 +44,7 @@ func (o ClientOptions) ConfigureClient(c *autorest.Client, authorizer autorest.A
 	setUserAgent(c, o.TerraformVersion, o.PartnerId, o.DisableTerraformPartnerID)
 
 	c.Authorizer = authorizer
-	c.Sender = sender.BuildSender("AzureRM")
+	c.Sender = sender.BuildSender("Azurestack")
 	c.SkipResourceProviderRegistration = o.SkipProviderReg
 	if !o.DisableCorrelationRequestID {
 		id := o.CustomCorrelationRequestID

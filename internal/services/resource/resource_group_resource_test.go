@@ -15,7 +15,7 @@ import (
 type ResourceGroupResource struct{}
 
 func TestAccResourceGroup_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_resource_group", "test")
+	data := acceptance.BuildTestData(t, "azurestack_resource_group", "test")
 	testResource := ResourceGroupResource{}
 	data.ResourceTest(t, testResource, []acceptance.TestStep{
 		data.ApplyStep(testResource.basicConfig, testResource),
@@ -24,7 +24,7 @@ func TestAccResourceGroup_basic(t *testing.T) {
 }
 
 func TestAccResourceGroup_requiresImport(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_resource_group", "test")
+	data := acceptance.BuildTestData(t, "azurestack_resource_group", "test")
 	testResource := ResourceGroupResource{}
 	data.ResourceTest(t, testResource, []acceptance.TestStep{
 		data.ApplyStep(testResource.basicConfig, testResource),
@@ -33,7 +33,7 @@ func TestAccResourceGroup_requiresImport(t *testing.T) {
 }
 
 func TestAccResourceGroup_disappears(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_resource_group", "test")
+	data := acceptance.BuildTestData(t, "azurestack_resource_group", "test")
 	testResource := ResourceGroupResource{}
 	data.ResourceTest(t, testResource, []acceptance.TestStep{
 		data.DisappearsStep(acceptance.DisappearsStepData{
@@ -44,7 +44,7 @@ func TestAccResourceGroup_disappears(t *testing.T) {
 }
 
 func TestAccResourceGroup_withTags(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_resource_group", "test")
+	data := acceptance.BuildTestData(t, "azurestack_resource_group", "test")
 	testResource := ResourceGroupResource{}
 	assert := check.That(data.ResourceName)
 	data.ResourceTest(t, testResource, []acceptance.TestStep{
@@ -73,7 +73,7 @@ func TestAccResourceGroup_withTags(t *testing.T) {
 /*
 // todo put back in when we add vnets back in
 func TestAccResourceGroup_withNestedItemsAndFeatureFlag(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_resource_group", "test")
+	data := acceptance.BuildTestData(t, "azurestack_resource_group", "test")
 	r := ResourceGroupResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -130,11 +130,11 @@ func (t ResourceGroupResource) Exists(ctx context.Context, client *clients.Clien
 
 func (t ResourceGroupResource) basicConfig(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
@@ -146,20 +146,20 @@ func (t ResourceGroupResource) requiresImportConfig(data acceptance.TestData) st
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_resource_group" "import" {
-  name     = azurerm_resource_group.test.name
-  location = azurerm_resource_group.test.location
+resource "azurestack_resource_group" "import" {
+  name     = azurestack_resource_group.test.name
+  location = azurestack_resource_group.test.location
 }
 `, template)
 }
 
 func (t ResourceGroupResource) withTagsConfig(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 
@@ -173,11 +173,11 @@ resource "azurerm_resource_group" "test" {
 
 func (t ResourceGroupResource) withTagsUpdatedConfig(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 

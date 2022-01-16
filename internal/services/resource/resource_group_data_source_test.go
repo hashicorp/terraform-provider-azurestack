@@ -11,8 +11,8 @@ import (
 
 type ResourceGroupDataSource struct{}
 
-func TestAccDataSourceAzureRMResourceGroup_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "data.azurerm_resource_group", "test")
+func TestAccDataSourceAzurestackResourceGroup_basic(t *testing.T) {
+	data := acceptance.BuildTestData(t, "data.azurestack_resource_group", "test")
 	r := ResourceGroupDataSource{}
 
 	data.DataSourceTest(t, []acceptance.TestStep{
@@ -30,11 +30,11 @@ func TestAccDataSourceAzureRMResourceGroup_basic(t *testing.T) {
 
 func (ResourceGroupDataSource) basic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRg-%d"
   location = "%s"
 
@@ -43,8 +43,8 @@ resource "azurerm_resource_group" "test" {
   }
 }
 
-data "azurerm_resource_group" "test" {
-  name = azurerm_resource_group.test.name
+data "azurestack_resource_group" "test" {
+  name = azurestack_resource_group.test.name
 }
 `, data.RandomInteger, data.Locations.Primary)
 }

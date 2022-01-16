@@ -51,7 +51,7 @@ func Build(ctx context.Context, builder ClientBuilder) (*Client, error) {
 		return nil, fmt.Errorf("unable to configure OAuthConfig for tenant %s", builder.AuthConfig.TenantID)
 	}
 
-	sender := sender.BuildSender("AzureRM")
+	sender := sender.BuildSender("Azurestack")
 
 	// Resource Manager endpoints
 	endpoint := env.ResourceManagerEndpoint

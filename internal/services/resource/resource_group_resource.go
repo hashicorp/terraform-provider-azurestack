@@ -64,7 +64,7 @@ func resourceGroupCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 		}
 
 		if existing.ID != nil && *existing.ID != "" {
-			return tf.ImportAsExistsError("azurerm_resource_group", *existing.ID)
+			return tf.ImportAsExistsError("azurestack_resource_group", *existing.ID)
 		}
 	}
 

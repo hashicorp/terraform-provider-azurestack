@@ -166,7 +166,7 @@ func resourceDnsZoneCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) er
 		}
 
 		if !utils.ResponseWasNotFound(existing.Response) {
-			return tf.ImportAsExistsError("azurerm_dns_zone", resourceId.ID())
+			return tf.ImportAsExistsError("azurestack_dns_zone", resourceId.ID())
 		}
 	}
 

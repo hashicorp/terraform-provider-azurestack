@@ -17,7 +17,7 @@ type DnsZoneResource struct {
 }
 
 func TestAccDnsZone_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_dns_zone", "test")
+	data := acceptance.BuildTestData(t, "azurestack_dns_zone", "test")
 	r := DnsZoneResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -32,7 +32,7 @@ func TestAccDnsZone_basic(t *testing.T) {
 }
 
 func TestAccDnsZone_requiresImport(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_dns_zone", "test")
+	data := acceptance.BuildTestData(t, "azurestack_dns_zone", "test")
 	r := DnsZoneResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -44,13 +44,13 @@ func TestAccDnsZone_requiresImport(t *testing.T) {
 		},
 		{
 			Config:      r.requiresImport(data),
-			ExpectError: acceptance.RequiresImportError("azurerm_dns_zone"),
+			ExpectError: acceptance.RequiresImportError("azurestack_dns_zone"),
 		},
 	})
 }
 
 func TestAccDnsZone_withTags(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_dns_zone", "test")
+	data := acceptance.BuildTestData(t, "azurestack_dns_zone", "test")
 	r := DnsZoneResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -73,7 +73,7 @@ func TestAccDnsZone_withTags(t *testing.T) {
 }
 
 func TestAccDnsZone_withSOARecord(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_dns_zone", "test")
+	data := acceptance.BuildTestData(t, "azurestack_dns_zone", "test")
 	r := DnsZoneResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -117,18 +117,18 @@ func (DnsZoneResource) Exists(ctx context.Context, clients *clients.Client, stat
 
 func (DnsZoneResource) basic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = azurerm_resource_group.test.name
+  resource_group_name = azurestack_resource_group.test.name
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger)
 }
@@ -138,27 +138,27 @@ func (DnsZoneResource) requiresImport(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_dns_zone" "import" {
-  name                = azurerm_dns_zone.test.name
-  resource_group_name = azurerm_dns_zone.test.resource_group_name
+resource "azurestack_dns_zone" "import" {
+  name                = azurestack_dns_zone.test.name
+  resource_group_name = azurestack_dns_zone.test.resource_group_name
 }
 `, template)
 }
 
 func (DnsZoneResource) withTags(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = azurerm_resource_group.test.name
+  resource_group_name = azurestack_resource_group.test.name
 
   tags = {
     environment = "Production"
@@ -170,18 +170,18 @@ resource "azurerm_dns_zone" "test" {
 
 func (DnsZoneResource) withTagsUpdate(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = azurerm_resource_group.test.name
+  resource_group_name = azurestack_resource_group.test.name
 
   tags = {
     environment = "staging"
@@ -192,18 +192,18 @@ resource "azurerm_dns_zone" "test" {
 
 func (DnsZoneResource) withBasicSOARecord(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-dns-%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = azurerm_resource_group.test.name
+  resource_group_name = azurestack_resource_group.test.name
 
   soa_record {
     email     = "testemail.com"
@@ -215,18 +215,18 @@ resource "azurerm_dns_zone" "test" {
 
 func (DnsZoneResource) withCompletedSOARecord(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-dns-%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = azurerm_resource_group.test.name
+  resource_group_name = azurestack_resource_group.test.name
 
   soa_record {
     email         = "testemail.com"

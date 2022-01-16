@@ -18,7 +18,7 @@ type TestAccDnsARecordResource struct {
 }
 
 func TestAccDnsARecord_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_dns_a_record", "test")
+	data := acceptance.BuildTestData(t, "azurestack_dns_a_record", "test")
 	r := TestAccDnsARecordResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -34,7 +34,7 @@ func TestAccDnsARecord_basic(t *testing.T) {
 }
 
 func TestAccDnsARecord_requiresImport(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_dns_a_record", "test")
+	data := acceptance.BuildTestData(t, "azurestack_dns_a_record", "test")
 	r := TestAccDnsARecordResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -46,13 +46,13 @@ func TestAccDnsARecord_requiresImport(t *testing.T) {
 		},
 		{
 			Config:      r.requiresImport(data),
-			ExpectError: acceptance.RequiresImportError("azurerm_dns_a_record"),
+			ExpectError: acceptance.RequiresImportError("azurestack_dns_a_record"),
 		},
 	})
 }
 
 func TestAccDnsARecord_updateRecords(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_dns_a_record", "test")
+	data := acceptance.BuildTestData(t, "azurestack_dns_a_record", "test")
 	r := TestAccDnsARecordResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -74,7 +74,7 @@ func TestAccDnsARecord_updateRecords(t *testing.T) {
 }
 
 func TestAccDnsARecord_withTags(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_dns_a_record", "test")
+	data := acceptance.BuildTestData(t, "azurestack_dns_a_record", "test")
 	r := TestAccDnsARecordResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -112,24 +112,24 @@ func (TestAccDnsARecordResource) Exists(ctx context.Context, clients *clients.Cl
 
 func (TestAccDnsARecordResource) basic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = azurerm_resource_group.test.name
+  resource_group_name = azurestack_resource_group.test.name
 }
 
-resource "azurerm_dns_a_record" "test" {
+resource "azurestack_dns_a_record" "test" {
   name                = "myarecord%d"
-  resource_group_name = azurerm_resource_group.test.name
-  zone_name           = azurerm_dns_zone.test.name
+  resource_group_name = azurestack_resource_group.test.name
+  zone_name           = azurestack_dns_zone.test.name
   ttl                 = 300
   records             = ["1.2.3.4", "1.2.4.5"]
 }
@@ -140,10 +140,10 @@ func (r TestAccDnsARecordResource) requiresImport(data acceptance.TestData) stri
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_dns_a_record" "import" {
-  name                = azurerm_dns_a_record.test.name
-  resource_group_name = azurerm_dns_a_record.test.resource_group_name
-  zone_name           = azurerm_dns_a_record.test.zone_name
+resource "azurestack_dns_a_record" "import" {
+  name                = azurestack_dns_a_record.test.name
+  resource_group_name = azurestack_dns_a_record.test.resource_group_name
+  zone_name           = azurestack_dns_a_record.test.zone_name
   ttl                 = 300
   records             = ["1.2.3.4", "1.2.4.5"]
 }
@@ -152,24 +152,24 @@ resource "azurerm_dns_a_record" "import" {
 
 func (TestAccDnsARecordResource) updateRecords(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = azurerm_resource_group.test.name
+  resource_group_name = azurestack_resource_group.test.name
 }
 
-resource "azurerm_dns_a_record" "test" {
+resource "azurestack_dns_a_record" "test" {
   name                = "myarecord%d"
-  resource_group_name = azurerm_resource_group.test.name
-  zone_name           = azurerm_dns_zone.test.name
+  resource_group_name = azurestack_resource_group.test.name
+  zone_name           = azurestack_dns_zone.test.name
   ttl                 = 300
   records             = ["1.2.3.4", "1.2.4.5", "1.2.3.7"]
 }
@@ -178,24 +178,24 @@ resource "azurerm_dns_a_record" "test" {
 
 func (TestAccDnsARecordResource) withTags(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = azurerm_resource_group.test.name
+  resource_group_name = azurestack_resource_group.test.name
 }
 
-resource "azurerm_dns_a_record" "test" {
+resource "azurestack_dns_a_record" "test" {
   name                = "myarecord%d"
-  resource_group_name = azurerm_resource_group.test.name
-  zone_name           = azurerm_dns_zone.test.name
+  resource_group_name = azurestack_resource_group.test.name
+  zone_name           = azurestack_dns_zone.test.name
   ttl                 = 300
   records             = ["1.2.3.4", "1.2.4.5"]
 
@@ -209,24 +209,24 @@ resource "azurerm_dns_a_record" "test" {
 
 func (TestAccDnsARecordResource) withTagsUpdate(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = azurerm_resource_group.test.name
+  resource_group_name = azurestack_resource_group.test.name
 }
 
-resource "azurerm_dns_a_record" "test" {
+resource "azurestack_dns_a_record" "test" {
   name                = "myarecord%d"
-  resource_group_name = azurerm_resource_group.test.name
-  zone_name           = azurerm_dns_zone.test.name
+  resource_group_name = azurestack_resource_group.test.name
+  zone_name           = azurestack_dns_zone.test.name
   ttl                 = 300
   records             = ["1.2.3.4", "1.2.4.5"]
 
@@ -239,24 +239,24 @@ resource "azurerm_dns_a_record" "test" {
 
 func (TestAccDnsARecordResource) AliasToRecordsUpdate(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_dns_zone" "test" {
+resource "azurestack_dns_zone" "test" {
   name                = "acctestzone%d.com"
-  resource_group_name = azurerm_resource_group.test.name
+  resource_group_name = azurestack_resource_group.test.name
 }
 
-resource "azurerm_dns_a_record" "test" {
+resource "azurestack_dns_a_record" "test" {
   name                = "myarecord%d"
-  resource_group_name = azurerm_resource_group.test.name
-  zone_name           = azurerm_dns_zone.test.name
+  resource_group_name = azurestack_resource_group.test.name
+  zone_name           = azurestack_dns_zone.test.name
   ttl                 = 300
   records             = ["1.2.3.4", "1.2.4.5"]
 }

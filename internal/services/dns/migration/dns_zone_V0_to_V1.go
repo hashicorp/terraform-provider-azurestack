@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/terraform-provider-azurerm/internal/clients"
-	"github.com/hashicorp/terraform-provider-azurerm/internal/services/dns/parse"
-	"github.com/hashicorp/terraform-provider-azurerm/internal/tf/pluginsdk"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/dns/parse"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 )
 
 var _ pluginsdk.StateUpgrade = DnsZoneV0ToV1{}

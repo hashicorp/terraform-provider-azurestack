@@ -91,7 +91,7 @@ func dnsARecordCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		}
 
 		if !utils.ResponseWasNotFound(existing.Response) {
-			return tf.ImportAsExistsError("azurerm_dns_a_record", resourceId.ID())
+			return tf.ImportAsExistsError("azurestack_dns_a_record", resourceId.ID())
 		}
 	}
 
@@ -104,7 +104,7 @@ func dnsARecordCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		RecordSetProperties: &dns.RecordSetProperties{
 			Metadata: tags.Expand(t),
 			TTL:      &ttl,
-			ARecords: expandAzureRmDnsARecords(recordsRaw),
+			ARecords: expandazurestackDnsARecords(recordsRaw),
 		},
 	}
 
@@ -145,7 +145,7 @@ func dnsARecordRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	d.Set("fqdn", resp.Fqdn)
 	d.Set("ttl", resp.TTL)
 
-	if err := d.Set("records", flattenAzureRmDnsARecords(resp.ARecords)); err != nil {
+	if err := d.Set("records", flattenazurestackDnsARecords(resp.ARecords)); err != nil {
 		return fmt.Errorf("setting `records`: %+v", err)
 	}
 
@@ -170,7 +170,7 @@ func dnsARecordDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func expandAzureRmDnsARecords(input []interface{}) *[]dns.ARecord {
+func expandazurestackDnsARecords(input []interface{}) *[]dns.ARecord {
 	records := make([]dns.ARecord, len(input))
 
 	for i, v := range input {
@@ -183,7 +183,7 @@ func expandAzureRmDnsARecords(input []interface{}) *[]dns.ARecord {
 	return &records
 }
 
-func flattenAzureRmDnsARecords(records *[]dns.ARecord) []string {
+func flattenazurestackDnsARecords(records *[]dns.ARecord) []string {
 	if records == nil {
 		return []string{}
 	}

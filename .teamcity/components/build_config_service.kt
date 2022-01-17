@@ -10,7 +10,7 @@ class serviceDetails(name: String, displayName: String, environment: String) {
             // TC needs a consistent ID for dynamically generated packages
             id(uniqueID(providerName))
 
-            name = "%s - Acceptance Tests".format(displayName)
+            name = "%s".format(displayName)
 
             vcs {
                 root(providerRepository)

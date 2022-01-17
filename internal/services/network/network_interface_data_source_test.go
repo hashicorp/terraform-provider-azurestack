@@ -11,7 +11,7 @@ import (
 type NetworkInterfaceDataSource struct{}
 
 func TestAccDataSourceArmNetworkInterface_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "data.azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "data.azurestack_network_interface", "test")
 	r := NetworkInterfaceDataSource{}
 
 	data.DataSourceTest(t, []acceptance.TestStep{
@@ -31,9 +31,9 @@ func (NetworkInterfaceDataSource) basic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-data "azurerm_network_interface" "test" {
-  name                = azurerm_network_interface.test.name
-  resource_group_name = azurerm_network_interface.test.resource_group_name
+data "azurestack_network_interface" "test" {
+  name                = azurestack_network_interface.test.name
+  resource_group_name = azurestack_network_interface.test.resource_group_name
 }
 `, NetworkInterfaceResource{}.static(data))
 }

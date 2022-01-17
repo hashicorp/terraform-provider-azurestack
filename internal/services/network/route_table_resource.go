@@ -116,7 +116,7 @@ func routeTableCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	ctx, cancel := timeouts.ForCreateUpdate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
-	log.Printf("[INFO] preparing arguments for AzureRM Route Table creation.")
+	log.Printf("[INFO] preparing arguments for azurestack Route Table creation.")
 
 	id := parse.NewRouteTableID(subscriptionId, d.Get("resource_group_name").(string), d.Get("name").(string))
 	location := location.Normalize(d.Get("location").(string))
@@ -131,7 +131,7 @@ func routeTableCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		}
 
 		if existing.ID != nil && *existing.ID != "" {
-			return tf.ImportAsExistsError("azurerm_route_table", *existing.ID)
+			return tf.ImportAsExistsError("azurestack_route_table", *existing.ID)
 		}
 	}
 

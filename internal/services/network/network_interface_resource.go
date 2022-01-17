@@ -111,7 +111,7 @@ func networkInterface() *pluginsdk.Resource {
 						},
 
 						/*
-							TODO missing from azurerm, put back?
+							TODO missing from azurestack, put back?
 
 							"application_gateway_backend_address_pools_ids": {
 									Type:     schema.TypeSet,
@@ -237,7 +237,7 @@ func networkInterfaceCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 		}
 
 		if !utils.ResponseWasNotFound(existing.Response) {
-			return tf.ImportAsExistsError("azurerm_network_interface", id.ID())
+			return tf.ImportAsExistsError("azurestack_network_interface", id.ID())
 		}
 	}
 

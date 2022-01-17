@@ -16,7 +16,7 @@ import (
 type RouteTableResource struct{}
 
 func TestAccRouteTable_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route_table", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route_table", "test")
 	r := RouteTableResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -33,7 +33,7 @@ func TestAccRouteTable_basic(t *testing.T) {
 }
 
 func TestAccRouteTable_requiresImport(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route_table", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route_table", "test")
 	r := RouteTableResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -47,13 +47,13 @@ func TestAccRouteTable_requiresImport(t *testing.T) {
 		},
 		{
 			Config:      r.requiresImport(data),
-			ExpectError: acceptance.RequiresImportError("azurerm_route_table"),
+			ExpectError: acceptance.RequiresImportError("azurestack_route_table"),
 		},
 	})
 }
 
 func TestAccRouteTable_complete(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route_table", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route_table", "test")
 	r := RouteTableResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -70,7 +70,7 @@ func TestAccRouteTable_complete(t *testing.T) {
 }
 
 func TestAccRouteTable_update(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route_table", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route_table", "test")
 	r := RouteTableResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -102,7 +102,7 @@ func TestAccRouteTable_update(t *testing.T) {
 }
 
 func TestAccRouteTable_singleRoute(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route_table", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route_table", "test")
 	r := RouteTableResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -117,7 +117,7 @@ func TestAccRouteTable_singleRoute(t *testing.T) {
 }
 
 func TestAccRouteTable_removeRoute(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route_table", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route_table", "test")
 	r := RouteTableResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -154,7 +154,7 @@ func TestAccRouteTable_removeRoute(t *testing.T) {
 }
 
 func TestAccRouteTable_disappears(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route_table", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route_table", "test")
 	r := RouteTableResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -166,7 +166,7 @@ func TestAccRouteTable_disappears(t *testing.T) {
 }
 
 func TestAccRouteTable_withTags(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route_table", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route_table", "test")
 	r := RouteTableResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -191,7 +191,7 @@ func TestAccRouteTable_withTags(t *testing.T) {
 }
 
 func TestAccRouteTable_multipleRoutes(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route_table", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route_table", "test")
 	r := RouteTableResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -256,19 +256,19 @@ func (RouteTableResource) Destroy(ctx context.Context, client *clients.Client, s
 
 func (RouteTableResource) basic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_route_table" "test" {
+resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger)
 }
@@ -277,29 +277,29 @@ func (r RouteTableResource) requiresImport(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_route_table" "import" {
-  name                = azurerm_route_table.test.name
-  location            = azurerm_route_table.test.location
-  resource_group_name = azurerm_route_table.test.resource_group_name
+resource "azurestack_route_table" "import" {
+  name                = azurestack_route_table.test.name
+  location            = azurestack_route_table.test.location
+  resource_group_name = azurestack_route_table.test.resource_group_name
 }
 `, r.basic(data))
 }
 
 func (RouteTableResource) basicAppliance(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_route_table" "test" {
+resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   route {
     name                   = "route1"
@@ -313,19 +313,19 @@ resource "azurerm_route_table" "test" {
 
 func (RouteTableResource) complete(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_route_table" "test" {
+resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   route {
     name           = "acctestRoute"
@@ -340,19 +340,19 @@ resource "azurerm_route_table" "test" {
 
 func (RouteTableResource) singleRoute(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_route_table" "test" {
+resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   route {
     name           = "route1"
@@ -365,38 +365,38 @@ resource "azurerm_route_table" "test" {
 
 func (RouteTableResource) noRouteBlocks(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_route_table" "test" {
+resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger)
 }
 
 func (RouteTableResource) singleRouteRemoved(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_route_table" "test" {
+resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   route = []
 }
@@ -405,19 +405,19 @@ resource "azurerm_route_table" "test" {
 
 func (RouteTableResource) multipleRoutes(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_route_table" "test" {
+resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   route {
     name           = "route1"
@@ -436,19 +436,19 @@ resource "azurerm_route_table" "test" {
 
 func (RouteTableResource) withTags(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_route_table" "test" {
+resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   route {
     name           = "route1"
@@ -466,19 +466,19 @@ resource "azurerm_route_table" "test" {
 
 func (RouteTableResource) withTagsUpdate(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_route_table" "test" {
+resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   route {
     name           = "route1"

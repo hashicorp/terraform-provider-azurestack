@@ -11,7 +11,7 @@ import (
 type RouteTableDataSource struct{}
 
 func TestAccDataSourceRouteTable_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "data.azurerm_route_table", "test")
+	data := acceptance.BuildTestData(t, "data.azurestack_route_table", "test")
 	r := RouteTableDataSource{}
 
 	data.DataSourceTest(t, []acceptance.TestStep{
@@ -25,7 +25,7 @@ func TestAccDataSourceRouteTable_basic(t *testing.T) {
 }
 
 func TestAccDataSourceRouteTable_singleRoute(t *testing.T) {
-	data := acceptance.BuildTestData(t, "data.azurerm_route_table", "test")
+	data := acceptance.BuildTestData(t, "data.azurestack_route_table", "test")
 	r := RouteTableDataSource{}
 
 	data.DataSourceTest(t, []acceptance.TestStep{
@@ -42,7 +42,7 @@ func TestAccDataSourceRouteTable_singleRoute(t *testing.T) {
 }
 
 func TestAccDataSourceRouteTable_multipleRoutes(t *testing.T) {
-	data := acceptance.BuildTestData(t, "data.azurerm_route_table", "test")
+	data := acceptance.BuildTestData(t, "data.azurestack_route_table", "test")
 	r := RouteTableDataSource{}
 
 	data.DataSourceTest(t, []acceptance.TestStep{
@@ -65,9 +65,9 @@ func (RouteTableDataSource) basic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-data "azurerm_route_table" "test" {
-  name                = azurerm_route_table.test.name
-  resource_group_name = azurerm_route_table.test.resource_group_name
+data "azurestack_route_table" "test" {
+  name                = azurestack_route_table.test.name
+  resource_group_name = azurestack_route_table.test.resource_group_name
 }
 `, RouteTableResource{}.basic(data))
 }
@@ -76,9 +76,9 @@ func (RouteTableDataSource) singleRoute(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-data "azurerm_route_table" "test" {
-  name                = azurerm_route_table.test.name
-  resource_group_name = azurerm_route_table.test.resource_group_name
+data "azurestack_route_table" "test" {
+  name                = azurestack_route_table.test.name
+  resource_group_name = azurestack_route_table.test.resource_group_name
 }
 `, RouteTableResource{}.singleRoute(data))
 }
@@ -87,9 +87,9 @@ func (RouteTableDataSource) multipleRoutes(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-data "azurerm_route_table" "test" {
-  name                = azurerm_route_table.test.name
-  resource_group_name = azurerm_route_table.test.resource_group_name
+data "azurestack_route_table" "test" {
+  name                = azurestack_route_table.test.name
+  resource_group_name = azurestack_route_table.test.resource_group_name
 }
 `, RouteTableResource{}.multipleRoutes(data))
 }

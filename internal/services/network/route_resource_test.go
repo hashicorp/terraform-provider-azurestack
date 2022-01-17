@@ -16,7 +16,7 @@ import (
 type RouteResource struct{}
 
 func TestAccRoute_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route", "test")
 	r := RouteResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -31,7 +31,7 @@ func TestAccRoute_basic(t *testing.T) {
 }
 
 func TestAccRoute_requiresImport(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route", "test")
 	r := RouteResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -43,13 +43,13 @@ func TestAccRoute_requiresImport(t *testing.T) {
 		},
 		{
 			Config:      r.requiresImport(data),
-			ExpectError: acceptance.RequiresImportError("azurerm_route"),
+			ExpectError: acceptance.RequiresImportError("azurestack_route"),
 		},
 	})
 }
 
 func TestAccRoute_update(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route", "test")
 	r := RouteResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -81,7 +81,7 @@ func TestAccRoute_update(t *testing.T) {
 }
 
 func TestAccRoute_disappears(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route", "test")
 	r := RouteResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -93,7 +93,7 @@ func TestAccRoute_disappears(t *testing.T) {
 }
 
 func TestAccRoute_multipleRoutes(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_route", "test")
+	data := acceptance.BuildTestData(t, "azurestack_route", "test")
 	r := RouteResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -147,25 +147,25 @@ func (r RouteResource) Destroy(ctx context.Context, client *clients.Client, stat
 
 func (RouteResource) basic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_route_table" "test" {
+resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 }
 
-resource "azurerm_route" "test" {
+resource "azurestack_route" "test" {
   name                = "acctestroute%d"
-  resource_group_name = azurerm_resource_group.test.name
-  route_table_name    = azurerm_route_table.test.name
+  resource_group_name = azurestack_resource_group.test.name
+  route_table_name    = azurestack_route_table.test.name
 
   address_prefix = "10.1.0.0/16"
   next_hop_type  = "vnetlocal"
@@ -176,38 +176,38 @@ resource "azurerm_route" "test" {
 func (r RouteResource) requiresImport(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
-resource "azurerm_route" "import" {
-  name                = azurerm_route.test.name
-  resource_group_name = azurerm_route.test.resource_group_name
-  route_table_name    = azurerm_route.test.route_table_name
+resource "azurestack_route" "import" {
+  name                = azurestack_route.test.name
+  resource_group_name = azurestack_route.test.resource_group_name
+  route_table_name    = azurestack_route.test.route_table_name
 
-  address_prefix = azurerm_route.test.address_prefix
-  next_hop_type  = azurerm_route.test.next_hop_type
+  address_prefix = azurestack_route.test.address_prefix
+  next_hop_type  = azurestack_route.test.next_hop_type
 }
 `, r.basic(data))
 }
 
 func (RouteResource) basicAppliance(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_route_table" "test" {
+resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 }
 
-resource "azurerm_route" "test" {
+resource "azurestack_route" "test" {
   name                = "acctestroute%d"
-  resource_group_name = azurerm_resource_group.test.name
-  route_table_name    = azurerm_route_table.test.name
+  resource_group_name = azurestack_resource_group.test.name
+  route_table_name    = azurestack_route_table.test.name
 
   address_prefix         = "10.1.0.0/16"
   next_hop_type          = "VirtualAppliance"
@@ -218,34 +218,34 @@ resource "azurerm_route" "test" {
 
 func (RouteResource) multipleRoutes(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_route_table" "test" {
+resource "azurestack_route_table" "test" {
   name                = "acctestrt%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 }
 
-resource "azurerm_route" "test" {
+resource "azurestack_route" "test" {
   name                = "acctestroute%d"
-  resource_group_name = azurerm_resource_group.test.name
-  route_table_name    = azurerm_route_table.test.name
+  resource_group_name = azurestack_resource_group.test.name
+  route_table_name    = azurestack_route_table.test.name
 
   address_prefix = "10.1.0.0/16"
   next_hop_type  = "vnetlocal"
 }
 
-resource "azurerm_route" "test1" {
+resource "azurestack_route" "test1" {
   name                = "acctestroute%d1"
-  resource_group_name = azurerm_resource_group.test.name
-  route_table_name    = azurerm_route_table.test.name
+  resource_group_name = azurestack_resource_group.test.name
+  route_table_name    = azurestack_route_table.test.name
 
   address_prefix = "10.2.0.0/16"
   next_hop_type  = "none"

@@ -101,7 +101,7 @@ func routeCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		}
 
 		if !utils.ResponseWasNotFound(existing.Response) {
-			return tf.ImportAsExistsError("azurerm_route", id.ID())
+			return tf.ImportAsExistsError("azurestack_route", id.ID())
 		}
 	}
 

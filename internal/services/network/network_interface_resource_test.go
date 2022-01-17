@@ -16,7 +16,7 @@ import (
 type NetworkInterfaceResource struct{}
 
 func TestAccNetworkInterface_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -30,7 +30,7 @@ func TestAccNetworkInterface_basic(t *testing.T) {
 }
 
 func TestAccNetworkInterface_disappears(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		data.DisappearsStep(acceptance.DisappearsStepData{
@@ -41,7 +41,7 @@ func TestAccNetworkInterface_disappears(t *testing.T) {
 }
 
 func TestAccNetworkInterface_dnsServers(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -62,7 +62,7 @@ func TestAccNetworkInterface_dnsServers(t *testing.T) {
 }
 
 func TestAccNetworkInterface_enableAcceleratedNetworking(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -93,7 +93,7 @@ func TestAccNetworkInterface_enableAcceleratedNetworking(t *testing.T) {
 }
 
 func TestAccNetworkInterface_enableIPForwarding(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -124,7 +124,7 @@ func TestAccNetworkInterface_enableIPForwarding(t *testing.T) {
 }
 
 func TestAccNetworkInterface_internalDomainNameLabel(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -145,7 +145,7 @@ func TestAccNetworkInterface_internalDomainNameLabel(t *testing.T) {
 }
 
 func TestAccNetworkInterface_ipv6(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -161,7 +161,7 @@ func TestAccNetworkInterface_ipv6(t *testing.T) {
 }
 
 func TestAccNetworkInterface_multipleIPConfigurations(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -175,7 +175,7 @@ func TestAccNetworkInterface_multipleIPConfigurations(t *testing.T) {
 }
 
 func TestAccNetworkInterface_multipleIPConfigurationsSecondaryAsPrimary(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -189,7 +189,7 @@ func TestAccNetworkInterface_multipleIPConfigurationsSecondaryAsPrimary(t *testi
 }
 
 func TestAccNetworkInterface_publicIP(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -217,7 +217,7 @@ func TestAccNetworkInterface_publicIP(t *testing.T) {
 }
 
 func TestAccNetworkInterface_requiresImport(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -228,13 +228,13 @@ func TestAccNetworkInterface_requiresImport(t *testing.T) {
 		},
 		{
 			Config:      r.requiresImport(data),
-			ExpectError: acceptance.RequiresImportError("azurerm_network_interface"),
+			ExpectError: acceptance.RequiresImportError("azurestack_network_interface"),
 		},
 	})
 }
 
 func TestAccNetworkInterface_static(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -248,7 +248,7 @@ func TestAccNetworkInterface_static(t *testing.T) {
 }
 
 func TestAccNetworkInterface_tags(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -269,7 +269,7 @@ func TestAccNetworkInterface_tags(t *testing.T) {
 }
 
 func TestAccNetworkInterface_update(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -290,7 +290,7 @@ func TestAccNetworkInterface_update(t *testing.T) {
 }
 
 func TestAccNetworkInterface_updateMultipleParameters(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -311,7 +311,7 @@ func TestAccNetworkInterface_updateMultipleParameters(t *testing.T) {
 }
 
 func TestAccNetworkInterface_pointToGatewayLB(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_network_interface", "test")
+	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -360,14 +360,14 @@ func (r NetworkInterfaceResource) basic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctestni-%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -378,10 +378,10 @@ func (r NetworkInterfaceResource) withMultipleParameters(data acceptance.TestDat
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                    = "acctestni-%d"
-  location                = azurerm_resource_group.test.location
-  resource_group_name     = azurerm_resource_group.test.name
+  location                = azurestack_resource_group.test.location
+  resource_group_name     = azurestack_resource_group.test.name
   enable_ip_forwarding    = true
   internal_dns_name_label = "acctestni-%s"
 
@@ -392,7 +392,7 @@ resource "azurerm_network_interface" "test" {
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 
@@ -407,10 +407,10 @@ func (r NetworkInterfaceResource) updateMultipleParameters(data acceptance.TestD
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                    = "acctestni-%d"
-  location                = azurerm_resource_group.test.location
-  resource_group_name     = azurerm_resource_group.test.name
+  location                = azurestack_resource_group.test.location
+  resource_group_name     = azurestack_resource_group.test.name
   enable_ip_forwarding    = true
   internal_dns_name_label = "acctestni-%s"
 
@@ -421,7 +421,7 @@ resource "azurerm_network_interface" "test" {
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 
@@ -436,10 +436,10 @@ func (r NetworkInterfaceResource) dnsServers(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctestni-%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   dns_servers = [
     "10.0.0.5",
@@ -448,7 +448,7 @@ resource "azurerm_network_interface" "test" {
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -459,10 +459,10 @@ func (r NetworkInterfaceResource) dnsServersUpdated(data acceptance.TestData) st
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctestni-%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   dns_servers = [
     "10.0.0.6",
@@ -471,7 +471,7 @@ resource "azurerm_network_interface" "test" {
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -482,15 +482,15 @@ func (r NetworkInterfaceResource) enableAcceleratedNetworking(data acceptance.Te
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                          = "acctestni-%d"
-  location                      = azurerm_resource_group.test.location
-  resource_group_name           = azurerm_resource_group.test.name
+  location                      = azurestack_resource_group.test.location
+  resource_group_name           = azurestack_resource_group.test.name
   enable_accelerated_networking = %t
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -501,15 +501,15 @@ func (r NetworkInterfaceResource) enableIPForwarding(data acceptance.TestData, e
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                 = "acctestni-%d"
-  location             = azurerm_resource_group.test.location
-  resource_group_name  = azurerm_resource_group.test.name
+  location             = azurestack_resource_group.test.location
+  resource_group_name  = azurestack_resource_group.test.name
   enable_ip_forwarding = %t
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -520,15 +520,15 @@ func (r NetworkInterfaceResource) internalDomainNameLabel(data acceptance.TestDa
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                    = "acctestni-%d"
-  location                = azurerm_resource_group.test.location
-  resource_group_name     = azurerm_resource_group.test.name
+  location                = azurestack_resource_group.test.location
+  resource_group_name     = azurestack_resource_group.test.name
   internal_dns_name_label = "acctestni-%s-%s"
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -539,14 +539,14 @@ func (r NetworkInterfaceResource) ipv6(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctestni-%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
     primary                       = true
   }
@@ -564,21 +564,21 @@ func (r NetworkInterfaceResource) multipleIPConfigurations(data acceptance.TestD
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctestni-%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
     primary                       = true
   }
 
   ip_configuration {
     name                          = "secondary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -589,20 +589,20 @@ func (r NetworkInterfaceResource) multipleIPConfigurationsSecondaryAsPrimary(dat
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctestni-%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 
   ip_configuration {
     name                          = "secondary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
     primary                       = true
   }
@@ -614,16 +614,16 @@ func (r NetworkInterfaceResource) publicIP(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctestni-%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.test.id
+    public_ip_address_id          = azurestack_public_ip.test.id
   }
 }
 `, r.publicIPTemplate(data), data.RandomInteger)
@@ -633,14 +633,14 @@ func (r NetworkInterfaceResource) publicIPRemoved(data acceptance.TestData) stri
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctestni-%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -651,10 +651,10 @@ func (r NetworkInterfaceResource) publicIPTemplate(data acceptance.TestData) str
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_public_ip" "test" {
+resource "azurestack_public_ip" "test" {
   name                = "acctestpublicip-%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
   allocation_method   = "Static"
 }
 `, r.template(data), data.RandomInteger)
@@ -664,14 +664,14 @@ func (r NetworkInterfaceResource) requiresImport(data acceptance.TestData) strin
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "import" {
-  name                = azurerm_network_interface.test.name
-  location            = azurerm_network_interface.test.location
-  resource_group_name = azurerm_network_interface.test.resource_group_name
+resource "azurestack_network_interface" "import" {
+  name                = azurestack_network_interface.test.name
+  location            = azurestack_network_interface.test.location
+  resource_group_name = azurestack_network_interface.test.resource_group_name
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -682,14 +682,14 @@ func (r NetworkInterfaceResource) static(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctestni-%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Static"
     private_ip_address            = "10.0.2.15"
   }
@@ -701,14 +701,14 @@ func (r NetworkInterfaceResource) tags(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctestni-%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 
@@ -723,14 +723,14 @@ func (r NetworkInterfaceResource) tagsUpdated(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctestni-%d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   ip_configuration {
     name                          = "primary"
-    subnet_id                     = azurerm_subnet.test.id
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 
@@ -746,35 +746,35 @@ func (r NetworkInterfaceResource) pointToGatewayLB(data acceptance.TestData) str
 	return fmt.Sprintf(`
 %[1]s
 
-resource "azurerm_virtual_network" "gateway" {
+resource "azurestack_virtual_network" "gateway" {
   name                = "acctestvnet-gw-%[2]d"
   address_space       = ["11.0.0.0/16"]
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 }
 
-resource "azurerm_subnet" "gateway" {
+resource "azurestack_subnet" "gateway" {
   name                 = "acctestsubnet-gw-%[2]d"
-  resource_group_name  = azurerm_virtual_network.gateway.resource_group_name
-  virtual_network_name = azurerm_virtual_network.gateway.name
+  resource_group_name  = azurestack_virtual_network.gateway.resource_group_name
+  virtual_network_name = azurestack_virtual_network.gateway.name
   address_prefixes     = ["11.0.2.0/24"]
 }
 
-resource "azurerm_lb" "gateway" {
+resource "azurestack_lb" "gateway" {
   name                = "acctestlb-%[2]d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
   sku                 = "Gateway"
 
   frontend_ip_configuration {
     name      = "feip"
-    subnet_id = azurerm_subnet.gateway.id
+    subnet_id = azurestack_subnet.gateway.id
   }
 }
 
-resource "azurerm_lb_backend_address_pool" "gateway" {
+resource "azurestack_lb_backend_address_pool" "gateway" {
   name            = "acctestbap-%[2]d"
-  loadbalancer_id = azurerm_lb.gateway.id
+  loadbalancer_id = azurestack_lb.gateway.id
   tunnel_interface {
     identifier = 900
     type       = "Internal"
@@ -783,25 +783,25 @@ resource "azurerm_lb_backend_address_pool" "gateway" {
   }
 }
 
-resource "azurerm_public_ip" "test" {
+resource "azurestack_public_ip" "test" {
   name                = "acctestpip-%[2]d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
   sku                 = "Standard"
   allocation_method   = "Static"
 }
 
-resource "azurerm_network_interface" "test" {
+resource "azurestack_network_interface" "test" {
   name                = "acctestnic-%[2]d"
-  location            = azurerm_resource_group.test.location
-  resource_group_name = azurerm_resource_group.test.name
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
 
   ip_configuration {
     name                                               = "gateway"
-    public_ip_address_id                               = azurerm_public_ip.test.id
-    gateway_load_balancer_frontend_ip_configuration_id = azurerm_lb.gateway.frontend_ip_configuration.0.id
+    public_ip_address_id                               = azurestack_public_ip.test.id
+    gateway_load_balancer_frontend_ip_configuration_id = azurestack_lb.gateway.frontend_ip_configuration.0.id
     private_ip_address_allocation                      = "Dynamic"
-    subnet_id                                          = azurerm_subnet.test.id
+    subnet_id                                          = azurestack_subnet.test.id
   }
 }
 `, r.template(data), data.RandomInteger)
@@ -809,26 +809,26 @@ resource "azurerm_network_interface" "test" {
 
 func (NetworkInterfaceResource) template(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_virtual_network" "test" {
+resource "azurestack_virtual_network" "test" {
   name                = "acctestvn-%d"
-  resource_group_name = azurerm_resource_group.test.name
-  location            = azurerm_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
+  location            = azurestack_resource_group.test.location
   address_space       = ["10.0.0.0/16"]
 }
 
-resource "azurerm_subnet" "test" {
+resource "azurestack_subnet" "test" {
   name                 = "internal"
-  resource_group_name  = azurerm_resource_group.test.name
-  virtual_network_name = azurerm_virtual_network.test.name
+  resource_group_name  = azurestack_resource_group.test.name
+  virtual_network_name = azurestack_virtual_network.test.name
   address_prefix       = "10.0.2.0/24"
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger)

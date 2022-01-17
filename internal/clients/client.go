@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/features"
 	authorization "github.com/hashicorp/terraform-provider-azurestack/internal/services/authorization/client"
 	dns "github.com/hashicorp/terraform-provider-azurestack/internal/services/dns/client"
+	network "github.com/hashicorp/terraform-provider-azurestack/internal/services/network/client"
 	resource "github.com/hashicorp/terraform-provider-azurestack/internal/services/resource/client"
 )
 
@@ -19,9 +20,10 @@ type Client struct {
 	Account       *ResourceManagerAccount
 	Authorization *authorization.Client
 	Dns           *dns.Client
-	Features      features.UserFeatures
+	Network       *network.Client
+	Resource      *resource.Client
 
-	Resource *resource.Client
+	Features features.UserFeatures
 }
 
 // NOTE: it should be possible for this method to become Private once the top level Client's removed
@@ -35,6 +37,7 @@ func (client *Client) Build(ctx context.Context, o *common.ClientOptions) error 
 
 	client.Authorization = authorization.NewClient(o)
 	client.Dns = dns.NewClient(o)
+	client.Network = network.NewClient(o)
 	client.Resource = resource.NewClient(o)
 
 	return nil

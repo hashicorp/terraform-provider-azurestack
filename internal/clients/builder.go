@@ -3,6 +3,7 @@ package clients
 import (
 	"context"
 	"fmt"
+
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/go-azure-helpers/sender"

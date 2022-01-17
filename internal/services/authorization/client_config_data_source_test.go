@@ -1,17 +1,18 @@
 package authorization_test
 
 import (
-	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"os"
 	"regexp"
 	"testing"
+
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 )
 
 type ClientConfigDataSource struct{}
 
 func TestAccClientConfigDataSource_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "data.azurerm_client_config", "current")
+	data := acceptance.BuildTestData(t, "data.azurestack_client_config", "current")
 	clientId := os.Getenv("ARM_CLIENT_ID")
 	tenantId := os.Getenv("ARM_TENANT_ID")
 	subscriptionId := os.Getenv("ARM_SUBSCRIPTION_ID")
@@ -32,7 +33,7 @@ func TestAccClientConfigDataSource_basic(t *testing.T) {
 
 func (d ClientConfigDataSource) basic() string {
 	return `
-data "azurerm_client_config" "current" {
+data "azurestack_client_config" "current" {
 }
 `
 }

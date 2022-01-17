@@ -2,16 +2,17 @@ package authorization
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/timeouts"
-	"time"
 )
 
-func dataSourceArmClientConfig() *pluginsdk.Resource {
+func clientConfigDataSource() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
-		Read: dataSourceArmClientConfigRead,
+		Read: clientConfigRead,
 
 		Timeouts: &pluginsdk.ResourceTimeout{
 			Read: pluginsdk.DefaultTimeout(5 * time.Minute),
@@ -53,7 +54,7 @@ func dataSourceArmClientConfig() *pluginsdk.Resource {
 	}
 }
 
-func dataSourceArmClientConfigRead(d *pluginsdk.ResourceData, meta interface{}) error {
+func clientConfigRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client)
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()

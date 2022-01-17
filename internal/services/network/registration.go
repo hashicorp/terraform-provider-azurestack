@@ -21,15 +21,18 @@ func (r Registration) WebsiteCategories() []string {
 // SupportedDataSources returns the supported Data Sources supported by this Service
 func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
+		"azurestack_public_ip":       publicIPDataSource(),
+		"azurestack_public_ips":      publicIPsDataSource(),
+		"azurestack_subnet":          subnetDataSource(),
+		"azurestack_virtual_network": virtualNetworkDataSource(),
+
 		/*"azurestack_network_interface":                         dataSourceNetworkInterface(),
 		"azurestack_network_security_group":                    dataSourceNetworkSecurityGroup(),
-		"azurestack_public_ip":                                 dataSourcePublicIP(),
-		"azurestack_public_ips":                                dataSourcePublicIPs(),
 		"azurestack_route_table":                               dataSourceRouteTable(),
-		"azurestack_subnet":                                    dataSourceSubnet(),
+
 		"azurestack_virtual_network_gateway":                   dataSourceVirtualNetworkGateway(),
 		"azurestack_virtual_network_gateway_connection":        dataSourceVirtualNetworkGatewayConnection(),
-		"azurestack_virtual_network":                           dataSourceVirtualNetwork(),
+
 		"azurestack_local_network_gateway":                     dataSourceLocalNetworkGateway(),*/
 	}
 }
@@ -37,14 +40,16 @@ func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 // SupportedResources returns the supported Resources supported by this Service
 func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
+		"azurestack_public_ip":       publicIp(),
+		"azurestack_subnet":          subnet(),
+		"azurestack_virtual_network": virtualNetwork(),
 		/*"azurestack_local_network_gateway":                    resourceLocalNetworkGateway(),
-		"azurestack_public_ip":                                 resourcePublicIp(),
 		"azurestack_network_security_group":                    resourceNetworkSecurityGroup(),
 		"azurestack_network_security_rule":                     resourceNetworkSecurityRule(),
 		"azurestack_route_table":                               resourceRouteTable(),
 		"azurestack_route":                                     resourceRoute(),
 		"azurestack_virtual_network_gateway_connection":        resourceVirtualNetworkGatewayConnection(),
 		"azurestack_virtual_network_gateway":                   resourceVirtualNetworkGateway(),
-		"azurestack_virtual_network":                           resourceVirtualNetwork(),*/
+		*/
 	}
 }

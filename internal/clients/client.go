@@ -7,6 +7,7 @@ import (
 	"github.com/Azure/go-autorest/autorest/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/common"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/features"
+	authorization "github.com/hashicorp/terraform-provider-azurestack/internal/services/authorization/client"
 	dns "github.com/hashicorp/terraform-provider-azurestack/internal/services/dns/client"
 	resource "github.com/hashicorp/terraform-provider-azurestack/internal/services/resource/client"
 )
@@ -15,9 +16,10 @@ type Client struct {
 	// StopContext is used for propagating control from Terraform Core (e.g. Ctrl/Cmd+C)
 	StopContext context.Context
 
-	Account  *ResourceManagerAccount
-	Dns      *dns.Client
-	Features features.UserFeatures
+	Account       *ResourceManagerAccount
+	Authorization *authorization.Client
+	Dns           *dns.Client
+	Features      features.UserFeatures
 
 	Resource *resource.Client
 }
@@ -31,8 +33,9 @@ func (client *Client) Build(ctx context.Context, o *common.ClientOptions) error 
 
 	client.StopContext = ctx
 
-	client.Resource = resource.NewClient(o)
+	client.Authorization = authorization.NewClient(o)
 	client.Dns = dns.NewClient(o)
+	client.Resource = resource.NewClient(o)
 
 	return nil
 }

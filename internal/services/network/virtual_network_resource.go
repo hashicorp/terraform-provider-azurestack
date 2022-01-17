@@ -230,8 +230,6 @@ func resourceVirtualNetworkRead(d *pluginsdk.ResourceData, meta interface{}) err
 		if err := d.Set("dns_servers", flattenVirtualNetworkDNSServers(props.DhcpOptions)); err != nil {
 			return fmt.Errorf("setting `dns_servers`: %+v", err)
 		}
-
-		d.Set("vm_protection_enabled", props.EnableVMProtection)
 	}
 
 	return tags.FlattenAndSet(d, resp.Tags)
@@ -315,7 +313,6 @@ func expandVirtualNetworkProperties(ctx context.Context, d *pluginsdk.ResourceDa
 		DhcpOptions: &network.DhcpOptions{
 			DNSServers: utils.ExpandStringSlice(d.Get("dns_servers").([]interface{})),
 		},
-		EnableVMProtection: utils.Bool(d.Get("vm_protection_enabled").(bool)),
 		Subnets:            &subnets,
 	}
 

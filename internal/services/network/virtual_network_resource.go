@@ -313,7 +313,7 @@ func expandVirtualNetworkProperties(ctx context.Context, d *pluginsdk.ResourceDa
 		DhcpOptions: &network.DhcpOptions{
 			DNSServers: utils.ExpandStringSlice(d.Get("dns_servers").([]interface{})),
 		},
-		Subnets:            &subnets,
+		Subnets: &subnets,
 	}
 
 	return properties, nil

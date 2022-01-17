@@ -24,10 +24,10 @@ import (
 
 func virtualNetwork() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
-		Create: resourceVirtualNetworkCreateUpdate,
-		Read:   resourceVirtualNetworkRead,
-		Update: resourceVirtualNetworkCreateUpdate,
-		Delete: resourceVirtualNetworkDelete,
+		Create: virtualNetworkCreateUpdate,
+		Read:   virtualNetworkRead,
+		Update: virtualNetworkCreateUpdate,
+		Delete: virtualNetworkDelete,
 		Importer: pluginsdk.ImporterValidatingResourceId(func(id string) error {
 			_, err := parse.VirtualNetworkID(id)
 			return err
@@ -115,7 +115,7 @@ func virtualNetwork() *pluginsdk.Resource {
 	}
 }
 
-func resourceVirtualNetworkCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
+func virtualNetworkCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.VnetClient
 	subscriptionId := meta.(*clients.Client).Account.SubscriptionId
 	ctx, cancel := timeouts.ForCreateUpdate(meta.(*clients.Client).StopContext, d)
@@ -190,10 +190,10 @@ func resourceVirtualNetworkCreateUpdate(d *pluginsdk.ResourceData, meta interfac
 	}
 
 	d.SetId(id.ID())
-	return resourceVirtualNetworkRead(d, meta)
+	return virtualNetworkRead(d, meta)
 }
 
-func resourceVirtualNetworkRead(d *pluginsdk.ResourceData, meta interface{}) error {
+func virtualNetworkRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.VnetClient
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -235,7 +235,7 @@ func resourceVirtualNetworkRead(d *pluginsdk.ResourceData, meta interface{}) err
 	return tags.FlattenAndSet(d, resp.Tags)
 }
 
-func resourceVirtualNetworkDelete(d *pluginsdk.ResourceData, meta interface{}) error {
+func virtualNetworkDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.VnetClient
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()

@@ -127,23 +127,6 @@ func TestAccVirtualNetwork_requiresImport(t *testing.T) {
 	})
 }
 
-func TestAccVirtualNetwork_ddosProtectionPlan(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_network", "test")
-	r := VirtualNetworkResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.ddosProtectionPlan(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("ddos_protection_plan.0.enable").HasValue("true"),
-				check.That(data.ResourceName).Key("ddos_protection_plan.0.id").Exists(),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
 func TestAccVirtualNetwork_disappears(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_virtual_network", "test")
 	r := VirtualNetworkResource{}
@@ -202,35 +185,6 @@ func TestAccVirtualNetwork_deleteSubnet(t *testing.T) {
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 				check.That(data.ResourceName).Key("subnet.#").HasValue("0"),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
-func TestAccVirtualNetwork_bgpCommunity(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_network", "test")
-	r := VirtualNetworkResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.basic(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			Config: r.bgpCommunity(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			Config: r.basic(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
 		data.ImportStep(),
@@ -343,42 +297,6 @@ resource "azurestack_virtual_network" "import" {
 `, r.basic(data))
 }
 
-func (VirtualNetworkResource) ddosProtectionPlan(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_network_ddos_protection_plan" "test" {
-  name                = "acctestddospplan-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctestvirtnet%d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  ddos_protection_plan {
-    id     = azurestack_network_ddos_protection_plan.test.id
-    enable = true
-  }
-
-  subnet {
-    name           = "subnet1"
-    address_prefix = "10.0.1.0/24"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger)
-}
-
 func (VirtualNetworkResource) withTags(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
@@ -455,33 +373,6 @@ resource "azurestack_virtual_network" "test" {
   location            = azurestack_resource_group.test.location
   resource_group_name = azurestack_resource_group.test.name
   subnet              = []
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger)
-}
-
-func (VirtualNetworkResource) bgpCommunity(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctestvirtnet%d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  subnet {
-    name           = "subnet1"
-    address_prefix = "10.0.1.0/24"
-  }
-
-  bgp_community = "12076:20000"
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger)
 }

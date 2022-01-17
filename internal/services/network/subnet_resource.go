@@ -8,7 +8,6 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/locks"
@@ -19,14 +18,12 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
-var SubnetResourceName = "azurestack_subnet"
-
 func subnet() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
-		Create: resourceSubnetCreate,
-		Read:   resourceSubnetRead,
-		Update: resourceSubnetUpdate,
-		Delete: resourceSubnetDelete,
+		Create: subnetCreate,
+		Read:   subnetRead,
+		Update: subnetUpdate,
+		Delete: subnetDelete,
 		Importer: pluginsdk.ImporterValidatingResourceId(func(id string) error {
 			_, err := parse.SubnetID(id)
 			return err
@@ -60,19 +57,24 @@ func subnet() *pluginsdk.Resource {
 				ValidateFunc: validation.StringIsNotEmpty,
 			},
 
-			"ip_configurations": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      schema.HashString,
-			},
+			/*
+
+				TODO do we put back?
+				"ip_configurations": {
+					Type:     schema.TypeSet,
+					Optional: true,
+					Computed: true,
+					Elem:     &schema.Schema{Type: schema.TypeString},
+					Set:      schema.HashString,
+				},
+
+			*/
 		},
 	}
 }
 
 // TODO: refactor the create/flatten functions
-func resourceSubnetCreate(d *pluginsdk.ResourceData, meta interface{}) error {
+func subnetCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.SubnetsClient
 	vnetClient := meta.(*clients.Client).Network.VnetClient
 	subscriptionId := meta.(*clients.Client).Account.SubscriptionId
@@ -142,10 +144,10 @@ func resourceSubnetCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 	}
 
 	d.SetId(id.ID())
-	return resourceSubnetRead(d, meta)
+	return subnetRead(d, meta)
 }
 
-func resourceSubnetUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
+func subnetUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.SubnetsClient
 	vnetClient := meta.(*clients.Client).Network.VnetClient
 	ctx, cancel := timeouts.ForUpdate(meta.(*clients.Client).StopContext, d)
@@ -218,10 +220,10 @@ func resourceSubnetUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		return fmt.Errorf("waiting for provisioning state of virtual network for %s: %+v", id, err)
 	}
 
-	return resourceSubnetRead(d, meta)
+	return subnetRead(d, meta)
 }
 
-func resourceSubnetRead(d *pluginsdk.ResourceData, meta interface{}) error {
+func subnetRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.SubnetsClient
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -251,7 +253,7 @@ func resourceSubnetRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func resourceSubnetDelete(d *pluginsdk.ResourceData, meta interface{}) error {
+func subnetDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.SubnetsClient
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()

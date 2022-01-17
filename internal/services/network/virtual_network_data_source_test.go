@@ -11,7 +11,7 @@ import (
 
 type VirtualNetworkDataSource struct{}
 
-func TestAccDataSourceVirtualNetwork_basic(t *testing.T) {
+func TestAccVirtualNetworkDataSource_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_virtual_network", "test")
 	r := VirtualNetworkDataSource{}
 
@@ -31,7 +31,7 @@ func TestAccDataSourceVirtualNetwork_basic(t *testing.T) {
 	})
 }
 
-func TestAccDataSourceVirtualNetwork_peering(t *testing.T) {
+func TestAccVirtualNetworkDataSource_peering(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_virtual_network", "test")
 	r := VirtualNetworkDataSource{}
 

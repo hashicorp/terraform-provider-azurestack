@@ -10,7 +10,7 @@ import (
 
 type SubnetDataSource struct{}
 
-func TestAccDataSourceSubnet_basic(t *testing.T) {
+func TestAccSubnetDataSource_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_subnet", "test")
 	r := SubnetDataSource{}
 
@@ -29,7 +29,7 @@ func TestAccDataSourceSubnet_basic(t *testing.T) {
 	})
 }
 
-func TestAccDataSourceSubnet_networkSecurityGroup(t *testing.T) {
+func TestAccSubnetDataSource_networkSecurityGroup(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_subnet", "test")
 	r := SubnetDataSource{}
 
@@ -52,7 +52,7 @@ func TestAccDataSourceSubnet_networkSecurityGroup(t *testing.T) {
 	})
 }
 
-func TestAccDataSourceSubnet_routeTable(t *testing.T) {
+func TestAccSubnetDataSource_routeTable(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_subnet", "test")
 	r := SubnetDataSource{}
 

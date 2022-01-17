@@ -10,7 +10,7 @@ import (
 
 type PublicIPDataSource struct{}
 
-func TestAccDataSourcePublicIP_static(t *testing.T) {
+func TestAccPublicIPDataSource_static(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_public_ip", "test")
 	r := PublicIPDataSource{}
 
@@ -35,7 +35,7 @@ func TestAccDataSourcePublicIP_static(t *testing.T) {
 	})
 }
 
-func TestAccDataSourcePublicIP_dynamic(t *testing.T) {
+func TestAccPublicIPDataSource_dynamic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_public_ip", "test")
 	r := PublicIPDataSource{}
 

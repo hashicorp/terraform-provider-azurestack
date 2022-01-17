@@ -10,7 +10,7 @@ import (
 
 type PublicIPsResource struct{}
 
-func TestAccDataSourcePublicIPs_namePrefix(t *testing.T) {
+func TestAccPublicIPsDataSource_namePrefix(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_public_ips", "test")
 	r := PublicIPsResource{}
 
@@ -28,7 +28,7 @@ func TestAccDataSourcePublicIPs_namePrefix(t *testing.T) {
 	})
 }
 
-func TestAccDataSourcePublicIPs_assigned(t *testing.T) {
+func TestAccPublicIPsDataSource_assigned(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_public_ips", "test")
 	r := PublicIPsResource{}
 

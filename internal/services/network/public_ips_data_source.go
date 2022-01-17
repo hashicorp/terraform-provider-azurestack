@@ -16,7 +16,7 @@ import (
 
 func publicIPsDataSource() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
-		Read: dataSourcePublicIPsRead,
+		Read: publicIPsDataSourceRead,
 
 		Timeouts: &pluginsdk.ResourceTimeout{
 			Read: pluginsdk.DefaultTimeout(5 * time.Minute),
@@ -94,7 +94,7 @@ func publicIPsDataSource() *pluginsdk.Resource {
 	}
 }
 
-func dataSourcePublicIPsRead(d *pluginsdk.ResourceData, meta interface{}) error {
+func publicIPsDataSourceRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.PublicIPsClient
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()

@@ -3,10 +3,7 @@ package clients
 import (
 	"context"
 	"fmt"
-	"log"
-
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/go-azure-helpers/sender"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/common"
@@ -23,12 +20,9 @@ type ClientBuilder struct {
 }
 
 func Build(ctx context.Context, builder ClientBuilder) (*Client, error) {
-	// point folks towards the separate Azure Stack Provider when using Azure Stack
-	// if strings.EqualFold(builder.AuthConfig.Environment, "AZURESTACKCLOUD") {
-
-	env, err := authentication.AzureEnvironmentByNameFromEndpoint(ctx, builder.AuthConfig.MetadataHost, builder.AuthConfig.Environment)
+	env, err := authentication.LoadEnvironmentFromUrl(builder.AuthConfig.CustomResourceManagerEndpoint)
 	if err != nil {
-		return nil, fmt.Errorf("unable to find environment %q from endpoint %q: %+v", builder.AuthConfig.Environment, builder.AuthConfig.MetadataHost, err)
+		return nil, fmt.Errorf("unable to load stack encironment from endpoint %q: %+v", builder.AuthConfig.CustomResourceManagerEndpoint, err)
 	}
 
 	// client declarations:
@@ -68,30 +62,13 @@ func Build(ctx context.Context, builder ClientBuilder) (*Client, error) {
 	}
 
 	// Storage Endpoints
-	storageAuth, err := builder.AuthConfig.GetADALToken(ctx, sender, oauthConfig, env.ResourceIdentifiers.Storage)
+	storageAuth, err := builder.AuthConfig.GetADALToken(ctx, sender, oauthConfig, endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get authorization token for storage endpoints: %+v", err)
 	}
 
-	// Synapse Endpoints
-	var synapseAuth autorest.Authorizer = nil
-	if env.ResourceIdentifiers.Synapse != azure.NotAvailable {
-		synapseAuth, err = builder.AuthConfig.GetADALToken(ctx, sender, oauthConfig, env.ResourceIdentifiers.Synapse)
-		if err != nil {
-			return nil, fmt.Errorf("unable to get authorization token for synapse endpoints: %+v", err)
-		}
-	} else {
-		log.Printf("[DEBUG] Skipping building the Synapse Authorizer since this is not supported in the current Azure Environment")
-	}
-
 	// Key Vault Endpoints
 	// keyVaultAuth := builder.AuthConfig.BearerAuthorizerCallback(ctx, sender, oauthConfig)
-
-	// Batch Management Endpoints
-	batchManagementAuth, err := builder.AuthConfig.GetADALToken(ctx, sender, oauthConfig, env.BatchManagementEndpoint)
-	if err != nil {
-		return nil, fmt.Errorf("unable to get authorization token for batch management endpoint: %+v", err)
-	}
 
 	o := &common.ClientOptions{
 		SubscriptionId:   builder.AuthConfig.SubscriptionID,
@@ -103,8 +80,6 @@ func Build(ctx context.Context, builder ClientBuilder) (*Client, error) {
 		ResourceManagerAuthorizer:   auth,
 		ResourceManagerEndpoint:     endpoint,
 		StorageAuthorizer:           storageAuth,
-		SynapseAuthorizer:           synapseAuth,
-		BatchManagementAuthorizer:   batchManagementAuth,
 		SkipProviderReg:             builder.SkipProviderRegistration,
 		DisableCorrelationRequestID: builder.DisableCorrelationRequestID,
 		CustomCorrelationRequestID:  builder.CustomCorrelationRequestID,

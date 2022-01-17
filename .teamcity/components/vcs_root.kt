@@ -6,6 +6,6 @@ object providerRepository : GitVcsRoot({
     agentCleanPolicy = AgentCleanPolicy.ALWAYS
     agentCleanFilesPolicy = AgentCleanFilesPolicy.ALL_UNTRACKED
     branchSpec = "+:*"
-    branch = "refs/heads/main"
+    branch = "refs/heads/kt/stack-me-up-some-azurerm-tech"
     authMethod = anonymous()
 })

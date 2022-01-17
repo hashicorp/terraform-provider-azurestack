@@ -14,15 +14,16 @@ const val defaultDaysOfWeek = "2,3,4,5,6"
 const val defaultDaysOfMonth = "*"
 
 var locations = mapOf(
-        "public" to LocationConfiguration("westeurope", "eastus2", "francecentral", false)
+        "stack" to LocationConfiguration("ppe5", "ppe5", "ppe5", false)
 )
 
 // specifies the list of Azure Environments where tests should be run nightly
 var runNightly = mapOf(
-        "public" to true
+        "stack" to true
 )
 
 // specifies a list of services which should be run with a custom test configuration
 var serviceTestConfigurationOverrides = mapOf(
-
+        // these tests all conflict with one another
+        "authorization" to testConfiguration(parallelism = 1),
 )

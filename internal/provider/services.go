@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/dns"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/resource"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/sdk"
 )
@@ -10,11 +11,13 @@ import (
 func SupportedTypedServices() []sdk.TypedServiceRegistration {
 	return []sdk.TypedServiceRegistration{
 		resource.Registration{},
+		dns.Registration{},
 	}
 }
 
 func SupportedUntypedServices() []sdk.UntypedServiceRegistration {
 	return []sdk.UntypedServiceRegistration{
 		resource.Registration{},
+		dns.Registration{},
 	}
 }

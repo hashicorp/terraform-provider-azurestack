@@ -1,6 +1,6 @@
 package tests
 
-import Azurestack
+import AzureStack
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import useTeamCityGoTest

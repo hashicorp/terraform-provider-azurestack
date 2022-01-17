@@ -1,7 +1,6 @@
 package acceptance
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"regexp"
@@ -42,9 +41,7 @@ func EnvironmentName() string {
 }
 
 func Environment() (*azure.Environment, error) {
-	envName := EnvironmentName()
-	metadataURL := os.Getenv("ARM_METADATA_URL")
-	return authentication.AzureEnvironmentByNameFromEndpoint(context.TODO(), metadataURL, envName)
+	return authentication.LoadEnvironmentFromUrl(os.Getenv("ARM_ENDPOINT"))
 }
 
 func GetAuthConfig(t *testing.T) *authentication.Config {
@@ -61,12 +58,13 @@ func GetAuthConfig(t *testing.T) *authentication.Config {
 		TenantID:                      os.Getenv("ARM_TENANT_ID"),
 		ClientSecret:                  os.Getenv("ARM_CLIENT_SECRET"),
 		CustomResourceManagerEndpoint: os.Getenv("ARM_ENDPOINT"),
+		MetadataHost:                  os.Getenv("ARM_ENDPOINT"),
 		Environment:                   environment,
-		MetadataHost:                  os.Getenv("ARM_METADATA_HOST"),
 
 		// we intentionally only support Client Secret auth for tests (since those variables are used all over)
 		SupportsClientSecretAuth: true,
 	}
+
 	config, err := builder.Build()
 	if err != nil {
 		t.Fatalf("Error building ARM Client: %+v", err)

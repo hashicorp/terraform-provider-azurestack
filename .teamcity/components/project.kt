@@ -30,7 +30,7 @@ fun buildConfigurationsForServices(services: Map<String, String>, providerName :
         var service = serviceDetails(serviceName, displayName, environment)
         var buildConfig = service.buildConfiguration(providerName, runNightly, testConfig.startHour, testConfig.parallelism, testConfig.daysOfWeek, testConfig.daysOfMonth)
 
-        buildConfig.params.ConfigureAzureSpecificTestParameters(environment, config, locationsForEnv)
+        buildConfig.params.ConfigureAzureSpecificTestParameters(config, locationsForEnv)
 
         list.add(buildConfig)
     }
@@ -42,7 +42,7 @@ fun pullRequestBuildConfiguration(environment: String, configuration: ClientConf
     var locationsForEnv = locations.get(environment)!!
     var pullRequest = pullRequest("! Run Pull Request", environment)
     var buildConfiguration = pullRequest.buildConfiguration(providerName)
-    buildConfiguration.params.ConfigureAzureSpecificTestParameters(environment, configuration, locationsForEnv)
+    buildConfiguration.params.ConfigureAzureSpecificTestParameters(configuration, locationsForEnv)
     return buildConfiguration
 }
 

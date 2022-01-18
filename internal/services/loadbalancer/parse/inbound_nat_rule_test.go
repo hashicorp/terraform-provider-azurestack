@@ -24,6 +24,7 @@ func TestInboundNatRuleID(t *testing.T) {
 		Error    bool
 		Expected *InboundNatRuleId
 	}{
+
 		{
 			// empty
 			Input: "",

@@ -24,6 +24,7 @@ func TestDnsZoneID(t *testing.T) {
 		Error    bool
 		Expected *DnsZoneId
 	}{
+
 		{
 			// empty
 			Input: "",

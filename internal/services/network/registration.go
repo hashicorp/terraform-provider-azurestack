@@ -21,6 +21,7 @@ func (r Registration) WebsiteCategories() []string {
 // SupportedDataSources returns the supported Data Sources supported by this Service
 func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
+		"azurestack_application_security_group":         applicationSecurityGroupDataSource(),
 		"azurestack_network_interface":                  networkInterfaceDataSource(),
 		"azurestack_public_ip":                          publicIPDataSource(),
 		"azurestack_public_ips":                         publicIPsDataSource(),
@@ -37,6 +38,7 @@ func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 // SupportedResources returns the supported Resources supported by this Service
 func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
+		"azurestack_application_security_group":         applicationSecurityGroup(),
 		"azurestack_network_interface":                  networkInterface(),
 		"azurestack_public_ip":                          publicIp(),
 		"azurestack_route_table":                        routeTable(),

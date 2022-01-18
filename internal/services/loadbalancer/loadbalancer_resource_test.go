@@ -436,7 +436,6 @@ resource "azurestack_lb" "test" {
   name                = "acctestlb-%d"
   resource_group_name = azurestack_resource_group.test.name
   location            = azurestack_resource_group.test.location
-  sku                 = "Basic"
 
   frontend_ip_configuration {
     name                          = "Internal"
@@ -477,7 +476,6 @@ resource "azurestack_lb" "test" {
   name                = "acctestlb-%d"
   resource_group_name = azurestack_resource_group.test.name
   location            = azurestack_resource_group.test.location
-  sku                 = "Basic"
 
   frontend_ip_configuration {
     name                          = "Internal"

@@ -9,7 +9,6 @@ func TestLoadBalancerInboundNatPoolID(t *testing.T) {
 		Input string
 		Valid bool
 	}{
-
 		{
 			// empty
 			Input: "",

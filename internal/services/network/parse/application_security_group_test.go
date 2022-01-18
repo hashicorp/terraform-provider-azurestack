@@ -8,21 +8,21 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 )
 
-var _ resourceids.Id = DnsZoneId{}
+var _ resourceids.Id = ApplicationSecurityGroupId{}
 
-func TestDnsZoneIDFormatter(t *testing.T) {
-	actual := NewDnsZoneID("12345678-1234-9876-4563-123456789012", "resGroup1", "zone1").ID()
-	expected := "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/resGroup1/providers/Microsoft.Network/dnszones/zone1"
+func TestApplicationSecurityGroupIDFormatter(t *testing.T) {
+	actual := NewApplicationSecurityGroupID("12345678-1234-9876-4563-123456789012", "group1", "securityGroup1").ID()
+	expected := "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/group1/providers/Microsoft.Network/applicationSecurityGroups/securityGroup1"
 	if actual != expected {
 		t.Fatalf("Expected %q but got %q", expected, actual)
 	}
 }
 
-func TestDnsZoneID(t *testing.T) {
+func TestApplicationSecurityGroupID(t *testing.T) {
 	testData := []struct {
 		Input    string
 		Error    bool
-		Expected *DnsZoneId
+		Expected *ApplicationSecurityGroupId
 	}{
 		{
 			// empty
@@ -56,29 +56,29 @@ func TestDnsZoneID(t *testing.T) {
 
 		{
 			// missing Name
-			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/resGroup1/providers/Microsoft.Network/",
+			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/group1/providers/Microsoft.Network/",
 			Error: true,
 		},
 
 		{
 			// missing value for Name
-			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/resGroup1/providers/Microsoft.Network/dnszones/",
+			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/group1/providers/Microsoft.Network/applicationSecurityGroups/",
 			Error: true,
 		},
 
 		{
 			// valid
-			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/resGroup1/providers/Microsoft.Network/dnszones/zone1",
-			Expected: &DnsZoneId{
+			Input: "/subscriptions/12345678-1234-9876-4563-123456789012/resourceGroups/group1/providers/Microsoft.Network/applicationSecurityGroups/securityGroup1",
+			Expected: &ApplicationSecurityGroupId{
 				SubscriptionId: "12345678-1234-9876-4563-123456789012",
-				ResourceGroup:  "resGroup1",
-				Name:           "zone1",
+				ResourceGroup:  "group1",
+				Name:           "securityGroup1",
 			},
 		},
 
 		{
 			// upper-cased
-			Input: "/SUBSCRIPTIONS/12345678-1234-9876-4563-123456789012/RESOURCEGROUPS/RESGROUP1/PROVIDERS/MICROSOFT.NETWORK/DNSZONES/ZONE1",
+			Input: "/SUBSCRIPTIONS/12345678-1234-9876-4563-123456789012/RESOURCEGROUPS/GROUP1/PROVIDERS/MICROSOFT.NETWORK/APPLICATIONSECURITYGROUPS/SECURITYGROUP1",
 			Error: true,
 		},
 	}
@@ -86,7 +86,7 @@ func TestDnsZoneID(t *testing.T) {
 	for _, v := range testData {
 		t.Logf("[DEBUG] Testing %q", v.Input)
 
-		actual, err := DnsZoneID(v.Input)
+		actual, err := ApplicationSecurityGroupID(v.Input)
 		if err != nil {
 			if v.Error {
 				continue

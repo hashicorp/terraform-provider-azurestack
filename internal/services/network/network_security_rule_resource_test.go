@@ -264,7 +264,7 @@ resource "azurestack_network_security_rule" "test2" {
   priority                    = 101
   direction                   = "Inbound"
   access                      = "Deny"
-  protocol                    = "Icmp"
+  protocol                    = "Udp"
   source_port_range           = "*"
   destination_port_range      = "*"
   source_address_prefix       = "*"

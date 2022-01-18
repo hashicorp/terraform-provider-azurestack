@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/validate"
+
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
@@ -66,6 +68,13 @@ func managedDisk() *pluginsdk.Resource {
 				DiffSuppressFunc: suppress.CaseDifference,
 			},
 
+			"disk_size_gb": {
+				Type:         pluginsdk.TypeInt,
+				Optional:     true,
+				Computed:     true,
+				ValidateFunc: validate.ManagedDiskSizeGB,
+			},
+
 			"create_option": {
 				Type:     pluginsdk.TypeString,
 				Required: true,
@@ -111,27 +120,6 @@ func managedDisk() *pluginsdk.Resource {
 					string(compute.Windows),
 					string(compute.Linux),
 				}, true),
-			},
-
-			"disk_mbps_read_write": {
-				Type:         pluginsdk.TypeInt,
-				Optional:     true,
-				Computed:     true,
-				ValidateFunc: validation.IntAtLeast(1),
-			},
-
-			"disk_iops_read_only": {
-				Type:         pluginsdk.TypeInt,
-				Optional:     true,
-				Computed:     true,
-				ValidateFunc: validation.IntAtLeast(1),
-			},
-
-			"disk_mbps_read_only": {
-				Type:         pluginsdk.TypeInt,
-				Optional:     true,
-				Computed:     true,
-				ValidateFunc: validation.IntAtLeast(1),
 			},
 
 			"tags": tags.Schema(),

@@ -6,17 +6,18 @@ import (
 )
 
 type Client struct {
-	InterfacesClient             *network.InterfacesClient
-	LocalNetworkGatewaysClient   *network.LocalNetworkGatewaysClient
-	PublicIPsClient              *network.PublicIPAddressesClient
-	RoutesClient                 *network.RoutesClient
-	RouteTablesClient            *network.RouteTablesClient
-	SecurityGroupClient          *network.SecurityGroupsClient
-	SecurityRuleClient           *network.SecurityRulesClient
-	SubnetsClient                *network.SubnetsClient
-	VnetGatewayConnectionsClient *network.VirtualNetworkGatewayConnectionsClient
-	VnetGatewayClient            *network.VirtualNetworkGatewaysClient
-	VnetClient                   *network.VirtualNetworksClient
+	ApplicationSecurityGroupsClient *network.ApplicationSecurityGroupsClient
+	InterfacesClient                *network.InterfacesClient
+	LocalNetworkGatewaysClient      *network.LocalNetworkGatewaysClient
+	PublicIPsClient                 *network.PublicIPAddressesClient
+	RoutesClient                    *network.RoutesClient
+	RouteTablesClient               *network.RouteTablesClient
+	SecurityGroupClient             *network.SecurityGroupsClient
+	SecurityRuleClient              *network.SecurityRulesClient
+	SubnetsClient                   *network.SubnetsClient
+	VnetGatewayConnectionsClient    *network.VirtualNetworkGatewayConnectionsClient
+	VnetGatewayClient               *network.VirtualNetworkGatewaysClient
+	VnetClient                      *network.VirtualNetworksClient
 }
 
 func NewClient(o *common.ClientOptions) *Client {
@@ -84,16 +85,17 @@ func NewClient(o *common.ClientOptions) *Client {
 	o.ConfigureClient(&WatcherClient.Client, o.ResourceManagerAuthorizer)
 
 	return &Client{
-		InterfacesClient:             &InterfacesClient,
-		LocalNetworkGatewaysClient:   &LocalNetworkGatewaysClient,
-		PublicIPsClient:              &PublicIPsClient,
-		RoutesClient:                 &RoutesClient,
-		RouteTablesClient:            &RouteTablesClient,
-		SecurityGroupClient:          &SecurityGroupClient,
-		SecurityRuleClient:           &SecurityRuleClient,
-		SubnetsClient:                &SubnetsClient,
-		VnetGatewayConnectionsClient: &VnetGatewayConnectionsClient,
-		VnetGatewayClient:            &VnetGatewayClient,
-		VnetClient:                   &VnetClient,
+		ApplicationSecurityGroupsClient: &ApplicationSecurityGroupsClient,
+		InterfacesClient:                &InterfacesClient,
+		LocalNetworkGatewaysClient:      &LocalNetworkGatewaysClient,
+		PublicIPsClient:                 &PublicIPsClient,
+		RoutesClient:                    &RoutesClient,
+		RouteTablesClient:               &RouteTablesClient,
+		SecurityGroupClient:             &SecurityGroupClient,
+		SecurityRuleClient:              &SecurityRuleClient,
+		SubnetsClient:                   &SubnetsClient,
+		VnetGatewayConnectionsClient:    &VnetGatewayConnectionsClient,
+		VnetGatewayClient:               &VnetGatewayClient,
+		VnetClient:                      &VnetClient,
 	}
 }

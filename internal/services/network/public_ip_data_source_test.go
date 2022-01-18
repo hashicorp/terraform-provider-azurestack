@@ -77,7 +77,6 @@ resource "azurestack_public_ip" "test" {
   allocation_method       = "Static"
   domain_name_label       = "acctest-%d"
   idle_timeout_in_minutes = 30
-  sku                     = "Standard"
 
   tags = {
     environment = "test"

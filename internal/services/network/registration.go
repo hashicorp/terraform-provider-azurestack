@@ -30,8 +30,7 @@ func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 		"azurestack_network_security_group":             networkSecurityGroupDataSource(),
 		"azurestack_virtual_network_gateway":            virtualNetworkGatewayDataSource(),
 		"azurestack_virtual_network_gateway_connection": virtualNetworkGatewayConnectionDataSource(),
-
-		// "azurestack_local_network_gateway":                     dataSourceLocalNetworkGateway(),
+		"azurestack_local_network_gateway":              localNetworkGatewayDataSource(),
 	}
 }
 
@@ -48,8 +47,6 @@ func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 		"azurestack_network_security_rule":              networkSecurityRule(),
 		"azurestack_virtual_network_gateway_connection": virtualNetworkGatewayConnection(),
 		"azurestack_virtual_network_gateway":            virtualNetworkGateway(),
-
-		/*"azurestack_local_network_gateway":                    resourceLocalNetworkGateway(),
-		 */
+		"azurestack_local_network_gateway":              localNetworkGateway(),
 	}
 }

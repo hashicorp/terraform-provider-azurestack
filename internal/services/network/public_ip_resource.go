@@ -187,13 +187,6 @@ func publicIpCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		Tags: tags.Expand(t),
 	}
 
-	publicIpPrefixId, publicIpPrefixIdOk := d.GetOk("public_ip_prefix_id")
-
-	if publicIpPrefixIdOk {
-		publicIpPrefix := network.SubResource{}
-		publicIpPrefix.ID = utils.String(publicIpPrefixId.(string))
-	}
-
 	dnl, dnlOk := d.GetOk("domain_name_label")
 	rfqdn, rfqdnOk := d.GetOk("reverse_fqdn")
 

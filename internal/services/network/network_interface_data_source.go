@@ -30,10 +30,7 @@ func networkInterfaceDataSource() *pluginsdk.Resource {
 
 			"resource_group_name": commonschema.ResourceGroupNameForDataSource(),
 
-			"location": {
-				Type:     pluginsdk.TypeString,
-				Computed: true,
-			},
+			"location": commonschema.LocationComputed(),
 
 			"network_security_group_id": {
 				Type:     pluginsdk.TypeString,
@@ -115,11 +112,6 @@ func networkInterfaceDataSource() *pluginsdk.Resource {
 
 						"primary": {
 							Type:     pluginsdk.TypeBool,
-							Computed: true,
-						},
-
-						"gateway_load_balancer_frontend_ip_configuration_id": {
-							Type:     pluginsdk.TypeString,
 							Computed: true,
 						},
 					},

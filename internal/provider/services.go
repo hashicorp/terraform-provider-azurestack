@@ -2,7 +2,9 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/authorization"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/dns"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/loadbalancer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/network"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/resource"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/sdk"
@@ -13,7 +15,9 @@ import (
 func SupportedUntypedServices() []sdk.UntypedServiceRegistration {
 	return []sdk.UntypedServiceRegistration{
 		authorization.Registration{},
+		compute.Registration{},
 		dns.Registration{},
+		loadbalancer.Registration{},
 		network.Registration{},
 		resource.Registration{},
 	}

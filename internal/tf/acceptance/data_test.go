@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestAccAzurestackTestDataRandomIntOfLength(t *testing.T) {
+func TestAccTestDataRandomIntOfLength(t *testing.T) {
 	td := TestData{
 		RandomInteger: 112233445566779999,
 	}

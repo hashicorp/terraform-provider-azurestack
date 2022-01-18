@@ -9,7 +9,7 @@ import (
 
 type VirtualNetworkGatewayDataSource struct{}
 
-func TestAccazurestackDataSourceVirtualNetworkGateway_basic(t *testing.T) {
+func TestAccDataSourceVirtualNetworkGateway_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_virtual_network_gateway", "test")
 	r := VirtualNetworkGatewayDataSource{}
 

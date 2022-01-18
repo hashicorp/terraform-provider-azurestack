@@ -5,17 +5,17 @@ package validate
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform-provider-azurestack/internal/services/network/parse"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/loadbalancer/parse"
 )
 
-func LoadBalancerBackendAddressPoolID(input interface{}, key string) (warnings []string, errors []error) {
+func LoadBalancerID(input interface{}, key string) (warnings []string, errors []error) {
 	v, ok := input.(string)
 	if !ok {
 		errors = append(errors, fmt.Errorf("expected %q to be a string", key))
 		return
 	}
 
-	if _, err := parse.LoadBalancerBackendAddressPoolID(v); err != nil {
+	if _, err := parse.LoadBalancerID(v); err != nil {
 		errors = append(errors, err)
 	}
 

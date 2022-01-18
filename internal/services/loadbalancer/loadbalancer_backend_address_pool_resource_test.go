@@ -253,14 +253,12 @@ resource "azurestack_public_ip" "test" {
   location            = azurestack_resource_group.test.location
   resource_group_name = azurestack_resource_group.test.name
   allocation_method   = "Static"
-  sku                 = local.sku
 }
 
 resource "azurestack_lb" "test" {
   name                = "acctestlb-${local.number}"
   location            = azurestack_resource_group.test.location
   resource_group_name = azurestack_resource_group.test.name
-  sku                 = local.sku
 
   frontend_ip_configuration {
     name                 = "feip"

@@ -757,7 +757,7 @@ resource "azurestack_subnet" "gateway" {
   name                 = "acctestsubnet-gw-%[2]d"
   resource_group_name  = azurestack_virtual_network.gateway.resource_group_name
   virtual_network_name = azurestack_virtual_network.gateway.name
-  address_prefixes     = ["11.0.2.0/24"]
+  address_prefixe     = "11.0.2.0/24"
 }
 
 resource "azurestack_lb" "gateway" {

@@ -47,42 +47,6 @@ func TestAccVirtualNetwork_complete(t *testing.T) {
 	})
 }
 
-func TestAccVirtualNetwork_updateFlowTimeoutInMinutes(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_network", "test")
-	r := VirtualNetworkResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.basic(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			Config: r.updateFlowTimeoutInMinutes(data, 5),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			Config: r.updateFlowTimeoutInMinutes(data, 6),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			Config: r.basic(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
 func TestAccVirtualNetwork_basicUpdated(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_virtual_network", "test")
 	r := VirtualNetworkResource{}
@@ -375,25 +339,4 @@ resource "azurestack_virtual_network" "test" {
   subnet              = []
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger)
-}
-
-func (VirtualNetworkResource) updateFlowTimeoutInMinutes(data acceptance.TestData, flowTimeout int) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                    = "acctestvirtnet%d"
-  address_space           = ["10.0.0.0/16"]
-  location                = azurestack_resource_group.test.location
-  resource_group_name     = azurestack_resource_group.test.name
-  flow_timeout_in_minutes = %d
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, flowTimeout)
 }

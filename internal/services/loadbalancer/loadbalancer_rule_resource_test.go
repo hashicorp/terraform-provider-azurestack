@@ -258,7 +258,6 @@ resource "azurestack_lb" "test" {
   name                = "arm-test-loadbalancer-%[1]d"
   location            = azurestack_resource_group.test.location
   resource_group_name = azurestack_resource_group.test.name
-  sku                 = "%[3]s"
 
   frontend_ip_configuration {
     name                 = "one-%[1]d"

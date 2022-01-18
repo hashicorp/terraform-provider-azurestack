@@ -431,7 +431,6 @@ resource "azurestack_managed_disk" "test" {
   location             = azurestack_resource_group.test.location
   resource_group_name  = azurestack_resource_group.test.name
   os_type              = "Linux"
-  hyper_v_generation   = "V1"
   create_option        = "FromImage"
   image_reference_id   = data.azurestack_platform_image.test.id
   storage_account_type = "Standard_LRS"

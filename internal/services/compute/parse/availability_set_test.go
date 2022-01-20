@@ -24,6 +24,7 @@ func TestAvailabilitySetID(t *testing.T) {
 		Error    bool
 		Expected *AvailabilitySetId
 	}{
+
 		{
 			// empty
 			Input: "",

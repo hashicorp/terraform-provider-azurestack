@@ -24,6 +24,7 @@ func TestPublicIpAddressID(t *testing.T) {
 		Error    bool
 		Expected *PublicIpAddressId
 	}{
+
 		{
 			// empty
 			Input: "",

@@ -24,6 +24,7 @@ func TestSubnetID(t *testing.T) {
 		Error    bool
 		Expected *SubnetId
 	}{
+
 		{
 			// empty
 			Input: "",
@@ -132,6 +133,7 @@ func TestSubnetIDInsensitively(t *testing.T) {
 		Error    bool
 		Expected *SubnetId
 	}{
+
 		{
 			// empty
 			Input: "",

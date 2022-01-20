@@ -5,9 +5,8 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/az/zones"
-
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/az/zones"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"

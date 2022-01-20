@@ -1,13 +1,20 @@
+# cloud.google.com/go v0.65.0
+## explicit; go 1.11
+# cloud.google.com/go/storage v1.10.0
+## explicit; go 1.11
 # github.com/Azure/azure-sdk-for-go v59.2.0+incompatible
 ## explicit
 github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources
 github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute
 github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network
+github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/storage/mgmt/storage
 github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2017-12-01/compute
 github.com/Azure/azure-sdk-for-go/services/dns/mgmt/2016-04-01/dns
 github.com/Azure/azure-sdk-for-go/services/graphrbac/1.6/graphrbac
 github.com/Azure/azure-sdk-for-go/services/network/mgmt/2017-10-01/network
 github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2016-02-01/resources
+github.com/Azure/azure-sdk-for-go/services/storage/mgmt/2017-10-01/storage
+github.com/Azure/azure-sdk-for-go/storage
 github.com/Azure/azure-sdk-for-go/version
 # github.com/Azure/go-autorest v14.2.0+incompatible
 ## explicit
@@ -37,6 +44,12 @@ github.com/Azure/go-autorest/logger
 # github.com/Azure/go-autorest/tracing v0.6.0
 ## explicit; go 1.12
 github.com/Azure/go-autorest/tracing
+# github.com/Masterminds/goutils v1.1.0
+## explicit
+# github.com/Masterminds/semver v1.5.0
+## explicit
+# github.com/Masterminds/sprig v2.22.0+incompatible
+## explicit
 # github.com/agext/levenshtein v1.2.2
 ## explicit
 github.com/agext/levenshtein
@@ -49,8 +62,14 @@ github.com/apparentlymart/go-textseg/v12/textseg
 # github.com/apparentlymart/go-textseg/v13 v13.0.0
 ## explicit; go 1.16
 github.com/apparentlymart/go-textseg/v13/textseg
+# github.com/armon/go-radix v1.0.0
+## explicit
 # github.com/aws/aws-sdk-go v1.37.0
 ## explicit; go 1.11
+# github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d
+## explicit
+# github.com/bgentry/speakeasy v0.1.0
+## explicit
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 github.com/davecgh/go-spew/spew
@@ -60,9 +79,14 @@ github.com/dimchansky/utfbom
 # github.com/fatih/color v1.7.0
 ## explicit
 github.com/fatih/color
+# github.com/gofrs/uuid v4.2.0+incompatible
+## explicit
+github.com/gofrs/uuid
 # github.com/golang-jwt/jwt/v4 v4.1.0
 ## explicit; go 1.15
 github.com/golang-jwt/jwt/v4
+# github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e
+## explicit
 # github.com/golang/protobuf v1.5.2
 ## explicit; go 1.9
 github.com/golang/protobuf/proto
@@ -79,6 +103,10 @@ github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
+# github.com/google/uuid v1.1.2
+## explicit
+# github.com/googleapis/gax-go/v2 v2.0.5
+## explicit
 # github.com/hashicorp/errwrap v1.0.0
 ## explicit
 github.com/hashicorp/errwrap
@@ -109,6 +137,8 @@ github.com/hashicorp/go-cty/cty/gocty
 github.com/hashicorp/go-cty/cty/json
 github.com/hashicorp/go-cty/cty/msgpack
 github.com/hashicorp/go-cty/cty/set
+# github.com/hashicorp/go-getter v1.5.3
+## explicit; go 1.13
 # github.com/hashicorp/go-hclog v0.16.1
 ## explicit; go 1.13
 github.com/hashicorp/go-hclog
@@ -122,6 +152,8 @@ github.com/hashicorp/go-plugin/internal/plugin
 # github.com/hashicorp/go-retryablehttp v0.7.0
 ## explicit; go 1.13
 github.com/hashicorp/go-retryablehttp
+# github.com/hashicorp/go-safetemp v1.0.0
+## explicit
 # github.com/hashicorp/go-uuid v1.0.2
 ## explicit
 github.com/hashicorp/go-uuid
@@ -144,6 +176,8 @@ github.com/hashicorp/hc-install/internal/version
 github.com/hashicorp/hc-install/product
 github.com/hashicorp/hc-install/releases
 github.com/hashicorp/hc-install/src
+# github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f
+## explicit
 # github.com/hashicorp/hcl/v2 v2.8.2
 ## explicit; go 1.12
 github.com/hashicorp/hcl/v2
@@ -152,6 +186,8 @@ github.com/hashicorp/hcl/v2/hclsyntax
 # github.com/hashicorp/logutils v1.0.0
 ## explicit
 github.com/hashicorp/logutils
+# github.com/hashicorp/terraform-config-inspect v0.0.0-20191212124732-c6ae6269b9d7
+## explicit
 # github.com/hashicorp/terraform-exec v0.15.0
 ## explicit; go 1.14
 github.com/hashicorp/terraform-exec/internal/version
@@ -177,6 +213,8 @@ github.com/hashicorp/terraform-plugin-go/tftypes
 github.com/hashicorp/terraform-plugin-log/internal/logging
 github.com/hashicorp/terraform-plugin-log/tflog
 github.com/hashicorp/terraform-plugin-log/tfsdklog
+# github.com/hashicorp/terraform-plugin-sdk v1.17.2
+## explicit; go 1.12
 # github.com/hashicorp/terraform-plugin-sdk/v2 v2.10.1
 ## explicit; go 1.16
 github.com/hashicorp/terraform-plugin-sdk/v2/diag
@@ -198,6 +236,8 @@ github.com/hashicorp/terraform-plugin-sdk/v2/internal/tfdiags
 github.com/hashicorp/terraform-plugin-sdk/v2/meta
 github.com/hashicorp/terraform-plugin-sdk/v2/plugin
 github.com/hashicorp/terraform-plugin-sdk/v2/terraform
+# github.com/hashicorp/terraform-plugin-test/v2 v2.2.1
+## explicit; go 1.12
 # github.com/hashicorp/terraform-registry-address v0.0.0-20210412075316-9b2996cce896
 ## explicit; go 1.14
 github.com/hashicorp/terraform-registry-address
@@ -207,6 +247,16 @@ github.com/hashicorp/terraform-svchost
 # github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d
 ## explicit
 github.com/hashicorp/yamux
+# github.com/huandu/xstrings v1.3.2
+## explicit; go 1.12
+# github.com/imdario/mergo v0.3.12
+## explicit; go 1.13
+# github.com/jmespath/go-jmespath v0.4.0
+## explicit; go 1.14
+# github.com/jstemmer/go-junit-report v0.9.1
+## explicit; go 1.2
+# github.com/klauspost/compress v1.11.2
+## explicit; go 1.13
 # github.com/manicminer/hamilton v0.37.0
 ## explicit; go 1.16
 github.com/manicminer/hamilton/auth
@@ -221,6 +271,10 @@ github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.10
 ## explicit; go 1.14
 github.com/mattn/go-isatty
+# github.com/mitchellh/cli v1.1.2
+## explicit; go 1.11
+# github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db
+## explicit
 # github.com/mitchellh/copystructure v1.2.0
 ## explicit; go 1.15
 github.com/mitchellh/copystructure
@@ -242,10 +296,27 @@ github.com/mitchellh/reflectwalk
 # github.com/oklog/run v1.0.0
 ## explicit
 github.com/oklog/run
+# github.com/posener/complete v1.2.1
+## explicit
+# github.com/spf13/afero v1.2.2
+## explicit
+# github.com/tombuildsstuff/giovanni v0.17.0
+## explicit; go 1.13
+github.com/tombuildsstuff/giovanni/storage/2019-12-12/blob/blobs
+github.com/tombuildsstuff/giovanni/storage/2019-12-12/blob/containers
+github.com/tombuildsstuff/giovanni/storage/internal/endpoints
+github.com/tombuildsstuff/giovanni/storage/internal/metadata
+github.com/tombuildsstuff/giovanni/version
+# github.com/ulikunitz/xz v0.5.8
+## explicit; go 1.12
 # github.com/vmihailenco/msgpack v4.0.4+incompatible
 ## explicit
 github.com/vmihailenco/msgpack
 github.com/vmihailenco/msgpack/codes
+# github.com/vmihailenco/msgpack/v4 v4.3.12
+## explicit; go 1.11
+# github.com/vmihailenco/tagparser v0.1.1
+## explicit; go 1.13
 # github.com/zclconf/go-cty v1.9.1
 ## explicit; go 1.12
 github.com/zclconf/go-cty/cty
@@ -255,6 +326,10 @@ github.com/zclconf/go-cty/cty/function/stdlib
 github.com/zclconf/go-cty/cty/gocty
 github.com/zclconf/go-cty/cty/json
 github.com/zclconf/go-cty/cty/set
+# github.com/zclconf/go-cty-yaml v1.0.2
+## explicit
+# go.opencensus.io v0.22.4
+## explicit; go 1.13
 # golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa
 ## explicit; go 1.17
 golang.org/x/crypto/blowfish
@@ -276,6 +351,10 @@ golang.org/x/crypto/pkcs12
 golang.org/x/crypto/pkcs12/internal/rc2
 golang.org/x/crypto/ssh
 golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
+# golang.org/x/lint v0.0.0-20200302205851-738671d3881b
+## explicit; go 1.11
+# golang.org/x/mod v0.3.0
+## explicit; go 1.12
 # golang.org/x/net v0.0.0-20210525063256-abc453219eb5
 ## explicit; go 1.17
 golang.org/x/net/context
@@ -303,6 +382,8 @@ golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 # golang.org/x/tools v0.0.0-20201028111035-eafbe7b904eb
 ## explicit; go 1.12
+# golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
+## explicit; go 1.11
 # google.golang.org/api v0.34.0
 ## explicit; go 1.11
 # google.golang.org/appengine v1.6.7

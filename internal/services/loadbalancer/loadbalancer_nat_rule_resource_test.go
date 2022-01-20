@@ -6,9 +6,8 @@ import (
 	"testing"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/services/loadbalancer/parse"
-
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/loadbalancer/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"

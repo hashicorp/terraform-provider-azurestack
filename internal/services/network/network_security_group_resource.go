@@ -7,6 +7,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
+	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -18,8 +19,6 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/suppress"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/timeouts"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
-
-	"github.com/hashicorp/go-multierror"
 )
 
 func networkSecurityGroup() *pluginsdk.Resource {

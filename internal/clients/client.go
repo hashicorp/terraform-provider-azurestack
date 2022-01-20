@@ -3,17 +3,17 @@ package clients
 import (
 	"context"
 
-	compute "github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/client"
-
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/common"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/features"
 	authorization "github.com/hashicorp/terraform-provider-azurestack/internal/services/authorization/client"
+	compute "github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/client"
 	dns "github.com/hashicorp/terraform-provider-azurestack/internal/services/dns/client"
 	loadbalancer "github.com/hashicorp/terraform-provider-azurestack/internal/services/loadbalancer/client"
 	network "github.com/hashicorp/terraform-provider-azurestack/internal/services/network/client"
 	resource "github.com/hashicorp/terraform-provider-azurestack/internal/services/resource/client"
+	storage "github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/client"
 )
 
 type Client struct {
@@ -27,6 +27,7 @@ type Client struct {
 	LoadBalancer  *loadbalancer.Client
 	Network       *network.Client
 	Resource      *resource.Client
+	Storage       *storage.Client
 
 	Features features.UserFeatures
 }
@@ -46,6 +47,7 @@ func (client *Client) Build(ctx context.Context, o *common.ClientOptions) error 
 	client.LoadBalancer = loadbalancer.NewClient(o)
 	client.Network = network.NewClient(o)
 	client.Resource = resource.NewClient(o)
+	client.Storage = storage.NewClient(o)
 
 	return nil
 }

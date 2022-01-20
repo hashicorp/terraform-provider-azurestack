@@ -6,24 +6,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/validate"
-
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceid"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/zones"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/locks"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/tf"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/timeouts"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/validate"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/suppress"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/timeouts"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 func managedDisk() *pluginsdk.Resource {

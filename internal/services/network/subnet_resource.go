@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -105,7 +106,7 @@ func subnetCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 	}
 
 	subnet := network.Subnet{
-		Name:                   utils.String(id.Name),
+		Name:                   pointer.FromString(id.Name),
 		SubnetPropertiesFormat: &properties,
 	}
 
@@ -143,7 +144,7 @@ func subnetCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 		return fmt.Errorf("waiting for provisioning state of virtual network for %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 	return subnetRead(d, meta)
 }
 
@@ -178,11 +179,11 @@ func subnetUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	props := *existing.SubnetPropertiesFormat
 
 	if d.HasChange("address_prefix") {
-		props.AddressPrefix = utils.String(d.Get("address_prefix").(string))
+		props.AddressPrefix = pointer.FromString(d.Get("address_prefix").(string))
 	}
 
 	subnet := network.Subnet{
-		Name:                   utils.String(id.Name),
+		Name:                   pointer.FromString(id.Name),
 		SubnetPropertiesFormat: &props,
 	}
 

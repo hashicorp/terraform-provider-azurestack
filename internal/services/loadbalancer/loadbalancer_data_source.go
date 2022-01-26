@@ -110,11 +110,8 @@ func dataSourceArmLoadBalancerRead(d *pluginsdk.ResourceData, meta interface{}) 
 		return fmt.Errorf("retrieving %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 	d.Set("location", location.NormalizeNilable(resp.Location))
-	if sku := resp.Sku; sku != nil {
-		d.Set("sku", string(sku.Name))
-	}
 
 	privateIpAddress := ""
 	privateIpAddresses := make([]string, 0)

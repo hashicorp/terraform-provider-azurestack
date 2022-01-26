@@ -1,6 +1,6 @@
 package storage
 
-// TODO - bring in line with the azurerm version of this data source
+// TODO - bring in line with the azurestack version of this data source
 
 import (
 	"fmt"
@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/Azure/go-autorest/autorest"
-
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -56,11 +55,6 @@ func storageAccountDataSource() *schema.Resource {
 				Computed: true,
 			},
 
-			"access_tier": {
-				Type:     pluginsdk.TypeString,
-				Computed: true,
-			},
-
 			"custom_domain": {
 				Type:     pluginsdk.TypeList,
 				Computed: true,
@@ -72,6 +66,11 @@ func storageAccountDataSource() *schema.Resource {
 						},
 					},
 				},
+			},
+
+			"account_encryption_source": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 
 			"enable_blob_encryption": {
@@ -176,7 +175,7 @@ func storageAccountDataSourceRead(d *schema.ResourceData, meta interface{}) erro
 		return fmt.Errorf("retrieving %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	// handle the user not having permissions to list the keys
 	d.Set("primary_connection_string", "")
@@ -213,8 +212,6 @@ func storageAccountDataSourceRead(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if props := resp.AccountProperties; props != nil {
-		d.Set("access_tier", props.AccessTier)
-
 		if customDomain := props.CustomDomain; customDomain != nil {
 			if err := d.Set("custom_domain", flattenStorageAccountCustomDomain(customDomain)); err != nil {
 				return fmt.Errorf("setting `custom_domain`: %+v", err)

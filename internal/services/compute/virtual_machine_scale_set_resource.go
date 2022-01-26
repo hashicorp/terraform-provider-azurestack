@@ -9,16 +9,16 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/az/zones"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/validate"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceid"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/az/zones"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/validate"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/suppress"
@@ -829,7 +829,7 @@ func virtualMachineScaleSetCreateUpdate(d *pluginsdk.ResourceData, meta interfac
 
 	if v, ok := d.GetOk("health_probe_id"); ok {
 		scaleSetProps.VirtualMachineProfile.NetworkProfile.HealthProbe = &compute.APIEntityReference{
-			ID: utils.String(v.(string)),
+			ID: pointer.FromString(v.(string)),
 		}
 	}
 
@@ -847,7 +847,7 @@ func virtualMachineScaleSetCreateUpdate(d *pluginsdk.ResourceData, meta interfac
 	}
 
 	if v, ok := d.GetOk("license_type"); ok {
-		properties.VirtualMachineProfile.LicenseType = utils.String(v.(string))
+		properties.VirtualMachineProfile.LicenseType = pointer.FromString(v.(string))
 	}
 
 	if _, ok := d.GetOk("plan"); ok {
@@ -863,7 +863,7 @@ func virtualMachineScaleSetCreateUpdate(d *pluginsdk.ResourceData, meta interfac
 		return err
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return virtualMachineScaleSetRead(d, meta)
 }
@@ -1614,8 +1614,8 @@ func expandVirtualMachineScaleSetSku(d *pluginsdk.ResourceData) *compute.Sku {
 	config := skuConfig[0].(map[string]interface{})
 
 	sku := &compute.Sku{
-		Name:     utils.String(config["name"].(string)),
-		Capacity: utils.Int64(int64(config["capacity"].(int))),
+		Name:     pointer.FromString(config["name"].(string)),
+		Capacity: pointer.FromInt64(int64(config["capacity"].(int))),
 	}
 
 	if tier, ok := config["tier"].(string); ok && tier != "" {
@@ -1632,7 +1632,7 @@ func expandAzureRmRollingUpgradePolicy(d *pluginsdk.ResourceData) *compute.Rolli
 			MaxBatchInstancePercent:             utils.Int32(int32(policy["max_batch_instance_percent"].(int))),
 			MaxUnhealthyInstancePercent:         utils.Int32(int32(policy["max_unhealthy_instance_percent"].(int))),
 			MaxUnhealthyUpgradedInstancePercent: utils.Int32(int32(policy["max_unhealthy_upgraded_instance_percent"].(int))),
-			PauseTimeBetweenBatches:             utils.String(policy["pause_time_between_batches"].(string)),
+			PauseTimeBetweenBatches:             pointer.FromString(policy["pause_time_between_batches"].(string)),
 		}
 	}
 	return nil
@@ -1957,16 +1957,16 @@ func expandAzureRmVirtualMachineScaleSetStorageProfileImageReference(d *pluginsd
 	}
 
 	if imageID != "" {
-		imageReference.ID = utils.String(storageImageRef["id"].(string))
+		imageReference.ID = pointer.FromString(storageImageRef["id"].(string))
 	} else {
 		offer := storageImageRef["offer"].(string)
 		sku := storageImageRef["sku"].(string)
 		version := storageImageRef["version"].(string)
 
-		imageReference.Publisher = utils.String(publisher)
-		imageReference.Offer = utils.String(offer)
-		imageReference.Sku = utils.String(sku)
-		imageReference.Version = utils.String(version)
+		imageReference.Publisher = pointer.FromString(publisher)
+		imageReference.Offer = pointer.FromString(offer)
+		imageReference.Sku = pointer.FromString(sku)
+		imageReference.Version = pointer.FromString(version)
 	}
 
 	return &imageReference, nil

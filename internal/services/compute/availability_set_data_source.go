@@ -76,7 +76,7 @@ func availabilitySetDataSourceRead(d *pluginsdk.ResourceData, meta interface{}) 
 		return fmt.Errorf("making Read request on %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 	d.Set("location", location.NormalizeNilable(resp.Location))
 	if resp.Sku != nil && resp.Sku.Name != nil {
 		d.Set("managed", strings.EqualFold(*resp.Sku.Name, "Aligned"))

@@ -77,7 +77,7 @@ func loadBalancerBackendAddressPoolDataSourceRead(d *pluginsdk.ResourceData, met
 		return fmt.Errorf("failed to retrieve Load Balancer Backend Address Pool %q: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	if props := resp.BackendAddressPoolPropertiesFormat; props != nil {
 		var backendIPConfigurations []interface{}

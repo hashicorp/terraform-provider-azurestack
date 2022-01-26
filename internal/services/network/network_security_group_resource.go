@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/go-multierror"
@@ -229,7 +230,7 @@ func networkSecurityGroupCreateUpdate(d *pluginsdk.ResourceData, meta interface{
 		return fmt.Errorf("waiting for the completion of %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return networkSecurityGroupRead(d, meta)
 }
@@ -365,7 +366,7 @@ func expandazurestackSecurityRules(d *pluginsdk.ResourceData) ([]network.Securit
 			var sourceApplicationSecurityGroups []network.ApplicationSecurityGroup
 			for _, v := range r.List() {
 				sg := network.ApplicationSecurityGroup{
-					ID: utils.String(v.(string)),
+					ID: pointer.FromString(v.(string)),
 				}
 				sourceApplicationSecurityGroups = append(sourceApplicationSecurityGroups, sg)
 			}
@@ -376,7 +377,7 @@ func expandazurestackSecurityRules(d *pluginsdk.ResourceData) ([]network.Securit
 			var destinationApplicationSecurityGroups []network.ApplicationSecurityGroup
 			for _, v := range r.List() {
 				sg := network.ApplicationSecurityGroup{
-					ID: utils.String(v.(string)),
+					ID: pointer.FromString(v.(string)),
 				}
 				destinationApplicationSecurityGroups = append(destinationApplicationSecurityGroups, sg)
 			}

@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/network/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 type RouteResource struct{}
@@ -124,7 +124,7 @@ func (t RouteResource) Exists(ctx context.Context, clients *clients.Client, stat
 		return nil, fmt.Errorf("reading Route (%s): %+v", *id, err)
 	}
 
-	return utils.Bool(resp.ID != nil), nil
+	return pointer.FromBool(resp.ID != nil), nil
 }
 
 func (r RouteResource) Destroy(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
@@ -142,7 +142,7 @@ func (r RouteResource) Destroy(ctx context.Context, client *clients.Client, stat
 		return nil, fmt.Errorf("waiting for deletion of Route %q: %+v", id, err)
 	}
 
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (RouteResource) basic(data acceptance.TestData) string {

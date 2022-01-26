@@ -6,5 +6,6 @@ var services = mapOf(
         "dns" to "DNS",
         "loadbalancer" to "Load Balancer",
         "network" to "Network",
-        "resource" to "Resources"
+        "resource" to "Resources",
+        "storage" to "Storage"
 )

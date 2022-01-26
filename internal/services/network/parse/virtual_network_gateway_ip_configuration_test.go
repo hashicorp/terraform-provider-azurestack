@@ -24,7 +24,6 @@ func TestVirtualNetworkGatewayIpConfigurationID(t *testing.T) {
 		Error    bool
 		Expected *VirtualNetworkGatewayIpConfigurationId
 	}{
-
 		{
 			// empty
 			Input: "",

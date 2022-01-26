@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 type ResourceGroupResource struct{}
@@ -114,7 +114,7 @@ func (t ResourceGroupResource) Destroy(ctx context.Context, client *clients.Clie
 		return nil, fmt.Errorf("waiting for deletion of Resource Group %q: %+v", resourceGroup, err)
 	}
 
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (t ResourceGroupResource) Exists(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
@@ -125,7 +125,7 @@ func (t ResourceGroupResource) Exists(ctx context.Context, client *clients.Clien
 		return nil, fmt.Errorf("retrieving Resource Group %q: %+v", name, err)
 	}
 
-	return utils.Bool(resp.Properties != nil), nil
+	return pointer.FromBool(resp.Properties != nil), nil
 }
 
 func (t ResourceGroupResource) basicConfig(data acceptance.TestData) string {

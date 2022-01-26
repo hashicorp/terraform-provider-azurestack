@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/network/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 type SubnetResource struct{}
@@ -93,7 +93,7 @@ func (t SubnetResource) Exists(ctx context.Context, clients *clients.Client, sta
 		return nil, fmt.Errorf("reading Subnet (%s): %+v", id, err)
 	}
 
-	return utils.Bool(resp.ID != nil), nil
+	return pointer.FromBool(resp.ID != nil), nil
 }
 
 func (SubnetResource) Destroy(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
@@ -111,7 +111,7 @@ func (SubnetResource) Destroy(ctx context.Context, client *clients.Client, state
 		return nil, fmt.Errorf("waiting for deletion of Subnet %q: %+v", id, err)
 	}
 
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (r SubnetResource) basic(data acceptance.TestData) string {

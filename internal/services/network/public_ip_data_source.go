@@ -98,7 +98,7 @@ func publicIPDataSourceRead(d *pluginsdk.ResourceData, meta interface{}) error {
 		return fmt.Errorf("making Read request on %s: %s", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	d.Set("zones", resp.Zones)
 

@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/resourceids"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
@@ -156,7 +157,7 @@ func (t TemplateDeploymentResource) Exists(ctx context.Context, clients *clients
 		return nil, fmt.Errorf("reading Template Deployment (%s): %+v", id, err)
 	}
 
-	return utils.Bool(resp.ID != nil), nil
+	return pointer.FromBool(resp.ID != nil), nil
 }
 
 func (r TemplateDeploymentResource) Destroy(ctx context.Context, clients *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
@@ -202,7 +203,7 @@ func (r TemplateDeploymentResource) Destroy(ctx context.Context, clients *client
 		return nil, fmt.Errorf("waiting for Template Deployment %q to be deleted: %+v", id, err)
 	}
 
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (TemplateDeploymentResource) basicSingle(data acceptance.TestData) string {

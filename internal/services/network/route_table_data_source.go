@@ -91,7 +91,7 @@ func routeTableDataSourceRead(d *pluginsdk.ResourceData, meta interface{}) error
 		return fmt.Errorf("making Read request on %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	d.Set("name", id.Name)
 	d.Set("resource_group_name", id.ResourceGroup)

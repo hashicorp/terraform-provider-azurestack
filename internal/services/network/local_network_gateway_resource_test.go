@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/network/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 type LocalNetworkGatewayResource struct{}
@@ -214,7 +214,7 @@ func (t LocalNetworkGatewayResource) Exists(ctx context.Context, clients *client
 		return nil, fmt.Errorf("reading %s: %+v", *id, err)
 	}
 
-	return utils.Bool(resp.ID != nil), nil
+	return pointer.FromBool(resp.ID != nil), nil
 }
 
 func (LocalNetworkGatewayResource) Destroy(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
@@ -232,7 +232,7 @@ func (LocalNetworkGatewayResource) Destroy(ctx context.Context, client *clients.
 		return nil, fmt.Errorf("waiting for %s : %+v", *id, err)
 	}
 
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (LocalNetworkGatewayResource) basic(data acceptance.TestData) string {

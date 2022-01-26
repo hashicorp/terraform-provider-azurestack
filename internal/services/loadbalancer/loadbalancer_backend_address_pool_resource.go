@@ -149,7 +149,7 @@ func loadBalancerBackendAddressPoolCreateUpdate(d *pluginsdk.ResourceData, meta 
 		return fmt.Errorf("waiting for update of Load Balancer %q for Backend Address Pool %q: %+v", loadBalancerId, id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return loadBalancerBackendAddressPoolRead(d, meta)
 }

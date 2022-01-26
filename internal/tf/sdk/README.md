@@ -92,7 +92,7 @@ func (r ResourceGroupResource) Create() sdk.ResourceFunc {
 			}
 
 			input := resources.Group{
-				Location: utils.String(state.Location),
+				Location: pointer.FromString(state.Location),
 				Tags:     tags.FromTypedObject(state.Tags),
 			}
 			if _, err := client.CreateOrUpdate(ctx, state.Name, input); err != nil {

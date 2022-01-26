@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/loadbalancer/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
@@ -159,7 +160,7 @@ func (r LoadBalancerNatPool) Exists(ctx context.Context, client *clients.Client,
 		return nil, fmt.Errorf("Nat Pool %q not found in Load Balancer %q (resource group %q)", id.InboundNatPoolName, id.LoadBalancerName, id.ResourceGroup)
 	}
 
-	return utils.Bool(found), nil
+	return pointer.FromBool(found), nil
 }
 
 func (r LoadBalancerNatPool) Destroy(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
@@ -198,7 +199,7 @@ func (r LoadBalancerNatPool) Destroy(ctx context.Context, client *clients.Client
 		return nil, fmt.Errorf("waiting for update of Load Balancer %q (Resource Group %q): %+v", id.LoadBalancerName, id.ResourceGroup, err)
 	}
 
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (r LoadBalancerNatPool) basic(data acceptance.TestData, sku string) string {

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -140,7 +141,7 @@ func routeTableCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		Location: &location,
 		RouteTablePropertiesFormat: &network.RouteTablePropertiesFormat{
 			Routes:                     expandRouteTableRoutes(d),
-			DisableBgpRoutePropagation: utils.Bool(d.Get("disable_bgp_route_propagation").(bool)),
+			DisableBgpRoutePropagation: pointer.FromBool(d.Get("disable_bgp_route_propagation").(bool)),
 		},
 		Tags: tags.Expand(t),
 	}
@@ -154,7 +155,7 @@ func routeTableCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		return fmt.Errorf("waiting for completion of %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return routeTableRead(d, meta)
 }
@@ -228,9 +229,9 @@ func expandRouteTableRoutes(d *pluginsdk.ResourceData) *[]network.Route {
 		data := configRaw.(map[string]interface{})
 
 		route := network.Route{
-			Name: utils.String(data["name"].(string)),
+			Name: pointer.FromString(data["name"].(string)),
 			RoutePropertiesFormat: &network.RoutePropertiesFormat{
-				AddressPrefix: utils.String(data["address_prefix"].(string)),
+				AddressPrefix: pointer.FromString(data["address_prefix"].(string)),
 				NextHopType:   network.RouteNextHopType(data["next_hop_type"].(string)),
 			},
 		}

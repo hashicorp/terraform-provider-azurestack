@@ -3,6 +3,8 @@ package utils
 import (
 	"fmt"
 	"strings"
+
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 )
 
 // NormalizeSSHKey attempts to remove invalid formatting and line breaks that can be present in some cases
@@ -24,5 +26,5 @@ func NormalizeSSHKey(input string) (*string, error) {
 
 	normalised := strings.Join(lines, "")
 
-	return String(normalised), nil
+	return pointer.FromString(normalised), nil
 }

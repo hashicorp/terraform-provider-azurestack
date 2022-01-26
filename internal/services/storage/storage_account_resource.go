@@ -1,13 +1,8 @@
 package storage
 
-// TODO - bring in line with the azurerm version of this resource
-
 import (
 	"fmt"
-	"log"
 	"strings"
-
-	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/storage/mgmt/storage"
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
@@ -17,8 +12,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/migration"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/validate"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/suppress"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/timeouts"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
@@ -32,6 +29,13 @@ func storageAccount() *schema.Resource {
 		Read:   storageAccountRead,
 		Update: storageAccountUpdate,
 		Delete: storageAccountDelete,
+
+		// TODO check schema and confirm old stack provider can upgrade to this
+		SchemaVersion: 2,
+		StateUpgraders: pluginsdk.StateUpgrades(map[int]pluginsdk.StateUpgrade{
+			0: migration.AccountV0ToV1{},
+			1: migration.AccountV1ToV2{},
+		}),
 
 		Importer: pluginsdk.ImporterValidatingResourceId(func(id string) error {
 			_, err := parse.StorageAccountID(id)
@@ -210,8 +214,8 @@ func storageAccountCreate(d *schema.ResourceData, meta interface{}) error {
 	ctx, cancel := timeouts.ForCreate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
-	resourceGroupName := d.Get("resource_group_name").(string)
-	storageAccountName := d.Get("name").(string)
+	subscriptionId := meta.(*clients.Client).Account.SubscriptionId
+
 	accountKind := d.Get("account_kind").(string)
 
 	location := d.Get("location").(string)
@@ -219,6 +223,8 @@ func storageAccountCreate(d *schema.ResourceData, meta interface{}) error {
 	accountTier := d.Get("account_tier").(string)
 	replicationType := d.Get("account_replication_type").(string)
 	storageType := fmt.Sprintf("%s_%s", accountTier, replicationType)
+
+	id := parse.NewStorageAccountID(subscriptionId, d.Get("resource_group_name").(string), d.Get("name").(string))
 
 	// Not supported by the profile in the same struct as the original, both of the
 	// following commented lines will be read and set later on the correct
@@ -247,13 +253,7 @@ func storageAccountCreate(d *schema.ResourceData, meta interface{}) error {
 		if string(parameters.Sku.Name) == string(storage.StandardZRS) {
 			return fmt.Errorf("A `account_replication_type` of `ZRS` isn't supported for Blob Storage accounts.")
 		}
-		accessTier, ok := d.GetOk("access_tier")
-		if !ok {
-			// default to "Hot"
-			accessTier = blobStorageAccountDefaultAccessTier
-		}
-
-		parameters.AccountPropertiesCreateParameters.AccessTier = storage.AccessTier(accessTier.(string))
+		parameters.AccountPropertiesCreateParameters.AccessTier = storage.AccessTier(blobStorageAccountDefaultAccessTier)
 
 		enableBlobEncryption := d.Get("enable_blob_encryption").(bool)
 
@@ -271,29 +271,25 @@ func storageAccountCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	future, err := client.Create(ctx, resourceGroupName, storageAccountName, parameters)
+	future, err := client.Create(ctx, id.ResourceGroup, id.Name, parameters)
 	if err != nil {
-		return fmt.Errorf(
-			"Error creating Azure Storage Account %q: %+v",
-			storageAccountName, err)
+		return fmt.Errorf("creating Azure Storage Account %q: %+v", id.Name, err)
 	}
 
-	err = future.WaitForCompletionRef(ctx, client.Client)
-	if err != nil {
-		return fmt.Errorf(
-			"Error while waiting for Azure Storage Account %q: %+v",
-			storageAccountName, err)
+	if err = future.WaitForCompletionRef(ctx, client.Client); err != nil {
+		return fmt.Errorf("waiting for Azure Storage Account %q to be created: %+v", id.Name, err)
 	}
 
-	account, err := future.Result(*client)
-	if err != nil {
-		return fmt.Errorf(
-			"Error while fetching Azure Storage Account %q: %+v",
-			storageAccountName, err)
-	}
+	d.SetId(id.ID())
 
-	log.Printf("[INFO] storage account %q ID: %q", storageAccountName, *account.ID)
-	d.SetId(*account.ID)
+	// populate the cache
+	account, err := client.GetProperties(ctx, id.ResourceGroup, id.Name)
+	if err != nil {
+		return fmt.Errorf("retrieving %s: %+v", id, err)
+	}
+	if err := meta.(*clients.Client).Storage.AddToCache(id.Name, account); err != nil {
+		return fmt.Errorf("populating cache for %s: %+v", id, err)
+	}
 
 	return storageAccountRead(d, meta)
 }
@@ -333,28 +329,10 @@ func storageAccountUpdate(d *schema.ResourceData, meta interface{}) error {
 			Sku: &sku,
 		}
 
-		_, err := client.Update(ctx, id.ResourceGroup, id.Name, opts)
-		if err != nil {
+		if _, err := client.Update(ctx, id.ResourceGroup, id.Name, opts); err != nil {
 			return fmt.Errorf("updating Azure Storage Account type %q: %+v", id.Name, err)
 		}
 	}
-
-	// if d.HasChange("access_tier") {
-	// 	accessTier := d.Get("access_tier").(string)
-
-	// 	opts := storage.AccountUpdateParameters{
-	// 		AccountPropertiesUpdateParameters: &storage.AccountPropertiesUpdateParameters{
-	// 			AccessTier: storage.AccessTier(accessTier),
-	// 		},
-	// 	}
-
-	// 	_, err := client.Update(ctx, resourceGroupName, storageAccountName, opts)
-	// 	if err != nil {
-	// 		return fmt.Errorf("updating Azure Storage Account access_tier %q: %+v", storageAccountName, err)
-	// 	}
-
-	// 	d.SetPartial("access_tier")
-	// }
 
 	if d.HasChange("tags") {
 		opts := storage.AccountUpdateParameters{
@@ -442,15 +420,11 @@ func storageAccountRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("account_kind", resp.Kind)
 
 	if sku := resp.Sku; sku != nil {
-		d.Set("account_type", sku.Name)
 		d.Set("account_tier", sku.Tier)
 		d.Set("account_replication_type", strings.Split(fmt.Sprintf("%v", sku.Name), "_")[1])
 	}
 
 	if props := resp.AccountProperties; props != nil {
-		// Currently not supported on Azure Stack
-		// d.Set("access_tier", props.AccessTier)
-
 		if customDomain := props.CustomDomain; customDomain != nil {
 			if err := d.Set("custom_domain", flattenStorageAccountCustomDomain(customDomain)); err != nil {
 				return fmt.Errorf("flattening `custom_domain`: %+v", err)

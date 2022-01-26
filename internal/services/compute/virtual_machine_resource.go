@@ -10,20 +10,18 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tombuildsstuff/giovanni/storage/2019-12-12/blob/blobs"
-
-	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/validate"
-
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
+	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/zones"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/locks"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/validate"
 	networkParse "github.com/hashicorp/terraform-provider-azurestack/internal/services/network/parse"
 	intStor "github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/client"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf"
@@ -31,6 +29,7 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/suppress"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/timeouts"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
+	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/blobs"
 )
 
 // TODO move into internal/tf/suppress/base64.go
@@ -716,7 +715,7 @@ func virtualMachineCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) err
 		return fmt.Errorf("cannot read %s", id)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	ipAddress, err := determineVirtualMachineIPAddress(ctx, meta, read.VirtualMachineProperties)
 	if err != nil {
@@ -1501,7 +1500,7 @@ func expandAzureRmVirtualMachineOsProfileWindowsConfig(d *pluginsdk.ResourceData
 	}
 
 	if v := osProfileConfig["timezone"]; v != nil && v.(string) != "" {
-		config.TimeZone = utils.String(v.(string))
+		config.TimeZone = pointer.FromString(v.(string))
 	}
 
 	if v := osProfileConfig["winrm"]; v != nil {
@@ -1608,7 +1607,7 @@ func expandAzureRmVirtualMachineDataDisk(d *pluginsdk.ResourceData) ([]compute.D
 		}
 
 		if v, ok := config["write_accelerator_enabled"].(bool); ok {
-			data_disk.WriteAcceleratorEnabled = utils.Bool(v)
+			data_disk.WriteAcceleratorEnabled = pointer.FromBool(v)
 		}
 
 		data_disks = append(data_disks, data_disk)
@@ -1625,8 +1624,8 @@ func expandAzureRmVirtualMachineDiagnosticsProfile(d *pluginsdk.ResourceData) *c
 		bootDiagnostic := bootDiagnostics[0].(map[string]interface{})
 
 		diagnostic := &compute.BootDiagnostics{
-			Enabled:    utils.Bool(bootDiagnostic["enabled"].(bool)),
-			StorageURI: utils.String(bootDiagnostic["storage_uri"].(string)),
+			Enabled:    pointer.FromBool(bootDiagnostic["enabled"].(bool)),
+			StorageURI: pointer.FromString(bootDiagnostic["storage_uri"].(string)),
 		}
 
 		diagnosticsProfile.BootDiagnostics = diagnostic
@@ -1651,7 +1650,7 @@ func expandAzureRmVirtualMachineImageReference(d *pluginsdk.ResourceData) (*comp
 	}
 
 	if imageID != "" {
-		imageReference.ID = utils.String(storageImageRef["id"].(string))
+		imageReference.ID = pointer.FromString(storageImageRef["id"].(string))
 	} else {
 		offer := storageImageRef["offer"].(string)
 		sku := storageImageRef["sku"].(string)
@@ -1757,7 +1756,7 @@ func expandAzureRmVirtualMachineOsDisk(d *pluginsdk.ResourceData) (*compute.OSDi
 	}
 
 	if v, ok := config["write_accelerator_enabled"].(bool); ok {
-		osDisk.WriteAcceleratorEnabled = utils.Bool(v)
+		osDisk.WriteAcceleratorEnabled = pointer.FromBool(v)
 	}
 
 	return osDisk, nil

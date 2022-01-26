@@ -127,7 +127,7 @@ func loadBalancerRuleDataSourceRead(d *pluginsdk.ResourceData, meta interface{})
 		return fmt.Errorf("retrieving %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 	if props := resp.LoadBalancingRulePropertiesFormat; props != nil {
 		frontendIPConfigurationName, err := parse.LoadBalancerFrontendIpConfigurationID(*props.FrontendIPConfiguration.ID)
 		if err != nil {

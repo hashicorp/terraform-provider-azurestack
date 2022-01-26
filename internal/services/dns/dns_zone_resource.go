@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/services/dns/mgmt/2016-04-01/dns"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
@@ -188,7 +189,7 @@ func dnsZoneCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		soaRecord := v.([]interface{})[0].(map[string]interface{})
 		rsParameters := dns.RecordSet{
 			RecordSetProperties: &dns.RecordSetProperties{
-				TTL:       utils.Int64(int64(soaRecord["ttl"].(int))),
+				TTL:       pointer.FromInt64(int64(soaRecord["ttl"].(int))),
 				Metadata:  tags.Expand(soaRecord["tags"].(map[string]interface{})),
 				SoaRecord: expandArmDNSZoneSOARecord(soaRecord),
 			},
@@ -279,13 +280,13 @@ func dnsZoneDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 
 func expandArmDNSZoneSOARecord(input map[string]interface{}) *dns.SoaRecord {
 	return &dns.SoaRecord{
-		Email:        utils.String(input["email"].(string)),
-		Host:         utils.String(input["host_name"].(string)),
-		ExpireTime:   utils.Int64(int64(input["expire_time"].(int))),
-		MinimumTTL:   utils.Int64(int64(input["minimum_ttl"].(int))),
-		RefreshTime:  utils.Int64(int64(input["refresh_time"].(int))),
-		RetryTime:    utils.Int64(int64(input["retry_time"].(int))),
-		SerialNumber: utils.Int64(int64(input["serial_number"].(int))),
+		Email:        pointer.FromString(input["email"].(string)),
+		Host:         pointer.FromString(input["host_name"].(string)),
+		ExpireTime:   pointer.FromInt64(int64(input["expire_time"].(int))),
+		MinimumTTL:   pointer.FromInt64(int64(input["minimum_ttl"].(int))),
+		RefreshTime:  pointer.FromInt64(int64(input["refresh_time"].(int))),
+		RetryTime:    pointer.FromInt64(int64(input["retry_time"].(int))),
+		SerialNumber: pointer.FromInt64(int64(input["serial_number"].(int))),
 	}
 }
 

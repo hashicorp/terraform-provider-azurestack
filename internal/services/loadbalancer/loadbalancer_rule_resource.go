@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -191,7 +192,7 @@ func resourceArmLoadBalancerRuleCreateUpdate(d *pluginsdk.ResourceData, meta int
 		return fmt.Errorf("waiting for update of Load Balancer %q (resource group %q) for Rule %q: %+v", id.LoadBalancerName, id.ResourceGroup, id.Name, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return loadBalancerRuleRead(d, meta)
 }
@@ -341,8 +342,8 @@ func expandazurestackLoadBalancerRule(d *pluginsdk.ResourceData, lb *network.Loa
 		Protocol:            network.TransportProtocol(d.Get("protocol").(string)),
 		FrontendPort:        utils.Int32(int32(d.Get("frontend_port").(int))),
 		BackendPort:         utils.Int32(int32(d.Get("backend_port").(int))),
-		EnableFloatingIP:    utils.Bool(d.Get("enable_floating_ip").(bool)),
-		DisableOutboundSnat: utils.Bool(d.Get("disable_outbound_snat").(bool)),
+		EnableFloatingIP:    pointer.FromBool(d.Get("enable_floating_ip").(bool)),
+		DisableOutboundSnat: pointer.FromBool(d.Get("disable_outbound_snat").(bool)),
 	}
 
 	if v, ok := d.GetOk("idle_timeout_in_minutes"); ok {
@@ -378,7 +379,7 @@ func expandazurestackLoadBalancerRule(d *pluginsdk.ResourceData, lb *network.Loa
 	}
 
 	return &network.LoadBalancingRule{
-		Name:                              utils.String(d.Get("name").(string)),
+		Name:                              pointer.FromString(d.Get("name").(string)),
 		LoadBalancingRulePropertiesFormat: &properties,
 	}, nil
 }

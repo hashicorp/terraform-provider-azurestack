@@ -7,12 +7,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 type VirtualMachineScaleSetResource struct{}
@@ -728,7 +728,7 @@ func (VirtualMachineScaleSetResource) Destroy(ctx context.Context, client *clien
 		return nil, fmt.Errorf("Bad: waiting for deletion of %s: %+v", *id, err)
 	}
 
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (VirtualMachineScaleSetResource) hasLoadBalancer(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) error {
@@ -819,7 +819,7 @@ func (t VirtualMachineScaleSetResource) Exists(ctx context.Context, clients *cli
 		return nil, fmt.Errorf("retrieving Compute Virtual Machine Scale Set %q", id)
 	}
 
-	return utils.Bool(resp.ID != nil), nil
+	return pointer.FromBool(resp.ID != nil), nil
 }
 
 func (VirtualMachineScaleSetResource) basic(data acceptance.TestData) string {
@@ -4546,9 +4546,9 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   location            = azurestack_resource_group.test.location
   resource_group_name = azurestack_resource_group.test.name
 
-  upgrade_policy_mode  = "Rolling"
-  health_probe_id      = azurestack_lb_probe.test.id
-  depends_on           = [azurestack_lb_rule.test]
+  upgrade_policy_mode = "Rolling"
+  health_probe_id     = azurestack_lb_probe.test.id
+  depends_on          = [azurestack_lb_rule.test]
 
   rolling_upgrade_policy {
     max_batch_instance_percent              = 21

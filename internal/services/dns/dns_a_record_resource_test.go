@@ -6,12 +6,12 @@ import (
 	"testing"
 
 	"github.com/Azure/azure-sdk-for-go/services/dns/mgmt/2016-04-01/dns"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/dns/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 type TestAccDnsARecordResource struct{}
@@ -106,7 +106,7 @@ func (TestAccDnsARecordResource) Exists(ctx context.Context, clients *clients.Cl
 		return nil, fmt.Errorf("retrieving DNS A record %s (resource group: %s): %v", id.AName, id.ResourceGroup, err)
 	}
 
-	return utils.Bool(resp.RecordSetProperties != nil), nil
+	return pointer.FromBool(resp.RecordSetProperties != nil), nil
 }
 
 func (TestAccDnsARecordResource) basic(data acceptance.TestData) string {

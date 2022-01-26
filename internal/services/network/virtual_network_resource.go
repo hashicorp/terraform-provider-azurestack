@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -144,8 +145,8 @@ func virtualNetworkCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) err
 	}
 
 	vnet := network.VirtualNetwork{
-		Name:                           utils.String(id.Name),
-		Location:                       utils.String(location),
+		Name:                           pointer.FromString(id.Name),
+		Location:                       pointer.FromString(location),
 		VirtualNetworkPropertiesFormat: vnetProperties,
 		Tags:                           tags.Expand(t),
 	}
@@ -189,7 +190,7 @@ func virtualNetworkCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) err
 		return fmt.Errorf("waiting for provisioning state of %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 	return virtualNetworkRead(d, meta)
 }
 

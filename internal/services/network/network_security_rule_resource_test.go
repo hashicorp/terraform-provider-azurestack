@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/network/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
@@ -119,7 +120,7 @@ func (t NetworkSecurityRuleResource) Exists(ctx context.Context, clients *client
 		return nil, fmt.Errorf("reading %s: %+v", *id, err)
 	}
 
-	return utils.Bool(resp.ID != nil), nil
+	return pointer.FromBool(resp.ID != nil), nil
 }
 
 func (NetworkSecurityRuleResource) Destroy(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
@@ -139,7 +140,7 @@ func (NetworkSecurityRuleResource) Destroy(ctx context.Context, client *clients.
 		return nil, fmt.Errorf("waiting for Deletion on Network Security Rule: %+v", err)
 	}
 
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (NetworkSecurityRuleResource) basic(data acceptance.TestData) string {

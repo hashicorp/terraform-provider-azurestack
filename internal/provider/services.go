@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/loadbalancer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/network"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/resource"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/sdk"
 )
 
@@ -20,6 +21,7 @@ func SupportedUntypedServices() []sdk.UntypedServiceRegistration {
 		loadbalancer.Registration{},
 		network.Registration{},
 		resource.Registration{},
+		storage.Registration{},
 	}
 }
 

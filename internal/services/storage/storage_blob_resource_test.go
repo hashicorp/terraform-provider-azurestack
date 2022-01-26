@@ -7,18 +7,20 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
+
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
-	"github.com/tombuildsstuff/giovanni/storage/2019-12-12/blob/blobs"
+	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/blobs"
 )
 
 type StorageBlobResource struct{}
 
 func TestAccStorageBlob_disappears(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -30,7 +32,7 @@ func TestAccStorageBlob_disappears(t *testing.T) {
 }
 
 func TestAccStorageBlob_appendEmpty(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -44,23 +46,8 @@ func TestAccStorageBlob_appendEmpty(t *testing.T) {
 	})
 }
 
-func TestAccStorageBlob_appendEmptyMetaData(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
-	r := StorageBlobResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.appendEmptyMetaData(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("parallelism", "size", "type"),
-	})
-}
-
 func TestAccStorageBlob_blockEmpty(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -74,68 +61,8 @@ func TestAccStorageBlob_blockEmpty(t *testing.T) {
 	})
 }
 
-func TestAccStorageBlob_blockEmptyAzureADAuth(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
-	r := StorageBlobResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.blockEmptyAzureADAuth(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("parallelism", "size", "type"),
-	})
-}
-
-func TestAccStorageBlob_blockEmptyMetaData(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
-	r := StorageBlobResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.blockEmptyMetaData(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("parallelism", "size", "type"),
-	})
-}
-
-func TestAccStorageBlob_blockEmptyAccessTier(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
-	r := StorageBlobResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.blockEmptyAccessTier(data, blobs.Cool),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("access_tier").HasValue("Cool"),
-			),
-		},
-		data.ImportStep("parallelism", "size", "type"),
-		{
-			Config: r.blockEmptyAccessTier(data, blobs.Hot),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("access_tier").HasValue("Hot"),
-			),
-		},
-		{
-			Config: r.blockEmptyAccessTier(data, blobs.Cool),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("access_tier").HasValue("Cool"),
-			),
-		},
-	})
-}
-
 func TestAccStorageBlob_blockFromInlineContent(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -150,7 +77,7 @@ func TestAccStorageBlob_blockFromInlineContent(t *testing.T) {
 }
 
 func TestAccStorageBlob_blockFromPublicBlob(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -165,7 +92,7 @@ func TestAccStorageBlob_blockFromPublicBlob(t *testing.T) {
 }
 
 func TestAccStorageBlob_blockFromPublicFile(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -180,7 +107,7 @@ func TestAccStorageBlob_blockFromPublicFile(t *testing.T) {
 }
 
 func TestAccStorageBlob_blockFromExistingBlob(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -203,7 +130,7 @@ func TestAccStorageBlob_blockFromLocalFile(t *testing.T) {
 	if err := populateTempFile(sourceBlob); err != nil {
 		t.Fatalf("Error populating temp file: %s", err)
 	}
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -218,92 +145,8 @@ func TestAccStorageBlob_blockFromLocalFile(t *testing.T) {
 	})
 }
 
-func TestAccStorageBlob_blockFromLocalFileWithContentMd5(t *testing.T) {
-	sourceBlob, err := os.CreateTemp("", "")
-	if err != nil {
-		t.Fatalf("Failed to create local source blob file")
-	}
-
-	if err := populateTempFile(sourceBlob); err != nil {
-		t.Fatalf("Error populating temp file: %s", err)
-	}
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
-	r := StorageBlobResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.contentMd5ForLocalFile(data, sourceBlob.Name()),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("name").HasValue("example.vhd"),
-				acceptance.TestCheckResourceAttr(data.ResourceName, "source", sourceBlob.Name()),
-			),
-		},
-		data.ImportStep("parallelism", "size", "source", "type"),
-	})
-}
-
-func TestAccStorageBlob_cacheControl(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
-	r := StorageBlobResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.cacheControl(data, "no-cache"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("parallelism", "size", "type"),
-		{
-			Config: r.cacheControl(data, "max-age=3600"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("parallelism", "size", "type"),
-	})
-}
-
-func TestAccStorageBlob_contentType(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
-	r := StorageBlobResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.contentType(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("parallelism", "size", "type"),
-		{
-			Config: r.contentTypeUpdated(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("parallelism", "size", "type"),
-	})
-}
-
-func TestAccStorageBlob_contentTypePremium(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
-	r := StorageBlobResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.contentTypePremium(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("parallelism", "size", "type"),
-	})
-}
-
 func TestAccStorageBlob_pageEmpty(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -318,7 +161,7 @@ func TestAccStorageBlob_pageEmpty(t *testing.T) {
 }
 
 func TestAccStorageBlob_pageEmptyPremium(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -332,23 +175,8 @@ func TestAccStorageBlob_pageEmptyPremium(t *testing.T) {
 	})
 }
 
-func TestAccStorageBlob_pageEmptyMetaData(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
-	r := StorageBlobResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.pageEmptyMetaData(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("parallelism", "size", "type"),
-	})
-}
-
 func TestAccStorageBlob_pageFromExistingBlob(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -371,7 +199,7 @@ func TestAccStorageBlob_pageFromLocalFile(t *testing.T) {
 	if err := populateTempFile(sourceBlob); err != nil {
 		t.Fatalf("Error populating temp file: %s", err)
 	}
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -387,7 +215,7 @@ func TestAccStorageBlob_pageFromLocalFile(t *testing.T) {
 }
 
 func TestAccStorageBlob_requiresImport(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -398,28 +226,6 @@ func TestAccStorageBlob_requiresImport(t *testing.T) {
 			),
 		},
 		data.RequiresImportErrorStep(r.requiresImport),
-	})
-}
-
-func TestAccStorageBlob_update(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_blob", "test")
-	r := StorageBlobResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.update(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("parallelism", "size", "type"),
-		{
-			Config: r.updateUpdated(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("parallelism", "size", "type"),
 	})
 }
 
@@ -443,11 +249,11 @@ func (r StorageBlobResource) Exists(ctx context.Context, client *clients.Client,
 	resp, err := blobsClient.GetProperties(ctx, id.AccountName, id.ContainerName, id.BlobName, input)
 	if err != nil {
 		if utils.ResponseWasNotFound(resp.Response) {
-			return utils.Bool(false), nil
+			return pointer.FromBool(false), nil
 		}
 		return nil, fmt.Errorf("retrieving Blob %q (Container %q / Account %q): %+v", id.BlobName, id.ContainerName, id.AccountName, err)
 	}
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (r StorageBlobResource) Destroy(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
@@ -469,7 +275,7 @@ func (r StorageBlobResource) Destroy(ctx context.Context, client *clients.Client
 	if _, err := blobsClient.Delete(ctx, id.AccountName, id.ContainerName, id.BlobName, input); err != nil {
 		return nil, fmt.Errorf("deleting Blob %q (Container %q / Account %q): %+v", id.BlobName, id.ContainerName, id.AccountName, err)
 	}
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (r StorageBlobResource) blobMatchesFile(kind blobs.BlobType, filePath string) func(ctx context.Context, clients *clients.Client, state *pluginsdk.InstanceState) error {
@@ -528,35 +334,15 @@ func (r StorageBlobResource) blobMatchesFile(kind blobs.BlobType, filePath strin
 func (r StorageBlobResource) appendEmpty(data acceptance.TestData) string {
 	template := r.template(data, "private")
 	return fmt.Sprintf(`
-provider "azurerm" {}
+provider "azurestack" {}
 
 %s
 
-resource "azurerm_storage_blob" "test" {
+resource "azurestack_storage_blob" "test" {
   name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
   type                   = "Append"
-}
-`, template)
-}
-
-func (r StorageBlobResource) appendEmptyMetaData(data acceptance.TestData) string {
-	template := r.template(data, "private")
-	return fmt.Sprintf(`
-provider "azurerm" {}
-
-%s
-
-resource "azurerm_storage_blob" "test" {
-  name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
-  type                   = "Append"
-
-  metadata = {
-    hello = "world"
-  }
 }
 `, template)
 }
@@ -564,76 +350,17 @@ resource "azurerm_storage_blob" "test" {
 func (r StorageBlobResource) blockEmpty(data acceptance.TestData) string {
 	template := r.template(data, "private")
 	return fmt.Sprintf(`
-provider "azurerm" {}
+provider "azurestack" {}
 
 %s
 
-resource "azurerm_storage_blob" "test" {
+resource "azurestack_storage_blob" "test" {
   name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
   type                   = "Block"
 }
 `, template)
-}
-
-func (r StorageBlobResource) blockEmptyAzureADAuth(data acceptance.TestData) string {
-	template := r.template(data, "private")
-	return fmt.Sprintf(`
-provider "azurerm" {
-  storage_use_azuread = true
-}
-
-%s
-
-resource "azurerm_storage_blob" "test" {
-  name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
-  type                   = "Block"
-}
-`, template)
-}
-
-func (r StorageBlobResource) blockEmptyMetaData(data acceptance.TestData) string {
-	template := r.template(data, "private")
-	return fmt.Sprintf(`
-%s
-
-provider "azurerm" {
-  features {}
-}
-
-resource "azurerm_storage_blob" "test" {
-  name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
-  type                   = "Block"
-
-  metadata = {
-    hello = "world"
-  }
-}
-`, template)
-}
-
-func (r StorageBlobResource) blockEmptyAccessTier(data acceptance.TestData, accessTier blobs.AccessTier) string {
-	template := r.templateBlockBlobStorage(data, "private")
-	return fmt.Sprintf(`
-%s
-
-provider "azurerm" {
-  features {}
-}
-
-resource "azurerm_storage_blob" "test" {
-  name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
-  type                   = "Block"
-  access_tier            = "%s"
-}
-`, template, string(accessTier))
 }
 
 func (r StorageBlobResource) blockFromInlineContent(data acceptance.TestData) string {
@@ -641,14 +368,14 @@ func (r StorageBlobResource) blockFromInlineContent(data acceptance.TestData) st
 	return fmt.Sprintf(`
 %s
 
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_storage_blob" "test" {
+resource "azurestack_storage_blob" "test" {
   name                   = "rick.morty"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
   type                   = "Block"
   source_content         = "Wubba Lubba Dub Dub"
 }
@@ -660,32 +387,30 @@ func (r StorageBlobResource) blockFromPublicBlob(data acceptance.TestData) strin
 	return fmt.Sprintf(`
 %s
 
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_storage_blob" "source" {
+resource "azurestack_storage_blob" "source" {
   name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
   type                   = "Block"
   source_uri             = "http://old-releases.ubuntu.com/releases/bionic/ubuntu-18.04-desktop-amd64.iso"
-  content_type           = "application/x-iso9660-image"
 }
 
-resource "azurerm_storage_container" "second" {
+resource "azurestack_storage_container" "second" {
   name                  = "second"
-  storage_account_name  = azurerm_storage_account.test.name
+  storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "private"
 }
 
-resource "azurerm_storage_blob" "test" {
+resource "azurestack_storage_blob" "test" {
   name                   = "copied.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.second.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.second.name
   type                   = "Block"
-  source_uri             = azurerm_storage_blob.source.id
-  content_type           = azurerm_storage_blob.source.content_type
+  source_uri             = azurestack_storage_blob.source.id
 }
 `, template)
 }
@@ -695,17 +420,16 @@ func (r StorageBlobResource) blockFromPublicFile(data acceptance.TestData) strin
 	return fmt.Sprintf(`
 %s
 
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_storage_blob" "test" {
+resource "azurestack_storage_blob" "test" {
   name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
   type                   = "Block"
   source_uri             = "http://old-releases.ubuntu.com/releases/bionic/ubuntu-18.04-desktop-amd64.iso"
-  content_type           = "application/x-iso9660-image"
 }
 `, template)
 }
@@ -715,26 +439,24 @@ func (r StorageBlobResource) blockFromExistingBlob(data acceptance.TestData) str
 	return fmt.Sprintf(`
 %s
 
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_storage_blob" "source" {
+resource "azurestack_storage_blob" "source" {
   name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
   type                   = "Block"
   source_uri             = "http://old-releases.ubuntu.com/releases/bionic/ubuntu-18.04-desktop-amd64.iso"
-  content_type           = "application/x-iso9660-image"
 }
 
-resource "azurerm_storage_blob" "test" {
+resource "azurestack_storage_blob" "test" {
   name                   = "copied.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
   type                   = "Block"
-  source_uri             = azurerm_storage_blob.source.id
-  content_type           = azurerm_storage_blob.source.content_type
+  source_uri             = azurestack_storage_blob.source.id
 }
 `, template)
 }
@@ -744,98 +466,18 @@ func (r StorageBlobResource) blockFromLocalBlob(data acceptance.TestData, fileNa
 	return fmt.Sprintf(`
 %s
 
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_storage_blob" "test" {
+resource "azurestack_storage_blob" "test" {
   name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
   type                   = "Block"
   source                 = "%s"
 }
 `, template, fileName)
-}
-
-func (r StorageBlobResource) contentMd5ForLocalFile(data acceptance.TestData, fileName string) string {
-	template := r.template(data, "blob")
-	return fmt.Sprintf(`
-%s
-
-provider "azurerm" {
-  features {}
-}
-
-resource "azurerm_storage_blob" "test" {
-  name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
-  type                   = "Block"
-  source                 = "%s"
-  content_md5            = "${filemd5("%s")}"
-}
-`, template, fileName, fileName)
-}
-
-func (r StorageBlobResource) contentType(data acceptance.TestData) string {
-	template := r.template(data, "private")
-	return fmt.Sprintf(`
-%s
-
-provider "azurerm" {
-  features {}
-}
-
-resource "azurerm_storage_blob" "test" {
-  name                   = "example.ext"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
-  type                   = "Page"
-  size                   = 5120
-  content_type           = "image/png"
-}
-`, template)
-}
-
-func (r StorageBlobResource) contentTypePremium(data acceptance.TestData) string {
-	template := r.templatePremium(data, "private")
-	return fmt.Sprintf(`
-%s
-
-provider "azurerm" {
-  features {}
-}
-
-resource "azurerm_storage_blob" "test" {
-  name                   = "example.ext"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
-  type                   = "Page"
-  size                   = 5120
-  content_type           = "image/png"
-}
-`, template)
-}
-
-func (r StorageBlobResource) contentTypeUpdated(data acceptance.TestData) string {
-	template := r.template(data, "private")
-	return fmt.Sprintf(`
-%s
-
-provider "azurerm" {
-  features {}
-}
-
-resource "azurerm_storage_blob" "test" {
-  name                   = "example.ext"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
-  type                   = "Page"
-  size                   = 5120
-  content_type           = "image/gif"
-}
-`, template)
 }
 
 func (r StorageBlobResource) pageEmpty(data acceptance.TestData) string {
@@ -843,14 +485,14 @@ func (r StorageBlobResource) pageEmpty(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_storage_blob" "test" {
+resource "azurestack_storage_blob" "test" {
   name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
   type                   = "Page"
   size                   = 5120
 }
@@ -862,39 +504,16 @@ func (r StorageBlobResource) pageEmptyPremium(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_storage_blob" "test" {
+resource "azurestack_storage_blob" "test" {
   name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
   type                   = "Page"
   size                   = 5120
-}
-`, template)
-}
-
-func (r StorageBlobResource) pageEmptyMetaData(data acceptance.TestData) string {
-	template := r.template(data, "private")
-	return fmt.Sprintf(`
-%s
-
-provider "azurerm" {
-  features {}
-}
-
-resource "azurerm_storage_blob" "test" {
-  name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
-  type                   = "Page"
-  size                   = 5120
-
-  metadata = {
-    hello = "world"
-  }
 }
 `, template)
 }
@@ -904,26 +523,24 @@ func (r StorageBlobResource) pageFromExistingBlob(data acceptance.TestData) stri
 	return fmt.Sprintf(`
 %s
 
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_storage_blob" "source" {
+resource "azurestack_storage_blob" "source" {
   name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
   type                   = "Page"
   size                   = 5120
-  content_type           = "application/x-iso9660-image"
 }
 
-resource "azurerm_storage_blob" "test" {
+resource "azurestack_storage_blob" "test" {
   name                   = "copied.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
   type                   = "Page"
-  source_uri             = azurerm_storage_blob.source.id
-  content_type           = azurerm_storage_blob.source.content_type
+  source_uri             = azurestack_storage_blob.source.id
 }
 `, template)
 }
@@ -933,14 +550,14 @@ func (r StorageBlobResource) pageFromLocalBlob(data acceptance.TestData, fileNam
 	return fmt.Sprintf(`
 %s
 
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_storage_blob" "test" {
+resource "azurestack_storage_blob" "test" {
   name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
+  storage_account_name   = azurestack_storage_account.test.name
+  storage_container_name = azurestack_storage_container.test.name
   type                   = "Page"
   source                 = "%s"
 }
@@ -952,128 +569,34 @@ func (r StorageBlobResource) requiresImport(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_storage_blob" "import" {
-  name                   = azurerm_storage_blob.test.name
-  storage_account_name   = azurerm_storage_blob.test.storage_account_name
-  storage_container_name = azurerm_storage_blob.test.storage_container_name
-  type                   = azurerm_storage_blob.test.type
-  size                   = azurerm_storage_blob.test.size
+resource "azurestack_storage_blob" "import" {
+  name                   = azurestack_storage_blob.test.name
+  storage_account_name   = azurestack_storage_blob.test.storage_account_name
+  storage_container_name = azurestack_storage_blob.test.storage_container_name
+  type                   = azurestack_storage_blob.test.type
+  size                   = azurestack_storage_blob.test.size
 }
 `, template)
-}
-
-func (r StorageBlobResource) update(data acceptance.TestData) string {
-	template := r.template(data, "private")
-	return fmt.Sprintf(`
-%s
-
-provider "azurerm" {
-  features {}
-}
-
-resource "azurerm_storage_blob" "test" {
-  name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
-  type                   = "Block"
-  size                   = 5120
-  content_type           = "vnd/panda+pops"
-  metadata = {
-    hello = "world"
-  }
-}
-`, template)
-}
-
-func (r StorageBlobResource) updateUpdated(data acceptance.TestData) string {
-	template := r.template(data, "private")
-	return fmt.Sprintf(`
-%s
-
-provider "azurerm" {
-  features {}
-}
-
-resource "azurerm_storage_blob" "test" {
-  name                   = "example.vhd"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
-  type                   = "Block"
-  size                   = 5120
-  content_type           = "vnd/mountain-mover-3000"
-  metadata = {
-    hello = "world"
-    panda = "pops"
-  }
-}
-`, template)
-}
-
-func (r StorageBlobResource) cacheControl(data acceptance.TestData, cacheControl string) string {
-	template := r.template(data, "private")
-	return fmt.Sprintf(`
-%s
-
-provider "azurerm" {
-  features {}
-}
-
-resource "azurerm_storage_blob" "test" {
-  name                   = "example.ext"
-  storage_account_name   = azurerm_storage_account.test.name
-  storage_container_name = azurerm_storage_container.test.name
-  type                   = "Page"
-  size                   = 5120
-  content_type           = "image/png"
-  cache_control          = "%s"
-}
-`, template, cacheControl)
 }
 
 func (r StorageBlobResource) template(data acceptance.TestData, accessLevel string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_storage_account" "test" {
+resource "azurestack_storage_account" "test" {
   name                     = "acctestacc%s"
-  resource_group_name      = azurerm_resource_group.test.name
-  location                 = azurerm_resource_group.test.location
+  resource_group_name      = azurestack_resource_group.test.name
+  location                 = azurestack_resource_group.test.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-  allow_blob_public_access = true
 }
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
   name                  = "test"
-  storage_account_name  = azurerm_storage_account.test.name
-  container_access_type = "%s"
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomString, accessLevel)
-}
-
-func (r StorageBlobResource) templateBlockBlobStorage(data acceptance.TestData, accessLevel string) string {
-	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurerm_storage_account" "test" {
-  name                     = "acctestacc%s"
-  resource_group_name      = azurerm_resource_group.test.name
-  location                 = azurerm_resource_group.test.location
-  account_kind             = "StorageV2"
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  allow_blob_public_access = true
-}
-
-resource "azurerm_storage_container" "test" {
-  name                  = "test"
-  storage_account_name  = azurerm_storage_account.test.name
+  storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "%s"
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomString, accessLevel)
@@ -1081,23 +604,22 @@ resource "azurerm_storage_container" "test" {
 
 func (r StorageBlobResource) templatePremium(data acceptance.TestData, accessLevel string) string {
 	return fmt.Sprintf(`
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_storage_account" "test" {
+resource "azurestack_storage_account" "test" {
   name                     = "acctestacc%s"
-  resource_group_name      = azurerm_resource_group.test.name
-  location                 = azurerm_resource_group.test.location
+  resource_group_name      = azurestack_resource_group.test.name
+  location                 = azurestack_resource_group.test.location
   account_tier             = "Premium"
   account_replication_type = "LRS"
-  allow_blob_public_access = true
 }
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
   name                  = "test"
-  storage_account_name  = azurerm_storage_account.test.name
+  storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "%s"
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomString, accessLevel)

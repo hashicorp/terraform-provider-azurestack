@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -296,7 +297,7 @@ func virtualNetworkGatewayConnectionCreateUpdate(d *pluginsdk.ResourceData, meta
 		}
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return virtualNetworkGatewayConnectionRead(d, meta)
 }
@@ -404,8 +405,8 @@ func getVirtualNetworkGatewayConnectionProperties(d *pluginsdk.ResourceData) (*n
 
 	props := &network.VirtualNetworkGatewayConnectionPropertiesFormat{
 		ConnectionType:                 connectionType,
-		EnableBgp:                      utils.Bool(d.Get("enable_bgp").(bool)),
-		UsePolicyBasedTrafficSelectors: utils.Bool(d.Get("use_policy_based_traffic_selectors").(bool)),
+		EnableBgp:                      pointer.FromBool(d.Get("enable_bgp").(bool)),
+		UsePolicyBasedTrafficSelectors: pointer.FromBool(d.Get("use_policy_based_traffic_selectors").(bool)),
 	}
 
 	if v, ok := d.GetOk("virtual_network_gateway_id"); ok {
@@ -443,7 +444,7 @@ func getVirtualNetworkGatewayConnectionProperties(d *pluginsdk.ResourceData) (*n
 			return nil, err
 		}
 		props.VirtualNetworkGateway2 = &network.VirtualNetworkGateway{
-			ID:   utils.String(gwid.ID()),
+			ID:   pointer.FromString(gwid.ID()),
 			Name: &gwid.Name,
 			VirtualNetworkGatewayPropertiesFormat: &network.VirtualNetworkGatewayPropertiesFormat{
 				IPConfigurations: &[]network.VirtualNetworkGatewayIPConfiguration{},
@@ -473,7 +474,7 @@ func getVirtualNetworkGatewayConnectionProperties(d *pluginsdk.ResourceData) (*n
 	}
 
 	if v, ok := d.GetOk("shared_key"); ok {
-		props.SharedKey = utils.String(v.(string))
+		props.SharedKey = pointer.FromString(v.(string))
 	}
 
 	if v, ok := d.GetOk("ipsec_policy"); ok {

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
@@ -142,18 +143,18 @@ func virtualMachineScaleSetExtensionCreate(d *pluginsdk.ResourceData, meta inter
 	}
 
 	props := compute.VirtualMachineScaleSetExtension{
-		Name: utils.String(id.ExtensionName),
+		Name: pointer.FromString(id.ExtensionName),
 		VirtualMachineScaleSetExtensionProperties: &compute.VirtualMachineScaleSetExtensionProperties{
-			Publisher:               utils.String(d.Get("publisher").(string)),
-			Type:                    utils.String(d.Get("type").(string)),
-			TypeHandlerVersion:      utils.String(d.Get("type_handler_version").(string)),
-			AutoUpgradeMinorVersion: utils.Bool(d.Get("auto_upgrade_minor_version").(bool)),
+			Publisher:               pointer.FromString(d.Get("publisher").(string)),
+			Type:                    pointer.FromString(d.Get("type").(string)),
+			TypeHandlerVersion:      pointer.FromString(d.Get("type_handler_version").(string)),
+			AutoUpgradeMinorVersion: pointer.FromBool(d.Get("auto_upgrade_minor_version").(bool)),
 			ProtectedSettings:       protectedSettings,
 			Settings:                settings,
 		},
 	}
 	if v, ok := d.GetOk("force_update_tag"); ok {
-		props.VirtualMachineScaleSetExtensionProperties.ForceUpdateTag = utils.String(v.(string))
+		props.VirtualMachineScaleSetExtensionProperties.ForceUpdateTag = pointer.FromString(v.(string))
 	}
 
 	future, err := client.CreateOrUpdate(ctx, id.ResourceGroup, id.VirtualMachineScaleSetName, id.ExtensionName, props)
@@ -165,7 +166,7 @@ func virtualMachineScaleSetExtensionCreate(d *pluginsdk.ResourceData, meta inter
 		return fmt.Errorf("waiting for creation of %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return virtualMachineScaleSetExtensionRead(d, meta)
 }
@@ -182,11 +183,11 @@ func virtualMachineScaleSetExtensionUpdate(d *pluginsdk.ResourceData, meta inter
 
 	props := compute.VirtualMachineScaleSetExtensionProperties{
 		// if this isn't specified it defaults to false
-		AutoUpgradeMinorVersion: utils.Bool(d.Get("auto_upgrade_minor_version").(bool)),
+		AutoUpgradeMinorVersion: pointer.FromBool(d.Get("auto_upgrade_minor_version").(bool)),
 	}
 
 	if d.HasChange("force_update_tag") {
-		props.ForceUpdateTag = utils.String(d.Get("force_update_tag").(string))
+		props.ForceUpdateTag = pointer.FromString(d.Get("force_update_tag").(string))
 	}
 
 	if d.HasChange("protected_settings") {
@@ -203,7 +204,7 @@ func virtualMachineScaleSetExtensionUpdate(d *pluginsdk.ResourceData, meta inter
 	}
 
 	if d.HasChange("publisher") {
-		props.Publisher = utils.String(d.Get("publisher").(string))
+		props.Publisher = pointer.FromString(d.Get("publisher").(string))
 	}
 
 	if d.HasChange("settings") {
@@ -221,15 +222,15 @@ func virtualMachineScaleSetExtensionUpdate(d *pluginsdk.ResourceData, meta inter
 	}
 
 	if d.HasChange("type") {
-		props.Type = utils.String(d.Get("type").(string))
+		props.Type = pointer.FromString(d.Get("type").(string))
 	}
 
 	if d.HasChange("type_handler_version") {
-		props.TypeHandlerVersion = utils.String(d.Get("type_handler_version").(string))
+		props.TypeHandlerVersion = pointer.FromString(d.Get("type_handler_version").(string))
 	}
 
 	extension := compute.VirtualMachineScaleSetExtension{
-		Name: utils.String(id.ExtensionName),
+		Name: pointer.FromString(id.ExtensionName),
 		VirtualMachineScaleSetExtensionProperties: &props,
 	}
 	future, err := client.CreateOrUpdate(ctx, id.ResourceGroup, id.VirtualMachineScaleSetName, id.ExtensionName, extension)

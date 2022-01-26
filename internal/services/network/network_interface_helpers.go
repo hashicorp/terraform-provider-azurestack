@@ -2,7 +2,7 @@ package network
 
 import (
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 )
 
 type networkInterfaceUpdateInformation struct {
@@ -90,28 +90,28 @@ func mapFieldsToNetworkInterface(input *[]network.InterfaceIPConfiguration, info
 	applicationSecurityGroups := make([]network.ApplicationSecurityGroup, 0)
 	for _, id := range info.applicationSecurityGroupIDs {
 		applicationSecurityGroups = append(applicationSecurityGroups, network.ApplicationSecurityGroup{
-			ID: utils.String(id),
+			ID: pointer.FromString(id),
 		})
 	}
 
 	applicationGatewayBackendAddressPools := make([]network.ApplicationGatewayBackendAddressPool, 0)
 	for _, id := range info.applicationGatewayBackendAddressPoolIDs {
 		applicationGatewayBackendAddressPools = append(applicationGatewayBackendAddressPools, network.ApplicationGatewayBackendAddressPool{
-			ID: utils.String(id),
+			ID: pointer.FromString(id),
 		})
 	}
 
 	loadBalancerBackendAddressPools := make([]network.BackendAddressPool, 0)
 	for _, id := range info.loadBalancerBackendAddressPoolIDs {
 		loadBalancerBackendAddressPools = append(loadBalancerBackendAddressPools, network.BackendAddressPool{
-			ID: utils.String(id),
+			ID: pointer.FromString(id),
 		})
 	}
 
 	loadBalancerInboundNatRules := make([]network.InboundNatRule, 0)
 	for _, id := range info.loadBalancerInboundNatRuleIDs {
 		loadBalancerInboundNatRules = append(loadBalancerInboundNatRules, network.InboundNatRule{
-			ID: utils.String(id),
+			ID: pointer.FromString(id),
 		})
 	}
 

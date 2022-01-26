@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/loadbalancer/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
@@ -188,13 +189,13 @@ func (r LoadBalancerRule) Exists(ctx context.Context, client *clients.Client, st
 	rule, err := client.LoadBalancer.LoadBalancingRulesClient.Get(ctx, id.ResourceGroup, id.LoadBalancerName, id.Name)
 	if err != nil {
 		if utils.ResponseWasNotFound(rule.Response) {
-			return utils.Bool(false), nil
+			return pointer.FromBool(false), nil
 		}
 
 		return nil, fmt.Errorf("retrieving %s: %+v", id, err)
 	}
 
-	return utils.Bool(rule.ID != nil), nil
+	return pointer.FromBool(rule.ID != nil), nil
 }
 
 func (r LoadBalancerRule) Destroy(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
@@ -232,7 +233,7 @@ func (r LoadBalancerRule) Destroy(ctx context.Context, client *clients.Client, s
 		return nil, fmt.Errorf("waiting for update of Load Balancer %q (Resource Group %q): %+v", id.LoadBalancerName, id.ResourceGroup, err)
 	}
 
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (r LoadBalancerRule) template(data acceptance.TestData, sku string) string {
@@ -432,7 +433,7 @@ resource "azurestack_subnet" "test" {
   name                 = "acctest-lb-subnet-%[2]d"
   resource_group_name  = azurestack_resource_group.test.name
   virtual_network_name = azurestack_virtual_network.test.name
-  address_prefixes     = ["10.0.1.0/24"]
+  address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_linux_virtual_machine_scale_set" "test" {

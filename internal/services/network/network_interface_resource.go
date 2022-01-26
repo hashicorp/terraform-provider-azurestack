@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -265,7 +266,7 @@ func networkInterfaceCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 		}
 
 		if hasNameLabel {
-			dnsSettings.InternalDNSNameLabel = utils.String(nameLabel.(string))
+			dnsSettings.InternalDNSNameLabel = pointer.FromString(nameLabel.(string))
 		}
 
 		properties.DNSSettings = &dnsSettings
@@ -289,8 +290,8 @@ func networkInterfaceCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 	}
 
 	iface := network.Interface{
-		Name:                      utils.String(id.Name),
-		Location:                  utils.String(location),
+		Name:                      pointer.FromString(id.Name),
+		Location:                  pointer.FromString(location),
 		InterfacePropertiesFormat: &properties,
 		Tags:                      tags.Expand(t),
 	}
@@ -304,7 +305,7 @@ func networkInterfaceCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 		return fmt.Errorf("waiting for creation of %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 	return networkInterfaceRead(d, meta)
 }
 
@@ -336,10 +337,10 @@ func networkInterfaceUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 
 	location := location.Normalize(d.Get("location").(string))
 	update := network.Interface{
-		Name:     utils.String(id.Name),
-		Location: utils.String(location),
+		Name:     pointer.FromString(id.Name),
+		Location: pointer.FromString(location),
 		InterfacePropertiesFormat: &network.InterfacePropertiesFormat{
-			EnableAcceleratedNetworking: utils.Bool(d.Get("enable_accelerated_networking").(bool)),
+			EnableAcceleratedNetworking: pointer.FromBool(d.Get("enable_accelerated_networking").(bool)),
 			DNSSettings:                 &network.InterfaceDNSSettings{},
 		},
 	}
@@ -354,13 +355,13 @@ func networkInterfaceUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	}
 
 	if d.HasChange("enable_ip_forwarding") {
-		update.InterfacePropertiesFormat.EnableIPForwarding = utils.Bool(d.Get("enable_ip_forwarding").(bool))
+		update.InterfacePropertiesFormat.EnableIPForwarding = pointer.FromBool(d.Get("enable_ip_forwarding").(bool))
 	} else {
 		update.InterfacePropertiesFormat.EnableIPForwarding = existing.InterfacePropertiesFormat.EnableIPForwarding
 	}
 
 	if d.HasChange("internal_dns_name_label") {
-		update.InterfacePropertiesFormat.DNSSettings.InternalDNSNameLabel = utils.String(d.Get("internal_dns_name_label").(string))
+		update.InterfacePropertiesFormat.DNSSettings.InternalDNSNameLabel = pointer.FromString(d.Get("internal_dns_name_label").(string))
 	} else {
 		update.InterfacePropertiesFormat.DNSSettings.InternalDNSNameLabel = existing.InterfacePropertiesFormat.DNSSettings.InternalDNSNameLabel
 	}
@@ -587,7 +588,7 @@ func expandNetworkInterfaceIPConfigurations(input []interface{}) (*[]network.Int
 		}
 
 		if v, ok := data["primary"]; ok {
-			properties.Primary = utils.Bool(v.(bool))
+			properties.Primary = pointer.FromBool(v.(bool))
 		}
 
 		name := data["name"].(string)

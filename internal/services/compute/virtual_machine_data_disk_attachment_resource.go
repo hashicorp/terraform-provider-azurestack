@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceid"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -131,15 +132,15 @@ func virtualMachineDataDiskAttachmentCreateUpdate(d *pluginsdk.ResourceData, met
 	writeAcceleratorEnabled := d.Get("write_accelerator_enabled").(bool)
 
 	expandedDisk := compute.DataDisk{
-		Name:         utils.String(name),
+		Name:         pointer.FromString(name),
 		Caching:      compute.CachingTypes(caching),
 		CreateOption: createOption,
 		Lun:          utils.Int32(lun),
 		ManagedDisk: &compute.ManagedDiskParameters{
-			ID:                 utils.String(managedDiskId),
+			ID:                 pointer.FromString(managedDiskId),
 			StorageAccountType: managedDisk.Sku.Name,
 		},
-		WriteAcceleratorEnabled: utils.Bool(writeAcceleratorEnabled),
+		WriteAcceleratorEnabled: pointer.FromBool(writeAcceleratorEnabled),
 	}
 
 	disks := *virtualMachine.StorageProfile.DataDisks

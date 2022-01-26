@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
@@ -74,7 +75,7 @@ func resourceApplicationSecurityGroupCreateUpdate(d *pluginsdk.ResourceData, met
 	t := d.Get("tags").(map[string]interface{})
 
 	securityGroup := network.ApplicationSecurityGroup{
-		Location: utils.String(location.Normalize(d.Get("location").(string))),
+		Location: pointer.FromString(location.Normalize(d.Get("location").(string))),
 		Tags:     tags.Expand(t),
 	}
 	future, err := client.CreateOrUpdate(ctx, id.ResourceGroup, id.Name, securityGroup)
@@ -86,7 +87,7 @@ func resourceApplicationSecurityGroupCreateUpdate(d *pluginsdk.ResourceData, met
 		return fmt.Errorf("waiting for the creation of %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 	return resourceApplicationSecurityGroupRead(d, meta)
 }
 

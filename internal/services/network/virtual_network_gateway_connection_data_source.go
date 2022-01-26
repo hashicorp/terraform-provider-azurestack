@@ -163,7 +163,7 @@ func virtualNetworkGatewayConnectionDataSourceRead(d *pluginsdk.ResourceData, me
 		return fmt.Errorf("making Read request on %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	d.Set("name", resp.Name)
 	d.Set("resource_group_name", id.ResourceGroup)

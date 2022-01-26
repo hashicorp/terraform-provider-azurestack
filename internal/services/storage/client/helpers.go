@@ -112,7 +112,7 @@ func populateAccountDetails(accountName string, props storage.Account) (*account
 	}
 
 	accountId := *props.ID
-	id, err := parse.StorageAccountID(accountId)
+	id, err := parse.StorageAccountIDInsensitively(accountId)
 	if err != nil {
 		return nil, fmt.Errorf("parsing %q as a Resource ID: %+v", accountId, err)
 	}

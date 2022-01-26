@@ -90,7 +90,7 @@ func virtualNetworkDataSourceRead(d *pluginsdk.ResourceData, meta interface{}) e
 		return fmt.Errorf("retrieving %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 	d.Set("location", location.NormalizeNilable(resp.Location))
 
 	if props := resp.VirtualNetworkPropertiesFormat; props != nil {

@@ -6,12 +6,12 @@ import (
 	"testing"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 type VirtualMachineDataDiskAttachmentResource struct{}
@@ -213,7 +213,7 @@ func (t VirtualMachineDataDiskAttachmentResource) Exists(ctx context.Context, cl
 		}
 	}
 
-	return utils.Bool(disk != nil), nil
+	return pointer.FromBool(disk != nil), nil
 }
 
 func (VirtualMachineDataDiskAttachmentResource) Destroy(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
@@ -252,7 +252,7 @@ func (VirtualMachineDataDiskAttachmentResource) Destroy(ctx context.Context, cli
 		return nil, fmt.Errorf("waiting for Virtual Machine %q: %+v", id, err)
 	}
 
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (r VirtualMachineDataDiskAttachmentResource) basic(data acceptance.TestData) string {

@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 )
 
-func TestAccAzureRMDataSourceLoadBalancer_basic(t *testing.T) {
+func TestAccDataSourceLoadBalancer_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_lb", "test")
 	d := LoadBalancer{}
 

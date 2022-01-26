@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
@@ -134,7 +135,7 @@ func (AvailabilitySetResource) Exists(ctx context.Context, clients *clients.Clie
 		return nil, fmt.Errorf("retrieving Compute Availability Set %q", id.String())
 	}
 
-	return utils.Bool(resp.ID != nil), nil
+	return pointer.FromBool(resp.ID != nil), nil
 }
 
 func (AvailabilitySetResource) Destroy(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
@@ -150,7 +151,7 @@ func (AvailabilitySetResource) Destroy(ctx context.Context, client *clients.Clie
 		}
 	}
 
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (AvailabilitySetResource) basic(data acceptance.TestData) string {

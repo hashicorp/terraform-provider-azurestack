@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -182,8 +183,8 @@ func resourceManagedDiskCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 			return fmt.Errorf("`storage_account_id` must be specified when `create_option` is set to `Import`")
 		}
 
-		props.CreationData.StorageAccountID = utils.String(storageAccountId)
-		props.CreationData.SourceURI = utils.String(sourceUri)
+		props.CreationData.StorageAccountID = pointer.FromString(storageAccountId)
+		props.CreationData.SourceURI = pointer.FromString(sourceUri)
 	}
 	if createOption == compute.Copy {
 		sourceResourceId := d.Get("source_resource_id").(string)
@@ -191,12 +192,12 @@ func resourceManagedDiskCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 			return fmt.Errorf("`source_resource_id` must be specified when `create_option` is set to `Copy` or `Restore`")
 		}
 
-		props.CreationData.SourceResourceID = utils.String(sourceResourceId)
+		props.CreationData.SourceResourceID = pointer.FromString(sourceResourceId)
 	}
 	if createOption == compute.FromImage {
 		if imageReferenceId := d.Get("image_reference_id").(string); imageReferenceId != "" {
 			props.CreationData.ImageReference = &compute.ImageDiskReference{
-				ID: utils.String(imageReferenceId),
+				ID: pointer.FromString(imageReferenceId),
 			}
 		} else {
 			return fmt.Errorf("`image_reference_id` must be specified when `create_option` is set to `FromImage`")
@@ -231,7 +232,7 @@ func resourceManagedDiskCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 		return fmt.Errorf("reading Managed Disk %s (Resource Group %q): ID was nil", name, resourceGroup)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return resourceManagedDiskRead(d, meta)
 }

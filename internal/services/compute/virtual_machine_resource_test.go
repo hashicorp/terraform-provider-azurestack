@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/tombuildsstuff/giovanni/storage/2019-12-12/blob/blobs"
-
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
+	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/blobs"
 )
 
 type VirtualMachineResource struct{}
@@ -42,7 +42,7 @@ func (VirtualMachineResource) Exists(ctx context.Context, clients *clients.Clien
 		return nil, fmt.Errorf("retrieving Compute Virtual Machine %q", id)
 	}
 
-	return utils.Bool(resp.ID != nil), nil
+	return pointer.FromBool(resp.ID != nil), nil
 }
 
 func (VirtualMachineResource) managedDiskExists(diskId *string, shouldExist bool) acceptance.ClientCheckFunc {
@@ -192,7 +192,7 @@ func (VirtualMachineResource) Destroy(ctx context.Context, client *clients.Clien
 		return nil, fmt.Errorf("Bad: Delete on vmClient: %+v", err)
 	}
 
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (VirtualMachineResource) winTimeZone(data acceptance.TestData) string {

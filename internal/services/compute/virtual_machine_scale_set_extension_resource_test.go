@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 type VirtualMachineScaleSetExtensionResource struct{}
@@ -154,7 +154,7 @@ func (t VirtualMachineScaleSetExtensionResource) Exists(ctx context.Context, cli
 		return nil, fmt.Errorf("retrieving Compute Virtual Machine Scale Set Extension %q", id.String())
 	}
 
-	return utils.Bool(resp.ID != nil), nil
+	return pointer.FromBool(resp.ID != nil), nil
 }
 
 func (r VirtualMachineScaleSetExtensionResource) basicLinux(data acceptance.TestData) string {

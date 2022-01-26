@@ -9,7 +9,6 @@ func TestInboundNatRuleID(t *testing.T) {
 		Input string
 		Valid bool
 	}{
-
 		{
 			// empty
 			Input: "",

@@ -168,7 +168,7 @@ func virtualMachineExtensionsCreateUpdate(d *pluginsdk.ResourceData, meta interf
 		return err
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return virtualMachineExtensionsRead(d, meta)
 }

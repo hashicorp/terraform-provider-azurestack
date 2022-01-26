@@ -5,23 +5,22 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/Azure/go-autorest/autorest"
-	"github.com/Azure/go-autorest/autorest/azure"
-	"github.com/tombuildsstuff/giovanni/storage/2019-12-12/blob/blobs"
-	"github.com/tombuildsstuff/giovanni/storage/2019-12-12/blob/containers"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/shim"
 
-	"github.com/hashicorp/terraform-provider-azurestack/internal/common"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
-
-	// todo switch what we can to github.com/tombuildsstuff/giovanni
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/storage/mgmt/storage"
 	mainStorage "github.com/Azure/azure-sdk-for-go/storage"
+	"github.com/Azure/go-autorest/autorest"
+	"github.com/Azure/go-autorest/autorest/azure"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/common"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
+	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/blobs"
+	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/containers"
 )
 
 type Client struct {
 	AccountsClient *storage.AccountsClient
 
-	env      azure.Environment
+	Env      azure.Environment
 	endpoint string
 }
 
@@ -32,7 +31,7 @@ func NewClient(options *common.ClientOptions) *Client {
 	client := Client{
 		AccountsClient: &accountsClient,
 		endpoint:       options.ResourceManagerEndpoint,
-		env:            options.Environment,
+		Env:            options.Environment,
 	}
 
 	return &client
@@ -54,12 +53,12 @@ func (client Client) BlobsClient(ctx context.Context, account accountDetails) (*
 		return nil, fmt.Errorf("building Authorizer: %+v", err)
 	}
 
-	blobsClient := blobs.NewWithEnvironment(client.env)
+	blobsClient := blobs.NewWithEnvironment(client.Env)
 	blobsClient.Client.Authorizer = storageAuth
 	return &blobsClient, nil
 }
 
-func (client Client) ContainersClient(ctx context.Context, account accountDetails) (*containers.Client, error) {
+func (client Client) ContainersClient(ctx context.Context, account accountDetails) (shim.StorageContainerWrapper, error) {
 	accountKey, err := account.AccountKey(ctx, client)
 	if err != nil {
 		return nil, fmt.Errorf("retrieving Account Key: %s", err)
@@ -70,10 +69,11 @@ func (client Client) ContainersClient(ctx context.Context, account accountDetail
 		return nil, fmt.Errorf("building Authorizer: %+v", err)
 	}
 
-	containersClient := containers.NewWithEnvironment(client.env)
+	containersClient := containers.NewWithEnvironment(client.Env)
 	containersClient.Client.Authorizer = storageAuth
 
-	return &containersClient, nil
+	shim := shim.NewDataPlaneStorageContainerWrapper(&containersClient)
+	return shim, nil
 }
 
 func (client Client) GetKeyForStorageAccount(ctx context.Context, resourceGroupName, storageAccountName string) (string, bool, error) {
@@ -130,7 +130,7 @@ func (client Client) GetBlobStorageClientForStorageAccount(ctx context.Context, 
 		return nil, false, nil
 	}
 
-	storageClient, err := mainStorage.NewClient(storageAccountName, key, client.endpoint,
+	storageClient, err := mainStorage.NewClient(storageAccountName, key, client.Env.StorageEndpointSuffix,
 		"2016-05-31", true)
 	if err != nil {
 		return nil, true, fmt.Errorf("creating storage client for storage account %q: %s", storageAccountName, err)

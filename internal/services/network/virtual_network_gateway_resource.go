@@ -312,7 +312,7 @@ func virtualNetworkGatewayCreateUpdate(d *pluginsdk.ResourceData, meta interface
 		return fmt.Errorf("waiting for completion of %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return virtualNetworkGatewayRead(d, meta)
 }

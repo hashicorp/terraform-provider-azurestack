@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 type VirtualNetworkGatewayConnectionResource struct{}
@@ -134,7 +134,7 @@ func (t VirtualNetworkGatewayConnectionResource) Exists(ctx context.Context, cli
 		return nil, fmt.Errorf("reading Virtual Network Gateway Connection (%s): %+v", state.ID, err)
 	}
 
-	return utils.Bool(resp.ID != nil), nil
+	return pointer.FromBool(resp.ID != nil), nil
 }
 
 func (VirtualNetworkGatewayConnectionResource) sitetosite(data acceptance.TestData) string {

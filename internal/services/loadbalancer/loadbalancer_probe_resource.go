@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -159,7 +160,7 @@ func loadBalancerProbeCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) 
 		return fmt.Errorf("waiting for update of Load Balancer %q (Resource Group %q) for Probe %q: %+v", id.LoadBalancerName, id.ResourceGroup, id.ProbeName, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return loadBalancerProbeRead(d, meta)
 }
@@ -289,11 +290,11 @@ func expandazurestackLoadBalancerProbe(d *pluginsdk.ResourceData) *network.Probe
 	}
 
 	if v, ok := d.GetOk("request_path"); ok {
-		properties.RequestPath = utils.String(v.(string))
+		properties.RequestPath = pointer.FromString(v.(string))
 	}
 
 	return &network.Probe{
-		Name:                  utils.String(d.Get("name").(string)),
+		Name:                  pointer.FromString(d.Get("name").(string)),
 		ProbePropertiesFormat: &properties,
 	}
 }

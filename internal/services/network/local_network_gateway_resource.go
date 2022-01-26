@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
@@ -148,7 +149,7 @@ func localNetworkGatewayCreateUpdate(d *pluginsdk.ResourceData, meta interface{}
 		return fmt.Errorf("waiting for completion of %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return localNetworkGatewayRead(d, meta)
 }
@@ -233,8 +234,8 @@ func expandLocalNetworkGatewayBGPSettings(d *pluginsdk.ResourceData) *network.Bg
 	setting := settings[0].(map[string]interface{})
 
 	bgpSettings := network.BgpSettings{
-		Asn:               utils.Int64(int64(setting["asn"].(int))),
-		BgpPeeringAddress: utils.String(setting["bgp_peering_address"].(string)),
+		Asn:               pointer.FromInt64(int64(setting["asn"].(int))),
+		BgpPeeringAddress: pointer.FromString(setting["bgp_peering_address"].(string)),
 		PeerWeight:        utils.Int32(int32(setting["peer_weight"].(int))),
 	}
 

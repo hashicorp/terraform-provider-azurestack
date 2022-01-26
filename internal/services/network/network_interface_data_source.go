@@ -180,7 +180,7 @@ func networkInterfaceDataSourceRead(d *pluginsdk.ResourceData, meta interface{})
 		return fmt.Errorf("retrieving %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	d.Set("name", id.Name)
 	d.Set("resource_group_name", id.ResourceGroup)

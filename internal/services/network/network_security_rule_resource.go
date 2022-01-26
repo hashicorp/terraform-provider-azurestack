@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -271,7 +272,7 @@ func networkSecurityRuleCreateUpdate(d *pluginsdk.ResourceData, meta interface{}
 		var sourceApplicationSecurityGroups []network.ApplicationSecurityGroup
 		for _, v := range r.(*pluginsdk.Set).List() {
 			sg := network.ApplicationSecurityGroup{
-				ID: utils.String(v.(string)),
+				ID: pointer.FromString(v.(string)),
 			}
 			sourceApplicationSecurityGroups = append(sourceApplicationSecurityGroups, sg)
 		}
@@ -282,7 +283,7 @@ func networkSecurityRuleCreateUpdate(d *pluginsdk.ResourceData, meta interface{}
 		var destinationApplicationSecurityGroups []network.ApplicationSecurityGroup
 		for _, v := range r.(*pluginsdk.Set).List() {
 			sg := network.ApplicationSecurityGroup{
-				ID: utils.String(v.(string)),
+				ID: pointer.FromString(v.(string)),
 			}
 			destinationApplicationSecurityGroups = append(destinationApplicationSecurityGroups, sg)
 		}
@@ -298,7 +299,7 @@ func networkSecurityRuleCreateUpdate(d *pluginsdk.ResourceData, meta interface{}
 		return fmt.Errorf("waiting for completion of %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return networkSecurityRuleRead(d, meta)
 }

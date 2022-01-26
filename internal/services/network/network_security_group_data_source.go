@@ -156,7 +156,7 @@ func networkSecurityGroupDataSourceRead(d *pluginsdk.ResourceData, meta interfac
 	if resp.ID == nil || *resp.ID == "" {
 		return fmt.Errorf("reading request on %s: %+v", id, err)
 	}
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	d.Set("name", resp.Name)
 	d.Set("resource_group_name", id.ResourceGroup)

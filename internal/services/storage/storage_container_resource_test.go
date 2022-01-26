@@ -8,18 +8,18 @@ import (
 
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/parse"
 
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/validate"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 type StorageContainerResource struct{}
 
 func TestAccStorageContainer_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_container", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_container", "test")
 	r := StorageContainerResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -34,7 +34,7 @@ func TestAccStorageContainer_basic(t *testing.T) {
 }
 
 func TestAccStorageContainer_deleteAndRecreate(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_container", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_container", "test")
 	r := StorageContainerResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -58,23 +58,8 @@ func TestAccStorageContainer_deleteAndRecreate(t *testing.T) {
 	})
 }
 
-func TestAccStorageContainer_basicAzureADAuth(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_container", "test")
-	r := StorageContainerResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.basicAzureADAuth(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
 func TestAccStorageContainer_requiresImport(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_container", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_container", "test")
 	r := StorageContainerResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -89,7 +74,7 @@ func TestAccStorageContainer_requiresImport(t *testing.T) {
 }
 
 func TestAccStorageContainer_update(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_container", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_container", "test")
 	r := StorageContainerResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -111,37 +96,8 @@ func TestAccStorageContainer_update(t *testing.T) {
 	})
 }
 
-func TestAccStorageContainer_metaData(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_container", "test")
-	r := StorageContainerResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.metaData(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			Config: r.metaDataUpdated(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			Config: r.metaDataEmpty(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
 func TestAccStorageContainer_disappears(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_container", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_container", "test")
 	r := StorageContainerResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -153,7 +109,7 @@ func TestAccStorageContainer_disappears(t *testing.T) {
 }
 
 func TestAccStorageContainer_root(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_container", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_container", "test")
 	r := StorageContainerResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -169,7 +125,7 @@ func TestAccStorageContainer_root(t *testing.T) {
 }
 
 func TestAccStorageContainer_web(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurerm_storage_container", "test")
+	data := acceptance.BuildTestData(t, "azurestack_storage_container", "test")
 	r := StorageContainerResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
@@ -201,14 +157,11 @@ func (r StorageContainerResource) Exists(ctx context.Context, client *clients.Cl
 	if err != nil {
 		return nil, fmt.Errorf("building Containers Client: %+v", err)
 	}
-	prop, err := containersClient.GetProperties(ctx, id.AccountName, id.Name)
+	prop, err := containersClient.Get(ctx, account.ResourceGroup, id.AccountName, id.Name)
 	if err != nil {
-		if utils.ResponseWasNotFound(prop.Response) {
-			return utils.Bool(false), nil
-		}
 		return nil, fmt.Errorf("retrieving Container %q (Account %q / Resource Group %q): %+v", id.Name, id.AccountName, account.ResourceGroup, err)
 	}
-	return utils.Bool(true), nil
+	return pointer.FromBool(prop != nil), nil
 }
 
 func (r StorageContainerResource) Destroy(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
@@ -227,11 +180,10 @@ func (r StorageContainerResource) Destroy(ctx context.Context, client *clients.C
 	if err != nil {
 		return nil, fmt.Errorf("building Containers Client: %+v", err)
 	}
-
-	if _, err := containersClient.Delete(ctx, id.AccountName, id.Name); err != nil {
+	if err := containersClient.Delete(ctx, account.ResourceGroup, id.AccountName, id.Name); err != nil {
 		return nil, fmt.Errorf("deleting Container %q (Account %q / Resource Group %q): %+v", id.Name, id.AccountName, account.ResourceGroup, err)
 	}
-	return utils.Bool(true), nil
+	return pointer.FromBool(true), nil
 }
 
 func (r StorageContainerResource) basic(data acceptance.TestData) string {
@@ -239,44 +191,12 @@ func (r StorageContainerResource) basic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
   name                  = "vhds"
-  storage_account_name  = azurerm_storage_account.test.name
+  storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "private"
 }
 `, template)
-}
-
-func (r StorageContainerResource) basicAzureADAuth(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurerm" {
-  storage_use_azuread = true
-  features {}
-}
-
-resource "azurerm_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurerm_storage_account" "test" {
-  name                     = "acctestacc%s"
-  resource_group_name      = azurerm_resource_group.test.name
-  location                 = azurerm_resource_group.test.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  tags = {
-    environment = "staging"
-  }
-}
-
-resource "azurerm_storage_container" "test" {
-  name                  = "vhds"
-  storage_account_name  = azurerm_storage_account.test.name
-  container_access_type = "private"
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomString)
 }
 
 func (r StorageContainerResource) requiresImport(data acceptance.TestData) string {
@@ -284,10 +204,10 @@ func (r StorageContainerResource) requiresImport(data acceptance.TestData) strin
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_storage_container" "import" {
-  name                  = azurerm_storage_container.test.name
-  storage_account_name  = azurerm_storage_container.test.storage_account_name
-  container_access_type = azurerm_storage_container.test.container_access_type
+resource "azurestack_storage_container" "import" {
+  name                  = azurestack_storage_container.test.name
+  storage_account_name  = azurestack_storage_container.test.storage_account_name
+  container_access_type = azurestack_storage_container.test.container_access_type
 }
 `, template)
 }
@@ -297,62 +217,12 @@ func (r StorageContainerResource) update(data acceptance.TestData, accessType st
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
   name                  = "vhds"
-  storage_account_name  = azurerm_storage_account.test.name
+  storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "%s"
 }
 `, template, accessType)
-}
-
-func (r StorageContainerResource) metaData(data acceptance.TestData) string {
-	template := r.template(data)
-	return fmt.Sprintf(`
-%s
-
-resource "azurerm_storage_container" "test" {
-  name                  = "vhds"
-  storage_account_name  = azurerm_storage_account.test.name
-  container_access_type = "private"
-
-  metadata = {
-    hello = "world"
-  }
-}
-`, template)
-}
-
-func (r StorageContainerResource) metaDataUpdated(data acceptance.TestData) string {
-	template := r.template(data)
-	return fmt.Sprintf(`
-%s
-
-resource "azurerm_storage_container" "test" {
-  name                  = "vhds"
-  storage_account_name  = azurerm_storage_account.test.name
-  container_access_type = "private"
-
-  metadata = {
-    hello = "world"
-    panda = "pops"
-  }
-}
-`, template)
-}
-
-func (r StorageContainerResource) metaDataEmpty(data acceptance.TestData) string {
-	template := r.template(data)
-	return fmt.Sprintf(`
-%s
-
-resource "azurerm_storage_container" "test" {
-  name                  = "vhds"
-  storage_account_name  = azurerm_storage_account.test.name
-  container_access_type = "private"
-
-  metadata = {}
-}
-`, template)
 }
 
 func (r StorageContainerResource) root(data acceptance.TestData) string {
@@ -360,9 +230,9 @@ func (r StorageContainerResource) root(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
   name                  = "$root"
-  storage_account_name  = azurerm_storage_account.test.name
+  storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "private"
 }
 `, template)
@@ -373,9 +243,9 @@ func (r StorageContainerResource) web(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurerm_storage_container" "test" {
+resource "azurestack_storage_container" "test" {
   name                  = "$web"
-  storage_account_name  = azurerm_storage_account.test.name
+  storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "private"
 }
 `, template)
@@ -383,22 +253,21 @@ resource "azurerm_storage_container" "test" {
 
 func (r StorageContainerResource) template(data acceptance.TestData) string {
 	return fmt.Sprintf(`
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
-resource "azurerm_resource_group" "test" {
+resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
 
-resource "azurerm_storage_account" "test" {
+resource "azurestack_storage_account" "test" {
   name                     = "acctestacc%s"
-  resource_group_name      = azurerm_resource_group.test.name
-  location                 = azurerm_resource_group.test.location
+  resource_group_name      = azurestack_resource_group.test.name
+  location                 = azurestack_resource_group.test.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-  allow_blob_public_access = true
 
   tags = {
     environment = "staging"

@@ -6,8 +6,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceid"
-
-	"github.com/tombuildsstuff/giovanni/storage/2019-12-12/blob/containers"
+	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/containers"
 )
 
 // TODO: tests for this

@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/dns/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 type DnsZoneResource struct{}
@@ -111,7 +111,7 @@ func (DnsZoneResource) Exists(ctx context.Context, clients *clients.Client, stat
 		return nil, fmt.Errorf("retrieving DNS zone %s (resource group: %s): %v", id.Name, id.ResourceGroup, err)
 	}
 
-	return utils.Bool(resp.ZoneProperties != nil), nil
+	return pointer.FromBool(resp.ZoneProperties != nil), nil
 }
 
 func (DnsZoneResource) basic(data acceptance.TestData) string {

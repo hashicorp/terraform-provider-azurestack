@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 )
 
 func TestFromTypedObject(t *testing.T) {
@@ -41,7 +41,7 @@ func TestToTypedObject(t *testing.T) {
 		{
 			Name: "One Item",
 			Input: map[string]*string{
-				"hello": utils.String("there"),
+				"hello": pointer.FromString("there"),
 			},
 			Expected: map[string]string{
 				"hello": "there",
@@ -50,9 +50,9 @@ func TestToTypedObject(t *testing.T) {
 		{
 			Name: "Multiple Items",
 			Input: map[string]*string{
-				"euros": utils.String("3"),
-				"hello": utils.String("there"),
-				"panda": utils.String("pops"),
+				"euros": pointer.FromString("3"),
+				"hello": pointer.FromString("there"),
+				"panda": pointer.FromString("pops"),
 			},
 			Expected: map[string]string{
 				"euros": "3",

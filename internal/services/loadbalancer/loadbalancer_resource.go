@@ -7,12 +7,12 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceid"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/az/zones"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/loadbalancer/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf"
@@ -63,20 +63,6 @@ func loadBalancer() *pluginsdk.Resource {
 							Type:         pluginsdk.TypeString,
 							Required:     true,
 							ValidateFunc: validation.StringIsNotEmpty,
-						},
-
-						"availability_zone": {
-							Type:     pluginsdk.TypeString,
-							Optional: true,
-							// Default:  "Zone-Redundant",
-							Computed: true,
-							ValidateFunc: validation.StringInSlice([]string{
-								"No-Zone",
-								"1",
-								"2",
-								"3",
-								"Zone-Redundant",
-							}, false),
 						},
 
 						"subnet_id": {
@@ -135,19 +121,6 @@ func loadBalancer() *pluginsdk.Resource {
 							Set: pluginsdk.HashString,
 						},
 
-						// TODO - 3.0 make Computed only
-						"zones": {
-							Type:       pluginsdk.TypeList,
-							Optional:   true,
-							Computed:   true,
-							Deprecated: "This property has been deprecated in favour of `availability_zone` due to a breaking behavioural change in Azure: https://azure.microsoft.com/en-us/updates/zone-behavior-change/",
-							MaxItems:   1,
-							Elem: &pluginsdk.Schema{
-								Type:         pluginsdk.TypeString,
-								ValidateFunc: validation.StringIsNotEmpty,
-							},
-						},
-
 						"id": {
 							Type:     pluginsdk.TypeString,
 							Computed: true,
@@ -176,10 +149,6 @@ func loadBalancer() *pluginsdk.Resource {
 				configs := d.Get("frontend_ip_configuration").([]interface{})
 
 				for index := range configs {
-					if d.HasChange(fmt.Sprintf("frontend_ip_configuration.%d.availability_zone", index)) && !d.HasChange(fmt.Sprintf("frontend_ip_configuration.%d.name", index)) {
-						return fmt.Errorf("in place change of the `frontend_ip_configuration.%[1]d.availability_zone` is not allowed. It is allowed to do this while also changing `frontend_ip_configuration.%[1]d.name`", index)
-					}
-
 					// TODO - Remove in 3.0
 					if d.HasChange(fmt.Sprintf("frontend_ip_configuration.%d.zones", index)) && !d.HasChange(fmt.Sprintf("frontend_ip_configuration.%d.name", index)) {
 						return fmt.Errorf("in place change of the `frontend_ip_configuration.%[1]d.zones` is not allowed. It is allowed to do this while also changing `frontend_ip_configuration.%[1]d.name`", index)
@@ -223,8 +192,8 @@ func loadBalancerCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error
 	}
 
 	loadBalancer := network.LoadBalancer{
-		Name:                         utils.String(id.Name),
-		Location:                     utils.String(location.Normalize(d.Get("location").(string))),
+		Name:                         pointer.FromString(id.Name),
+		Location:                     pointer.FromString(location.Normalize(d.Get("location").(string))),
 		Tags:                         tags.Expand(d.Get("tags").(map[string]interface{})),
 		LoadBalancerPropertiesFormat: &properties,
 	}
@@ -237,7 +206,7 @@ func loadBalancerCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error
 		return fmt.Errorf("waiting for creation/update of %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return loadBalancerRead(d, meta)
 }
@@ -320,7 +289,7 @@ func expandazurestackLoadBalancerFrontendIpConfigurations(d *pluginsdk.ResourceD
 	configs := d.Get("frontend_ip_configuration").([]interface{})
 	frontEndConfigs := make([]network.FrontendIPConfiguration, 0, len(configs))
 
-	for index, configRaw := range configs {
+	for _, configRaw := range configs {
 		data := configRaw.(map[string]interface{})
 
 		privateIpAllocationMethod := data["private_ip_address_allocation"].(string)
@@ -345,32 +314,10 @@ func expandazurestackLoadBalancerFrontendIpConfigurations(d *pluginsdk.ResourceD
 		}
 
 		name := data["name"].(string)
-		// TODO - get zone list for each location by Resource API, instead of hardcode
-		z := &[]string{"1", "2"}
-
-		// TODO - Remove in 3.0
-		if deprecatedZonesRaw, ok := d.GetOk(fmt.Sprintf("frontend_ip_configuration.%d.zones", index)); ok {
-			deprecatedZones := zones.ExpandZones(deprecatedZonesRaw.([]interface{}))
-			if deprecatedZones != nil {
-				z = deprecatedZones
-			}
-		}
-
-		if availabilityZones, ok := d.GetOk(fmt.Sprintf("frontend_ip_configuration.%d.availability_zone", index)); ok {
-			switch availabilityZones.(string) {
-			case "1", "2", "3":
-				z = &[]string{availabilityZones.(string)}
-			case "Zone-Redundant":
-				z = &[]string{"1", "2"}
-			case "No-Zone":
-				z = &[]string{}
-			}
-		}
 
 		frontEndConfig := network.FrontendIPConfiguration{
 			Name:                                    &name,
 			FrontendIPConfigurationPropertiesFormat: &properties,
-			Zones:                                   z,
 		}
 
 		frontEndConfigs = append(frontEndConfigs, frontEndConfig)
@@ -395,21 +342,6 @@ func flattenLoadBalancerFrontendIpConfiguration(ipConfigs *[]network.FrontendIPC
 		if config.ID != nil {
 			ipConfig["id"] = *config.ID
 		}
-
-		availabilityZones := "No-Zone"
-		zonesDeprecated := make([]string, 0)
-		if config.Zones != nil {
-			if len(*config.Zones) > 1 {
-				availabilityZones = "Zone-Redundant"
-			}
-			if len(*config.Zones) == 1 {
-				zones := *config.Zones
-				availabilityZones = zones[0]
-				zonesDeprecated = zones
-			}
-		}
-		ipConfig["availability_zone"] = availabilityZones
-		ipConfig["zones"] = zonesDeprecated
 
 		if props := config.FrontendIPConfigurationPropertiesFormat; props != nil {
 			ipConfig["private_ip_address_allocation"] = string(props.PrivateIPAllocationMethod)

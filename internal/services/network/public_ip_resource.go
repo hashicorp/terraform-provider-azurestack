@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -174,7 +175,7 @@ func publicIpCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	}
 
 	publicIp := network.PublicIPAddress{
-		Name:     utils.String(id.Name),
+		Name:     pointer.FromString(id.Name),
 		Location: &location,
 		Sku: &network.PublicIPAddressSku{
 			Name: network.PublicIPAddressSkuName(sku),
@@ -194,11 +195,11 @@ func publicIpCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		dnsSettings := network.PublicIPAddressDNSSettings{}
 
 		if rfqdnOk {
-			dnsSettings.ReverseFqdn = utils.String(rfqdn.(string))
+			dnsSettings.ReverseFqdn = pointer.FromString(rfqdn.(string))
 		}
 
 		if dnlOk {
-			dnsSettings.DomainNameLabel = utils.String(dnl.(string))
+			dnsSettings.DomainNameLabel = pointer.FromString(dnl.(string))
 		}
 
 		publicIp.PublicIPAddressPropertiesFormat.DNSSettings = &dnsSettings
@@ -213,7 +214,7 @@ func publicIpCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		return fmt.Errorf("waiting for creation/update of %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 	return publicIpRead(d, meta)
 }
 

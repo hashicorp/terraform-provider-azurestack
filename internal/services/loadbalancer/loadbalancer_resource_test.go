@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 type LoadBalancer struct{}
@@ -133,87 +133,6 @@ func TestAccLoadBalancer_privateIP(t *testing.T) {
 	})
 }
 
-func TestAccLoadBalancer_updateFrontEndConfigsWithZone(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_lb", "test")
-	r := LoadBalancer{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.availability_zone_update1(data, "Zone-Redundant"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			Config: r.availability_zone_update1(data, "No-Zone"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			Config: r.availability_zone_update1(data, "Zone-Redundant"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			Config: r.availability_zone_update2(data, "Zone-Redundant"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
-func TestAccLoadBalancer_ZoneRedundant(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_lb", "test")
-	r := LoadBalancer{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.availability_zone(data, "Zone-Redundant"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
-func TestAccLoadBalancer_NoZone(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_lb", "test")
-	r := LoadBalancer{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.availability_zone(data, "No-Zone"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
-func TestAccLoadBalancer_SingleZone(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_lb", "test")
-	r := LoadBalancer{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.availability_zone(data, "1"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
 func (r LoadBalancer) Exists(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
 	loadBalancerName := state.Attributes["name"]
 	resourceGroup := state.Attributes["resource_group_name"]
@@ -227,7 +146,7 @@ func (r LoadBalancer) Exists(ctx context.Context, client *clients.Client, state 
 		return nil, fmt.Errorf("Bad: Get on loadBalancerClient: %+v", err)
 	}
 
-	return utils.Bool(resp.ID != nil), nil
+	return pointer.FromBool(resp.ID != nil), nil
 }
 
 func (r LoadBalancer) basic(data acceptance.TestData) string {
@@ -485,135 +404,4 @@ resource "azurestack_lb" "test" {
   }
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger)
-}
-
-func (r LoadBalancer) availability_zone(data acceptance.TestData, zone string) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-lb-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_lb" "test" {
-  name                = "acctestlb-%d"
-  resource_group_name = azurestack_resource_group.test.name
-  location            = azurestack_resource_group.test.location
-
-  frontend_ip_configuration {
-    name                          = "Internal"
-    private_ip_address_allocation = "Static"
-    private_ip_address            = "10.0.2.7"
-    subnet_id                     = azurestack_subnet.test.id
-    availability_zone             = "%s"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger, zone)
-}
-
-func (r LoadBalancer) availability_zone_update1(data acceptance.TestData, zone string) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-lb-%[1]d"
-  location = "%[2]s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%[1]d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%[1]d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_lb" "test" {
-  name                = "acctestlb-%[1]d"
-  resource_group_name = azurestack_resource_group.test.name
-  location            = azurestack_resource_group.test.location
-
-  frontend_ip_configuration {
-    name                          = "Internal-%[3]s"
-    private_ip_address_allocation = "Static"
-    private_ip_address            = "10.0.2.7"
-    subnet_id                     = azurestack_subnet.test.id
-    availability_zone             = "%[3]s"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, zone)
-}
-
-func (r LoadBalancer) availability_zone_update2(data acceptance.TestData, zone string) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-lb-%[1]d"
-  location = "%[2]s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%[1]d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%[1]d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_lb" "test" {
-  name                = "acctestlb-%[1]d"
-  resource_group_name = azurestack_resource_group.test.name
-  location            = azurestack_resource_group.test.location
-
-  frontend_ip_configuration {
-    name                          = "Internal-%[3]s"
-    private_ip_address_allocation = "Static"
-    private_ip_address            = "10.0.2.7"
-    subnet_id                     = azurestack_subnet.test.id
-    availability_zone             = "%[3]s"
-  }
-
-  frontend_ip_configuration {
-    name                          = "Internal2-%[3]s"
-    private_ip_address_allocation = "Static"
-    private_ip_address            = "10.0.2.8"
-    subnet_id                     = azurestack_subnet.test.id
-    availability_zone             = "%[3]s"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, zone)
 }

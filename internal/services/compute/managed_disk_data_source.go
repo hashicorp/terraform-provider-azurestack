@@ -93,7 +93,7 @@ func managedDiskDataSourceRead(d *pluginsdk.ResourceData, meta interface{}) erro
 		return fmt.Errorf("making Read request on %s: %s", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	d.Set("name", id.DiskName)
 	d.Set("resource_group_name", id.ResourceGroup)

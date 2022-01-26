@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -109,7 +110,7 @@ func routeCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	defer locks.UnlockByName(id.RouteTableName, routeTableResourceName)
 
 	route := network.Route{
-		Name: utils.String(id.Name),
+		Name: pointer.FromString(id.Name),
 		RoutePropertiesFormat: &network.RoutePropertiesFormat{
 			AddressPrefix: &addressPrefix,
 			NextHopType:   network.RouteNextHopType(nextHopType),
@@ -117,7 +118,7 @@ func routeCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	}
 
 	if v, ok := d.GetOk("next_hop_in_ip_address"); ok {
-		route.RoutePropertiesFormat.NextHopIPAddress = utils.String(v.(string))
+		route.RoutePropertiesFormat.NextHopIPAddress = pointer.FromString(v.(string))
 	}
 
 	future, err := client.CreateOrUpdate(ctx, id.ResourceGroup, id.RouteTableName, id.Name, route)
@@ -129,7 +130,7 @@ func routeCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		return fmt.Errorf("waiting for create/update of %s: %+v", id, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 	return routeRead(d, meta)
 }
 

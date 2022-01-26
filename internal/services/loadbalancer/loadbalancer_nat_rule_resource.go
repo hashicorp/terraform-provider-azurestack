@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -173,7 +174,7 @@ func loadBalancerNatRuleCreateUpdate(d *pluginsdk.ResourceData, meta interface{}
 		return fmt.Errorf("waiting for update of Load Balancer %q (Resource Group %q) for Nat Rule %q: %+v", id.LoadBalancerName, id.ResourceGroup, id.InboundNatRuleName, err)
 	}
 
-	d.SetId(id.ID())
+	d.SetId(id.ID()) // TODO before release confirm no state migration is required for this
 
 	return loadBalancerNatRuleRead(d, meta)
 }
@@ -305,7 +306,7 @@ func expandazurestackLoadBalancerNatRule(d *pluginsdk.ResourceData, lb *network.
 	}
 
 	if v, ok := d.GetOk("enable_floating_ip"); ok {
-		properties.EnableFloatingIP = utils.Bool(v.(bool))
+		properties.EnableFloatingIP = pointer.FromBool(v.(bool))
 	}
 
 	if v, ok := d.GetOk("idle_timeout_in_minutes"); ok {
@@ -319,12 +320,12 @@ func expandazurestackLoadBalancerNatRule(d *pluginsdk.ResourceData, lb *network.
 
 		id := parse.NewLoadBalancerFrontendIpConfigurationID(loadBalancerId.SubscriptionId, loadBalancerId.ResourceGroup, loadBalancerId.Name, v).ID()
 		properties.FrontendIPConfiguration = &network.SubResource{
-			ID: utils.String(id),
+			ID: pointer.FromString(id),
 		}
 	}
 
 	natRule := network.InboundNatRule{
-		Name:                           utils.String(d.Get("name").(string)),
+		Name:                           pointer.FromString(d.Get("name").(string)),
 		InboundNatRulePropertiesFormat: &properties,
 	}
 

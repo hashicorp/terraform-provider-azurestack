@@ -1495,7 +1495,7 @@ resource "azurestack_virtual_machine" "test" {
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2012-Datacenter"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 
@@ -1585,7 +1585,7 @@ resource "azurestack_virtual_machine" "test" {
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2012-Datacenter"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 
@@ -1681,7 +1681,7 @@ resource "azurestack_virtual_machine" "test" {
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2012-Datacenter"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 
@@ -1777,7 +1777,7 @@ resource "azurestack_virtual_machine" "test" {
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2012-Datacenter"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 

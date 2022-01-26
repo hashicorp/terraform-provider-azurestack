@@ -2194,7 +2194,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   storage_profile_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2016-Datacenter-Server-Core"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 }
@@ -3000,7 +3000,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   storage_profile_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2016-Datacenter-Server-Core"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 }

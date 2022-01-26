@@ -12,21 +12,6 @@ import (
 
 // NOTE: Test `TestAccVirtualMachine_enableAnWithVM` requires a machine of size `D8_v3` which is large/expensive - you may wish to ignore this test"
 
-func TestAccVirtualMachine_basicLinuxMachine_managedDisk_standardSSD(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine", "test")
-	r := VirtualMachineResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.basicLinuxMachine_managedDisk_standardSSD(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("storage_os_disk.0.managed_disk_type").HasValue("StandardSSD_LRS"),
-			),
-		},
-	})
-}
-
 func TestAccVirtualMachine_requiresImport(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_virtual_machine", "test")
 	r := VirtualMachineResource{}
@@ -360,20 +345,6 @@ func TestAccVirtualMachine_basicLinuxMachine_managedDisk_changeWriteAcceleratorE
 	})
 }
 
-func TestAccVirtualMachine_winRMCerts(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine", "test")
-	r := VirtualMachineResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.winRMCerts(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-	})
-}
-
 func TestAccVirtualMachine_hasDiskInfoWhenStopped(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_virtual_machine", "test")
 	r := VirtualMachineResource{}
@@ -609,208 +580,6 @@ resource "azurestack_virtual_machine" "test" {
   }
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, enabled, data.RandomInteger)
-}
-
-func (VirtualMachineResource) winRMCerts(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-variable "prefix" {
-  default = "acctest%s"
-}
-
-data "azurestack_client_config" "current" {}
-
-resource "azurestack_resource_group" "test" {
-  name     = "${var.prefix}-resources"
-  location = "%s"
-
-  tags = {
-    source = "TestAccVirtualMachine_winRMCerts"
-  }
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "${var.prefix}-network"
-  address_space       = ["10.0.0.0/16"]
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "internal"
-  resource_group_name  = "${azurestack_resource_group.test.name}"
-  virtual_network_name = "${azurestack_virtual_network.test.name}"
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_network_interface" "test" {
-  name                = "${var.prefix}-nic"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-
-  ip_configuration {
-    name                          = "testconfiguration1"
-    subnet_id                     = "${azurestack_subnet.test.id}"
-    private_ip_address_allocation = "Dynamic"
-  }
-}
-
-resource "azurestack_key_vault" "test" {
-  name                = "${var.prefix}-keyvault"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-  location            = "${azurestack_resource_group.test.location}"
-
-  sku_name = "standard"
-
-  tenant_id = "${data.azurestack_client_config.current.tenant_id}"
-
-  access_policy {
-    tenant_id = "${data.azurestack_client_config.current.tenant_id}"
-    object_id = "${data.azurestack_client_config.current.object_id}"
-
-    key_permissions = [
-      "backup",
-      "create",
-      "decrypt",
-      "delete",
-      "encrypt",
-      "get",
-      "import",
-      "list",
-      "purge",
-      "recover",
-      "restore",
-      "sign",
-      "unwrapKey",
-      "update",
-      "verify",
-      "wrapKey",
-    ]
-
-    secret_permissions = [
-      "backup",
-      "delete",
-      "get",
-      "list",
-      "purge",
-      "recover",
-      "restore",
-      "set",
-    ]
-
-    certificate_permissions = [
-      "create",
-      "delete",
-      "deleteissuers",
-      "get",
-      "getissuers",
-      "import",
-      "list",
-      "listissuers",
-      "managecontacts",
-      "manageissuers",
-      "purge",
-      "setissuers",
-      "update",
-    ]
-  }
-
-  enabled_for_deployment          = true
-  enabled_for_template_deployment = true
-}
-
-resource "azurestack_key_vault_certificate" "test" {
-  name         = "${var.prefix}-cert"
-  key_vault_id = azurestack_key_vault.test.id
-
-  certificate_policy {
-    issuer_parameters {
-      name = "Self"
-    }
-
-    key_properties {
-      exportable = true
-      key_size   = 2048
-      key_type   = "RSA"
-      reuse_key  = true
-    }
-
-    lifetime_action {
-      action {
-        action_type = "AutoRenew"
-      }
-
-      trigger {
-        days_before_expiry = 30
-      }
-    }
-
-    secret_properties {
-      content_type = "application/x-pkcs12"
-    }
-
-    x509_certificate_properties {
-      key_usage = [
-        "cRLSign",
-        "dataEncipherment",
-        "digitalSignature",
-        "keyAgreement",
-        "keyCertSign",
-        "keyEncipherment",
-      ]
-
-      subject            = "CN=${azurestack_network_interface.test.private_ip_address}"
-      validity_in_months = 12
-    }
-  }
-}
-
-resource "azurestack_virtual_machine" "test" {
-  name                          = "${var.prefix}-vm"
-  location                      = "${azurestack_resource_group.test.location}"
-  resource_group_name           = "${azurestack_resource_group.test.name}"
-  network_interface_ids         = ["${azurestack_network_interface.test.id}"]
-  vm_size                       = "Standard_F2"
-  delete_os_disk_on_termination = true
-
-  storage_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2016-Datacenter"
-    version   = "latest"
-  }
-
-  storage_os_disk {
-    name              = "${var.prefix}-osdisk"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-
-  os_profile {
-    computer_name  = "${var.prefix}-vm"
-    admin_username = "mradministrator"
-    admin_password = "Th15IsD0g1234!"
-  }
-
-  os_profile_windows_config {
-    provision_vm_agent = true
-
-    winrm {
-      protocol        = "https"
-      certificate_url = "${azurestack_key_vault_certificate.test.secret_id}"
-    }
-  }
-
-  os_profile_secrets {
-    source_vault_id = "${azurestack_key_vault.test.id}"
-
-    vault_certificates {
-      certificate_url   = "${azurestack_key_vault_certificate.test.secret_id}"
-      certificate_store = "My"
-    }
-  }
-}
-`, data.RandomString, data.Locations.Primary)
 }
 
 func (VirtualMachineResource) withManagedServiceIdentity(data acceptance.TestData) string {
@@ -2000,7 +1769,7 @@ resource "azurestack_virtual_machine" "test" {
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2012-Datacenter"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 
@@ -2142,7 +1911,7 @@ resource "azurestack_virtual_machine" "test" {
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2012-Datacenter"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 
@@ -2222,7 +1991,7 @@ resource "azurestack_virtual_machine" "test" {
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2012-Datacenter"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 

@@ -400,7 +400,7 @@ resource "azurestack_windows_virtual_machine_scale_set" "test" {
   source_image_reference {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"
-    sku       = "2019-Datacenter"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 

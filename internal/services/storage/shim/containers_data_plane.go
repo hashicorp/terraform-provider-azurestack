@@ -75,7 +75,7 @@ func (w DataPlaneStorageContainerWrapper) Get(ctx context.Context, _, accountNam
 	props, err := w.client.GetProperties(ctx, accountName, containerName)
 	if err != nil {
 		if utils.ResponseWasNotFound(props.Response) {
-			return nil, nil
+			return nil, nil // nolint: nilnil
 		}
 
 		return nil, err

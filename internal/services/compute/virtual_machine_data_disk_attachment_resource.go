@@ -83,6 +83,7 @@ func virtualMachineDataDiskAttachment() *pluginsdk.Resource {
 				DiffSuppressFunc: suppress.CaseDifference,
 			},
 
+			// todo does this work on stack? tests need to be fixed at least
 			"write_accelerator_enabled": {
 				Type:     pluginsdk.TypeBool,
 				Optional: true,

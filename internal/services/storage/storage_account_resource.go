@@ -3,6 +3,7 @@ package storage
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/storage/mgmt/storage"
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
@@ -41,6 +42,13 @@ func storageAccount() *schema.Resource {
 			_, err := parse.StorageAccountID(id)
 			return err
 		}),
+
+		Timeouts: &pluginsdk.ResourceTimeout{
+			Create: pluginsdk.DefaultTimeout(60 * time.Minute),
+			Read:   pluginsdk.DefaultTimeout(5 * time.Minute),
+			Update: pluginsdk.DefaultTimeout(60 * time.Minute),
+			Delete: pluginsdk.DefaultTimeout(60 * time.Minute),
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": {

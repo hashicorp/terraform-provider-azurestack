@@ -40,9 +40,20 @@ fmtcheck:
 
 terrafmt:
 	@echo "==> Fixing acceptance test terraform blocks code with terrafmt..."
-	@find azurestack | egrep "_test.go" | sort | while read f; do terrafmt fmt -f $$f; done
+	@find internal | egrep "_test.go" | sort | while read f; do terrafmt fmt -f $$f; done
 	@echo "==> Fixing website terraform blocks code with terrafmt..."
 	@find . | egrep html.markdown | sort | while read f; do terrafmt fmt $$f; done
+
+generate:
+	go generate ./internal/services/...
+	go generate ./internal/provider/
+
+gencheck:
+	@echo "==> Generating..."
+	@make generate
+	@echo "==> Comparing generated code to committed code..."
+	@git diff --compact-summary --exit-code -- ./ || \
+    		(echo; echo "Unexpected difference in generated code. Run 'make generate' to update the generated code and commit."; exit 1)
 
 goimports:
 	@echo "==> Fixing imports code with goimports..."

@@ -1,7 +1,9 @@
-Compute
-Network
-Template
-Load Balancer
-DNS
+Authorization
 Base
+Compute
+DNS
+Load Balancer
+Management
+Network
 Storage
+Template

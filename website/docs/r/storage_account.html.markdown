@@ -53,10 +53,6 @@ The following arguments are supported:
 
 * `account_replication_type` - (Required) Defines the type of replication to use for this storage account. Valid option is `LRS` currently as per [Azure Stack Storage Differences](https://docs.microsoft.com/en-us/azure/azure-stack/user/azure-stack-acs-differences)
 
-* `access_tier` - (Required for `BlobStorage` accounts) Defines the access tier
-    for `BlobStorage` accounts. Valid options are `Hot` and `Cold`, defaults to
-    `Hot`. - **`Currently Not Supported on Azure Stack`**
-
 * `account_encryption_source` - (Optional) The Encryption Source for this Storage Account. Possible values are `Microsoft.Keyvault` and `Microsoft.Storage`. Defaults to `Microsoft.Storage`.
 
 * `custom_domain` - (Optional) A `custom_domain` block as documented below.

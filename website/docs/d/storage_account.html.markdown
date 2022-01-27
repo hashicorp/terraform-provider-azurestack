@@ -42,10 +42,6 @@ output "storage_account_tier" {
 
 * `account_replication_type` - Defines the type of replication used for this storage account.
 
-* `access_tier` - (Required for `BlobStorage` accounts) Defines the access tier
-    for `BlobStorage` accounts. Valid options are `Hot` and `Cold`, defaults to
-    `Hot`. - **`Currently Not Supported on Azure Stack`**
-
 * `account_encryption_source` - The Encryption Source for this Storage Account.
 
 * `custom_domain` - A `custom_domain` block as documented below.

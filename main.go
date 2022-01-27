@@ -1,12 +1,34 @@
 package main
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/plugin"
-	"github.com/hashicorp/terraform-provider-azurestack/azurestack"
+	"context"
+	"flag"
+	"log"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/provider"
 )
 
 func main() {
-	plugin.Serve(&plugin.ServeOpts{
-		ProviderFunc: azurestack.Provider,
-	})
+	// remove date and time stamp from log output as the plugin SDK already adds its own
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
+
+	var debugMode bool
+
+	flag.BoolVar(&debugMode, "debuggable", false, "set to true to run the provider with support for debuggers like delve")
+	flag.Parse()
+
+	if debugMode {
+		err := plugin.Debug(context.Background(), "registry.terraform.io/hashicorp/azurestack",
+			&plugin.ServeOpts{
+				ProviderFunc: provider.AzureProvider,
+			})
+		if err != nil {
+			log.Println(err.Error())
+		}
+	} else {
+		plugin.Serve(&plugin.ServeOpts{
+			ProviderFunc: provider.AzureProvider,
+		})
+	}
 }

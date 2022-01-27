@@ -183,7 +183,8 @@ func (VirtualMachineResource) Destroy(ctx context.Context, client *clients.Clien
 	vmName := state.Attributes["name"]
 	resourceGroup := state.Attributes["resource_group_name"]
 
-	future, err := client.Compute.VMClient.Delete(ctx, resourceGroup, vmName)
+	var forceDeletion *bool = nil
+	future, err := client.Compute.VMClient.Delete(ctx, resourceGroup, vmName, forceDeletion)
 	if err != nil {
 		return nil, fmt.Errorf("Bad: Delete on vmClient: %+v", err)
 	}

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/network/mgmt/network"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 )
@@ -61,7 +61,7 @@ func TestAccDataSourceVirtualNetworkGatewayConnection_ipsecpolicy(t *testing.T) 
 				check.That(data.ResourceName).Key("routing_weight").HasValue("20"),
 				check.That(data.ResourceName).Key("ipsec_policy.0.dh_group").HasValue(string(network.DHGroup14)),
 				check.That(data.ResourceName).Key("ipsec_policy.0.ike_encryption").HasValue(string(network.AES256)),
-				check.That(data.ResourceName).Key("ipsec_policy.0.ike_integrity").HasValue(string(network.SHA256)),
+				check.That(data.ResourceName).Key("ipsec_policy.0.ike_integrity").HasValue(string(network.IkeIntegritySHA256)),
 				check.That(data.ResourceName).Key("ipsec_policy.0.ipsec_encryption").HasValue(string(network.IpsecEncryptionAES256)),
 				check.That(data.ResourceName).Key("ipsec_policy.0.ipsec_integrity").HasValue(string(network.IpsecIntegritySHA256)),
 				check.That(data.ResourceName).Key("ipsec_policy.0.pfs_group").HasValue(string(network.PfsGroupPFS2048)),

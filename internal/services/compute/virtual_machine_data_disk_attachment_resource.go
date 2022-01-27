@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
+	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/compute/mgmt/compute"
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceid"
@@ -139,7 +139,7 @@ func virtualMachineDataDiskAttachmentCreateUpdate(d *pluginsdk.ResourceData, met
 		Lun:          utils.Int32(lun),
 		ManagedDisk: &compute.ManagedDiskParameters{
 			ID:                 pointer.FromString(managedDiskId),
-			StorageAccountType: managedDisk.Sku.Name,
+			StorageAccountType: compute.StorageAccountTypes(managedDisk.Sku.Name),
 		},
 		WriteAcceleratorEnabled: pointer.FromBool(writeAcceleratorEnabled),
 	}

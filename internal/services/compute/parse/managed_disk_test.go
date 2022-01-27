@@ -24,6 +24,7 @@ func TestManagedDiskID(t *testing.T) {
 		Error    bool
 		Expected *ManagedDiskId
 	}{
+
 		{
 			// empty
 			Input: "",

@@ -24,6 +24,7 @@ func TestNetworkSecurityGroupID(t *testing.T) {
 		Error    bool
 		Expected *NetworkSecurityGroupId
 	}{
+
 		{
 			// empty
 			Input: "",

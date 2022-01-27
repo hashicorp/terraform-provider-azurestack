@@ -24,6 +24,7 @@ func TestStorageAccountID(t *testing.T) {
 		Error    bool
 		Expected *StorageAccountId
 	}{
+
 		{
 			// empty
 			Input: "",
@@ -116,6 +117,7 @@ func TestStorageAccountIDInsensitively(t *testing.T) {
 		Error    bool
 		Expected *StorageAccountId
 	}{
+
 		{
 			// empty
 			Input: "",

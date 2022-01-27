@@ -24,6 +24,7 @@ func TestVirtualMachineScaleSetID(t *testing.T) {
 		Error    bool
 		Expected *VirtualMachineScaleSetId
 	}{
+
 		{
 			// empty
 			Input: "",

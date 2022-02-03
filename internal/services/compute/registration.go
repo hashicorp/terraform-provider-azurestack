@@ -33,6 +33,7 @@ func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 		"azurestack_availability_set":                     availabilitySet(),
 		"azurestack_managed_disk":                         managedDisk(),
 		"azurestack_virtual_machine":                      virtualMachine(),
+		"azurestack_linux_virtual_machine":                linuxVirtualMachine(),
 		"azurestack_virtual_machine_data_disk_attachment": virtualMachineDataDiskAttachment(),
 		"azurestack_virtual_machine_extension":            virtualMachineExtension(),
 		"azurestack_virtual_machine_scale_set":            virtualMachineScaleSet(),

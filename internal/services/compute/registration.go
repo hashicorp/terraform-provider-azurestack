@@ -24,6 +24,7 @@ func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 		"azurestack_availability_set": availabilitySetDataSource(),
 		"azurestack_managed_disk":     managedDiskDataSource(),
 		"azurestack_platform_image":   platformImageDataSource(),
+		"azurestack_image":            ImageDataSource(),
 	}
 }
 

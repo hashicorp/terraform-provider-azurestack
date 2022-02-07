@@ -448,7 +448,7 @@ resource "azurestack_virtual_machine" "test" {
   location              = azurestack_resource_group.test.location
   resource_group_name   = azurestack_resource_group.test.name
   network_interface_ids = [azurestack_network_interface.test.id]
-  vm_size               = "Standard_M64s"
+  vm_size               = "Standard_DS13"
 
   delete_os_disk_on_termination = true
 
@@ -536,7 +536,7 @@ resource "azurestack_virtual_machine" "test" {
   location              = azurestack_resource_group.test.location
   resource_group_name   = azurestack_resource_group.test.name
   network_interface_ids = [azurestack_network_interface.test.id]
-  vm_size               = "Standard_M64s"
+  vm_size               = "Standard_DS13"
 
   delete_os_disk_on_termination = true
 
@@ -984,7 +984,7 @@ resource "azurestack_virtual_machine" "test" {
   resource_group_name   = azurestack_resource_group.test.name
   network_interface_ids = [azurestack_network_interface.test.id]
   vm_size               = "Standard_D1_v2"
-  zones                 = ["1"]
+  #zones                 = ["1"]
 
   storage_image_reference {
     publisher = "Canonical"

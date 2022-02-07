@@ -743,7 +743,7 @@ func resourceWindowsVirtualMachineScaleSetUpdate(d *pluginsdk.ResourceData, meta
 				return err
 			}
 
-			// Must include all storage profile properties when updating disk image.  See: https://github.com/hashicorp/terraform-provider-azurerm/issues/8273
+			// Must include all storage profile properties when updating disk image.  See: https://github.com/hashicorp/terraform-provider-azurestack/issues/8273
 			updateProps.VirtualMachineProfile.StorageProfile.DataDisks = existing.VirtualMachineScaleSetProperties.VirtualMachineProfile.StorageProfile.DataDisks
 			updateProps.VirtualMachineProfile.StorageProfile.ImageReference = sourceImageReference
 			updateProps.VirtualMachineProfile.StorageProfile.OsDisk = &compute.VirtualMachineScaleSetUpdateOSDisk{

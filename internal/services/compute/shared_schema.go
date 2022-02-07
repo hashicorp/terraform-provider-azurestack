@@ -337,7 +337,7 @@ func flattenPlan(input *compute.Plan) []interface{} {
 }
 
 func sourceImageReferenceSchema(isVirtualMachine bool) *pluginsdk.Schema {
-	// whilst originally I was hoping we could use the 'id' from `azurerm_platform_image' unfortunately Azure doesn't
+	// whilst originally I was hoping we could use the 'id' from `azurestack_platform_image' unfortunately Azure doesn't
 	// like this as a value for the 'id' field:
 	// Id /...../Versions/16.04.201909091 is not a valid resource reference."
 	// as such the image is split into two fields (source_image_id and source_image_reference) to provide better validation

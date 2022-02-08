@@ -95,7 +95,7 @@ func flattenAdditionalUnattendContent(input *[]compute.AdditionalUnattendContent
 }
 
 func bootDiagnosticsSchema() *pluginsdk.Schema {
-	//lintignore:XS003
+	// lintignore:XS003
 	return &pluginsdk.Schema{
 		Type:     pluginsdk.TypeList,
 		Optional: true,
@@ -160,107 +160,6 @@ func flattenBootDiagnostics(input *compute.DiagnosticsProfile) []interface{} {
 			"storage_account_uri": storageAccountUri,
 		},
 	}
-}
-
-// TODO: Uncomment it when keyvault is available
-/*
-func linuxSecretSchema() *pluginsdk.Schema {
-	return &pluginsdk.Schema{
-		Type:     pluginsdk.TypeList,
-		Optional: true,
-		Elem: &pluginsdk.Resource{
-			Schema: map[string]*pluginsdk.Schema{
-				// whilst this isn't present in the nested object it's required when this is specified
-				"key_vault_id": {
-					Type:         pluginsdk.TypeString,
-					Required:     true,
-					ValidateFunc: resourceid.ValidateResourceID, // TODO: more granular validation
-				},
-
-				// whilst we /could/ flatten this to `certificate_urls` we're intentionally not to keep this
-				// closer to the Windows VMSS resource, which will also take a `store` param
-				"certificate": {
-					Type:     pluginsdk.TypeSet,
-					Required: true,
-					MinItems: 1,
-					Elem: &pluginsdk.Resource{
-						Schema: map[string]*pluginsdk.Schema{
-							"url": {
-								Type:         pluginsdk.TypeString,
-								Required:     true,
-								ValidateFunc: keyVaultValidate.NestedItemId,
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-}
-*/
-func expandLinuxSecrets(input []interface{}) *[]compute.VaultSecretGroup {
-	output := make([]compute.VaultSecretGroup, 0)
-
-	for _, raw := range input {
-		v := raw.(map[string]interface{})
-
-		keyVaultId := v["key_vault_id"].(string)
-		certificatesRaw := v["certificate"].(*pluginsdk.Set).List()
-		certificates := make([]compute.VaultCertificate, 0)
-		for _, certificateRaw := range certificatesRaw {
-			certificateV := certificateRaw.(map[string]interface{})
-
-			url := certificateV["url"].(string)
-			certificates = append(certificates, compute.VaultCertificate{
-				CertificateURL: utils.String(url),
-			})
-		}
-
-		output = append(output, compute.VaultSecretGroup{
-			SourceVault: &compute.SubResource{
-				ID: utils.String(keyVaultId),
-			},
-			VaultCertificates: &certificates,
-		})
-	}
-
-	return &output
-}
-
-func flattenLinuxSecrets(input *[]compute.VaultSecretGroup) []interface{} {
-	if input == nil {
-		return []interface{}{}
-	}
-
-	output := make([]interface{}, 0)
-
-	for _, v := range *input {
-		keyVaultId := ""
-		if v.SourceVault != nil && v.SourceVault.ID != nil {
-			keyVaultId = *v.SourceVault.ID
-		}
-
-		certificates := make([]interface{}, 0)
-
-		if v.VaultCertificates != nil {
-			for _, c := range *v.VaultCertificates {
-				if c.CertificateURL == nil {
-					continue
-				}
-
-				certificates = append(certificates, map[string]interface{}{
-					"url": *c.CertificateURL,
-				})
-			}
-		}
-
-		output = append(output, map[string]interface{}{
-			"key_vault_id": keyVaultId,
-			"certificate":  certificates,
-		})
-	}
-
-	return output
 }
 
 func planSchema() *pluginsdk.Schema {

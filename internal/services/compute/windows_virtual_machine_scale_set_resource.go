@@ -160,7 +160,7 @@ func windowsVirtualMachineScaleSet() *pluginsdk.Resource {
 			},
 
 			// TODO: Uncomment identity if its needed, its commented because of issues about unavailability for local testing
-			//"identity": VirtualMachineScaleSetIdentitySchema(),
+			// "identity": VirtualMachineScaleSetIdentitySchema(),
 
 			"license_type": {
 				Type:     pluginsdk.TypeString,
@@ -521,7 +521,7 @@ func resourceWindowsVirtualMachineScaleSetCreate(d *pluginsdk.ResourceData, meta
 			// doesn't appear this can be set to anything else, even Promo machines are Standard
 			Tier: utils.String("Standard"),
 		},
-		//Identity: identity,
+		// Identity: identity,
 		Plan: plan,
 		Tags: tags.Expand(t),
 		VirtualMachineScaleSetProperties: &compute.VirtualMachineScaleSetProperties{

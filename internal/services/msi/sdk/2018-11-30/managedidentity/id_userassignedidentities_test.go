@@ -119,7 +119,6 @@ func TestParseUserAssignedIdentitiesID(t *testing.T) {
 		if actual.ResourceName != v.Expected.ResourceName {
 			t.Fatalf("Expected %q but got %q for ResourceName", v.Expected.ResourceName, actual.ResourceName)
 		}
-
 	}
 }
 
@@ -259,7 +258,6 @@ func TestParseUserAssignedIdentitiesIDInsensitively(t *testing.T) {
 		if actual.ResourceName != v.Expected.ResourceName {
 			t.Fatalf("Expected %q but got %q for ResourceName", v.Expected.ResourceName, actual.ResourceName)
 		}
-
 	}
 }
 

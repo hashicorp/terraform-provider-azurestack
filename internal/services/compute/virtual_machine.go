@@ -5,16 +5,12 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/compute/mgmt/compute"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/identity"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/validate"
-	msiparse "github.com/hashicorp/terraform-provider-azurestack/internal/services/msi/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/suppress"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
-
-type virtualMachineIdentity = identity.SystemAssignedUserAssigned
 
 func virtualMachineAdditionalCapabilitiesSchema() *pluginsdk.Schema {
 	return &pluginsdk.Schema{
@@ -68,6 +64,7 @@ func flattenVirtualMachineAdditionalCapabilities(input *compute.AdditionalCapabi
 	}
 }
 
+/*
 func expandVirtualMachineIdentity(input []interface{}) (*compute.VirtualMachineIdentity, error) {
 	config, err := virtualMachineIdentity{}.Expand(input)
 	if err != nil {
@@ -120,7 +117,7 @@ func flattenVirtualMachineIdentity(input *compute.VirtualMachineIdentity) ([]int
 	}
 	return virtualMachineIdentity{}.Flatten(config), nil
 }
-
+*/
 func expandVirtualMachineNetworkInterfaceIDs(input []interface{}) []compute.NetworkInterfaceReference {
 	output := make([]compute.NetworkInterfaceReference, 0)
 

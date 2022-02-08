@@ -175,7 +175,7 @@ func windowsVirtualMachine() *pluginsdk.Resource {
 			},
 
 			// TODO: Uncomment identity if its needed, its commented because of issues about unavailability for local testing
-			//"identity": virtualMachineIdentity{}.Schema(),
+			// "identity": virtualMachineIdentity{}.Schema(),
 
 			"license_type": {
 				Type:     pluginsdk.TypeString,
@@ -232,7 +232,7 @@ func windowsVirtualMachine() *pluginsdk.Resource {
 				},*/
 
 			// TODO: Uncomment secret if key vault is available
-			//"secret": windowsSecretSchema(),
+			// "secret": windowsSecretSchema(),
 
 			"source_image_id": {
 				Type:     pluginsdk.TypeString,
@@ -389,7 +389,7 @@ func resourceWindowsVirtualMachineCreate(d *pluginsdk.ResourceData, meta interfa
 	params := compute.VirtualMachine{
 		Name:     utils.String(id.Name),
 		Location: utils.String(location),
-		//Identity: identity,
+		// Identity: identity,
 		Plan: plan,
 		VirtualMachineProperties: &compute.VirtualMachineProperties{
 			HardwareProfile: &compute.HardwareProfile{
@@ -1071,7 +1071,7 @@ func resourceWindowsVirtualMachineDelete(d *pluginsdk.ResourceData, meta interfa
 	if strings.EqualFold(*existing.ProvisioningState, "failed") {
 		log.Printf("[DEBUG] Powering Off Windows Virtual Machine was skipped because the VM was in %q state %q (Resource Group %q).", *existing.ProvisioningState, id.Name, id.ResourceGroup)
 	} else {
-		//ISSUE: 4920
+		// ISSUE: 4920
 		// shutting down the Virtual Machine prior to removing it means users are no longer charged for some Azure resources
 		// thus this can be a large cost-saving when deleting larger instances
 		// https://docs.microsoft.com/en-us/azure/virtual-machines/states-lifecycle

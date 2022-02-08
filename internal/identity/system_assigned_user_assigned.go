@@ -73,7 +73,7 @@ func (s SystemAssignedUserAssigned) Schema() *pluginsdk.Schema {
 					Optional: true,
 					Elem: &pluginsdk.Schema{
 						Type: pluginsdk.TypeString,
-						//ValidateFunc: msivalidate.UserAssignedIdentityID,
+						// ValidateFunc: msivalidate.UserAssignedIdentityID,
 					},
 				},
 				"principal_id": {

@@ -10,22 +10,6 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 )
 
-func importOrchestratedVirtualMachineScaleSet(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) (data []*pluginsdk.ResourceData, err error) {
-	id, err := parse.VirtualMachineScaleSetID(d.Id())
-	if err != nil {
-		return []*pluginsdk.ResourceData{}, err
-	}
-
-	client := meta.(*clients.Client).Compute.VMScaleSetClient
-	// Upgrading to the 2021-07-01 exposed a new expand parameter in the GET method
-	_, err = client.Get(ctx, id.ResourceGroup, id.Name)
-	if err != nil {
-		return []*pluginsdk.ResourceData{}, fmt.Errorf("retrieving Virtual Machine Scale Set %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
-	}
-
-	return []*pluginsdk.ResourceData{d}, nil
-}
-
 func importVirtualMachineScaleSet(osType compute.OperatingSystemTypes, resourceType string) pluginsdk.ImporterFunc {
 	return func(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) (data []*pluginsdk.ResourceData, err error) {
 		id, err := parse.VirtualMachineScaleSetID(d.Id())

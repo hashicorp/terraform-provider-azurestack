@@ -172,7 +172,7 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 			},
 
 			// TODO: Uncomment identity if its needed, its commented because of issues about unavailability for local testing
-			//"identity": virtualMachineIdentity{}.Schema(),
+			// "identity": virtualMachineIdentity{}.Schema(),
 
 			"license_type": {
 				Type:     pluginsdk.TypeString,
@@ -220,7 +220,7 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 					DiffSuppressFunc: suppress.CaseDifference,
 				},*/
 
-			//"secret": linuxSecretSchema(),
+			// "secret": linuxSecretSchema(),
 
 			"source_image_id": {
 				Type:     pluginsdk.TypeString,
@@ -366,7 +366,7 @@ func resourceLinuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface
 	params := compute.VirtualMachine{
 		Name:     utils.String(id.Name),
 		Location: utils.String(location),
-		//Identity: identity,
+		// Identity: identity,
 		Plan: plan,
 		VirtualMachineProperties: &compute.VirtualMachineProperties{
 			HardwareProfile: &compute.HardwareProfile{
@@ -600,7 +600,6 @@ func resourceLinuxVirtualMachineRead(d *pluginsdk.ResourceData, meta interface{}
 				return fmt.Errorf("setting `admin_ssh_key`: %+v", err)
 			}
 		}
-
 	}
 	// Resources created with azurestack_linux_virtual_machine have priority set to ""
 	// We need to treat "" as equal to "Regular" to allow migration azurestack_linux_virtual_machine -> azurestack_linux_virtual_machine

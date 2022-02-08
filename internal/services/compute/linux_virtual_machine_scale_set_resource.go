@@ -158,7 +158,7 @@ func linuxVirtualMachineScaleSet() *pluginsdk.Resource {
 			},
 
 			// TODO: Uncomment identity if its needed, its commented because of issues about unavailability for local testing
-			//"identity": VirtualMachineScaleSetIdentitySchema(),
+			// "identity": VirtualMachineScaleSetIdentitySchema(),
 
 			"max_bid_price": {
 				Type:         pluginsdk.TypeFloat,
@@ -213,7 +213,7 @@ func linuxVirtualMachineScaleSet() *pluginsdk.Resource {
 			"rolling_upgrade_policy": VirtualMachineScaleSetRollingUpgradePolicySchema(),
 
 			// TODO: Uncomment secret if keyvault is available
-			//"secret": linuxSecretSchema(),
+			// "secret": linuxSecretSchema(),
 
 			"single_placement_group": {
 				Type:     pluginsdk.TypeBool,
@@ -491,7 +491,7 @@ func resourceLinuxVirtualMachineScaleSetCreate(d *pluginsdk.ResourceData, meta i
 			// doesn't appear this can be set to anything else, even Promo machines are Standard
 			Tier: utils.String("Standard"),
 		},
-		//Identity: identity,
+		// Identity: identity,
 		Plan: plan,
 		Tags: tags.Expand(t),
 		VirtualMachineScaleSetProperties: &compute.VirtualMachineScaleSetProperties{

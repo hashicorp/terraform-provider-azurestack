@@ -53,6 +53,9 @@ github.com/apparentlymart/go-textseg/v12/textseg
 github.com/apparentlymart/go-textseg/v13/textseg
 # github.com/aws/aws-sdk-go v1.37.0
 ## explicit; go 1.11
+# github.com/btubbs/datetime v0.1.1
+## explicit
+github.com/btubbs/datetime
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 github.com/davecgh/go-spew/spew
@@ -249,6 +252,12 @@ github.com/mitchellh/reflectwalk
 # github.com/oklog/run v1.0.0
 ## explicit
 github.com/oklog/run
+# github.com/rickb777/date v1.17.0
+## explicit; go 1.17
+github.com/rickb777/date/period
+# github.com/rickb777/plural v1.4.1
+## explicit; go 1.17
+github.com/rickb777/plural
 # github.com/tombuildsstuff/giovanni v0.17.0
 ## explicit; go 1.13
 github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/blobs
@@ -290,7 +299,7 @@ golang.org/x/crypto/pkcs12
 golang.org/x/crypto/pkcs12/internal/rc2
 golang.org/x/crypto/ssh
 golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
-# golang.org/x/net v0.0.0-20210525063256-abc453219eb5
+# golang.org/x/net v0.0.0-20211216030914-fe4d6282115f
 ## explicit; go 1.17
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
@@ -304,13 +313,13 @@ golang.org/x/net/trace
 ## explicit; go 1.11
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
-# golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1
+# golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e
 ## explicit; go 1.17
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.6
-## explicit; go 1.11
+# golang.org/x/text v0.3.7
+## explicit; go 1.17
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi

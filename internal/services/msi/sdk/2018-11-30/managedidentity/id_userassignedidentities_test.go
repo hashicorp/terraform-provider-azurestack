@@ -267,7 +267,7 @@ func TestSegmentsForUserAssignedIdentitiesId(t *testing.T) {
 		t.Fatalf("UserAssignedIdentitiesId has no segments")
 	}
 
-	uniqueNames := make(map[string]struct{}, 0)
+	uniqueNames := make(map[string]struct{})
 	for _, segment := range segments {
 		uniqueNames[segment.Name] = struct{}{}
 	}

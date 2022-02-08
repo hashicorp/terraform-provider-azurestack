@@ -174,7 +174,8 @@ func windowsVirtualMachine() *pluginsdk.Resource {
 				ValidateFunc: utils.ISO8601DurationBetween("PT15M", "PT2H"),
 			},
 
-			"identity": virtualMachineIdentity{}.Schema(),
+			// TODO: Uncomment identity if its needed, its commented because of issues about unavailability for local testing
+			//"identity": virtualMachineIdentity{}.Schema(),
 
 			"license_type": {
 				Type:     pluginsdk.TypeString,
@@ -357,11 +358,11 @@ func resourceWindowsVirtualMachineCreate(d *pluginsdk.ResourceData, meta interfa
 	}
 	enableAutomaticUpdates := d.Get("enable_automatic_updates").(bool)
 	location := location.Normalize(d.Get("location").(string))
-	identityRaw := d.Get("identity").([]interface{})
+	/*identityRaw := d.Get("identity").([]interface{})
 	identity, err := expandVirtualMachineIdentity(identityRaw)
 	if err != nil {
 		return fmt.Errorf("expanding `identity`: %+v", err)
-	}
+	}*/
 	planRaw := d.Get("plan").([]interface{})
 	plan := expandPlan(planRaw)
 	priority := compute.VirtualMachinePriorityTypes(d.Get("priority").(string))
@@ -388,8 +389,8 @@ func resourceWindowsVirtualMachineCreate(d *pluginsdk.ResourceData, meta interfa
 	params := compute.VirtualMachine{
 		Name:     utils.String(id.Name),
 		Location: utils.String(location),
-		Identity: identity,
-		Plan:     plan,
+		//Identity: identity,
+		Plan: plan,
 		VirtualMachineProperties: &compute.VirtualMachineProperties{
 			HardwareProfile: &compute.HardwareProfile{
 				VMSize: compute.VirtualMachineSizeTypes(size),
@@ -534,13 +535,13 @@ func resourceWindowsVirtualMachineRead(d *pluginsdk.ResourceData, meta interface
 		d.Set("location", location.Normalize(*v))
 	}
 
-	identity, err := flattenVirtualMachineIdentity(resp.Identity)
+	/*identity, err := flattenVirtualMachineIdentity(resp.Identity)
 	if err != nil {
 		return err
 	}
 	if err := d.Set("identity", identity); err != nil {
 		return fmt.Errorf("setting `identity`: %+v", err)
-	}
+	}*/
 
 	if err := d.Set("plan", flattenPlan(resp.Plan)); err != nil {
 		return fmt.Errorf("setting `plan`: %+v", err)
@@ -739,7 +740,7 @@ func resourceWindowsVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interfa
 		update.OsProfile.AllowExtensionOperations = utils.Bool(allowExtensionOperations)
 	}
 
-	if d.HasChange("identity") {
+	/*if d.HasChange("identity") {
 		shouldUpdate = true
 
 		identityRaw := d.Get("identity").([]interface{})
@@ -748,7 +749,7 @@ func resourceWindowsVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interfa
 			return fmt.Errorf("expanding `identity`: %+v", err)
 		}
 		update.Identity = identity
-	}
+	}*/
 
 	if d.HasChange("extensions_time_budget") {
 		shouldUpdate = true

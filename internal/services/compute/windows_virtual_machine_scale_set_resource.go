@@ -159,7 +159,8 @@ func windowsVirtualMachineScaleSet() *pluginsdk.Resource {
 				ValidateFunc: resourceid.ValidateResourceID,
 			},
 
-			"identity": VirtualMachineScaleSetIdentitySchema(),
+			// TODO: Uncomment identity if its needed, its commented because of issues about unavailability for local testing
+			//"identity": VirtualMachineScaleSetIdentitySchema(),
 
 			"license_type": {
 				Type:     pluginsdk.TypeString,
@@ -335,11 +336,11 @@ func resourceWindowsVirtualMachineScaleSetCreate(d *pluginsdk.ResourceData, meta
 		return fmt.Errorf("expanding `data_disk`: %+v", err)
 	}
 
-	identityRaw := d.Get("identity").([]interface{})
+	/*identityRaw := d.Get("identity").([]interface{})
 	identity, err := ExpandVirtualMachineScaleSetIdentity(identityRaw)
 	if err != nil {
 		return fmt.Errorf("expanding `identity`: %+v", err)
-	}
+	}*/
 
 	networkInterfacesRaw := d.Get("network_interface").([]interface{})
 	networkInterfaces, err := ExpandVirtualMachineScaleSetNetworkInterface(networkInterfacesRaw)
@@ -520,9 +521,9 @@ func resourceWindowsVirtualMachineScaleSetCreate(d *pluginsdk.ResourceData, meta
 			// doesn't appear this can be set to anything else, even Promo machines are Standard
 			Tier: utils.String("Standard"),
 		},
-		Identity: identity,
-		Plan:     plan,
-		Tags:     tags.Expand(t),
+		//Identity: identity,
+		Plan: plan,
+		Tags: tags.Expand(t),
 		VirtualMachineScaleSetProperties: &compute.VirtualMachineScaleSetProperties{
 			AdditionalCapabilities:                 additionalCapabilities,
 			AutomaticRepairsPolicy:                 automaticRepairsPolicy,
@@ -824,7 +825,7 @@ func resourceWindowsVirtualMachineScaleSetUpdate(d *pluginsdk.ResourceData, meta
 		updateProps.AutomaticRepairsPolicy = automaticRepairsPolicy
 	}
 
-	if d.HasChange("identity") {
+	/*if d.HasChange("identity") {
 		identityRaw := d.Get("identity").([]interface{})
 		identity, err := ExpandVirtualMachineScaleSetIdentity(identityRaw)
 		if err != nil {
@@ -832,7 +833,7 @@ func resourceWindowsVirtualMachineScaleSetUpdate(d *pluginsdk.ResourceData, meta
 		}
 
 		update.Identity = identity
-	}
+	}*/
 
 	if d.HasChange("plan") {
 		planRaw := d.Get("plan").([]interface{})
@@ -928,13 +929,13 @@ func resourceWindowsVirtualMachineScaleSetRead(d *pluginsdk.ResourceData, meta i
 	d.Set("instances", instances)
 	d.Set("sku", skuName)
 
-	identity, err := FlattenVirtualMachineScaleSetIdentity(resp.Identity)
+	/*identity, err := FlattenVirtualMachineScaleSetIdentity(resp.Identity)
 	if err != nil {
 		return err
 	}
 	if err := d.Set("identity", identity); err != nil {
 		return fmt.Errorf("setting `identity`: %+v", err)
-	}
+	}*/
 
 	if err := d.Set("plan", flattenPlan(resp.Plan)); err != nil {
 		return fmt.Errorf("setting `plan`: %+v", err)

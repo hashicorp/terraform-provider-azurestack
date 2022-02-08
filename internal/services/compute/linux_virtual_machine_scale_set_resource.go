@@ -157,7 +157,7 @@ func linuxVirtualMachineScaleSet() *pluginsdk.Resource {
 				ValidateFunc: resourceid.ValidateResourceID,
 			},
 
-			// TODO: Uncomment identity if its needed
+			// TODO: Uncomment identity if its needed, its commented because of issues about unavailability for local testing
 			//"identity": VirtualMachineScaleSetIdentitySchema(),
 
 			"max_bid_price": {

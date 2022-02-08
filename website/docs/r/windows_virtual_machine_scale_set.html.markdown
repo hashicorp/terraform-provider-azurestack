@@ -142,8 +142,6 @@ The following arguments are supported:
 
 * `health_probe_id` - (Optional) The ID of a Load Balancer Probe which should be used to determine the health of an instance. This is Required and can only be specified when `upgrade_mode` is set to `Automatic` or `Rolling`.
 
-* `identity` - (Optional) An `identity` block as defined below.
-
 * `license_type` - (Optional) Specifies the type of on-premise license (also known as [Azure Hybrid Use Benefit](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing)) which should be used for this Virtual Machine Scale Set. Possible values are `None`, `Windows_Client` and `Windows_Server`.
 
 * `max_bid_price` - (Optional) The maximum price you're willing to pay for each Virtual Machine in this Scale Set, in US Dollars; which must be greater than the current spot price. If this bid price falls below the current spot price the Virtual Machines in the Scale Set will be evicted using the `eviction_policy`. Defaults to `-1`, which means that each Virtual Machine in the Scale Set should not be evicted for price reasons.
@@ -312,17 +310,7 @@ An `extension` block supports the following:
 
 -> **NOTE:** Rather than defining JSON inline [you can use the `jsonencode` interpolation function](https://www.terraform.io/docs/configuration/functions/jsonencode.html) to define this in a cleaner way.
 
----
 
-A `identity` block supports the following:
-
-* `type` - (Required) The type of Managed Identity which should be assigned to the Windows Virtual Machine Scale Set. Possible values are `SystemAssigned`, `UserAssigned` and `SystemAssigned, UserAssigned`.
-
-* `identity_ids` - (Optional) A list of User Managed Identity ID's which should be assigned to the Windows Virtual Machine Scale Set.
-
-~> **NOTE:** This is required when `type` is set to `UserAssigned`.
-
----
 
 A `ip_configuration` block supports the following:
 
@@ -481,15 +469,9 @@ In addition to all arguments above, the following attributes are exported:
 
 * `id` - The ID of the Windows Virtual Machine Scale Set.
 
-* `identity` - An `identity` block as defined below.
-
 * `unique_id` - The Unique ID for this Windows Virtual Machine Scale Set.
 
 ---
-
-An `identity` block exports the following:
-
-* `principal_id` - The ID of the System Managed Service Principal.
 
 ## Timeouts
 

@@ -171,7 +171,7 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 				ValidateFunc: utils.ISO8601DurationBetween("PT15M", "PT2H"),
 			},
 
-			// TODO: Uncomment identity if its needed
+			// TODO: Uncomment identity if its needed, its commented because of issues about unavailability for local testing
 			//"identity": virtualMachineIdentity{}.Schema(),
 
 			"license_type": {

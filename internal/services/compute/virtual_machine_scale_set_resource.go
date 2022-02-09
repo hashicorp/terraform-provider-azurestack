@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/compute/mgmt/compute"
+	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/compute/mgmt/compute"
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
@@ -130,9 +130,9 @@ func virtualMachineScaleSet() *pluginsdk.Resource {
 				Type:     pluginsdk.TypeString,
 				Required: true,
 				ValidateFunc: validation.StringInSlice([]string{
-					string(compute.Automatic),
-					string(compute.Manual),
-					string(compute.Rolling),
+					string(compute.UpgradeModeAutomatic),
+					string(compute.UpgradeModeManual),
+					string(compute.UpgradeModeRolling),
 				}, true),
 				DiffSuppressFunc: suppress.CaseDifference,
 			},
@@ -1922,7 +1922,7 @@ func expandAzureRMVirtualMachineScaleSetsStorageProfileDataDisk(d *pluginsdk.Res
 		if managedDiskType != "" {
 			managedDiskVMSS.StorageAccountType = compute.StorageAccountTypes(managedDiskType)
 		} else {
-			managedDiskVMSS.StorageAccountType = compute.StandardLRS
+			managedDiskVMSS.StorageAccountType = compute.StorageAccountTypesStandardLRS
 		}
 
 		// assume that data disks in VMSS can only be Managed Disks

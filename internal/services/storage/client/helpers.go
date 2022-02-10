@@ -6,7 +6,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/storage/mgmt/storage"
+	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/storage/mgmt/storage"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/parse"
 )
 

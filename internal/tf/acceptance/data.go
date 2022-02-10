@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/Azure/go-autorest/autorest/azure"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 const (
@@ -57,6 +58,11 @@ type TestData struct {
 
 // BuildTestData generates some test data for the given resource
 func BuildTestData(t *testing.T, resourceType string, resourceLabel string) TestData {
+	if os.Getenv(resource.TestEnvVar) == "" {
+		t.Skip(fmt.Sprintf("Integration test skipped unless env '%s' set", resource.TestEnvVar))
+		return TestData{}
+	}
+
 	env, err := Environment()
 	if err != nil {
 		t.Fatalf("Error retrieving Environment: %+v", err)

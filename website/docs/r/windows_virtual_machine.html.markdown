@@ -1,6 +1,6 @@
 ---
 subcategory: "Compute"
-layout: "azurerm"
+layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_windows_virtual_machine"
 description: |-
   Manages a Windows Virtual Machine.
@@ -12,7 +12,7 @@ Manages a Windows Virtual Machine.
 
 ## Disclaimers
 
--> **Note** Terraform will automatically remove the OS Disk by default - this behaviour can be configured [using the `features` setting within the Provider block](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#features).
+-> **Note** Terraform will automatically remove the OS Disk by default - this behaviour can be configured [using the `features` setting within the Provider block](https://registry.terraform.io/providers/hashicorp/azurestack/latest/docs#features).
 
 ~> **Note** All arguments including the administrator login and password will be stored in the raw state as plain-text. [Read more about sensitive data in state](/docs/state/sensitive-data.html).
 
@@ -24,10 +24,10 @@ Manages a Windows Virtual Machine.
 
 ## Example Usage
 
-This example provisions a basic Windows Virtual Machine on an internal network. Additional examples of how to use the `azurestack_windows_virtual_machine` resource can be found [in the ./examples/virtual-machines/windows directory within the Github Repository](https://github.com/hashicorp/terraform-provider-azurerm/tree/main/examples/virtual-machines/windows).
+This example provisions a basic Windows Virtual Machine on an internal network. Additional examples of how to use the `azurestack_windows_virtual_machine` resource can be found [in the ./examples/virtual-machines/windows directory within the Github Repository](https://github.com/hashicorp/terraform-provider-azurestack/tree/main/examples/virtual-machines/windows).
 
 ```hcl
-provider "azurerm" {
+provider "azurestack" {
   features {}
 }
 
@@ -169,7 +169,7 @@ The following arguments are supported:
 
 * `virtual_machine_scale_set_id` - (Optional) Specifies the Orchestrated Virtual Machine Scale Set that this Virtual Machine should be created within. Changing this forces a new resource to be created.
 
-~> **NOTE:** Orchestrated Virtual Machine Scale Sets can be provisioned using [the `azurestack_orchestrated_virtual_machine_scale_set` resource](/docs/providers/azurerm/r/orchestrated_virtual_machine_scale_set.html).
+~> **NOTE:** Orchestrated Virtual Machine Scale Sets can be provisioned using [the `azurestack_orchestrated_virtual_machine_scale_set` resource](/docs/providers/azurestack/r/orchestrated_virtual_machine_scale_set.html).
 
 * `winrm_listener` - (Optional) One or more `winrm_listener` blocks as defined below.
 

@@ -7,6 +7,7 @@ require (
 	github.com/Azure/go-autorest/autorest v0.11.22
 	github.com/Azure/go-autorest/autorest/date v0.3.0
 	github.com/Azure/go-autorest/autorest/validation v0.3.1
+	github.com/btubbs/datetime v0.1.1
 	github.com/davecgh/go-spew v1.1.1
 	github.com/gofrs/uuid v4.2.0+incompatible
 	github.com/google/go-cmp v0.5.6
@@ -14,6 +15,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/go-uuid v1.0.2
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.10.1
+	github.com/rickb777/date v1.17.0
 	github.com/tombuildsstuff/giovanni v0.17.0
 	golang.org/x/crypto v0.0.0-20211108221036-ceb1ce70b4fa
 )
@@ -63,13 +65,14 @@ require (
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/oklog/run v1.0.0 // indirect
+	github.com/rickb777/plural v1.4.1 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	github.com/zclconf/go-cty v1.9.1 // indirect
-	golang.org/x/net v0.0.0-20210525063256-abc453219eb5 // indirect
+	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
 	golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c // indirect
-	golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 // indirect
-	golang.org/x/text v0.3.6 // indirect
-	golang.org/x/tools v0.0.0-20201028111035-eafbe7b904eb // indirect
+	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
+	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/tools v0.0.0-20201224043029-2b0845dc783e // indirect
 	google.golang.org/api v0.34.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20200904004341-0bd0a958aa1d // indirect

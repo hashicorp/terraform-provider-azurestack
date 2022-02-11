@@ -1153,6 +1153,45 @@ func linuxVirtualMachineDelete(d *pluginsdk.ResourceData, meta interface{}) erro
 	}
 	log.Printf("[DEBUG] Deleted Linux Virtual Machine %q (Resource Group %q).", id.Name, id.ResourceGroup)
 
+	// delete OS Disk if opted in
+	deleteOsDisk := d.Get("delete_os_disk_on_termination").(bool)
+	deleteDataDisks := d.Get("delete_data_disks_on_termination").(bool)
+	if deleteOsDisk || deleteDataDisks {
+		log.Printf("[DEBUG] Deleting OS Disk from Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+		disksClient := meta.(*clients.Client).Compute.DisksClient
+		managedDiskId := ""
+		if props := existing.VirtualMachineProperties; props != nil && props.StorageProfile != nil && props.StorageProfile.OsDisk != nil {
+			if disk := props.StorageProfile.OsDisk.ManagedDisk; disk != nil && disk.ID != nil {
+				managedDiskId = *disk.ID
+			}
+		}
+
+		if managedDiskId != "" {
+			diskId, err := parse.ManagedDiskID(managedDiskId)
+			if err != nil {
+				return err
+			}
+
+			diskDeleteFuture, err := disksClient.Delete(ctx, diskId.ResourceGroup, diskId.DiskName)
+			if err != nil {
+				if !utils.WasNotFound(diskDeleteFuture.Response()) {
+					return fmt.Errorf("deleting OS Disk %q (Resource Group %q) for Linux Virtual Machine %q (Resource Group %q): %+v", diskId.DiskName, diskId.ResourceGroup, id.Name, id.ResourceGroup, err)
+				}
+			}
+			if !utils.WasNotFound(diskDeleteFuture.Response()) {
+				if err := diskDeleteFuture.WaitForCompletionRef(ctx, disksClient.Client); err != nil {
+					return fmt.Errorf("OS Disk %q (Resource Group %q) for Linux Virtual Machine %q (Resource Group %q): %+v", diskId.DiskName, diskId.ResourceGroup, id.Name, id.ResourceGroup, err)
+				}
+			}
+
+			log.Printf("[DEBUG] Deleted OS Disk from Linux Virtual Machine %q (Resource Group %q).", diskId.DiskName, diskId.ResourceGroup)
+		} else {
+			log.Printf("[DEBUG] Skipping Deleting OS Disk from Linux Virtual Machine %q (Resource Group %q) - cannot determine OS Disk ID.", id.Name, id.ResourceGroup)
+		}
+	} else {
+		log.Printf("[DEBUG] Skipping Deleting OS Disk from Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+	}
+
 	// Need to add a get and a state wait to avoid bug in network API where the attached disk(s) are not actually deleted
 	// Service team indicated that we need to do a get after VM delete call returns to verify that the VM and all attached
 	// disks have actually been deleted.

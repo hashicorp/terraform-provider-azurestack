@@ -1,5 +1,7 @@
 package identity
 
+import "github.com/hashicorp/terraform-provider-azurestack/internal/utils"
+
 type userAssignedIdentity struct {
 	ResourceId *string `json:"resourceId,omitempty"`
 	userAssignedIdentityInfo
@@ -99,7 +101,7 @@ func (u *UserAssignedIdentityList) FromExpandedConfig(config ExpandedConfig) {
 	var identities []userAssignedIdentity
 	for _, id := range config.UserAssignedIdentityIds {
 		identities = append(identities, userAssignedIdentity{
-			ResourceId: &id,
+			ResourceId: utils.String(id),
 		})
 	}
 	u.UserAssignedIdentities = &identities
@@ -212,7 +214,7 @@ func (s *SystemUserAssignedIdentityList) FromExpandedConfig(config ExpandedConfi
 	var identities []userAssignedIdentity
 	for _, id := range config.UserAssignedIdentityIds {
 		identities = append(identities, userAssignedIdentity{
-			ResourceId: &id,
+			ResourceId: utils.String(id),
 		})
 	}
 	s.UserAssignedIdentities = &identities

@@ -27,16 +27,17 @@ import (
 
 // TODO: confirm locking as appropriate
 
-func linuxVirtualMachine() *pluginsdk.Resource {
+func windowsVirtualMachine() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
-		Create: linuxVirtualMachineCreate,
-		Read:   linuxVirtualMachineRead,
-		Update: linuxVirtualMachineUpdate,
-		Delete: linuxVirtualMachineDelete,
+		Create: resourceWindowsVirtualMachineCreate,
+		Read:   resourceWindowsVirtualMachineRead,
+		Update: resourceWindowsVirtualMachineUpdate,
+		Delete: resourceWindowsVirtualMachineDelete,
+
 		Importer: pluginsdk.ImporterValidatingResourceIdThen(func(id string) error {
 			_, err := parse.VirtualMachineID(id)
 			return err
-		}, importVirtualMachine(compute.Linux, "azurestack_linux_virtual_machine")),
+		}, importVirtualMachine(compute.Windows, "azurestack_windows_virtual_machine")),
 
 		Timeouts: &pluginsdk.ResourceTimeout{
 			Create: pluginsdk.DefaultTimeout(45 * time.Minute),
@@ -58,6 +59,14 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 			"location": commonschema.Location(),
 
 			// Required
+			"admin_password": {
+				Type:             pluginsdk.TypeString,
+				Required:         true,
+				ForceNew:         true,
+				Sensitive:        true,
+				DiffSuppressFunc: adminPasswordDiffSuppressFunc,
+			},
+
 			"admin_username": {
 				Type:         pluginsdk.TypeString,
 				Required:     true,
@@ -86,15 +95,7 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 			// Optional
 			"additional_capabilities": virtualMachineAdditionalCapabilitiesSchema(),
 
-			"admin_password": {
-				Type:             pluginsdk.TypeString,
-				Optional:         true,
-				ForceNew:         true,
-				Sensitive:        true,
-				DiffSuppressFunc: adminPasswordDiffSuppressFunc,
-			},
-
-			"admin_ssh_key": SSHKeysSchema(true),
+			"additional_unattend_content": additionalUnattendContentSchema(),
 
 			"allow_extension_operations": {
 				Type:     pluginsdk.TypeBool,
@@ -127,7 +128,7 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 				Computed: true,
 				ForceNew: true,
 
-				ValidateFunc: computeValidate.LinuxComputerNameFull,
+				ValidateFunc: computeValidate.WindowsComputerNameFull,
 			},
 
 			"custom_data": base64.OptionalSchema(true),
@@ -142,10 +143,10 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 				// /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TOM-MANUAL/providers/Microsoft.Compute/hostGroups/tom-hostgroup/hosts/tom-manual-host
 			},
 
-			"disable_password_authentication": {
+			"enable_automatic_updates": {
 				Type:     pluginsdk.TypeBool,
 				Optional: true,
-				ForceNew: true,
+				ForceNew: true, // updating this is not allowed "Changing property 'windowsConfiguration.enableAutomaticUpdates' is not allowed." Target="windowsConfiguration.enableAutomaticUpdates"
 				Default:  true,
 			},
 
@@ -178,9 +179,17 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 				Type:     pluginsdk.TypeString,
 				Optional: true,
 				ValidateFunc: validation.StringInSlice([]string{
-					"RHEL_BYOS",
-					"SLES_BYOS",
+					"None",
+					"Windows_Client",
+					"Windows_Server",
 				}, false),
+				DiffSuppressFunc: func(_, old, new string, _ *pluginsdk.ResourceData) bool {
+					if old == "None" && new == "" || old == "" && new == "None" {
+						return true
+					}
+
+					return false
+				},
 			},
 
 			"max_bid_price": {
@@ -188,6 +197,18 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 				Optional:     true,
 				Default:      -1,
 				ValidateFunc: validation.FloatAtLeast(-1.0),
+			},
+
+			// This is a preview feature: `az feature register -n InGuestAutoPatchVMPreview --namespace Microsoft.Compute`
+			"patch_mode": {
+				Type:     pluginsdk.TypeString,
+				Optional: true,
+				Default:  string(compute.AutomaticByOS),
+				ValidateFunc: validation.StringInSlice([]string{
+					string(compute.AutomaticByOS),
+					string(compute.AutomaticByPlatform),
+					string(compute.Manual),
+				}, false),
 			},
 
 			"plan": planSchema(),
@@ -219,7 +240,7 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 				DiffSuppressFunc: suppress.CaseDifference,
 			},
 
-			"secret": linuxSecretSchema(),
+			"secret": windowsSecretSchema(),
 
 			"source_image_id": {
 				Type:     pluginsdk.TypeString,
@@ -234,6 +255,14 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 
 			"source_image_reference": sourceImageReferenceSchema(true),
 
+			"tags": tags.Schema(),
+
+			"timezone": {
+				Type:         pluginsdk.TypeString,
+				Optional:     true,
+				ValidateFunc: computeValidate.VirtualMachineTimeZone(),
+			},
+
 			"virtual_machine_scale_set_id": {
 				Type:     pluginsdk.TypeString,
 				Optional: true,
@@ -244,7 +273,7 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 				ValidateFunc: computeValidate.VirtualMachineScaleSetID,
 			},
 
-			"tags": tags.Schema(),
+			"winrm_listener": winRmListenerSchema(),
 
 			"zone": {
 				Type:     pluginsdk.TypeString,
@@ -290,7 +319,7 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 	}
 }
 
-func linuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface{}) error {
+func resourceWindowsVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Compute.VMClient
 	subscriptionId := meta.(*clients.Client).Account.SubscriptionId
 	ctx, cancel := timeouts.ForCreate(meta.(*clients.Client).StopContext, d)
@@ -304,17 +333,21 @@ func linuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 	resp, err := client.Get(ctx, id.ResourceGroup, id.Name, "")
 	if err != nil {
 		if !utils.ResponseWasNotFound(resp.Response) {
-			return fmt.Errorf("checking for existing %s: %+v", id, err)
+			return fmt.Errorf("checking for existing Windows %s: %+v", id, err)
 		}
 	}
 
 	if !utils.ResponseWasNotFound(resp.Response) {
-		return tf.ImportAsExistsError("azurestack_linux_virtual_machine", *resp.ID)
+		return tf.ImportAsExistsError("azurestack_windows_virtual_machine", *resp.ID)
 	}
 
 	additionalCapabilitiesRaw := d.Get("additional_capabilities").([]interface{})
 	additionalCapabilities := expandVirtualMachineAdditionalCapabilities(additionalCapabilitiesRaw)
 
+	additionalUnattendContentRaw := d.Get("additional_unattend_content").([]interface{})
+	additionalUnattendContent := expandAdditionalUnattendContent(additionalUnattendContentRaw)
+
+	adminPassword := d.Get("admin_password").(string)
 	adminUsername := d.Get("admin_username").(string)
 	allowExtensionOperations := d.Get("allow_extension_operations").(bool)
 
@@ -325,13 +358,13 @@ func linuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 	if v, ok := d.GetOk("computer_name"); ok && len(v.(string)) > 0 {
 		computerName = v.(string)
 	} else {
-		_, errs := computeValidate.LinuxComputerNameFull(d.Get("name"), "computer_name")
+		_, errs := computeValidate.WindowsComputerNameFull(d.Get("name"), "computer_name")
 		if len(errs) > 0 {
-			return fmt.Errorf("unable to assume default computer name %s Please adjust the %q, or specify an explicit %q", errs[0], "name", "computer_name")
+			return fmt.Errorf("unable to assume default computer name %s. Please adjust the %q, or specify an explicit %q", errs[0], "name", "computer_name")
 		}
 		computerName = id.Name
 	}
-	disablePasswordAuthentication := d.Get("disable_password_authentication").(bool)
+	enableAutomaticUpdates := d.Get("enable_automatic_updates").(bool)
 	location := location.Normalize(d.Get("location").(string))
 	identityRaw := d.Get("identity").([]interface{})
 	identity, err := expandVirtualMachineIdentity(identityRaw)
@@ -349,10 +382,10 @@ func linuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 	networkInterfaceIds := expandVirtualMachineNetworkInterfaceIDs(networkInterfaceIdsRaw)
 
 	osDiskRaw := d.Get("os_disk").([]interface{})
-	osDisk := expandVirtualMachineOSDisk(osDiskRaw, compute.Linux)
+	osDisk := expandVirtualMachineOSDisk(osDiskRaw, compute.Windows)
 
 	secretsRaw := d.Get("secret").([]interface{})
-	secrets := expandLinuxSecrets(secretsRaw)
+	secrets := expandWindowsSecrets(secretsRaw)
 
 	sourceImageReferenceRaw := d.Get("source_image_reference").([]interface{})
 	sourceImageId := d.Get("source_image_id").(string)
@@ -361,8 +394,8 @@ func linuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 		return err
 	}
 
-	sshKeysRaw := d.Get("admin_ssh_key").(*pluginsdk.Set).List()
-	sshKeys := ExpandSSHKeys(sshKeysRaw)
+	winRmListenersRaw := d.Get("winrm_listener").(*pluginsdk.Set).List()
+	winRmListeners := expandWinRMListener(winRmListenersRaw)
 
 	params := compute.VirtualMachine{
 		Name:     utils.String(id.Name),
@@ -374,15 +407,14 @@ func linuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 				VMSize: compute.VirtualMachineSizeTypes(size),
 			},
 			OsProfile: &compute.OSProfile{
+				AdminPassword:            utils.String(adminPassword),
 				AdminUsername:            utils.String(adminUsername),
 				ComputerName:             utils.String(computerName),
 				AllowExtensionOperations: utils.Bool(allowExtensionOperations),
-				LinuxConfiguration: &compute.LinuxConfiguration{
-					DisablePasswordAuthentication: utils.Bool(disablePasswordAuthentication),
-					ProvisionVMAgent:              utils.Bool(provisionVMAgent),
-					SSH: &compute.SSHConfiguration{
-						PublicKeys: &sshKeys,
-					},
+				WindowsConfiguration: &compute.WindowsConfiguration{
+					ProvisionVMAgent:       utils.Bool(provisionVMAgent),
+					EnableAutomaticUpdates: utils.Bool(enableAutomaticUpdates),
+					WinRM:                  winRmListeners,
 				},
 				Secrets: secrets,
 			},
@@ -407,18 +439,19 @@ func linuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 		Tags: tags.Expand(t),
 	}
 
-	if v, ok := d.GetOk("license_type"); ok {
-		params.VirtualMachineProperties.LicenseType = utils.String(v.(string))
-	}
-
-	if encryptionAtHostEnabled, ok := d.GetOk("encryption_at_host_enabled"); ok {
-		params.VirtualMachineProperties.SecurityProfile = &compute.SecurityProfile{
-			EncryptionAtHost: utils.Bool(encryptionAtHostEnabled.(bool)),
-		}
-	}
-
 	if !provisionVMAgent && allowExtensionOperations {
 		return fmt.Errorf("`allow_extension_operations` cannot be set to `true` when `provision_vm_agent` is set to `false`")
+	}
+
+	if len(additionalUnattendContentRaw) > 0 {
+		params.OsProfile.WindowsConfiguration.AdditionalUnattendContent = additionalUnattendContent
+	}
+
+	patchMode := d.Get("patch_mode").(string)
+	if patchMode != string(compute.AutomaticByOS) {
+		params.OsProfile.WindowsConfiguration.PatchSettings = &compute.PatchSettings{
+			PatchMode: compute.InGuestPatchMode(patchMode),
+		}
 	}
 
 	if v, ok := d.GetOk("availability_set_id"); ok {
@@ -437,14 +470,25 @@ func linuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 		}
 	}
 
+	if encryptionAtHostEnabled, ok := d.GetOk("encryption_at_host_enabled"); ok {
+		if params.SecurityProfile == nil {
+			params.SecurityProfile = &compute.SecurityProfile{}
+		}
+		params.SecurityProfile.EncryptionAtHost = utils.Bool(encryptionAtHostEnabled.(bool))
+	}
+
 	if evictionPolicyRaw, ok := d.GetOk("eviction_policy"); ok {
 		if params.Priority != compute.Spot {
-			return fmt.Errorf("An `eviction_policy` can only be specified when `priority` is set to `Spot`")
+			return fmt.Errorf("an `eviction_policy` can only be specified when `priority` is set to `Spot`")
 		}
 
 		params.EvictionPolicy = compute.VirtualMachineEvictionPolicyTypes(evictionPolicyRaw.(string))
 	} else if priority == compute.Spot {
-		return fmt.Errorf("An `eviction_policy` must be specified when `priority` is set to `Spot`")
+		return fmt.Errorf("an `eviction_policy` must be specified when `priority` is set to `Spot`")
+	}
+
+	if v, ok := d.GetOk("license_type"); ok {
+		params.LicenseType = utils.String(v.(string))
 	}
 
 	if v, ok := d.Get("max_bid_price").(float64); ok && v > 0 {
@@ -469,38 +513,30 @@ func linuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 		}
 	}
 
+	if v, ok := d.GetOk("timezone"); ok {
+		params.VirtualMachineProperties.OsProfile.WindowsConfiguration.TimeZone = utils.String(v.(string))
+	}
+
 	if v, ok := d.GetOk("zone"); ok {
 		params.Zones = &[]string{
 			v.(string),
 		}
 	}
 
-	// "Authentication using either SSH or by user name and password must be enabled in Linux profile." Target="linuxConfiguration"
-	adminPassword := d.Get("admin_password").(string)
-	if disablePasswordAuthentication && len(sshKeys) == 0 {
-		return fmt.Errorf("At least one `admin_ssh_key` must be specified when `disable_password_authentication` is set to `true`")
-	} else if !disablePasswordAuthentication {
-		if adminPassword == "" {
-			return fmt.Errorf("An `admin_password` must be specified if `disable_password_authentication` is set to `false`")
-		}
-
-		params.OsProfile.AdminPassword = utils.String(adminPassword)
-	}
-
 	future, err := client.CreateOrUpdate(ctx, id.ResourceGroup, id.Name, params)
 	if err != nil {
-		return fmt.Errorf("creating Linux %s: %+v", id, err)
+		return fmt.Errorf("creating Windows %s: %+v", id, err)
 	}
 
 	if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("waiting for creation of Linux %s: %+v", id, err)
+		return fmt.Errorf("waiting for creation of Windows %s: %+v", id, err)
 	}
 
 	d.SetId(id.ID())
-	return linuxVirtualMachineRead(d, meta)
+	return resourceWindowsVirtualMachineRead(d, meta)
 }
 
-func linuxVirtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error {
+func resourceWindowsVirtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Compute.VMClient
 	disksClient := meta.(*clients.Client).Compute.DisksClient
 	networkInterfacesClient := meta.(*clients.Client).Network.InterfacesClient
@@ -516,12 +552,12 @@ func linuxVirtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error 
 	resp, err := client.Get(ctx, id.ResourceGroup, id.Name, "")
 	if err != nil {
 		if utils.ResponseWasNotFound(resp.Response) {
-			log.Printf("[DEBUG] Linux Virtual Machine %q was not found in Resource Group %q - removing from state!", id.Name, id.ResourceGroup)
+			log.Printf("[DEBUG] Windows Virtual Machine %q was not found in Resource Group %q - removing from state!", id.Name, id.ResourceGroup)
 			d.SetId("")
 			return nil
 		}
 
-		return fmt.Errorf("retrieving Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+		return fmt.Errorf("retrieving Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 	}
 
 	d.Set("name", id.Name)
@@ -543,7 +579,7 @@ func linuxVirtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error 
 	}
 
 	if resp.VirtualMachineProperties == nil {
-		return fmt.Errorf("retrieving Linux Virtual Machine %q (Resource Group %q): `properties` was nil", id.Name, id.ResourceGroup)
+		return fmt.Errorf("retrieving Windows Virtual Machine %q (Resource Group %q): `properties` was nil", id.Name, id.ResourceGroup)
 	}
 
 	props := *resp.VirtualMachineProperties
@@ -557,12 +593,6 @@ func linuxVirtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error 
 	}
 	d.Set("availability_set_id", availabilitySetId)
 
-	licenseType := ""
-	if props.LicenseType != nil {
-		licenseType = *props.LicenseType
-	}
-	d.Set("license_type", licenseType)
-
 	if err := d.Set("boot_diagnostics", flattenBootDiagnostics(props.DiagnosticsProfile)); err != nil {
 		return fmt.Errorf("setting `boot_diagnostics`: %+v", err)
 	}
@@ -571,6 +601,7 @@ func linuxVirtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error 
 	if profile := props.HardwareProfile; profile != nil {
 		d.Set("size", string(profile.VMSize))
 	}
+	d.Set("license_type", props.LicenseType)
 
 	extensionsTimeBudget := "PT1H30M"
 	if props.ExtensionsTimeBudget != nil {
@@ -608,20 +639,27 @@ func linuxVirtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error 
 		d.Set("allow_extension_operations", profile.AllowExtensionOperations)
 		d.Set("computer_name", profile.ComputerName)
 
-		if config := profile.LinuxConfiguration; config != nil {
-			d.Set("disable_password_authentication", config.DisablePasswordAuthentication)
+		if config := profile.WindowsConfiguration; config != nil {
+			if err := d.Set("additional_unattend_content", flattenAdditionalUnattendContent(config.AdditionalUnattendContent, d)); err != nil {
+				return fmt.Errorf("setting `additional_unattend_content`: %+v", err)
+			}
+
+			d.Set("enable_automatic_updates", config.EnableAutomaticUpdates)
+
 			d.Set("provision_vm_agent", config.ProvisionVMAgent)
 
-			flattenedSSHKeys, err := FlattenSSHKeys(config.SSH)
-			if err != nil {
-				return fmt.Errorf("flattening `admin_ssh_key`: %+v", err)
+			if patchSettings := config.PatchSettings; patchSettings != nil {
+				d.Set("patch_mode", patchSettings.PatchMode)
 			}
-			if err := d.Set("admin_ssh_key", pluginsdk.NewSet(SSHKeySchemaHash, *flattenedSSHKeys)); err != nil {
-				return fmt.Errorf("setting `admin_ssh_key`: %+v", err)
+
+			d.Set("timezone", config.TimeZone)
+
+			if err := d.Set("winrm_listener", flattenWinRMListener(config.WinRM)); err != nil {
+				return fmt.Errorf("setting `winrm_listener`: %+v", err)
 			}
 		}
 
-		if err := d.Set("secret", flattenLinuxSecrets(profile.Secrets)); err != nil {
+		if err := d.Set("secret", flattenWindowsSecrets(profile.Secrets)); err != nil {
 			return fmt.Errorf("setting `secret`: %+v", err)
 		}
 	}
@@ -684,7 +722,7 @@ func linuxVirtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error 
 	return tags.FlattenAndSet(d, resp.Tags)
 }
 
-func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
+func resourceWindowsVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Compute.VMClient
 	ctx, cancel := timeouts.ForUpdate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -697,20 +735,20 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 	locks.ByName(id.Name, virtualMachineResourceName)
 	defer locks.UnlockByName(id.Name, virtualMachineResourceName)
 
-	log.Printf("[DEBUG] Retrieving Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+	log.Printf("[DEBUG] Retrieving Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 	existing, err := client.Get(ctx, id.ResourceGroup, id.Name, "")
 	if err != nil {
 		if utils.ResponseWasNotFound(existing.Response) {
 			return nil
 		}
 
-		return fmt.Errorf("retrieving Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+		return fmt.Errorf("retrieving Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 	}
 
-	log.Printf("[DEBUG] Retrieving InstanceView for Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+	log.Printf("[DEBUG] Retrieving InstanceView for Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 	instanceView, err := client.InstanceView(ctx, id.ResourceGroup, id.Name)
 	if err != nil {
-		return fmt.Errorf("retrieving InstanceView for Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+		return fmt.Errorf("retrieving InstanceView for Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 	}
 
 	shouldTurnBackOn := virtualMachineShouldBeStarted(instanceView)
@@ -747,10 +785,38 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 
 		if d.HasChange("secret") {
 			secretsRaw := d.Get("secret").([]interface{})
-			profile.Secrets = expandLinuxSecrets(secretsRaw)
+			profile.Secrets = expandWindowsSecrets(secretsRaw)
 		}
 
 		update.VirtualMachineProperties.OsProfile = &profile
+	}
+
+	if d.HasChange("allow_extension_operations") {
+		allowExtensionOperations := d.Get("allow_extension_operations").(bool)
+
+		shouldUpdate = true
+
+		if update.OsProfile == nil {
+			update.OsProfile = &compute.OSProfile{}
+		}
+
+		update.OsProfile.AllowExtensionOperations = utils.Bool(allowExtensionOperations)
+	}
+
+	if d.HasChange("patch_mode") {
+		shouldUpdate = true
+
+		if update.OsProfile == nil {
+			update.OsProfile = &compute.OSProfile{}
+		}
+
+		if update.OsProfile.WindowsConfiguration == nil {
+			update.OsProfile.WindowsConfiguration = &compute.WindowsConfiguration{}
+		}
+
+		update.OsProfile.WindowsConfiguration.PatchSettings = &compute.PatchSettings{
+			PatchMode: compute.InGuestPatchMode(d.Get("patch_mode").(string)),
+		}
 	}
 
 	if d.HasChange("identity") {
@@ -762,14 +828,6 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 			return fmt.Errorf("expanding `identity`: %+v", err)
 		}
 		update.Identity = identity
-	}
-
-	if d.HasChange("license_type") {
-		shouldUpdate = true
-
-		if v, ok := d.GetOk("license_type"); ok {
-			update.LicenseType = utils.String(v.(string))
-		}
 	}
 
 	if d.HasChange("dedicated_host_id") {
@@ -835,7 +893,7 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 		shouldDeallocate = true
 
 		osDiskRaw := d.Get("os_disk").([]interface{})
-		osDisk := expandVirtualMachineOSDisk(osDiskRaw, compute.Linux)
+		osDisk := expandVirtualMachineOSDisk(osDiskRaw, compute.Windows)
 		update.VirtualMachineProperties.StorageProfile = &compute.StorageProfile{
 			OsDisk: osDisk,
 		}
@@ -870,7 +928,7 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 		availableOnThisHost := false
 		sizes, err := client.ListAvailableSizes(ctx, id.ResourceGroup, id.Name)
 		if err != nil {
-			return fmt.Errorf("retrieving available sizes for Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+			return fmt.Errorf("retrieving available sizes for Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 		}
 
 		if sizes.Value != nil {
@@ -900,18 +958,6 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 		}
 	}
 
-	if d.HasChange("allow_extension_operations") {
-		allowExtensionOperations := d.Get("allow_extension_operations").(bool)
-
-		shouldUpdate = true
-
-		if update.OsProfile == nil {
-			update.OsProfile = &compute.OSProfile{}
-		}
-
-		update.OsProfile.AllowExtensionOperations = utils.Bool(allowExtensionOperations)
-	}
-
 	if d.HasChange("tags") {
 		shouldUpdate = true
 
@@ -934,10 +980,23 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 	if d.HasChange("encryption_at_host_enabled") {
 		shouldUpdate = true
 		shouldDeallocate = true // API returns the following error if not deallocate: 'securityProfile.encryptionAtHost' can be updated only when VM is in deallocated state
-
-		update.VirtualMachineProperties.SecurityProfile = &compute.SecurityProfile{
-			EncryptionAtHost: utils.Bool(d.Get("encryption_at_host_enabled").(bool)),
+		if update.SecurityProfile == nil {
+			update.SecurityProfile = &compute.SecurityProfile{}
 		}
+		update.SecurityProfile.EncryptionAtHost = utils.Bool(d.Get("encryption_at_host_enabled").(bool))
+	}
+
+	if d.HasChange("license_type") {
+		shouldUpdate = true
+
+		license := d.Get("license_type").(string)
+		if license == "" {
+			// Only for create no specification is possible in the API. API does not allow empty string in update.
+			// So removing attribute license_type from Terraform configuration if it was set to value other than 'None' would lead to an endless loop in apply.
+			// To allow updating in this case set value explicitly to 'None'.
+			license = "None"
+		}
+		update.VirtualMachineProperties.LicenseType = &license
 	}
 
 	if instanceView.Statuses != nil {
@@ -971,37 +1030,37 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 	}
 
 	if shouldShutDown {
-		log.Printf("[DEBUG] Shutting Down Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+		log.Printf("[DEBUG] Shutting Down Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 		forceShutdown := false
 		future, err := client.PowerOff(ctx, id.ResourceGroup, id.Name, utils.Bool(forceShutdown))
 		if err != nil {
-			return fmt.Errorf("sending Power Off to Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+			return fmt.Errorf("sending Power Off to Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 		}
 
 		if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-			return fmt.Errorf("waiting for Power Off of Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+			return fmt.Errorf("waiting for Power Off of Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 		}
 
-		log.Printf("[DEBUG] Shut Down Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+		log.Printf("[DEBUG] Shut Down Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 	}
 
 	if shouldDeallocate {
 		if !hasEphemeralOSDisk {
-			log.Printf("[DEBUG] Deallocating Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
-			// Upgrade to 2021-07-01 added a hibernate parameter to this call defaulting to false
+			log.Printf("[DEBUG] Deallocating Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+			// Upgrading to the 2021-07-01 exposed a new hibernate parameter in the Deallocate method
 			future, err := client.Deallocate(ctx, id.ResourceGroup, id.Name)
 			if err != nil {
-				return fmt.Errorf("Deallocating Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+				return fmt.Errorf("deallocating Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 			}
 
 			if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-				return fmt.Errorf("waiting for Deallocation of Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+				return fmt.Errorf("waiting for Deallocation of Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 			}
 
-			log.Printf("[DEBUG] Deallocated Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+			log.Printf("[DEBUG] Deallocated Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 		} else {
 			// Code="OperationNotAllowed" Message="Operation 'deallocate' is not supported for VMs or VM Scale Set instances using an ephemeral OS disk."
-			log.Printf("[DEBUG] Skipping deallocation for Linux Virtual Machine %q (Resource Group %q) since cannot deallocate a Virtual Machine with an Ephemeral OS Disk", id.Name, id.ResourceGroup)
+			log.Printf("[DEBUG] Skipping deallocation for Windows Virtual Machine %q (Resource Group %q) since cannot deallocate a Virtual Machine with an Ephemeral OS Disk", id.Name, id.ResourceGroup)
 		}
 	}
 
@@ -1011,7 +1070,7 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 	if d.HasChange("os_disk.0.disk_size_gb") {
 		diskName := d.Get("os_disk.0.name").(string)
 		newSize := d.Get("os_disk.0.disk_size_gb").(int)
-		log.Printf("[DEBUG] Resizing OS Disk %q for Linux Virtual Machine %q (Resource Group %q) to %dGB..", diskName, id.Name, id.ResourceGroup, newSize)
+		log.Printf("[DEBUG] Resizing OS Disk %q for Windows Virtual Machine %q (Resource Group %q) to %dGB..", diskName, id.Name, id.ResourceGroup, newSize)
 
 		disksClient := meta.(*clients.Client).Compute.DisksClient
 
@@ -1023,20 +1082,20 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 
 		future, err := disksClient.Update(ctx, id.ResourceGroup, diskName, update)
 		if err != nil {
-			return fmt.Errorf("resizing OS Disk %q for Linux Virtual Machine %q (Resource Group %q): %+v", diskName, id.Name, id.ResourceGroup, err)
+			return fmt.Errorf("resizing OS Disk %q for Windows Virtual Machine %q (Resource Group %q): %+v", diskName, id.Name, id.ResourceGroup, err)
 		}
 
 		if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-			return fmt.Errorf("waiting for resize of OS Disk %q for Linux Virtual Machine %q (Resource Group %q): %+v", diskName, id.Name, id.ResourceGroup, err)
+			return fmt.Errorf("waiting for resize of OS Disk %q for Windows Virtual Machine %q (Resource Group %q): %+v", diskName, id.Name, id.ResourceGroup, err)
 		}
 
-		log.Printf("[DEBUG] Resized OS Disk %q for Linux Virtual Machine %q (Resource Group %q) to %dGB.", diskName, id.Name, id.ResourceGroup, newSize)
+		log.Printf("[DEBUG] Resized OS Disk %q for Windows Virtual Machine %q (Resource Group %q) to %dGB.", diskName, id.Name, id.ResourceGroup, newSize)
 	}
 
 	if d.HasChange("os_disk.0.disk_encryption_set_id") {
 		if diskEncryptionSetId := d.Get("os_disk.0.disk_encryption_set_id").(string); diskEncryptionSetId != "" {
 			diskName := d.Get("os_disk.0.name").(string)
-			log.Printf("[DEBUG] Updating encryption settings of OS Disk %q for Linux Virtual Machine %q (Resource Group %q) to %q..", diskName, id.Name, id.ResourceGroup, diskEncryptionSetId)
+			log.Printf("[DEBUG] Updating encryption settings of OS Disk %q for Windows Virtual Machine %q (Resource Group %q) to %q..", diskName, id.Name, id.ResourceGroup, diskEncryptionSetId)
 
 			disksClient := meta.(*clients.Client).Compute.DisksClient
 
@@ -1051,52 +1110,52 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 
 			future, err := disksClient.Update(ctx, id.ResourceGroup, diskName, update)
 			if err != nil {
-				return fmt.Errorf("updating encryption settings of OS Disk %q for Linux Virtual Machine %q (Resource Group %q): %+v", diskName, id.Name, id.ResourceGroup, err)
+				return fmt.Errorf("updating encryption settings of OS Disk %q for Windows Virtual Machine %q (Resource Group %q): %+v", diskName, id.Name, id.ResourceGroup, err)
 			}
 
 			if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-				return fmt.Errorf("waiting to update encryption settings of OS Disk %q for Linux Virtual Machine %q (Resource Group %q): %+v", diskName, id.Name, id.ResourceGroup, err)
+				return fmt.Errorf("waiting to update encryption settings of OS Disk %q for Windows Virtual Machine %q (Resource Group %q): %+v", diskName, id.Name, id.ResourceGroup, err)
 			}
 
-			log.Printf("[DEBUG] Updating encryption settings of OS Disk %q for Linux Virtual Machine %q (Resource Group %q) to %q.", diskName, id.Name, id.ResourceGroup, diskEncryptionSetId)
+			log.Printf("[DEBUG] Updating encryption settings of OS Disk %q for Windows Virtual Machine %q (Resource Group %q) to %q.", diskName, id.Name, id.ResourceGroup, diskEncryptionSetId)
 		} else {
-			return fmt.Errorf("Once a customer-managed key is used, you can’t change the selection back to a platform-managed key")
+			return fmt.Errorf("once a customer-managed key is used, you can’t change the selection back to a platform-managed key")
 		}
 	}
 
 	if shouldUpdate {
-		log.Printf("[DEBUG] Updating Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+		log.Printf("[DEBUG] Updating Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 		future, err := client.Update(ctx, id.ResourceGroup, id.Name, update)
 		if err != nil {
-			return fmt.Errorf("updating Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+			return fmt.Errorf("updating Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 		}
 
 		if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-			return fmt.Errorf("waiting for update of Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+			return fmt.Errorf("waiting for update of Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 		}
 
-		log.Printf("[DEBUG] Updated Linux Virtual Machine %q (Resource Group %q).", id.Name, id.ResourceGroup)
+		log.Printf("[DEBUG] Updated Windows Virtual Machine %q (Resource Group %q).", id.Name, id.ResourceGroup)
 	}
 
 	// if we've shut it down and it was turned off, let's boot it back up
 	if shouldTurnBackOn && shouldShutDown {
-		log.Printf("[DEBUG] Starting Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+		log.Printf("[DEBUG] Starting Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 		future, err := client.Start(ctx, id.ResourceGroup, id.Name)
 		if err != nil {
-			return fmt.Errorf("starting Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+			return fmt.Errorf("starting Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 		}
 
 		if err := future.WaitForCompletionRef(ctx, client.Client); err != nil {
-			return fmt.Errorf("waiting for start of Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+			return fmt.Errorf("waiting for start of Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 		}
 
-		log.Printf("[DEBUG] Started Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+		log.Printf("[DEBUG] Started Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 	}
 
-	return linuxVirtualMachineRead(d, meta)
+	return resourceWindowsVirtualMachineRead(d, meta)
 }
 
-func linuxVirtualMachineDelete(d *pluginsdk.ResourceData, meta interface{}) error {
+func resourceWindowsVirtualMachineDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Compute.VMClient
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -1109,36 +1168,36 @@ func linuxVirtualMachineDelete(d *pluginsdk.ResourceData, meta interface{}) erro
 	locks.ByName(id.Name, virtualMachineResourceName)
 	defer locks.UnlockByName(id.Name, virtualMachineResourceName)
 
-	log.Printf("[DEBUG] Retrieving Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+	log.Printf("[DEBUG] Retrieving Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 	existing, err := client.Get(ctx, id.ResourceGroup, id.Name, "")
 	if err != nil {
 		if utils.ResponseWasNotFound(existing.Response) {
 			return nil
 		}
 
-		return fmt.Errorf("retrieving Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+		return fmt.Errorf("retrieving Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 	}
 
 	if strings.EqualFold(*existing.ProvisioningState, "failed") {
-		log.Printf("[DEBUG] Powering Off Linux Virtual Machine was skipped because the VM was in %q state %q (Resource Group %q).", *existing.ProvisioningState, id.Name, id.ResourceGroup)
+		log.Printf("[DEBUG] Powering Off Windows Virtual Machine was skipped because the VM was in %q state %q (Resource Group %q).", *existing.ProvisioningState, id.Name, id.ResourceGroup)
 	} else {
 		// ISSUE: 4920
 		// shutting down the Virtual Machine prior to removing it means users are no longer charged for some Azure resources
 		// thus this can be a large cost-saving when deleting larger instances
 		// https://docs.microsoft.com/en-us/azure/virtual-machines/states-lifecycle
-		log.Printf("[DEBUG] Powering Off Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+		log.Printf("[DEBUG] Powering Off Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 		var skipShutdown *bool = nil
 		powerOffFuture, err := client.PowerOff(ctx, id.ResourceGroup, id.Name, skipShutdown)
 		if err != nil {
-			return fmt.Errorf("powering off Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+			return fmt.Errorf("powering off Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 		}
 		if err := powerOffFuture.WaitForCompletionRef(ctx, client.Client); err != nil {
-			return fmt.Errorf("waiting for power off of Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+			return fmt.Errorf("waiting for power off of Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 		}
-		log.Printf("[DEBUG] Powered Off Linux Virtual Machine %q (Resource Group %q).", id.Name, id.ResourceGroup)
+		log.Printf("[DEBUG] Powered Off Windows Virtual Machine %q (Resource Group %q).", id.Name, id.ResourceGroup)
 	}
 
-	log.Printf("[DEBUG] Deleting Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+	log.Printf("[DEBUG] Deleting Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 
 	// Force Delete is in an opt-in Preview and can only be specified (true/false) if the feature is enabled
 	// as such we default this to `nil` which matches the previous behaviour (where this isn't sent) and
@@ -1146,18 +1205,18 @@ func linuxVirtualMachineDelete(d *pluginsdk.ResourceData, meta interface{}) erro
 	var forceDeletion *bool = nil
 	deleteFuture, err := client.Delete(ctx, id.ResourceGroup, id.Name, forceDeletion)
 	if err != nil {
-		return fmt.Errorf("deleting Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+		return fmt.Errorf("deleting Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 	}
 	if err := deleteFuture.WaitForCompletionRef(ctx, client.Client); err != nil {
-		return fmt.Errorf("waiting for deletion of Linux Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+		return fmt.Errorf("waiting for deletion of Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 	}
-	log.Printf("[DEBUG] Deleted Linux Virtual Machine %q (Resource Group %q).", id.Name, id.ResourceGroup)
+	log.Printf("[DEBUG] Deleted Windows Virtual Machine %q (Resource Group %q).", id.Name, id.ResourceGroup)
 
 	// delete OS Disk if opted in
 	deleteOsDisk := d.Get("delete_os_disk_on_termination").(bool)
 	deleteDataDisks := d.Get("delete_data_disks_on_termination").(bool)
 	if deleteOsDisk || deleteDataDisks {
-		log.Printf("[DEBUG] Deleting OS Disk from Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+		log.Printf("[DEBUG] Deleting OS Disk from Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 		disksClient := meta.(*clients.Client).Compute.DisksClient
 		managedDiskId := ""
 		if props := existing.VirtualMachineProperties; props != nil && props.StorageProfile != nil && props.StorageProfile.OsDisk != nil {
@@ -1175,35 +1234,35 @@ func linuxVirtualMachineDelete(d *pluginsdk.ResourceData, meta interface{}) erro
 			diskDeleteFuture, err := disksClient.Delete(ctx, diskId.ResourceGroup, diskId.DiskName)
 			if err != nil {
 				if !utils.WasNotFound(diskDeleteFuture.Response()) {
-					return fmt.Errorf("deleting OS Disk %q (Resource Group %q) for Linux Virtual Machine %q (Resource Group %q): %+v", diskId.DiskName, diskId.ResourceGroup, id.Name, id.ResourceGroup, err)
+					return fmt.Errorf("deleting OS Disk %q (Resource Group %q) for Windows Virtual Machine %q (Resource Group %q): %+v", diskId.DiskName, diskId.ResourceGroup, id.Name, id.ResourceGroup, err)
 				}
 			}
 			if !utils.WasNotFound(diskDeleteFuture.Response()) {
 				if err := diskDeleteFuture.WaitForCompletionRef(ctx, disksClient.Client); err != nil {
-					return fmt.Errorf("OS Disk %q (Resource Group %q) for Linux Virtual Machine %q (Resource Group %q): %+v", diskId.DiskName, diskId.ResourceGroup, id.Name, id.ResourceGroup, err)
+					return fmt.Errorf("OS Disk %q (Resource Group %q) for Windows Virtual Machine %q (Resource Group %q): %+v", diskId.DiskName, diskId.ResourceGroup, id.Name, id.ResourceGroup, err)
 				}
 			}
 
-			log.Printf("[DEBUG] Deleted OS Disk from Linux Virtual Machine %q (Resource Group %q).", diskId.DiskName, diskId.ResourceGroup)
+			log.Printf("[DEBUG] Deleted OS Disk from Windows Virtual Machine %q (Resource Group %q).", diskId.DiskName, diskId.ResourceGroup)
 		} else {
-			log.Printf("[DEBUG] Skipping Deleting OS Disk from Linux Virtual Machine %q (Resource Group %q) - cannot determine OS Disk ID.", id.Name, id.ResourceGroup)
+			log.Printf("[DEBUG] Skipping Deleting OS Disk from Windows Virtual Machine %q (Resource Group %q) - cannot determine OS Disk ID.", id.Name, id.ResourceGroup)
 		}
 	} else {
-		log.Printf("[DEBUG] Skipping Deleting OS Disk from Linux Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+		log.Printf("[DEBUG] Skipping Deleting OS Disk from Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 	}
 
 	// Need to add a get and a state wait to avoid bug in network API where the attached disk(s) are not actually deleted
 	// Service team indicated that we need to do a get after VM delete call returns to verify that the VM and all attached
 	// disks have actually been deleted.
 
-	log.Printf("[INFO] verifying Linux Virtual Machine %q has been deleted", id.Name)
+	log.Printf("[INFO] verifying Windows Virtual Machine %q has been deleted", id.Name)
 	virtualMachine, err := client.Get(ctx, id.ResourceGroup, id.Name, "")
 	if err != nil && !utils.ResponseWasNotFound(virtualMachine.Response) {
-		return fmt.Errorf("verifying Linux Virtual Machine %q (Resource Group %q) has been deleted: %+v", id.Name, id.ResourceGroup, err)
+		return fmt.Errorf("verifying Windows Virtual Machine %q (Resource Group %q) has been deleted: %+v", id.Name, id.ResourceGroup, err)
 	}
 
 	if !utils.ResponseWasNotFound(virtualMachine.Response) {
-		log.Printf("[INFO] Linux Virtual Machine still exists, waiting on Linux Virtual Machine %q to be deleted", id.Name)
+		log.Printf("[INFO] Windows Virtual Machine still exists, waiting on Windows Virtual Machine %q to be deleted", id.Name)
 
 		deleteWait := &pluginsdk.StateChangeConf{
 			Pending:    []string{"200"},
@@ -1211,20 +1270,20 @@ func linuxVirtualMachineDelete(d *pluginsdk.ResourceData, meta interface{}) erro
 			MinTimeout: 30 * time.Second,
 			Timeout:    d.Timeout(pluginsdk.TimeoutDelete),
 			Refresh: func() (interface{}, string, error) {
-				log.Printf("[INFO] checking on state of Linux Virtual Machine %q", id.Name)
+				log.Printf("[INFO] checking on state of Windows Virtual Machine %q", id.Name)
 				resp, err := client.Get(ctx, id.ResourceGroup, id.Name, "")
 				if err != nil {
 					if utils.ResponseWasNotFound(resp.Response) {
 						return resp, strconv.Itoa(resp.StatusCode), nil
 					}
-					return nil, "nil", fmt.Errorf("polling for the status of Linux Virtual Machine %q (Resource Group %q): %v", id.Name, id.ResourceGroup, err)
+					return nil, "nil", fmt.Errorf("polling for the status of Windows Virtual Machine %q (Resource Group %q): %v", id.Name, id.ResourceGroup, err)
 				}
 				return resp, strconv.Itoa(resp.StatusCode), nil
 			},
 		}
 
 		if _, err := deleteWait.WaitForStateContext(ctx); err != nil {
-			return fmt.Errorf("waiting for the deletion of Linux Virtual Machine %q (Resource Group %q): %v", id.Name, id.ResourceGroup, err)
+			return fmt.Errorf("waiting for the deletion of Windows Virtual Machine %q (Resource Group %q): %v", id.Name, id.ResourceGroup, err)
 		}
 	}
 

@@ -10,9 +10,9 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
-type LinuxVirtualMachineResource struct{}
+type WindowsVirtualMachineResource struct{}
 
-func (t LinuxVirtualMachineResource) Exists(ctx context.Context, clients *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
+func (t WindowsVirtualMachineResource) Exists(ctx context.Context, clients *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
 	id, err := parse.VirtualMachineID(state.ID)
 	if err != nil {
 		return nil, err
@@ -20,7 +20,7 @@ func (t LinuxVirtualMachineResource) Exists(ctx context.Context, clients *client
 
 	resp, err := clients.Compute.VMClient.Get(ctx, id.ResourceGroup, id.Name, "")
 	if err != nil {
-		return nil, fmt.Errorf("retrieving Compute Linux Virtual Machine %q", id)
+		return nil, fmt.Errorf("retrieving Compute Windows Virtual Machine %q", id)
 	}
 
 	return utils.Bool(resp.ID != nil), nil

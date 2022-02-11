@@ -31,12 +31,14 @@ func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 	resources := map[string]*pluginsdk.Resource{
 		"azurestack_availability_set":                     availabilitySet(),
+		"azurestack_linux_virtual_machine":                linuxVirtualMachine(),
 		"azurestack_managed_disk":                         managedDisk(),
 		"azurestack_virtual_machine":                      virtualMachine(),
 		"azurestack_virtual_machine_data_disk_attachment": virtualMachineDataDiskAttachment(),
 		"azurestack_virtual_machine_extension":            virtualMachineExtension(),
 		"azurestack_virtual_machine_scale_set":            virtualMachineScaleSet(),
 		"azurestack_virtual_machine_scale_set_extension":  virtualMachineScaleSetExtension(),
+		"azurestack_windows_virtual_machine":              windowsVirtualMachine(),
 	}
 
 	return resources

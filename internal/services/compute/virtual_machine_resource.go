@@ -251,6 +251,7 @@ func virtualMachine() *pluginsdk.Resource {
 							ValidateFunc: validation.StringInSlice([]string{
 								string(compute.PremiumLRS),
 								string(compute.StandardLRS),
+								string(compute.StandardSSDLRS),
 							}, true),
 						},
 

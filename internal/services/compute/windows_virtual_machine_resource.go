@@ -143,6 +143,12 @@ func windowsVirtualMachine() *pluginsdk.Resource {
 				// /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TOM-MANUAL/providers/Microsoft.Compute/hostGroups/tom-hostgroup/hosts/tom-manual-host
 			},
 
+			"delete_os_disk_on_termination": {
+				Type:     pluginsdk.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+
 			"enable_automatic_updates": {
 				Type:     pluginsdk.TypeBool,
 				Optional: true,
@@ -366,11 +372,6 @@ func resourceWindowsVirtualMachineCreate(d *pluginsdk.ResourceData, meta interfa
 	}
 	enableAutomaticUpdates := d.Get("enable_automatic_updates").(bool)
 	location := location.Normalize(d.Get("location").(string))
-	identityRaw := d.Get("identity").([]interface{})
-	identity, err := expandVirtualMachineIdentity(identityRaw)
-	if err != nil {
-		return fmt.Errorf("expanding `identity`: %+v", err)
-	}
 	planRaw := d.Get("plan").([]interface{})
 	plan := expandPlan(planRaw)
 	priority := compute.VirtualMachinePriorityTypes(d.Get("priority").(string))
@@ -400,7 +401,6 @@ func resourceWindowsVirtualMachineCreate(d *pluginsdk.ResourceData, meta interfa
 	params := compute.VirtualMachine{
 		Name:     utils.String(id.Name),
 		Location: utils.String(location),
-		Identity: identity,
 		Plan:     plan,
 		VirtualMachineProperties: &compute.VirtualMachineProperties{
 			HardwareProfile: &compute.HardwareProfile{
@@ -437,6 +437,16 @@ func resourceWindowsVirtualMachineCreate(d *pluginsdk.ResourceData, meta interfa
 			ExtensionsTimeBudget:   utils.String(d.Get("extensions_time_budget").(string)),
 		},
 		Tags: tags.Expand(t),
+	}
+
+	if v, ok := d.GetOk("identity"); ok {
+		identityRaw := v.([]interface{})
+		identity, err := expandVirtualMachineIdentity(identityRaw)
+		if err != nil {
+			return fmt.Errorf("expanding `identity`: %+v", err)
+		}
+
+		params.Identity = identity
 	}
 
 	if !provisionVMAgent && allowExtensionOperations {
@@ -1214,8 +1224,7 @@ func resourceWindowsVirtualMachineDelete(d *pluginsdk.ResourceData, meta interfa
 
 	// delete OS Disk if opted in
 	deleteOsDisk := d.Get("delete_os_disk_on_termination").(bool)
-	deleteDataDisks := d.Get("delete_data_disks_on_termination").(bool)
-	if deleteOsDisk || deleteDataDisks {
+	if deleteOsDisk {
 		log.Printf("[DEBUG] Deleting OS Disk from Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 		disksClient := meta.(*clients.Client).Compute.DisksClient
 		managedDiskId := ""

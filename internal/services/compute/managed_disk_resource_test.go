@@ -629,7 +629,7 @@ resource "azurestack_linux_virtual_machine" "test" {
   name                            = "acctestvm-%d"
   resource_group_name             = azurestack_resource_group.test.name
   location                        = azurestack_resource_group.test.location
-  size                            = "Standard_D2s_v3"
+  size                            = "Standard_D2_v3"
   admin_username                  = "adminuser"
   admin_password                  = "Password1234!"
   disable_password_authentication = false

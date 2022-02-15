@@ -50,5 +50,6 @@ func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 		"azurestack_virtual_network_gateway_connection": virtualNetworkGatewayConnection(),
 		"azurestack_virtual_network_gateway":            virtualNetworkGateway(),
 		"azurestack_local_network_gateway":              localNetworkGateway(),
+		"azurestack_virtual_network_peering":            virtualNetworkPeering(),
 	}
 }

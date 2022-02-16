@@ -24,6 +24,7 @@ func TestRouteID(t *testing.T) {
 		Error    bool
 		Expected *RouteId
 	}{
+
 		{
 			// empty
 			Input: "",

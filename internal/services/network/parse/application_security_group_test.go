@@ -24,6 +24,7 @@ func TestApplicationSecurityGroupID(t *testing.T) {
 		Error    bool
 		Expected *ApplicationSecurityGroupId
 	}{
+
 		{
 			// empty
 			Input: "",

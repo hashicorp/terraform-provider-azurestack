@@ -24,6 +24,7 @@ func TestSrvRecordID(t *testing.T) {
 		Error    bool
 		Expected *SrvRecordId
 	}{
+
 		{
 			// empty
 			Input: "",

@@ -24,6 +24,7 @@ func TestNetworkInterfaceID(t *testing.T) {
 		Error    bool
 		Expected *NetworkInterfaceId
 	}{
+
 		{
 			// empty
 			Input: "",

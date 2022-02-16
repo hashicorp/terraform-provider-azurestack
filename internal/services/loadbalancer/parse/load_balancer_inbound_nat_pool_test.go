@@ -24,6 +24,7 @@ func TestLoadBalancerInboundNatPoolID(t *testing.T) {
 		Error    bool
 		Expected *LoadBalancerInboundNatPoolId
 	}{
+
 		{
 			// empty
 			Input: "",

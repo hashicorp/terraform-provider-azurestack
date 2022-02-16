@@ -24,6 +24,7 @@ func TestLoadBalancingRuleID(t *testing.T) {
 		Error    bool
 		Expected *LoadBalancingRuleId
 	}{
+
 		{
 			// empty
 			Input: "",

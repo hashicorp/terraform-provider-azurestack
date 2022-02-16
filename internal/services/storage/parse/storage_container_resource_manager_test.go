@@ -24,6 +24,7 @@ func TestStorageContainerResourceManagerID(t *testing.T) {
 		Error    bool
 		Expected *StorageContainerResourceManagerId
 	}{
+
 		{
 			// empty
 			Input: "",

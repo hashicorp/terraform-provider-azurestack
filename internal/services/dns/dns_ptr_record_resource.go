@@ -16,12 +16,12 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
-func dnsARecord() *pluginsdk.Resource {
+func dnsPtrRecord() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
-		Create: dnsARecordCreateUpdate,
-		Read:   dnsARecordRead,
-		Update: dnsARecordCreateUpdate,
-		Delete: dnsARecordDelete,
+		Create: dnsPtrRecordCreateUpdate,
+		Read:   dnsPtrRecordRead,
+		Update: dnsPtrRecordCreateUpdate,
+		Delete: dnsPtrRecordDelete,
 
 		Timeouts: &pluginsdk.ResourceTimeout{
 			Create: pluginsdk.DefaultTimeout(30 * time.Minute),
@@ -29,11 +29,11 @@ func dnsARecord() *pluginsdk.Resource {
 			Update: pluginsdk.DefaultTimeout(30 * time.Minute),
 			Delete: pluginsdk.DefaultTimeout(30 * time.Minute),
 		},
+
 		Importer: pluginsdk.ImporterValidatingResourceId(func(id string) error {
-			_, err := parse.ARecordID(id)
+			_, err := parse.PtrRecordID(id)
 			return err
 		}),
-
 		Schema: map[string]*pluginsdk.Schema{
 			"name": {
 				Type:     pluginsdk.TypeString,
@@ -70,7 +70,7 @@ func dnsARecord() *pluginsdk.Resource {
 	}
 }
 
-func dnsARecordCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
+func dnsPtrRecordCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Dns.RecordSetsClient
 	ctx, cancel := timeouts.ForCreateUpdate(meta.(*clients.Client).StopContext, d)
 	subscriptionId := meta.(*clients.Client).Account.SubscriptionId
@@ -80,122 +80,121 @@ func dnsARecordCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	resGroup := d.Get("resource_group_name").(string)
 	zoneName := d.Get("zone_name").(string)
 
-	resourceId := parse.NewARecordID(subscriptionId, resGroup, zoneName, name)
+	resourceId := parse.NewPtrRecordID(subscriptionId, resGroup, zoneName, name)
 
 	if d.IsNewResource() {
-		existing, err := client.Get(ctx, resGroup, zoneName, name, dns.A)
+		existing, err := client.Get(ctx, resGroup, zoneName, name, dns.PTR)
 		if err != nil {
 			if !utils.ResponseWasNotFound(existing.Response) {
-				return fmt.Errorf("checking for presence of existing DNS A Record %q (Zone %q / Resource Group %q): %s", name, zoneName, resGroup, err)
+				return fmt.Errorf("checking for presence of existing DNS PTR Record %q (Zone %q / Resource Group %q): %s", name, zoneName, resGroup, err)
 			}
 		}
 
 		if !utils.ResponseWasNotFound(existing.Response) {
-			return tf.ImportAsExistsError("azurestack_dns_a_record", resourceId.ID())
+			return tf.ImportAsExistsError("azurestack_dns_ptr_record", resourceId.ID())
 		}
 	}
 
 	ttl := int64(d.Get("ttl").(int))
 	t := d.Get("tags").(map[string]interface{})
-	recordsRaw := d.Get("records").(*pluginsdk.Set).List()
 
 	parameters := dns.RecordSet{
-		Name: &name,
 		RecordSetProperties: &dns.RecordSetProperties{
-			Metadata: tags.Expand(t),
-			TTL:      &ttl,
-			ARecords: expandazurestackDnsARecords(recordsRaw),
+			Metadata:   tags.Expand(t),
+			TTL:        &ttl,
+			PtrRecords: expandazurestackDnsPtrRecords(d),
 		},
 	}
 
 	eTag := ""
 	ifNoneMatch := "" // set to empty to allow updates to records after creation
-	if _, err := client.CreateOrUpdate(ctx, resGroup, zoneName, name, dns.A, parameters, eTag, ifNoneMatch); err != nil {
-		return fmt.Errorf("creating/updating DNS A Record %q (Zone %q / Resource Group %q): %s", name, zoneName, resGroup, err)
+	if _, err := client.CreateOrUpdate(ctx, resGroup, zoneName, name, dns.PTR, parameters, eTag, ifNoneMatch); err != nil {
+		return fmt.Errorf("creating/updating DNS PTR Record %q (Zone %q / Resource Group %q): %s", name, zoneName, resGroup, err)
 	}
 
 	d.SetId(resourceId.ID())
 
-	return dnsARecordRead(d, meta)
+	return dnsPtrRecordRead(d, meta)
 }
 
-func dnsARecordRead(d *pluginsdk.ResourceData, meta interface{}) error {
-	dnsClient := meta.(*clients.Client).Dns.RecordSetsClient
+func dnsPtrRecordRead(d *pluginsdk.ResourceData, meta interface{}) error {
+	client := meta.(*clients.Client)
+	dnsClient := client.Dns.RecordSetsClient
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
-	id, err := parse.ARecordID(d.Id())
+	id, err := parse.PtrRecordID(d.Id())
 	if err != nil {
 		return err
 	}
 
-	resp, err := dnsClient.Get(ctx, id.ResourceGroup, id.DnszoneName, id.AName, dns.A)
+	resp, err := dnsClient.Get(ctx, id.ResourceGroup, id.DnszoneName, id.PTRName, dns.PTR)
 	if err != nil {
 		if utils.ResponseWasNotFound(resp.Response) {
 			d.SetId("")
 			return nil
 		}
-		return fmt.Errorf("reading DNS A record %s: %+v", id.AName, err)
+
+		return fmt.Errorf("reading DNS PTR record %s: %+v", id.PTRName, err)
 	}
 
-	d.Set("name", id.AName)
+	d.Set("name", id.PTRName)
 	d.Set("resource_group_name", id.ResourceGroup)
 	d.Set("zone_name", id.DnszoneName)
-
-	d.Set("fqdn", resp.Fqdn)
 	d.Set("ttl", resp.TTL)
+	d.Set("fqdn", resp.Fqdn)
 
-	if err := d.Set("records", flattenazurestackDnsARecords(resp.ARecords)); err != nil {
-		return fmt.Errorf("setting `records`: %+v", err)
+	if err := d.Set("records", flattenazurestackDnsPtrRecords(resp.PtrRecords)); err != nil {
+		return err
 	}
-
 	return tags.FlattenAndSet(d, resp.Metadata)
 }
 
-func dnsARecordDelete(d *pluginsdk.ResourceData, meta interface{}) error {
-	dnsClient := meta.(*clients.Client).Dns.RecordSetsClient
+func dnsPtrRecordDelete(d *pluginsdk.ResourceData, meta interface{}) error {
+	client := meta.(*clients.Client)
+	dnsClient := client.Dns.RecordSetsClient
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
-	id, err := parse.ARecordID(d.Id())
+	id, err := parse.PtrRecordID(d.Id())
 	if err != nil {
 		return err
 	}
 
-	resp, err := dnsClient.Delete(ctx, id.ResourceGroup, id.DnszoneName, id.AName, dns.A, "")
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("deleting DNS A Record %s: %+v", id.AName, err)
+	resp, err := dnsClient.Delete(ctx, id.ResourceGroup, id.DnszoneName, id.PTRName, dns.PTR, "")
+	if err != nil {
+		if resp.StatusCode == http.StatusNotFound {
+			return nil
+		}
+
+		return fmt.Errorf("deleting DNS PTR Record %s: %+v", id.PTRName, err)
 	}
 
 	return nil
 }
 
-func expandazurestackDnsARecords(input []interface{}) *[]dns.ARecord {
-	records := make([]dns.ARecord, len(input))
+func flattenazurestackDnsPtrRecords(records *[]dns.PtrRecord) []string {
+	results := make([]string, 0)
 
-	for i, v := range input {
-		ipv4 := v.(string)
-		records[i] = dns.ARecord{
-			Ipv4Address: &ipv4,
+	if records != nil {
+		for _, record := range *records {
+			results = append(results, *record.Ptrdname)
+		}
+	}
+
+	return results
+}
+
+func expandazurestackDnsPtrRecords(d *pluginsdk.ResourceData) *[]dns.PtrRecord {
+	recordStrings := d.Get("records").(*pluginsdk.Set).List()
+	records := make([]dns.PtrRecord, len(recordStrings))
+
+	for i, v := range recordStrings {
+		fqdn := v.(string)
+		records[i] = dns.PtrRecord{
+			Ptrdname: &fqdn,
 		}
 	}
 
 	return &records
-}
-
-func flattenazurestackDnsARecords(records *[]dns.ARecord) []string {
-	if records == nil {
-		return []string{}
-	}
-
-	results := make([]string, 0)
-	for _, record := range *records {
-		if record.Ipv4Address == nil {
-			continue
-		}
-
-		results = append(results, *record.Ipv4Address)
-	}
-
-	return results
 }

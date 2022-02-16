@@ -27,24 +27,22 @@ func (r Registration) WebsiteCategories() []string {
 // SupportedDataSources returns the supported Data Sources supported by this Service
 func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
-		// "azurestack_dns_zone": dataSourceDnsZone(), todo
+		"azurestack_dns_zone": dnsZoneDataSource(),
 	}
 }
 
 // SupportedResources returns the supported Resources supported by this Service
 func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
-		"azurestack_dns_a_record": dnsARecord(),
-		/* dodo copy in
-		"azurestack_dns_aaaa_record":  resourceDnsAAAARecord(),
-		"azurestack_dns_caa_record":   resourceDnsCaaRecord(),
-		"azurestack_dns_cname_record": resourceDnsCNameRecord(),
-		"azurestack_dns_mx_record":    resourceDnsMxRecord(),
-		"azurestack_dns_ns_record":    resourceDnsNsRecord(),
-		"azurestack_dns_ptr_record":   resourceDnsPtrRecord(),
-		"azurestack_dns_srv_record":   resourceDnsSrvRecord(),
-		"azurestack_dns_txt_record":   resourceDnsTxtRecord(),*/
-		"azurestack_dns_zone": dnsZone(),
+		"azurestack_dns_a_record":     dnsARecord(),
+		"azurestack_dns_aaaa_record":  dnsAAAARecord(),
+		"azurestack_dns_cname_record": dnsCNameRecord(),
+		"azurestack_dns_mx_record":    dnsMxRecord(),
+		"azurestack_dns_ns_record":    dnsNsRecord(),
+		"azurestack_dns_ptr_record":   dnsPtrRecord(),
+		"azurestack_dns_srv_record":   dnsSrvRecord(),
+		"azurestack_dns_txt_record":   dnsTxtRecord(),
+		"azurestack_dns_zone":         dnsZone(),
 	}
 }
 

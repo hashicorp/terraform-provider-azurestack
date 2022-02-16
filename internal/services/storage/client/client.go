@@ -5,13 +5,12 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/shim"
-
 	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/storage/mgmt/storage"
 	mainStorage "github.com/Azure/azure-sdk-for-go/storage"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/common"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/shim"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/blobs"
 	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/containers"

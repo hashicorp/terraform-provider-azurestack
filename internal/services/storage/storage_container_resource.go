@@ -122,7 +122,7 @@ func storageContainerCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 		return err
 	}
 	if exists != nil && *exists {
-		return tf.ImportAsExistsError("azurerm_storage_container", id)
+		return tf.ImportAsExistsError("azurestack_storage_container", id)
 	}
 
 	log.Printf("[INFO] Creating Container %q in Storage Account %q", containerName, accountName)

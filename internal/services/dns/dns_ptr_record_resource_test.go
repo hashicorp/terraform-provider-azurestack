@@ -6,19 +6,19 @@ import (
 	"testing"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/dns/mgmt/dns"
-	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/dns/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
-type TestAccDnsARecordResource struct{}
+type DnsPtrRecordResource struct{}
 
-func TestAccDnsARecord_basic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_dns_a_record", "test")
-	r := TestAccDnsARecordResource{}
+func TestAccDnsPtrRecord_basic(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_dns_ptr_record", "test")
+	r := DnsPtrRecordResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -32,9 +32,9 @@ func TestAccDnsARecord_basic(t *testing.T) {
 	})
 }
 
-func TestAccDnsARecord_requiresImport(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_dns_a_record", "test")
-	r := TestAccDnsARecordResource{}
+func TestAccDnsPtrRecord_requiresImport(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_dns_ptr_record", "test")
+	r := DnsPtrRecordResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -45,14 +45,14 @@ func TestAccDnsARecord_requiresImport(t *testing.T) {
 		},
 		{
 			Config:      r.requiresImport(data),
-			ExpectError: acceptance.RequiresImportError("azurestack_dns_a_record"),
+			ExpectError: acceptance.RequiresImportError("azurestack_dns_ptr_record"),
 		},
 	})
 }
 
-func TestAccDnsARecord_updateRecords(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_dns_a_record", "test")
-	r := TestAccDnsARecordResource{}
+func TestAccDnsPtrRecord_updateRecords(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_dns_ptr_record", "test")
+	r := DnsPtrRecordResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -62,6 +62,7 @@ func TestAccDnsARecord_updateRecords(t *testing.T) {
 				check.That(data.ResourceName).Key("records.#").HasValue("2"),
 			),
 		},
+
 		{
 			Config: r.updateRecords(data),
 			Check: acceptance.ComposeTestCheckFunc(
@@ -72,9 +73,9 @@ func TestAccDnsARecord_updateRecords(t *testing.T) {
 	})
 }
 
-func TestAccDnsARecord_withTags(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_dns_a_record", "test")
-	r := TestAccDnsARecordResource{}
+func TestAccDnsPtrRecord_withTags(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_dns_ptr_record", "test")
+	r := DnsPtrRecordResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -84,6 +85,7 @@ func TestAccDnsARecord_withTags(t *testing.T) {
 				check.That(data.ResourceName).Key("tags.%").HasValue("2"),
 			),
 		},
+
 		{
 			Config: r.withTagsUpdate(data),
 			Check: acceptance.ComposeTestCheckFunc(
@@ -95,21 +97,21 @@ func TestAccDnsARecord_withTags(t *testing.T) {
 	})
 }
 
-func (TestAccDnsARecordResource) Exists(ctx context.Context, clients *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
-	id, err := parse.ARecordID(state.ID)
+func (DnsPtrRecordResource) Exists(ctx context.Context, clients *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
+	id, err := parse.PtrRecordID(state.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := clients.Dns.RecordSetsClient.Get(ctx, id.ResourceGroup, id.DnszoneName, id.AName, dns.A)
+	resp, err := clients.Dns.RecordSetsClient.Get(ctx, id.ResourceGroup, id.DnszoneName, id.PTRName, dns.PTR)
 	if err != nil {
-		return nil, fmt.Errorf("retrieving DNS A record %s (resource group: %s): %v", id.AName, id.ResourceGroup, err)
+		return nil, fmt.Errorf("retrieving DNS PTR record %s (resource group: %s): %v", id.PTRName, id.ResourceGroup, err)
 	}
 
-	return pointer.FromBool(resp.RecordSetProperties != nil), nil
+	return utils.Bool(resp.RecordSetProperties != nil), nil
 }
 
-func (TestAccDnsARecordResource) basic(data acceptance.TestData) string {
+func (DnsPtrRecordResource) basic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
   features {}
@@ -125,31 +127,31 @@ resource "azurestack_dns_zone" "test" {
   resource_group_name = azurestack_resource_group.test.name
 }
 
-resource "azurestack_dns_a_record" "test" {
-  name                = "myarecord%d"
+resource "azurestack_dns_ptr_record" "test" {
+  name                = "testptrrecord%d"
   resource_group_name = azurestack_resource_group.test.name
   zone_name           = azurestack_dns_zone.test.name
   ttl                 = 300
-  records             = ["1.2.3.4", "1.2.4.5"]
+  records             = ["hashicorp.com", "microsoft.com"]
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger)
 }
 
-func (r TestAccDnsARecordResource) requiresImport(data acceptance.TestData) string {
+func (r DnsPtrRecordResource) requiresImport(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurestack_dns_a_record" "import" {
-  name                = azurestack_dns_a_record.test.name
-  resource_group_name = azurestack_dns_a_record.test.resource_group_name
-  zone_name           = azurestack_dns_a_record.test.zone_name
+resource "azurestack_dns_ptr_record" "import" {
+  name                = azurestack_dns_ptr_record.test.name
+  resource_group_name = azurestack_dns_ptr_record.test.resource_group_name
+  zone_name           = azurestack_dns_ptr_record.test.zone_name
   ttl                 = 300
-  records             = ["1.2.3.4", "1.2.4.5"]
+  records             = ["hashicorp.com", "microsoft.com"]
 }
 `, r.basic(data))
 }
 
-func (TestAccDnsARecordResource) updateRecords(data acceptance.TestData) string {
+func (DnsPtrRecordResource) updateRecords(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
   features {}
@@ -165,17 +167,17 @@ resource "azurestack_dns_zone" "test" {
   resource_group_name = azurestack_resource_group.test.name
 }
 
-resource "azurestack_dns_a_record" "test" {
-  name                = "myarecord%d"
+resource "azurestack_dns_ptr_record" "test" {
+  name                = "testptrrecord%d"
   resource_group_name = azurestack_resource_group.test.name
   zone_name           = azurestack_dns_zone.test.name
   ttl                 = 300
-  records             = ["1.2.3.4", "1.2.4.5", "1.2.3.7"]
+  records             = ["hashicorp.com", "microsoft.com", "reddit.com"]
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger)
 }
 
-func (TestAccDnsARecordResource) withTags(data acceptance.TestData) string {
+func (DnsPtrRecordResource) withTags(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
   features {}
@@ -191,22 +193,22 @@ resource "azurestack_dns_zone" "test" {
   resource_group_name = azurestack_resource_group.test.name
 }
 
-resource "azurestack_dns_a_record" "test" {
-  name                = "myarecord%d"
+resource "azurestack_dns_ptr_record" "test" {
+  name                = "testptrrecord%d"
   resource_group_name = azurestack_resource_group.test.name
   zone_name           = azurestack_dns_zone.test.name
   ttl                 = 300
-  records             = ["1.2.3.4", "1.2.4.5"]
+  records             = ["hashicorp.com", "microsoft.com"]
 
   tags = {
-    environment = "Production"
-    cost_center = "MSFT"
+    environment = "Dev"
+    cost_center = "Ops"
   }
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger)
 }
 
-func (TestAccDnsARecordResource) withTagsUpdate(data acceptance.TestData) string {
+func (DnsPtrRecordResource) withTagsUpdate(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
   features {}
@@ -222,42 +224,16 @@ resource "azurestack_dns_zone" "test" {
   resource_group_name = azurestack_resource_group.test.name
 }
 
-resource "azurestack_dns_a_record" "test" {
-  name                = "myarecord%d"
+resource "azurestack_dns_ptr_record" "test" {
+  name                = "testptrrecord%d"
   resource_group_name = azurestack_resource_group.test.name
   zone_name           = azurestack_dns_zone.test.name
   ttl                 = 300
-  records             = ["1.2.3.4", "1.2.4.5"]
+  records             = ["hashicorp.com", "microsoft.com"]
 
   tags = {
-    environment = "staging"
+    environment = "Stage"
   }
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger)
-}
-
-func (TestAccDnsARecordResource) AliasToRecordsUpdate(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_dns_zone" "test" {
-  name                = "acctestzone%d.com"
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_dns_a_record" "test" {
-  name                = "myarecord%d"
-  resource_group_name = azurestack_resource_group.test.name
-  zone_name           = azurestack_dns_zone.test.name
-  ttl                 = 300
-  records             = ["1.2.3.4", "1.2.4.5"]
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger)
 }

@@ -34,9 +34,9 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/sdk"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/resource/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/resource/validate"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/tags"
+
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
-	"github.com/hashicorp/terraform-provider-azurestack/utils"
+	
 )
 
 type ResourceGroup struct {

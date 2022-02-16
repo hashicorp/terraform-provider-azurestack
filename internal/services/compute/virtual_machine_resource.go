@@ -617,7 +617,7 @@ func virtualMachineCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) err
 	expandedTags := tags.Expand(t)
 	zones := zones.ExpandZones(d.Get("zones").([]interface{}))
 
-	osDisk, err := expandAzureRmVirtualMachineOsDisk(d)
+	osDisk, err := expandazurestackVirtualMachineOsDisk(d)
 	if err != nil {
 		return err
 	}
@@ -626,7 +626,7 @@ func virtualMachineCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) err
 	}
 
 	if _, ok := d.GetOk("storage_image_reference"); ok {
-		imageRef, err2 := expandAzureRmVirtualMachineImageReference(d)
+		imageRef, err2 := expandazurestackVirtualMachineImageReference(d)
 		if err2 != nil {
 			return err2
 		}
@@ -634,14 +634,14 @@ func virtualMachineCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) err
 	}
 
 	if _, ok := d.GetOk("storage_data_disk"); ok {
-		dataDisks, err2 := expandAzureRmVirtualMachineDataDisk(d)
+		dataDisks, err2 := expandazurestackVirtualMachineDataDisk(d)
 		if err2 != nil {
 			return err2
 		}
 		storageProfile.DataDisks = &dataDisks
 	}
 
-	networkProfile := expandAzureRmVirtualMachineNetworkProfile(d)
+	networkProfile := expandazurestackVirtualMachineNetworkProfile(d)
 	vmSize := d.Get("vm_size").(string)
 	properties := compute.VirtualMachineProperties{
 		NetworkProfile: &networkProfile,
@@ -657,14 +657,14 @@ func virtualMachineCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) err
 	}
 
 	if _, ok := d.GetOk("boot_diagnostics"); ok {
-		diagnosticsProfile := expandAzureRmVirtualMachineDiagnosticsProfile(d)
+		diagnosticsProfile := expandazurestackVirtualMachineDiagnosticsProfile(d)
 		if diagnosticsProfile != nil {
 			properties.DiagnosticsProfile = diagnosticsProfile
 		}
 	}
 
 	if _, ok := d.GetOk("os_profile"); ok {
-		osProfile, err2 := expandAzureRmVirtualMachineOsProfile(d)
+		osProfile, err2 := expandazurestackVirtualMachineOsProfile(d)
 		if err2 != nil {
 			return err2
 		}
@@ -689,11 +689,11 @@ func virtualMachineCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) err
 	}
 
 	if _, ok := d.GetOk("identity"); ok {
-		vm.Identity = expandAzureRmVirtualMachineIdentity(d)
+		vm.Identity = expandazurestackVirtualMachineIdentity(d)
 	}
 
 	if _, ok := d.GetOk("plan"); ok {
-		vm.Plan = expandAzureRmVirtualMachinePlan(d)
+		vm.Plan = expandazurestackVirtualMachinePlan(d)
 	}
 
 	locks.ByName(id.Name, virtualMachineResourceName)
@@ -763,11 +763,11 @@ func virtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	d.Set("zones", resp.Zones)
 	d.Set("location", location.NormalizeNilable(resp.Location))
 
-	if err := d.Set("plan", flattenAzureRmVirtualMachinePlan(resp.Plan)); err != nil {
+	if err := d.Set("plan", flattenazurestackVirtualMachinePlan(resp.Plan)); err != nil {
 		return fmt.Errorf("setting `plan`: %#v", err)
 	}
 
-	identity := flattenAzureRmVirtualMachineIdentity(resp.Identity)
+	identity := flattenazurestackVirtualMachineIdentity(resp.Identity)
 	if err := d.Set("identity", identity); err != nil {
 		return fmt.Errorf("setting `identity`: %+v", err)
 	}
@@ -785,7 +785,7 @@ func virtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error {
 		}
 
 		if profile := props.StorageProfile; profile != nil {
-			if err := d.Set("storage_image_reference", pluginsdk.NewSet(virtualMachineStorageImageReferenceHash, flattenAzureRmVirtualMachineImageReference(profile.ImageReference))); err != nil {
+			if err := d.Set("storage_image_reference", pluginsdk.NewSet(virtualMachineStorageImageReferenceHash, flattenazurestackVirtualMachineImageReference(profile.ImageReference))); err != nil {
 				return fmt.Errorf("[DEBUG] Error setting Virtual Machine Storage Image Reference error: %#v", err)
 			}
 
@@ -794,7 +794,7 @@ func virtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error {
 				if err != nil {
 					return fmt.Errorf("flattening `storage_os_disk`: %#v", err)
 				}
-				if err := d.Set("storage_os_disk", flattenAzureRmVirtualMachineOsDisk(osDisk, diskInfo)); err != nil {
+				if err := d.Set("storage_os_disk", flattenazurestackVirtualMachineOsDisk(osDisk, diskInfo)); err != nil {
 					return fmt.Errorf("setting `storage_os_disk`: %#v", err)
 				}
 			}
@@ -808,38 +808,38 @@ func virtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error {
 					}
 					disksInfo[i] = diskInfo
 				}
-				if err := d.Set("storage_data_disk", flattenAzureRmVirtualMachineDataDisk(dataDisks, disksInfo)); err != nil {
+				if err := d.Set("storage_data_disk", flattenazurestackVirtualMachineDataDisk(dataDisks, disksInfo)); err != nil {
 					return fmt.Errorf("[DEBUG] Error setting Virtual Machine Storage Data Disks error: %#v", err)
 				}
 			}
 		}
 
 		if profile := props.OsProfile; profile != nil {
-			if err := d.Set("os_profile", pluginsdk.NewSet(virtualMachineStorageOsProfileHash, flattenAzureRmVirtualMachineOsProfile(profile))); err != nil {
+			if err := d.Set("os_profile", pluginsdk.NewSet(virtualMachineStorageOsProfileHash, flattenazurestackVirtualMachineOsProfile(profile))); err != nil {
 				return fmt.Errorf("setting `os_profile`: %#v", err)
 			}
 
-			if err := d.Set("os_profile_linux_config", pluginsdk.NewSet(virtualMachineStorageOsProfileLinuxConfigHash, flattenAzureRmVirtualMachineOsProfileLinuxConfiguration(profile.LinuxConfiguration))); err != nil {
+			if err := d.Set("os_profile_linux_config", pluginsdk.NewSet(virtualMachineStorageOsProfileLinuxConfigHash, flattenazurestackVirtualMachineOsProfileLinuxConfiguration(profile.LinuxConfiguration))); err != nil {
 				return fmt.Errorf("setting `os_profile_linux_config`: %+v", err)
 			}
 
-			if err := d.Set("os_profile_windows_config", pluginsdk.NewSet(virtualMachineStorageOsProfileWindowsConfigHash, flattenAzureRmVirtualMachineOsProfileWindowsConfiguration(profile.WindowsConfiguration))); err != nil {
+			if err := d.Set("os_profile_windows_config", pluginsdk.NewSet(virtualMachineStorageOsProfileWindowsConfigHash, flattenazurestackVirtualMachineOsProfileWindowsConfiguration(profile.WindowsConfiguration))); err != nil {
 				return fmt.Errorf("setting `os_profile_windows_config`: %+v", err)
 			}
 
-			if err := d.Set("os_profile_secrets", flattenAzureRmVirtualMachineOsProfileSecrets(profile.Secrets)); err != nil {
+			if err := d.Set("os_profile_secrets", flattenazurestackVirtualMachineOsProfileSecrets(profile.Secrets)); err != nil {
 				return fmt.Errorf("setting `os_profile_secrets`: %+v", err)
 			}
 		}
 
 		if profile := props.DiagnosticsProfile; profile != nil {
-			if err := d.Set("boot_diagnostics", flattenAzureRmVirtualMachineDiagnosticsProfile(profile.BootDiagnostics)); err != nil {
+			if err := d.Set("boot_diagnostics", flattenazurestackVirtualMachineDiagnosticsProfile(profile.BootDiagnostics)); err != nil {
 				return fmt.Errorf("setting `boot_diagnostics`: %#v", err)
 			}
 		}
 
 		if profile := props.NetworkProfile; profile != nil {
-			if err := d.Set("network_interface_ids", flattenAzureRmVirtualMachineNetworkInterfaces(profile)); err != nil {
+			if err := d.Set("network_interface_ids", flattenazurestackVirtualMachineNetworkInterfaces(profile)); err != nil {
 				return fmt.Errorf("flattening `network_interface_ids`: %#v", err)
 			}
 
@@ -1025,7 +1025,7 @@ func virtualMachineDeleteManagedDisk(d *pluginsdk.ResourceData, disk *compute.Ma
 	return nil
 }
 
-func flattenAzureRmVirtualMachinePlan(plan *compute.Plan) []interface{} {
+func flattenazurestackVirtualMachinePlan(plan *compute.Plan) []interface{} {
 	if plan == nil {
 		return []interface{}{}
 	}
@@ -1045,7 +1045,7 @@ func flattenAzureRmVirtualMachinePlan(plan *compute.Plan) []interface{} {
 	return []interface{}{result}
 }
 
-func flattenAzureRmVirtualMachineImageReference(image *compute.ImageReference) []interface{} {
+func flattenazurestackVirtualMachineImageReference(image *compute.ImageReference) []interface{} {
 	if image == nil {
 		return []interface{}{}
 	}
@@ -1070,7 +1070,7 @@ func flattenAzureRmVirtualMachineImageReference(image *compute.ImageReference) [
 	return []interface{}{result}
 }
 
-func flattenAzureRmVirtualMachineIdentity(identity *compute.VirtualMachineIdentity) []interface{} {
+func flattenazurestackVirtualMachineIdentity(identity *compute.VirtualMachineIdentity) []interface{} {
 	if identity == nil {
 		return make([]interface{}, 0)
 	}
@@ -1084,7 +1084,7 @@ func flattenAzureRmVirtualMachineIdentity(identity *compute.VirtualMachineIdenti
 	return []interface{}{result}
 }
 
-func flattenAzureRmVirtualMachineDiagnosticsProfile(profile *compute.BootDiagnostics) []interface{} {
+func flattenazurestackVirtualMachineDiagnosticsProfile(profile *compute.BootDiagnostics) []interface{} {
 	if profile == nil {
 		return []interface{}{}
 	}
@@ -1102,7 +1102,7 @@ func flattenAzureRmVirtualMachineDiagnosticsProfile(profile *compute.BootDiagnos
 	return []interface{}{result}
 }
 
-func flattenAzureRmVirtualMachineNetworkInterfaces(profile *compute.NetworkProfile) []interface{} {
+func flattenazurestackVirtualMachineNetworkInterfaces(profile *compute.NetworkProfile) []interface{} {
 	result := make([]interface{}, 0)
 	for _, nic := range *profile.NetworkInterfaces {
 		result = append(result, *nic.ID)
@@ -1110,7 +1110,7 @@ func flattenAzureRmVirtualMachineNetworkInterfaces(profile *compute.NetworkProfi
 	return result
 }
 
-func flattenAzureRmVirtualMachineOsProfileSecrets(secrets *[]compute.VaultSecretGroup) []interface{} {
+func flattenazurestackVirtualMachineOsProfileSecrets(secrets *[]compute.VaultSecretGroup) []interface{} {
 	if secrets == nil {
 		return []interface{}{}
 	}
@@ -1142,7 +1142,7 @@ func flattenAzureRmVirtualMachineOsProfileSecrets(secrets *[]compute.VaultSecret
 	return result
 }
 
-func flattenAzureRmVirtualMachineDataDisk(disks *[]compute.DataDisk, disksInfo []*compute.Disk) interface{} {
+func flattenazurestackVirtualMachineDataDisk(disks *[]compute.DataDisk, disksInfo []*compute.Disk) interface{} {
 	result := make([]interface{}, len(*disks))
 	for i, disk := range *disks {
 		l := make(map[string]interface{})
@@ -1169,14 +1169,14 @@ func flattenAzureRmVirtualMachineDataDisk(disks *[]compute.DataDisk, disksInfo [
 			l["write_accelerator_enabled"] = *disk.WriteAcceleratorEnabled
 		}
 
-		flattenAzureRmVirtualMachineReviseDiskInfo(l, disksInfo[i])
+		flattenazurestackVirtualMachineReviseDiskInfo(l, disksInfo[i])
 
 		result[i] = l
 	}
 	return result
 }
 
-func flattenAzureRmVirtualMachineOsProfile(input *compute.OSProfile) []interface{} {
+func flattenazurestackVirtualMachineOsProfile(input *compute.OSProfile) []interface{} {
 	result := make(map[string]interface{})
 	result["computer_name"] = *input.ComputerName
 	result["admin_username"] = *input.AdminUsername
@@ -1187,7 +1187,7 @@ func flattenAzureRmVirtualMachineOsProfile(input *compute.OSProfile) []interface
 	return []interface{}{result}
 }
 
-func flattenAzureRmVirtualMachineOsProfileWindowsConfiguration(config *compute.WindowsConfiguration) []interface{} {
+func flattenazurestackVirtualMachineOsProfileWindowsConfiguration(config *compute.WindowsConfiguration) []interface{} {
 	if config == nil {
 		return []interface{}{}
 	}
@@ -1242,7 +1242,7 @@ func flattenAzureRmVirtualMachineOsProfileWindowsConfiguration(config *compute.W
 	return []interface{}{result}
 }
 
-func flattenAzureRmVirtualMachineOsProfileLinuxConfiguration(config *compute.LinuxConfiguration) []interface{} {
+func flattenazurestackVirtualMachineOsProfileLinuxConfiguration(config *compute.LinuxConfiguration) []interface{} {
 	if config == nil {
 		return []interface{}{}
 	}
@@ -1275,7 +1275,7 @@ func flattenAzureRmVirtualMachineOsProfileLinuxConfiguration(config *compute.Lin
 	return []interface{}{result}
 }
 
-func flattenAzureRmVirtualMachineOsDisk(disk *compute.OSDisk, diskInfo *compute.Disk) []interface{} {
+func flattenazurestackVirtualMachineOsDisk(disk *compute.OSDisk, diskInfo *compute.Disk) []interface{} {
 	result := make(map[string]interface{})
 	if disk.Name != nil {
 		result["name"] = *disk.Name
@@ -1303,12 +1303,12 @@ func flattenAzureRmVirtualMachineOsDisk(disk *compute.OSDisk, diskInfo *compute.
 		result["write_accelerator_enabled"] = *disk.WriteAcceleratorEnabled
 	}
 
-	flattenAzureRmVirtualMachineReviseDiskInfo(result, diskInfo)
+	flattenazurestackVirtualMachineReviseDiskInfo(result, diskInfo)
 
 	return []interface{}{result}
 }
 
-func flattenAzureRmVirtualMachineReviseDiskInfo(result map[string]interface{}, diskInfo *compute.Disk) {
+func flattenazurestackVirtualMachineReviseDiskInfo(result map[string]interface{}, diskInfo *compute.Disk) {
 	if diskInfo != nil {
 		if diskInfo.Sku != nil {
 			result["managed_disk_type"] = string(diskInfo.Sku.Name)
@@ -1319,7 +1319,7 @@ func flattenAzureRmVirtualMachineReviseDiskInfo(result map[string]interface{}, d
 	}
 }
 
-func expandAzureRmVirtualMachinePlan(d *pluginsdk.ResourceData) *compute.Plan {
+func expandazurestackVirtualMachinePlan(d *pluginsdk.ResourceData) *compute.Plan {
 	planConfigs := d.Get("plan").([]interface{})
 	if len(planConfigs) == 0 {
 		return nil
@@ -1338,7 +1338,7 @@ func expandAzureRmVirtualMachinePlan(d *pluginsdk.ResourceData) *compute.Plan {
 	}
 }
 
-func expandAzureRmVirtualMachineIdentity(d *pluginsdk.ResourceData) *compute.VirtualMachineIdentity {
+func expandazurestackVirtualMachineIdentity(d *pluginsdk.ResourceData) *compute.VirtualMachineIdentity {
 	v := d.Get("identity")
 	identities := v.([]interface{})
 	identity := identities[0].(map[string]interface{})
@@ -1351,7 +1351,7 @@ func expandAzureRmVirtualMachineIdentity(d *pluginsdk.ResourceData) *compute.Vir
 	return &vmIdentity
 }
 
-func expandAzureRmVirtualMachineOsProfile(d *pluginsdk.ResourceData) (*compute.OSProfile, error) {
+func expandazurestackVirtualMachineOsProfile(d *pluginsdk.ResourceData) (*compute.OSProfile, error) {
 	osProfiles := d.Get("os_profile").(*pluginsdk.Set).List()
 
 	osProfile := osProfiles[0].(map[string]interface{})
@@ -1370,14 +1370,14 @@ func expandAzureRmVirtualMachineOsProfile(d *pluginsdk.ResourceData) (*compute.O
 	}
 
 	if _, ok := d.GetOk("os_profile_windows_config"); ok {
-		winConfig := expandAzureRmVirtualMachineOsProfileWindowsConfig(d)
+		winConfig := expandazurestackVirtualMachineOsProfileWindowsConfig(d)
 		if winConfig != nil {
 			profile.WindowsConfiguration = winConfig
 		}
 	}
 
 	if _, ok := d.GetOk("os_profile_linux_config"); ok {
-		linuxConfig := expandAzureRmVirtualMachineOsProfileLinuxConfig(d)
+		linuxConfig := expandazurestackVirtualMachineOsProfileLinuxConfig(d)
 		if linuxConfig != nil {
 			profile.LinuxConfiguration = linuxConfig
 		}
@@ -1388,7 +1388,7 @@ func expandAzureRmVirtualMachineOsProfile(d *pluginsdk.ResourceData) (*compute.O
 	}
 
 	if _, ok := d.GetOk("os_profile_secrets"); ok {
-		secrets := expandAzureRmVirtualMachineOsProfileSecrets(d)
+		secrets := expandazurestackVirtualMachineOsProfileSecrets(d)
 		if secrets != nil {
 			profile.Secrets = secrets
 		}
@@ -1402,7 +1402,7 @@ func expandAzureRmVirtualMachineOsProfile(d *pluginsdk.ResourceData) (*compute.O
 	return profile, nil
 }
 
-func expandAzureRmVirtualMachineOsProfileSecrets(d *pluginsdk.ResourceData) *[]compute.VaultSecretGroup {
+func expandazurestackVirtualMachineOsProfileSecrets(d *pluginsdk.ResourceData) *[]compute.VaultSecretGroup {
 	secretsConfig := d.Get("os_profile_secrets").([]interface{})
 	secrets := make([]compute.VaultSecretGroup, 0, len(secretsConfig))
 
@@ -1448,7 +1448,7 @@ func expandAzureRmVirtualMachineOsProfileSecrets(d *pluginsdk.ResourceData) *[]c
 	return &secrets
 }
 
-func expandAzureRmVirtualMachineOsProfileLinuxConfig(d *pluginsdk.ResourceData) *compute.LinuxConfiguration {
+func expandazurestackVirtualMachineOsProfileLinuxConfig(d *pluginsdk.ResourceData) *compute.LinuxConfiguration {
 	osProfilesLinuxConfig := d.Get("os_profile_linux_config").(*pluginsdk.Set).List()
 
 	linuxConfig := osProfilesLinuxConfig[0].(map[string]interface{})
@@ -1485,7 +1485,7 @@ func expandAzureRmVirtualMachineOsProfileLinuxConfig(d *pluginsdk.ResourceData) 
 	return config
 }
 
-func expandAzureRmVirtualMachineOsProfileWindowsConfig(d *pluginsdk.ResourceData) *compute.WindowsConfiguration {
+func expandazurestackVirtualMachineOsProfileWindowsConfig(d *pluginsdk.ResourceData) *compute.WindowsConfiguration {
 	osProfilesWindowsConfig := d.Get("os_profile_windows_config").(*pluginsdk.Set).List()
 
 	osProfileConfig := osProfilesWindowsConfig[0].(map[string]interface{})
@@ -1556,7 +1556,7 @@ func expandAzureRmVirtualMachineOsProfileWindowsConfig(d *pluginsdk.ResourceData
 	return config
 }
 
-func expandAzureRmVirtualMachineDataDisk(d *pluginsdk.ResourceData) ([]compute.DataDisk, error) {
+func expandazurestackVirtualMachineDataDisk(d *pluginsdk.ResourceData) ([]compute.DataDisk, error) {
 	disks := d.Get("storage_data_disk").([]interface{})
 	data_disks := make([]compute.DataDisk, 0, len(disks))
 	for _, disk_config := range disks {
@@ -1618,7 +1618,7 @@ func expandAzureRmVirtualMachineDataDisk(d *pluginsdk.ResourceData) ([]compute.D
 	return data_disks, nil
 }
 
-func expandAzureRmVirtualMachineDiagnosticsProfile(d *pluginsdk.ResourceData) *compute.DiagnosticsProfile {
+func expandazurestackVirtualMachineDiagnosticsProfile(d *pluginsdk.ResourceData) *compute.DiagnosticsProfile {
 	bootDiagnostics := d.Get("boot_diagnostics").([]interface{})
 
 	diagnosticsProfile := &compute.DiagnosticsProfile{}
@@ -1638,7 +1638,7 @@ func expandAzureRmVirtualMachineDiagnosticsProfile(d *pluginsdk.ResourceData) *c
 	return nil
 }
 
-func expandAzureRmVirtualMachineImageReference(d *pluginsdk.ResourceData) (*compute.ImageReference, error) {
+func expandazurestackVirtualMachineImageReference(d *pluginsdk.ResourceData) (*compute.ImageReference, error) {
 	storageImageRefs := d.Get("storage_image_reference").(*pluginsdk.Set).List()
 
 	storageImageRef := storageImageRefs[0].(map[string]interface{})
@@ -1669,7 +1669,7 @@ func expandAzureRmVirtualMachineImageReference(d *pluginsdk.ResourceData) (*comp
 	return &imageReference, nil
 }
 
-func expandAzureRmVirtualMachineNetworkProfile(d *pluginsdk.ResourceData) compute.NetworkProfile {
+func expandazurestackVirtualMachineNetworkProfile(d *pluginsdk.ResourceData) compute.NetworkProfile {
 	nicIds := d.Get("network_interface_ids").([]interface{})
 	primaryNicId := d.Get("primary_network_interface_id").(string)
 	network_interfaces := make([]compute.NetworkInterfaceReference, 0, len(nicIds))
@@ -1696,7 +1696,7 @@ func expandAzureRmVirtualMachineNetworkProfile(d *pluginsdk.ResourceData) comput
 	return network_profile
 }
 
-func expandAzureRmVirtualMachineOsDisk(d *pluginsdk.ResourceData) (*compute.OSDisk, error) {
+func expandazurestackVirtualMachineOsDisk(d *pluginsdk.ResourceData) (*compute.OSDisk, error) {
 	disks := d.Get("storage_os_disk").([]interface{})
 
 	config := disks[0].(map[string]interface{})

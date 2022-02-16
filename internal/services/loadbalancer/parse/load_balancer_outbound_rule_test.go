@@ -24,7 +24,6 @@ func TestLoadBalancerOutboundRuleID(t *testing.T) {
 		Error    bool
 		Expected *LoadBalancerOutboundRuleId
 	}{
-
 		{
 			// empty
 			Input: "",

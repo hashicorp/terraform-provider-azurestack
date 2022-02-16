@@ -77,6 +77,7 @@ func availabilitySet() *pluginsdk.Resource {
 				ForceNew: true,
 			},
 
+			// Still not suported for now, but it may be supported in the future release.
 			"proximity_placement_group_id": {
 				Type:     pluginsdk.TypeString,
 				Optional: true,

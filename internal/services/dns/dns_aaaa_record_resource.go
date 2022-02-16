@@ -104,7 +104,6 @@ func dnsAaaaRecordCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 	ttl := int64(d.Get("ttl").(int))
 	t := d.Get("tags").(map[string]interface{})
 	recordsRaw := d.Get("records").(*pluginsdk.Set).List()
-	targetResourceId := d.Get("target_resource_id").(string)
 
 	parameters := dns.RecordSet{
 		Name: &name,
@@ -113,11 +112,6 @@ func dnsAaaaRecordCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 			TTL:         &ttl,
 			AaaaRecords: expandazurestackDnsAaaaRecords(recordsRaw),
 		},
-	}
-
-	// TODO: this can be removed when the provider SDK is upgraded
-	if targetResourceId == "" && len(recordsRaw) == 0 {
-		return fmt.Errorf("One of either `records` or `target_resource_id` must be specified")
 	}
 
 	eTag := ""

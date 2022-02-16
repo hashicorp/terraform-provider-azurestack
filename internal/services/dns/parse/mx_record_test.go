@@ -24,7 +24,6 @@ func TestMxRecordID(t *testing.T) {
 		Error    bool
 		Expected *MxRecordId
 	}{
-
 		{
 			// empty
 			Input: "",

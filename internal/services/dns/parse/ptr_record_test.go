@@ -24,7 +24,6 @@ func TestPtrRecordID(t *testing.T) {
 		Error    bool
 		Expected *PtrRecordId
 	}{
-
 		{
 			// empty
 			Input: "",

@@ -24,7 +24,6 @@ func TestDataDiskID(t *testing.T) {
 		Error    bool
 		Expected *DataDiskId
 	}{
-
 		{
 			// empty
 			Input: "",

@@ -24,7 +24,6 @@ func TestTxtRecordID(t *testing.T) {
 		Error    bool
 		Expected *TxtRecordId
 	}{
-
 		{
 			// empty
 			Input: "",

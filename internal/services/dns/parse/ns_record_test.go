@@ -24,7 +24,6 @@ func TestNsRecordID(t *testing.T) {
 		Error    bool
 		Expected *NsRecordId
 	}{
-
 		{
 			// empty
 			Input: "",

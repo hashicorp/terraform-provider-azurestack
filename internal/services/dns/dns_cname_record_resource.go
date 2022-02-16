@@ -51,9 +51,8 @@ func dnsCNameRecord() *pluginsdk.Resource {
 			},
 
 			"record": {
-				Type:          pluginsdk.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"target_resource_id"},
+				Type:     pluginsdk.TypeString,
+				Optional: true,
 			},
 
 			"ttl": {
@@ -99,7 +98,6 @@ func dnsCNameRecordCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) err
 	ttl := int64(d.Get("ttl").(int))
 	record := d.Get("record").(string)
 	t := d.Get("tags").(map[string]interface{})
-	targetResourceId := d.Get("target_resource_id").(string)
 
 	parameters := dns.RecordSet{
 		Name: &name,
@@ -112,11 +110,6 @@ func dnsCNameRecordCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) err
 
 	if record != "" {
 		parameters.RecordSetProperties.CnameRecord.Cname = pointer.FromString(record)
-	}
-
-	// TODO: this can be removed when the provider SDK is upgraded
-	if record == "" && targetResourceId == "" {
-		return fmt.Errorf("One of either `record` or `target_resource_id` must be specified")
 	}
 
 	eTag := ""

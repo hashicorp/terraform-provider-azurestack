@@ -132,16 +132,6 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 
 			"custom_data": base64.OptionalSchema(true),
 
-			"dedicated_host_id": {
-				Type:         pluginsdk.TypeString,
-				Optional:     true,
-				ValidateFunc: computeValidate.DedicatedHostID,
-				// the Compute/VM API is broken and returns the Resource Group name in UPPERCASE :shrug:
-				DiffSuppressFunc: suppress.CaseDifference,
-				// TODO: raise a GH issue for the broken API
-				// /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TOM-MANUAL/providers/Microsoft.Compute/hostGroups/tom-hostgroup/hosts/tom-manual-host
-			},
-
 			"delete_os_disk_on_termination": {
 				Type:     pluginsdk.TypeBool,
 				Optional: true,
@@ -215,14 +205,6 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 				Optional: true,
 				Default:  true,
 				ForceNew: true,
-			},
-
-			"proximity_placement_group_id": {
-				Type:         pluginsdk.TypeString,
-				Optional:     true,
-				ValidateFunc: computeValidate.ProximityPlacementGroupID,
-				// the Compute/VM API is broken and returns the Resource Group name in UPPERCASE :shrug:
-				DiffSuppressFunc: suppress.CaseDifference,
 			},
 
 			"secret": linuxSecretSchema(),
@@ -441,12 +423,6 @@ func linuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 		params.OsProfile.CustomData = utils.String(v.(string))
 	}
 
-	if v, ok := d.GetOk("dedicated_host_id"); ok {
-		params.Host = &compute.SubResource{
-			ID: utils.String(v.(string)),
-		}
-	}
-
 	if evictionPolicyRaw, ok := d.GetOk("eviction_policy"); ok {
 		if params.Priority != compute.Spot {
 			return fmt.Errorf("An `eviction_policy` can only be specified when `priority` is set to `Spot`")
@@ -464,12 +440,6 @@ func linuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 
 		params.BillingProfile = &compute.BillingProfile{
 			MaxPrice: utils.Float(v),
-		}
-	}
-
-	if v, ok := d.GetOk("proximity_placement_group_id"); ok {
-		params.ProximityPlacementGroup = &compute.SubResource{
-			ID: utils.String(v.(string)),
 		}
 	}
 
@@ -601,12 +571,6 @@ func linuxVirtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error 
 		}
 	}
 
-	dedicatedHostId := ""
-	if props.Host != nil && props.Host.ID != nil {
-		dedicatedHostId = *props.Host.ID
-	}
-	d.Set("dedicated_host_id", dedicatedHostId)
-
 	virtualMachineScaleSetId := ""
 	if props.VirtualMachineScaleSet != nil && props.VirtualMachineScaleSet.ID != nil {
 		virtualMachineScaleSetId = *props.VirtualMachineScaleSet.ID
@@ -642,11 +606,6 @@ func linuxVirtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error 
 		priority = string(props.Priority)
 	}
 	d.Set("priority", priority)
-	proximityPlacementGroupId := ""
-	if props.ProximityPlacementGroup != nil && props.ProximityPlacementGroup.ID != nil {
-		proximityPlacementGroupId = *props.ProximityPlacementGroup.ID
-	}
-	d.Set("proximity_placement_group_id", proximityPlacementGroupId)
 
 	if profile := props.StorageProfile; profile != nil {
 		// the storage_account_type isn't returned so we need to look it up
@@ -782,21 +741,6 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 		}
 	}
 
-	if d.HasChange("dedicated_host_id") {
-		shouldUpdate = true
-
-		// Code="PropertyChangeNotAllowed" Message="Updating Host of VM 'VMNAME' is not allowed as the VM is currently allocated. Please Deallocate the VM and retry the operation."
-		shouldDeallocate = true
-
-		if v, ok := d.GetOk("dedicated_host_id"); ok {
-			update.Host = &compute.SubResource{
-				ID: utils.String(v.(string)),
-			}
-		} else {
-			update.Host = &compute.SubResource{}
-		}
-	}
-
 	if d.HasChange("extensions_time_budget") {
 		shouldUpdate = true
 		update.ExtensionsTimeBudget = utils.String(d.Get("extensions_time_budget").(string))
@@ -848,22 +792,6 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 		osDisk := expandVirtualMachineOSDisk(osDiskRaw, compute.Linux)
 		update.VirtualMachineProperties.StorageProfile = &compute.StorageProfile{
 			OsDisk: osDisk,
-		}
-	}
-
-	if d.HasChange("proximity_placement_group_id") {
-		shouldUpdate = true
-
-		// Code="OperationNotAllowed" Message="Updating proximity placement group of VM is not allowed while the VM is running. Please stop/deallocate the VM and retry the operation."
-		shouldShutDown = true
-		shouldDeallocate = true
-
-		if ppgIDRaw, ok := d.GetOk("proximity_placement_group_id"); ok {
-			update.VirtualMachineProperties.ProximityPlacementGroup = &compute.SubResource{
-				ID: utils.String(ppgIDRaw.(string)),
-			}
-		} else {
-			update.VirtualMachineProperties.ProximityPlacementGroup = &compute.SubResource{}
 		}
 	}
 

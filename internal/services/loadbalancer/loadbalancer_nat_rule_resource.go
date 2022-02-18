@@ -98,6 +98,11 @@ func loadBalancerNatRule() *pluginsdk.Resource {
 				Computed: true,
 			},
 
+			"enable_tcp_reset": {
+				Type:     pluginsdk.TypeBool,
+				Optional: true,
+			},
+
 			"idle_timeout_in_minutes": {
 				Type:         pluginsdk.TypeInt,
 				Optional:     true,
@@ -222,6 +227,7 @@ func loadBalancerNatRuleRead(d *pluginsdk.ResourceData, meta interface{}) error 
 		}
 		d.Set("backend_port", backendPort)
 		d.Set("enable_floating_ip", props.EnableFloatingIP)
+		d.Set("enable_tcp_reset", props.EnableTCPReset)
 
 		frontendIPConfigName := ""
 		frontendIPConfigID := ""
@@ -300,9 +306,10 @@ func loadBalancerNatRuleDelete(d *pluginsdk.ResourceData, meta interface{}) erro
 
 func expandazurestackLoadBalancerNatRule(d *pluginsdk.ResourceData, lb *network.LoadBalancer, loadBalancerId parse.LoadBalancerId) (*network.InboundNatRule, error) {
 	properties := network.InboundNatRulePropertiesFormat{
-		Protocol:     network.TransportProtocol(d.Get("protocol").(string)),
-		FrontendPort: utils.Int32(int32(d.Get("frontend_port").(int))),
-		BackendPort:  utils.Int32(int32(d.Get("backend_port").(int))),
+		Protocol:       network.TransportProtocol(d.Get("protocol").(string)),
+		FrontendPort:   utils.Int32(int32(d.Get("frontend_port").(int))),
+		BackendPort:    utils.Int32(int32(d.Get("backend_port").(int))),
+		EnableTCPReset: utils.Bool(d.Get("enable_tcp_reset").(bool)),
 	}
 
 	if v, ok := d.GetOk("enable_floating_ip"); ok {

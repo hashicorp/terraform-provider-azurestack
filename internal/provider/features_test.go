@@ -18,6 +18,10 @@ func TestExpandFeatures(t *testing.T) {
 			Name:  "Empty Block",
 			Input: []interface{}{},
 			Expected: features.UserFeatures{
+				// KeyVault: features.KeyVaultFeatures{
+				// 	PurgeSoftDeleteOnDestroy:    true,
+				// 	RecoverSoftDeletedKeyVaults: true,
+				// },
 				ResourceGroup: features.ResourceGroupFeatures{
 					PreventDeletionIfContainsResources: false,
 				},
@@ -27,6 +31,12 @@ func TestExpandFeatures(t *testing.T) {
 			Name: "Complete Enabled",
 			Input: []interface{}{
 				map[string]interface{}{
+					"key_vault": []interface{}{
+						map[string]interface{}{
+							"purge_soft_delete_on_destroy":    true,
+							"recover_soft_deleted_key_vaults": true,
+						},
+					},
 					"resource_group": []interface{}{
 						map[string]interface{}{
 							"prevent_deletion_if_contains_resources": true,
@@ -35,6 +45,10 @@ func TestExpandFeatures(t *testing.T) {
 				},
 			},
 			Expected: features.UserFeatures{
+				// KeyVault: features.KeyVaultFeatures{
+				// 	PurgeSoftDeleteOnDestroy:    true,
+				// 	RecoverSoftDeletedKeyVaults: true,
+				// },
 				ResourceGroup: features.ResourceGroupFeatures{
 					PreventDeletionIfContainsResources: true,
 				},
@@ -44,6 +58,12 @@ func TestExpandFeatures(t *testing.T) {
 			Name: "Complete Disabled",
 			Input: []interface{}{
 				map[string]interface{}{
+					"key_vault": []interface{}{
+						map[string]interface{}{
+							"purge_soft_delete_on_destroy":    false,
+							"recover_soft_deleted_key_vaults": false,
+						},
+					},
 					"resource_group": []interface{}{
 						map[string]interface{}{
 							"prevent_deletion_if_contains_resources": false,
@@ -52,6 +72,10 @@ func TestExpandFeatures(t *testing.T) {
 				},
 			},
 			Expected: features.UserFeatures{
+				// KeyVault: features.KeyVaultFeatures{
+				// 	PurgeSoftDeleteOnDestroy:    false,
+				// 	RecoverSoftDeletedKeyVaults: false,
+				// },
 				ResourceGroup: features.ResourceGroupFeatures{
 					PreventDeletionIfContainsResources: false,
 				},
@@ -67,6 +91,76 @@ func TestExpandFeatures(t *testing.T) {
 		}
 	}
 }
+
+// func TestExpandFeaturesKeyVault(t *testing.T) {
+// 	testData := []struct {
+// 		Name     string
+// 		Input    []interface{}
+// 		EnvVars  map[string]interface{}
+// 		Expected features.UserFeatures
+// 	}{
+// 		{
+// 			Name: "Empty Block",
+// 			Input: []interface{}{
+// 				map[string]interface{}{
+// 					"key_vault": []interface{}{},
+// 				},
+// 			},
+// 			Expected: features.UserFeatures{
+// 				KeyVault: features.KeyVaultFeatures{
+// 					PurgeSoftDeleteOnDestroy:    true,
+// 					RecoverSoftDeletedKeyVaults: true,
+// 				},
+// 			},
+// 		},
+// 		{
+// 			Name: "Purge Soft Delete On Destroy and Recover Soft Deleted Key Vaults Enabled",
+// 			Input: []interface{}{
+// 				map[string]interface{}{
+// 					"key_vault": []interface{}{
+// 						map[string]interface{}{
+// 							"purge_soft_delete_on_destroy":    true,
+// 							"recover_soft_deleted_key_vaults": true,
+// 						},
+// 					},
+// 				},
+// 			},
+// 			Expected: features.UserFeatures{
+// 				KeyVault: features.KeyVaultFeatures{
+// 					PurgeSoftDeleteOnDestroy:    true,
+// 					RecoverSoftDeletedKeyVaults: true,
+// 				},
+// 			},
+// 		},
+// 		{
+// 			Name: "Purge Soft Delete On Destroy and Recover Soft Deleted Key Vaults Disabled",
+// 			Input: []interface{}{
+// 				map[string]interface{}{
+// 					"key_vault": []interface{}{
+// 						map[string]interface{}{
+// 							"purge_soft_delete_on_destroy":    false,
+// 							"recover_soft_deleted_key_vaults": false,
+// 						},
+// 					},
+// 				},
+// 			},
+// 			Expected: features.UserFeatures{
+// 				KeyVault: features.KeyVaultFeatures{
+// 					PurgeSoftDeleteOnDestroy:    false,
+// 					RecoverSoftDeletedKeyVaults: false,
+// 				},
+// 			},
+// 		},
+// 	}
+
+// 	for _, testCase := range testData {
+// 		t.Logf("[DEBUG] Test Case: %q", testCase.Name)
+// 		result := expandFeatures(testCase.Input)
+// 		if !reflect.DeepEqual(result.KeyVault, testCase.Expected.KeyVault) {
+// 			t.Fatalf("Expected %+v but got %+v", result.KeyVault, testCase.Expected.KeyVault)
+// 		}
+// 	}
+// }
 
 func TestExpandFeaturesResourceGroup(t *testing.T) {
 	testData := []struct {

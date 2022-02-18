@@ -4,6 +4,7 @@ var services = mapOf(
         "authorization" to "Authorization",
         "compute" to "Compute",
         "dns" to "DNS",
+        "keyvault" to "KeyVault",
         "loadbalancer" to "Load Balancer",
         "network" to "Network",
         "resource" to "Resources",

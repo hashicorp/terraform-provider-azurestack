@@ -113,6 +113,11 @@ func loadBalancerRule() *pluginsdk.Resource {
 				Default:  false,
 			},
 
+			"enable_tcp_reset": {
+				Type:     pluginsdk.TypeBool,
+				Optional: true,
+			},
+
 			"disable_outbound_snat": {
 				Type:     pluginsdk.TypeBool,
 				Optional: true,
@@ -230,6 +235,7 @@ func loadBalancerRuleRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	if props := config.LoadBalancingRulePropertiesFormat; props != nil {
 		d.Set("disable_outbound_snat", props.DisableOutboundSnat)
 		d.Set("enable_floating_ip", props.EnableFloatingIP)
+		d.Set("enable_tcp_reset", props.EnableTCPReset)
 		d.Set("protocol", string(props.Protocol))
 
 		backendPort := 0

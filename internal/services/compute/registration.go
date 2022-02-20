@@ -24,7 +24,7 @@ func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 		"azurestack_availability_set": availabilitySetDataSource(),
 		"azurestack_managed_disk":     managedDiskDataSource(),
 		"azurestack_platform_image":   platformImageDataSource(),
-		"azurestack_image":            ImageDataSource(),
+		"azurestack_image":            imageDataSource(),
 	}
 }
 
@@ -38,6 +38,7 @@ func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 		"azurestack_virtual_machine_extension":            virtualMachineExtension(),
 		"azurestack_virtual_machine_scale_set":            virtualMachineScaleSet(),
 		"azurestack_virtual_machine_scale_set_extension":  virtualMachineScaleSetExtension(),
+		"azurestack_image":                                image(),
 	}
 
 	return resources

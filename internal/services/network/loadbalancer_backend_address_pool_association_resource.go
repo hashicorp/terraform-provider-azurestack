@@ -23,13 +23,12 @@ import (
 func loadBalancerBackendAddressPoolAssociation() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
 		Create: loadBalancerBackendAddressPoolAssociationCreateUpdate,
-		Update: loadBalancerBackendAddressPoolAssociationCreateUpdate,
 		Read:   loadBalancerBackendAddressPoolAssociationRead,
 		Delete: loadBalancerBackendAddressPoolAssociationDelete,
 
 		Importer: pluginsdk.ImporterValidatingResourceId(func(id string) error {
 			splitId := strings.Split(id, "|")
-			if _, err := parse.NetworkInterfaceID(splitId[0]); err != nil {
+			if _, err := parse.NetworkInterfaceIpConfigurationID(splitId[0]); err != nil {
 				return err
 			}
 			if _, err := lbparse.LoadBalancerBackendAddressPoolID(splitId[1]); err != nil {
@@ -45,39 +44,36 @@ func loadBalancerBackendAddressPoolAssociation() *pluginsdk.Resource {
 			Delete: pluginsdk.DefaultTimeout(30 * time.Minute),
 		},
 
-		Schema: func() map[string]*pluginsdk.Schema {
-			s := map[string]*pluginsdk.Schema{
-				"network_interface_id": {
-					Type:         pluginsdk.TypeString,
-					Required:     true,
-					ForceNew:     true,
-					ValidateFunc: validate.NetworkInterfaceID,
-				},
+		Schema: map[string]*pluginsdk.Schema{
+			"network_interface_id": {
+				Type:         pluginsdk.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validate.NetworkInterfaceID,
+			},
 
-				"ip_configuration_name": {
-					Type:     pluginsdk.TypeString,
-					Required: true,
-					ForceNew: true,
-					Elem: &pluginsdk.Schema{
-						Type: pluginsdk.TypeString,
-					},
+			"ip_configuration_name": {
+				Type:     pluginsdk.TypeString,
+				Required: true,
+				ForceNew: true,
+				Elem: &pluginsdk.Schema{
+					Type: pluginsdk.TypeString,
 				},
+			},
 
-				"backend_address_pool_id": {
-					Type:         pluginsdk.TypeString,
-					Required:     true,
-					ForceNew:     true,
-					ValidateFunc: loadbalancer.LoadBalancerBackendAddressPoolID,
-				},
-			}
-			return s
-		}(),
+			"backend_address_pool_id": {
+				Type:         pluginsdk.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: loadbalancer.LoadBalancerBackendAddressPoolID,
+			},
+		},
 	}
 }
 
 func loadBalancerBackendAddressPoolAssociationCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.InterfacesClient
-	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
+	ctx, cancel := timeouts.ForCreate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
 	log.Printf("[INFO] preparing arguments for Network Interface <-> Load Balancer Backend Address Pool Association creation.")

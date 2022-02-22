@@ -21,7 +21,8 @@ func (r Registration) WebsiteCategories() []string {
 // SupportedDataSources returns the supported Data Sources supported by this Service
 func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
-		"azurestack_storage_account": storageAccountDataSource(),
+		"azurestack_storage_account":   storageAccountDataSource(),
+		"azurestack_storage_container": dataSourceStorageContainer(),
 	}
 }
 
@@ -30,6 +31,6 @@ func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
 		"azurestack_storage_account":   storageAccount(),
 		"azurestack_storage_blob":      storageBlob(),
-		"azurestack_storage_container": storageContainer(),
+		"azurestack_storage_container": resourceStorageContainer(),
 	}
 }

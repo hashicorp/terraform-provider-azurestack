@@ -1,11 +1,15 @@
 package storage
 
 import (
-	"fmt"
+	"context"
 	"log"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/containers"
+
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/migration"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/parse"
@@ -13,14 +17,14 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/timeouts"
-	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/containers"
 )
 
-func storageContainer() *schema.Resource {
+func resourceStorageContainer() *schema.Resource {
 	return &schema.Resource{
-		Create: storageContainerCreate,
-		Read:   storageContainerRead,
-		Delete: storageContainerDelete,
+		CreateContext: resourceStorageContainerCreate,
+		ReadContext:   resourceStorageContainerRead,
+		DeleteContext: resourceStorageContainerDelete,
+		UpdateContext: resourceStorageContainerUpdate,
 
 		// TODO check schema and confirm old stack provider can upgrade to this
 		SchemaVersion: 1,
@@ -45,43 +49,44 @@ func storageContainer() *schema.Resource {
 				ForceNew:     true,
 				ValidateFunc: validate.StorageContainerName,
 			},
-
-			// "resource_group_name": commonschema.ResourceGroupName(),
-			// todo property deprecate
-
 			"storage_account_name": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validate.StorageAccountName,
 			},
-
 			"container_access_type": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
 				Default:  "private",
-				// todo validate correctly
-				/*ValidateFunc: validation.StringInSlice([]string{
+				ValidateFunc: validation.StringInSlice([]string{
 					string(containers.Blob),
 					string(containers.Container),
 					"private",
-				}, false),*/
+				}, false),
 			},
-
-			// todo: replace with metadata
-			/*"properties": {
-				Type:     schema.TypeMap,
-				Computed: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
+			"metadata": {
+				Type:         pluginsdk.TypeMap,
+				Optional:     true,
+				Computed:     true,
+				ValidateFunc: validate.MetaDataKeys,
+				Elem: &pluginsdk.Schema{
+					Type: pluginsdk.TypeString,
 				},
-			},*/
+			},
+			"has_immutability_policy": {
+				Type:     pluginsdk.TypeBool,
+				Computed: true,
+			},
+			"has_legal_hold": {
+				Type:     pluginsdk.TypeBool,
+				Computed: true,
+			},
 		},
 	}
 }
 
-// TODO inline this?
 func expandStorageContainerAccessLevel(input string) containers.AccessLevel {
 	// for historical reasons, "private" above is an empty string in the API
 	// so the enum doesn't 1:1 match. You could argue the SDK should handle this
@@ -93,7 +98,7 @@ func expandStorageContainerAccessLevel(input string) containers.AccessLevel {
 	return containers.AccessLevel(input)
 }
 
-func storageContainerCreate(d *pluginsdk.ResourceData, meta interface{}) error {
+func resourceStorageContainerCreate(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForCreate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -103,54 +108,58 @@ func storageContainerCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 	accessLevelRaw := d.Get("container_access_type").(string)
 	accessLevel := expandStorageContainerAccessLevel(accessLevelRaw)
 
+	metaDataRaw := d.Get("metadata").(map[string]interface{})
+	metaData := ExpandMetaData(metaDataRaw)
+
 	account, err := storageClient.FindAccount(ctx, accountName)
 	if err != nil {
-		return fmt.Errorf("retrieving Account %q for Container %q: %s", accountName, containerName, err)
+		return diag.Errorf("retrieving Account %q for Container %q: %s", accountName, containerName, err)
 	}
 	if account == nil {
-		return fmt.Errorf("Unable to locate Storage Account %q!", accountName)
+		return diag.Errorf("Unable to locate Storage Account %q!", accountName)
 	}
 
 	client, err := storageClient.ContainersClient(ctx, *account)
 	if err != nil {
-		return fmt.Errorf("building storage client: %+v", err)
+		return diag.Errorf("building storage client: %+v", err)
 	}
 
 	id := parse.NewStorageContainerDataPlaneId(accountName, storageClient.Env.StorageEndpointSuffix, containerName).ID()
 	exists, err := client.Exists(ctx, account.ResourceGroup, accountName, containerName)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	if exists != nil && *exists {
-		return tf.ImportAsExistsError("azurestack_storage_container", id)
+		return diag.FromErr(tf.ImportAsExistsError("azurestack_storage_container", id))
 	}
 
 	log.Printf("[INFO] Creating Container %q in Storage Account %q", containerName, accountName)
 	input := containers.CreateInput{
 		AccessLevel: accessLevel,
+		MetaData:    metaData,
 	}
 
 	if err := client.Create(ctx, account.ResourceGroup, accountName, containerName, input); err != nil {
-		return fmt.Errorf("failed creating container: %+v", err)
+		return diag.Errorf("failed creating container: %+v", err)
 	}
 
 	d.SetId(id)
-	return storageContainerRead(d, meta)
+	return resourceStorageContainerRead(ctx, d, meta)
 }
 
-func storageContainerRead(d *pluginsdk.ResourceData, meta interface{}) error {
+func resourceStorageContainerRead(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
 	id, err := parse.StorageContainerDataPlaneID(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	account, err := storageClient.FindAccount(ctx, id.AccountName)
 	if err != nil {
-		return fmt.Errorf("retrieving Account %q for Container %q: %s", id.AccountName, id.Name, err)
+		return diag.Errorf("retrieving Account %q for Container %q: %s", id.AccountName, id.Name, err)
 	}
 	if account == nil {
 		log.Printf("[DEBUG] Unable to locate Account %q for Storage Container %q - assuming removed & removing from state", id.AccountName, id.Name)
@@ -159,12 +168,12 @@ func storageContainerRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	}
 	client, err := storageClient.ContainersClient(ctx, *account)
 	if err != nil {
-		return fmt.Errorf("building Containers Client for Storage Account %q (Resource Group %q): %s", id.AccountName, account.ResourceGroup, err)
+		return diag.Errorf("building Containers Client for Storage Account %q (Resource Group %q): %s", id.AccountName, account.ResourceGroup, err)
 	}
 
 	props, err := client.Get(ctx, account.ResourceGroup, id.AccountName, id.Name)
 	if err != nil {
-		return fmt.Errorf("retrieving Container %q (Account %q / Resource Group %q): %s", id.Name, id.AccountName, account.ResourceGroup, err)
+		return diag.Errorf("retrieving Container %q (Account %q / Resource Group %q): %s", id.Name, id.AccountName, account.ResourceGroup, err)
 	}
 	if props == nil {
 		log.Printf("[DEBUG] Container %q was not found in Account %q / Resource Group %q - assuming removed & removing from state", id.Name, id.AccountName, account.ResourceGroup)
@@ -176,10 +185,16 @@ func storageContainerRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	d.Set("storage_account_name", id.AccountName)
 	d.Set("container_access_type", flattenStorageContainerAccessLevel(props.AccessLevel))
 
+	if err := d.Set("metadata", FlattenMetaData(props.MetaData)); err != nil {
+		return diag.Errorf("setting `metadata`: %+v", err)
+	}
+
+	d.Set("has_immutability_policy", props.HasImmutabilityPolicy)
+	d.Set("has_legal_hold", props.HasLegalHold)
+
 	return nil
 }
 
-// todo inline this?
 func flattenStorageContainerAccessLevel(input containers.AccessLevel) string {
 	// for historical reasons, "private" above is an empty string in the API
 	if input == containers.Private {
@@ -189,31 +204,100 @@ func flattenStorageContainerAccessLevel(input containers.AccessLevel) string {
 	return string(input)
 }
 
-func storageContainerDelete(d *pluginsdk.ResourceData, meta interface{}) error {
+func resourceStorageContainerDelete(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
 	id, err := parse.StorageContainerDataPlaneID(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	account, err := storageClient.FindAccount(ctx, id.AccountName)
 	if err != nil {
-		return fmt.Errorf("retrieving Account %q for Container %q: %s", id.AccountName, id.Name, err)
+		return diag.Errorf("retrieving Account %q for Container %q: %s", id.AccountName, id.Name, err)
 	}
 	if account == nil {
-		return fmt.Errorf("Unable to locate Storage Account %q!", id.AccountName)
+		return diag.Errorf("Unable to locate Storage Account %q!", id.AccountName)
 	}
 	client, err := storageClient.ContainersClient(ctx, *account)
 	if err != nil {
-		return fmt.Errorf("building Containers Client for Storage Account %q (Resource Group %q): %s", id.AccountName, account.ResourceGroup, err)
+		return diag.Errorf("building Containers Client for Storage Account %q (Resource Group %q): %s", id.AccountName, account.ResourceGroup, err)
 	}
 
 	if err := client.Delete(ctx, account.ResourceGroup, id.AccountName, id.Name); err != nil {
-		return fmt.Errorf("deleting Container %q (Storage Account %q / Resource Group %q): %s", id.Name, id.AccountName, account.ResourceGroup, err)
+		return diag.Errorf("deleting Container %q (Storage Account %q / Resource Group %q): %s", id.Name, id.AccountName, account.ResourceGroup, err)
 	}
 
 	return nil
+}
+
+func resourceStorageContainerUpdate(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
+	storageClient := meta.(*clients.Client).Storage
+	ctx, cancel := timeouts.ForUpdate(meta.(*clients.Client).StopContext, d)
+	defer cancel()
+
+	id, err := parse.StorageContainerDataPlaneID(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	account, err := storageClient.FindAccount(ctx, id.AccountName)
+	if err != nil {
+		return diag.Errorf("retrieving Account %q for Container %q: %s", id.AccountName, id.Name, err)
+	}
+	if account == nil {
+		return diag.Errorf("Unable to locate Storage Account %q!", id.AccountName)
+	}
+	client, err := storageClient.ContainersClient(ctx, *account)
+	if err != nil {
+		return diag.Errorf("building Containers Client for Storage Account %q (Resource Group %q): %s", id.AccountName, account.ResourceGroup, err)
+	}
+
+	if d.HasChange("container_access_type") {
+		log.Printf("[DEBUG] Updating the Access Control for Container %q (Storage Account %q / Resource Group %q)..", id.Name, id.AccountName, account.ResourceGroup)
+		accessLevelRaw := d.Get("container_access_type").(string)
+		accessLevel := expandStorageContainerAccessLevel(accessLevelRaw)
+
+		if err := client.UpdateAccessLevel(ctx, account.ResourceGroup, id.AccountName, id.Name, accessLevel); err != nil {
+			return diag.Errorf("updating the Access Control for Container %q (Storage Account %q / Resource Group %q): %s", id.Name, id.AccountName, account.ResourceGroup, err)
+		}
+
+		log.Printf("[DEBUG] Updated the Access Control for Container %q (Storage Account %q / Resource Group %q)", id.Name, id.AccountName, account.ResourceGroup)
+	}
+
+	if d.HasChange("metadata") {
+		log.Printf("[DEBUG] Updating the MetaData for Container %q (Storage Account %q / Resource Group %q)..", id.Name, id.AccountName, account.ResourceGroup)
+		metaDataRaw := d.Get("metadata").(map[string]interface{})
+		metaData := ExpandMetaData(metaDataRaw)
+
+		if err := client.UpdateMetaData(ctx, account.ResourceGroup, id.AccountName, id.Name, metaData); err != nil {
+			return diag.Errorf("updating the MetaData for Container %q (Storage Account %q / Resource Group %q): %s", id.Name, id.AccountName, account.ResourceGroup, err)
+		}
+
+		log.Printf("[DEBUG] Updated the MetaData for Container %q (Storage Account %q / Resource Group %q)", id.Name, id.AccountName, account.ResourceGroup)
+	}
+
+	return resourceStorageContainerRead(ctx, d, meta)
+}
+
+func ExpandMetaData(input map[string]interface{}) map[string]string {
+	output := make(map[string]string)
+
+	for k, v := range input {
+		output[k] = v.(string)
+	}
+
+	return output
+}
+
+func FlattenMetaData(input map[string]string) map[string]interface{} {
+	output := make(map[string]interface{})
+
+	for k, v := range input {
+		output[k] = v
+	}
+
+	return output
 }

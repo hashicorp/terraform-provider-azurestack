@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
+
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/validate"
@@ -89,6 +90,35 @@ func TestAccStorageContainer_update(t *testing.T) {
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 				check.That(data.ResourceName).Key("container_access_type").HasValue("container"),
+			),
+		},
+		data.ImportStep(),
+	})
+}
+
+func TestAccStorageContainer_metaData(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_storage_container", "test")
+	r := StorageContainerResource{}
+
+	data.ResourceTest(t, r, []acceptance.TestStep{
+		{
+			Config: r.metaData(data, "private"),
+			Check: acceptance.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+			),
+		},
+		data.ImportStep(),
+		{
+			Config: r.metaDataUpdated(data, "private"),
+			Check: acceptance.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+			),
+		},
+		data.ImportStep(),
+		{
+			Config: r.metaDataEmpty(data, "private"),
+			Check: acceptance.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
 		data.ImportStep(),
@@ -220,6 +250,50 @@ resource "azurestack_storage_container" "test" {
   name                  = "vhds"
   storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "%s"
+}
+`, template, accessType)
+}
+
+func (r StorageContainerResource) metaData(data acceptance.TestData, accessType string) string {
+	template := r.template(data)
+	return fmt.Sprintf(`
+%s
+resource "azurestack_storage_container" "test" {
+  name                  = "vhds"
+  storage_account_name  = azurestack_storage_account.test.name
+  container_access_type = "%s"
+  metadata = {
+    hello = "world"
+  }
+}
+`, template, accessType)
+}
+
+func (r StorageContainerResource) metaDataUpdated(data acceptance.TestData, accessType string) string {
+	template := r.template(data)
+	return fmt.Sprintf(`
+%s
+resource "azurestack_storage_container" "test" {
+  name                  = "vhds"
+  storage_account_name  = azurestack_storage_account.test.name
+  container_access_type = "%s"
+  metadata = {
+    hello = "world"
+    panda = "pops"
+  }
+}
+`, template, accessType)
+}
+
+func (r StorageContainerResource) metaDataEmpty(data acceptance.TestData, accessType string) string {
+	template := r.template(data)
+	return fmt.Sprintf(`
+%s
+resource "azurestack_storage_container" "test" {
+  name                  = "vhds"
+  storage_account_name  = azurestack_storage_account.test.name
+  container_access_type = "%s"
+  metadata = {}
 }
 `, template, accessType)
 }

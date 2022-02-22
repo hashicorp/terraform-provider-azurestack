@@ -3,7 +3,7 @@ subcategory: "Storage"
 layout: "azurestack"
 page_title: "Azure Resource Manager: azurestack_storage_container"
 description: |-
-Gets information about an existing Storage Container.
+  Gets information about an existing Storage Container.
 ---
 
 # Data Source: azurestack_storage_container

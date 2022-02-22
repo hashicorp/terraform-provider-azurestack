@@ -37,8 +37,8 @@ resource "azurestack_resource_group" "test" {
   location = "%s"
 }
 resource "azurestack_storage_account" "test" {
-  name                = "acctestsadsc%s"
-  resource_group_name = "${azurestack_resource_group.test.name}"
+  name                     = "acctestsadsc%s"
+  resource_group_name      = "${azurestack_resource_group.test.name}"
   location                 = "${azurestack_resource_group.test.location}"
   account_tier             = "Standard"
   account_replication_type = "LRS"

@@ -55,6 +55,7 @@ func dataSourceStorageContainer() *pluginsdk.Resource {
 
 func dataSourceStorageContainerRead(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
 	storageClient := meta.(*clients.Client).Storage
+	_ = ctx
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 

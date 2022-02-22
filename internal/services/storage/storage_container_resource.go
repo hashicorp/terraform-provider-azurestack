@@ -100,6 +100,7 @@ func expandStorageContainerAccessLevel(input string) containers.AccessLevel {
 
 func resourceStorageContainerCreate(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
 	storageClient := meta.(*clients.Client).Storage
+	_ = ctx
 	ctx, cancel := timeouts.ForCreate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
@@ -149,6 +150,7 @@ func resourceStorageContainerCreate(ctx context.Context, d *pluginsdk.ResourceDa
 
 func resourceStorageContainerRead(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
 	storageClient := meta.(*clients.Client).Storage
+	_ = ctx
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
@@ -206,6 +208,7 @@ func flattenStorageContainerAccessLevel(input containers.AccessLevel) string {
 
 func resourceStorageContainerDelete(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
 	storageClient := meta.(*clients.Client).Storage
+	_ = ctx
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
@@ -235,6 +238,7 @@ func resourceStorageContainerDelete(ctx context.Context, d *pluginsdk.ResourceDa
 
 func resourceStorageContainerUpdate(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
 	storageClient := meta.(*clients.Client).Storage
+	_ = ctx
 	ctx, cancel := timeouts.ForUpdate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 

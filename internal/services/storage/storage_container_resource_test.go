@@ -293,7 +293,7 @@ resource "azurestack_storage_container" "test" {
   name                  = "vhds"
   storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "%s"
-  metadata = {}
+  metadata              = {}
 }
 `, template, accessType)
 }

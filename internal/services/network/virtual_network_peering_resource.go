@@ -8,7 +8,10 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/network/mgmt/network"
+	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceid"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/network/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf"
@@ -41,23 +44,26 @@ func virtualNetworkPeering() *pluginsdk.Resource {
 
 		Schema: map[string]*pluginsdk.Schema{
 			"name": {
-				Type:     pluginsdk.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         pluginsdk.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
 			},
 
 			"resource_group_name": commonschema.ResourceGroupName(),
 
 			"virtual_network_name": {
-				Type:     pluginsdk.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         pluginsdk.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
 			},
 
 			"remote_virtual_network_id": {
-				Type:     pluginsdk.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:         pluginsdk.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: resourceid.ValidateResourceID,
 			},
 
 			"allow_virtual_network_access": {
@@ -190,19 +196,14 @@ func virtualNetworkPeeringDelete(d *pluginsdk.ResourceData, meta interface{}) er
 }
 
 func getVirtualNetworkPeeringProperties(d *pluginsdk.ResourceData) *network.VirtualNetworkPeeringPropertiesFormat {
-	allowVirtualNetworkAccess := d.Get("allow_virtual_network_access").(bool)
-	allowForwardedTraffic := d.Get("allow_forwarded_traffic").(bool)
-	allowGatewayTransit := d.Get("allow_gateway_transit").(bool)
-	useRemoteGateways := d.Get("use_remote_gateways").(bool)
-	remoteVirtualNetworkID := d.Get("remote_virtual_network_id").(string)
 
 	return &network.VirtualNetworkPeeringPropertiesFormat{
-		AllowVirtualNetworkAccess: &allowVirtualNetworkAccess,
-		AllowForwardedTraffic:     &allowForwardedTraffic,
-		AllowGatewayTransit:       &allowGatewayTransit,
-		UseRemoteGateways:         &useRemoteGateways,
+		AllowVirtualNetworkAccess: pointer.FromBool(d.Get("allow_virtual_network_access").(bool)),
+		AllowForwardedTraffic:     pointer.FromBool(d.Get("allow_forwarded_traffic").(bool)),
+		AllowGatewayTransit:       pointer.FromBool(d.Get("allow_gateway_transit").(bool)),
+		UseRemoteGateways:         pointer.FromBool(d.Get("use_remote_gateways").(bool)),
 		RemoteVirtualNetwork: &network.SubResource{
-			ID: &remoteVirtualNetworkID,
+			ID: pointer.FromString(d.Get("remote_virtual_network_id").(string)),
 		},
 	}
 }

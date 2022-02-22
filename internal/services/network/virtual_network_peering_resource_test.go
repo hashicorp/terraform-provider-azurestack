@@ -80,7 +80,7 @@ func TestAccVirtualNetworkPeering_update(t *testing.T) {
 				acceptance.TestCheckResourceAttr(secondResourceName, "allow_forwarded_traffic", "false"),
 			),
 		},
-
+		data.ImportStep(),
 		{
 			Config: r.basicUpdate(data),
 			Check: acceptance.ComposeTestCheckFunc(
@@ -92,6 +92,7 @@ func TestAccVirtualNetworkPeering_update(t *testing.T) {
 				acceptance.TestCheckResourceAttr(secondResourceName, "allow_forwarded_traffic", "true"),
 			),
 		},
+		data.ImportStep(),
 	})
 }
 
@@ -131,22 +132,26 @@ func (VirtualNetworkPeeringResource) basic(data acceptance.TestData) string {
 provider "azurestack" {
   features {}
 }
+
 resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
+
 resource "azurestack_virtual_network" "test1" {
   name                = "acctestvirtnet-1-%d"
   resource_group_name = azurestack_resource_group.test.name
   address_space       = ["10.0.1.0/24"]
   location            = azurestack_resource_group.test.location
 }
+
 resource "azurestack_virtual_network" "test2" {
   name                = "acctestvirtnet-2-%d"
   resource_group_name = azurestack_resource_group.test.name
   address_space       = ["10.0.2.0/24"]
   location            = azurestack_resource_group.test.location
 }
+
 resource "azurestack_virtual_network_peering" "test1" {
   name                         = "acctestpeer-1-%d"
   resource_group_name          = azurestack_resource_group.test.name
@@ -154,6 +159,7 @@ resource "azurestack_virtual_network_peering" "test1" {
   remote_virtual_network_id    = azurestack_virtual_network.test2.id
   allow_virtual_network_access = true
 }
+
 resource "azurestack_virtual_network_peering" "test2" {
   name                         = "acctestpeer-2-%d"
   resource_group_name          = azurestack_resource_group.test.name
@@ -182,22 +188,26 @@ func (VirtualNetworkPeeringResource) basicUpdate(data acceptance.TestData) strin
 provider "azurestack" {
   features {}
 }
+
 resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
+
 resource "azurestack_virtual_network" "test1" {
   name                = "acctestvirtnet-1-%d"
   resource_group_name = azurestack_resource_group.test.name
   address_space       = ["10.0.1.0/24"]
   location            = azurestack_resource_group.test.location
 }
+
 resource "azurestack_virtual_network" "test2" {
   name                = "acctestvirtnet-2-%d"
   resource_group_name = azurestack_resource_group.test.name
   address_space       = ["10.0.2.0/24"]
   location            = azurestack_resource_group.test.location
 }
+
 resource "azurestack_virtual_network_peering" "test1" {
   name                         = "acctestpeer-1-%d"
   resource_group_name          = azurestack_resource_group.test.name
@@ -206,6 +216,7 @@ resource "azurestack_virtual_network_peering" "test1" {
   allow_forwarded_traffic      = true
   allow_virtual_network_access = true
 }
+
 resource "azurestack_virtual_network_peering" "test2" {
   name                         = "acctestpeer-2-%d"
   resource_group_name          = azurestack_resource_group.test.name

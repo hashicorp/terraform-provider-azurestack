@@ -54,10 +54,10 @@ resource "azurestack_image" "test" {
 
   os_disk {
     os_type  = "Linux"
-	os_state = "Generalized"
-	blob_uri = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
-	size_gb  = 30
-	caching  = "None"
+    os_state = "Generalized"
+    blob_uri = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
+    size_gb  = 30
+    caching  = "None"
   }
 }
 `, template)
@@ -215,7 +215,7 @@ resource "azurestack_network_interface" "testsource" {
     name                          = "testconfigurationsource"
     subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
-	public_ip_address_id          = azurestack_public_ip.test.id
+    public_ip_address_id          = azurestack_public_ip.test.id
   }
 }
 resource "azurestack_storage_account" "test" {
@@ -264,11 +264,11 @@ resource "azurestack_virtual_machine" "testsource" {
 func (ImageResource) template(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 locals {
-  number            = "%d"
-  location          = %q
-  random_string     = %q
-  admin_username    = "testadmin%d"
-  admin_password    = "Password1234!%d"
+  number         = "%d"
+  location       = %q
+  random_string  = %q
+  admin_username = "testadmin%d"
+  admin_password = "Password1234!%d"
 }
 resource "azurestack_resource_group" "test" {
   name     = "acctestRG-${local.number}"

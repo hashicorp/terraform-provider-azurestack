@@ -29,7 +29,7 @@ resource "azurestack_image" "example" {
     os_state = "Generalized"
     blob_uri = "{blob_uri}"
     size_gb  = 30
-	caching  = "None"
+    caching  = "None"
   }
 }
 ```

@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -54,24 +53,9 @@ func publicIp() *pluginsdk.Resource {
 
 			"resource_group_name": commonschema.ResourceGroupName(),
 
-			"public_ip_address_allocation": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Computed:         true,
-				DiffSuppressFunc: suppress.CaseDifference,
-				ExactlyOneOf:     []string{"public_ip_address_allocation", "allocation_method"},
-				Deprecated:       "the `public_ip_address_allocation` property has been renamed to `allocation_method`",
-				ValidateFunc: validation.StringInSlice([]string{
-					string(network.Dynamic),
-					string(network.Static),
-				}, true),
-			},
-
 			"allocation_method": {
-				Type:         pluginsdk.TypeString,
-				Optional:     true, // TODO required when deprecation completed
-				Computed:     true,
-				ExactlyOneOf: []string{"public_ip_address_allocation", "allocation_method"},
+				Type:     pluginsdk.TypeString,
+				Required: true,
 				ValidateFunc: validation.StringInSlice([]string{
 					string(network.Static),
 					string(network.Dynamic),
@@ -86,7 +70,6 @@ func publicIp() *pluginsdk.Resource {
 				DiffSuppressFunc: suppress.CaseDifference,
 				ValidateFunc: validation.StringInSlice([]string{
 					string(network.IPv4),
-					string(network.IPv6),
 				}, true),
 			},
 
@@ -98,7 +81,6 @@ func publicIp() *pluginsdk.Resource {
 				DiffSuppressFunc: suppress.CaseDifference,
 				ValidateFunc: validation.StringInSlice([]string{
 					string(network.PublicIPAddressSkuNameBasic),
-					string(network.PublicIPAddressSkuNameStandard),
 				}, true),
 			},
 
@@ -164,9 +146,6 @@ func publicIpCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	idleTimeout := d.Get("idle_timeout_in_minutes").(int)
 	ipVersion := network.IPVersion(d.Get("ip_version").(string))
 	ipAllocationMethod := d.Get("allocation_method").(string)
-	if ipAllocationMethod == "" {
-		ipAllocationMethod = d.Get("public_ip_address_allocation").(string)
-	}
 
 	if strings.EqualFold(sku, "standard") {
 		if !strings.EqualFold(ipAllocationMethod, "static") {
@@ -249,7 +228,6 @@ func publicIpRead(d *pluginsdk.ResourceData, meta interface{}) error {
 
 	if props := resp.PublicIPAddressPropertiesFormat; props != nil {
 		d.Set("allocation_method", string(props.PublicIPAllocationMethod))
-		d.Set("public_ip_address_allocation", string(props.PublicIPAllocationMethod))
 		d.Set("ip_version", string(props.PublicIPAddressVersion))
 
 		if settings := props.DNSSettings; settings != nil {

@@ -75,39 +75,6 @@ func TestAccPublicIpStatic_basic_withDNSLabel(t *testing.T) {
 	})
 }
 
-func TestAccPublicIpStatic_standard_withIPv6(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_public_ip", "test")
-	r := PublicIPResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.standard_withIPVersion(data, "IPv6"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("ip_version").HasValue("IPv6"),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
-func TestAccPublicIpDynamic_basic_withIPv6(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_public_ip", "test")
-	r := PublicIPResource{}
-	ipVersion := "Ipv6"
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.dynamic_basic_withIPVersion(data, ipVersion),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("ip_version").HasValue("IPv6"),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
 func TestAccPublicIpStatic_basic_defaultsToIPv4(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_public_ip", "test")
 	r := PublicIPResource{}
@@ -135,21 +102,6 @@ func TestAccPublicIpStatic_basic_withIPv4(t *testing.T) {
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 				check.That(data.ResourceName).Key("ip_version").HasValue("IPv4"),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
-func TestAccPublicIpStatic_standard(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_public_ip", "test")
-	r := PublicIPResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.standard(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
 		data.ImportStep(),
@@ -388,27 +340,6 @@ resource "azurestack_public_ip" "test" {
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, ipVersion)
 }
 
-func (PublicIPResource) standard(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_public_ip" "test" {
-  name                = "acctestpublicip-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger)
-}
-
 func (PublicIPResource) standard_withIPVersion(data acceptance.TestData, ipVersion string) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
@@ -583,5 +514,5 @@ resource "azurestack_public_ip" "test" {
   allocation_method = "Static"
   domain_name_label = "%s"
 }
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomStringOfLength(63))
+`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomStringOfLength(62))
 }

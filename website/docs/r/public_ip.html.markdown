@@ -19,10 +19,10 @@ resource "azurestack_resource_group" "test" {
 }
 
 resource "azurestack_public_ip" "test" {
-  name                         = "acceptanceTestPublicIp1"
-  location                     = "West US"
-  resource_group_name          = azurestack_resource_group.test.name
-  public_ip_address_allocation = "static"
+  name                = "acceptanceTestPublicIp1"
+  location            = "West US"
+  resource_group_name = azurestack_resource_group.test.name
+  allocation_method   = "static"
 
   tags = {
     environment = "Production"
@@ -42,7 +42,7 @@ The following arguments are supported:
 
 * `location` - (Required) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created.
 
-* `public_ip_address_allocation` - (Required) Defines whether the IP address is static or dynamic. Options are Static or Dynamic.
+* `allocation_method` - (Required)  Defines the allocation method for this IP address. Possible values are `Static` or `Dynamic`.
 
 ~> **Note** `Dynamic` Public IP Addresses aren't allocated until they're assigned to a resource (such as a Virtual Machine or a Load Balancer) by design within Azure - [more information is available below](#ip_address).
 

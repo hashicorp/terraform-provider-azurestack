@@ -196,7 +196,6 @@ func virtualNetworkPeeringDelete(d *pluginsdk.ResourceData, meta interface{}) er
 }
 
 func getVirtualNetworkPeeringProperties(d *pluginsdk.ResourceData) *network.VirtualNetworkPeeringPropertiesFormat {
-
 	return &network.VirtualNetworkPeeringPropertiesFormat{
 		AllowVirtualNetworkAccess: pointer.FromBool(d.Get("allow_virtual_network_access").(bool)),
 		AllowForwardedTraffic:     pointer.FromBool(d.Get("allow_forwarded_traffic").(bool)),

@@ -268,7 +268,7 @@ resource "azurestack_lb_nat_rule" "test" {
   backend_port  = 3389
 
   enable_floating_ip      = true
-  enable_tcp_reset        = true
+  tcp_reset_enabled        = true
   idle_timeout_in_minutes = 10
 
   frontend_ip_configuration_name = azurestack_lb.test.frontend_ip_configuration.0.name

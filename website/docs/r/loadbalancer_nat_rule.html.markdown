@@ -61,7 +61,7 @@ The following arguments are supported:
 * `frontend_port` - (Required) The port for the external endpoint. Port numbers for each Rule must be unique within the Load Balancer. Possible values range between 1 and 65534, inclusive.
 * `backend_port` - (Required) The port used for internal connections on the endpoint. Possible values range between 1 and 65535, inclusive.
 * `enable_floating_ip` - (Optional) Enables the Floating IP Capacity, required to configure a SQL AlwaysOn Availability Group.
-* `enable_tcp_reset` - (Optional) Is TCP Reset enabled for this Load Balancer Rule? Defaults to `false`.
+* `tcp_reset_enabled` - (Optional) Is TCP Reset enabled for this Load Balancer Rule? Defaults to `false`.
 
 ## Attributes Reference
 

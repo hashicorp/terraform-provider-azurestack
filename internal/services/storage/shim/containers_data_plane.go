@@ -8,7 +8,6 @@ import (
 
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
-
 	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/containers"
 )
 

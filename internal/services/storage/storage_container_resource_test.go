@@ -6,10 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/parse"
-
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/validate"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"

@@ -146,7 +146,7 @@ func (AvailabilitySetResource) Destroy(ctx context.Context, client *clients.Clie
 
 	resp, err := client.Compute.AvailabilitySetsClient.Delete(ctx, id.ResourceGroup, id.Name)
 	if err != nil {
-		if !utils.ResponseWasNotFound(resp.Response) {
+		if !utils.WasNotFound(resp.Response) {
 			return nil, fmt.Errorf("deleting on availSetClient: %+v", err)
 		}
 	}

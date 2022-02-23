@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2019-03-01/network/mgmt/network"
+	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/network/mgmt/network"
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
@@ -163,10 +163,10 @@ func virtualNetworkGatewayConnection() *pluginsdk.Resource {
 							Required:         true,
 							DiffSuppressFunc: suppress.CaseDifference,
 							ValidateFunc: validation.StringInSlice([]string{
-								string(network.MD5),
-								string(network.SHA1),
-								string(network.SHA256),
-								string(network.SHA384),
+								string(network.IkeIntegrityMD5),
+								string(network.IkeIntegritySHA1),
+								string(network.IkeIntegritySHA256),
+								string(network.IkeIntegritySHA384),
 							}, true),
 						},
 

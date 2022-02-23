@@ -29,7 +29,7 @@ func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
 		"azurestack_storage_account":   storageAccount(),
-		"azurestack_storage_blob":      storageBlob(),
+		"azurestack_storage_blob":      resourceStorageBlob(),
 		"azurestack_storage_container": storageContainer(),
 	}
 }

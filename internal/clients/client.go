@@ -14,6 +14,7 @@ import (
 	network "github.com/hashicorp/terraform-provider-azurestack/internal/services/network/client"
 	resource "github.com/hashicorp/terraform-provider-azurestack/internal/services/resource/client"
 	storage "github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/client"
+	subscription "github.com/hashicorp/terraform-provider-azurestack/internal/services/subscription/client"
 )
 
 type Client struct {
@@ -28,6 +29,7 @@ type Client struct {
 	Network       *network.Client
 	Resource      *resource.Client
 	Storage       *storage.Client
+	Subscription  *subscription.Client
 
 	Features features.UserFeatures
 }
@@ -48,6 +50,7 @@ func (client *Client) Build(ctx context.Context, o *common.ClientOptions) error 
 	client.Network = network.NewClient(o)
 	client.Resource = resource.NewClient(o)
 	client.Storage = storage.NewClient(o)
+	client.Subscription = subscription.NewClient(o)
 
 	return nil
 }

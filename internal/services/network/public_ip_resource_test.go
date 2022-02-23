@@ -340,28 +340,6 @@ resource "azurestack_public_ip" "test" {
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, ipVersion)
 }
 
-func (PublicIPResource) standard_withIPVersion(data acceptance.TestData, ipVersion string) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_public_ip" "test" {
-  name                = "acctestpublicip-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  allocation_method   = "Static"
-  ip_version          = "%s"
-  sku                 = "Standard"
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, ipVersion)
-}
-
 func (PublicIPResource) update(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
@@ -422,28 +400,6 @@ resource "azurestack_public_ip" "test" {
   allocation_method   = "Dynamic"
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger)
-}
-
-func (PublicIPResource) dynamic_basic_withIPVersion(data acceptance.TestData, ipVersion string) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_public_ip" "test" {
-  name                = "acctestpublicip-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  allocation_method   = "Dynamic"
-
-  ip_version = "%s"
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, ipVersion)
 }
 
 func (PublicIPResource) withTags(data acceptance.TestData) string {

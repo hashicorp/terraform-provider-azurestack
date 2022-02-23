@@ -1,21 +1,18 @@
 package storage
 
 import (
-	"context"
+	"fmt"
 	"time"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/parse"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/validate"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/timeouts"
 )
 
 func dataSourceStorageContainer() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
-		ReadContext: dataSourceStorageContainerRead,
+		Read: dataSourceStorageContainerRead,
 		Timeouts: &pluginsdk.ResourceTimeout{
 			Read: pluginsdk.DefaultTimeout(5 * time.Minute),
 		},
@@ -32,15 +29,7 @@ func dataSourceStorageContainer() *pluginsdk.Resource {
 				Type:     pluginsdk.TypeString,
 				Computed: true,
 			},
-			"metadata": {
-				Type:         pluginsdk.TypeMap,
-				Optional:     true,
-				Computed:     true,
-				ValidateFunc: validate.MetaDataKeys,
-				Elem: &pluginsdk.Schema{
-					Type: pluginsdk.TypeString,
-				},
-			},
+			"metadata": MetaDataSchema(),
 			"has_immutability_policy": {
 				Type:     pluginsdk.TypeBool,
 				Computed: true,
@@ -53,9 +42,8 @@ func dataSourceStorageContainer() *pluginsdk.Resource {
 	}
 }
 
-func dataSourceStorageContainerRead(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
+func dataSourceStorageContainerRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
-	_ = ctx
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
@@ -64,15 +52,15 @@ func dataSourceStorageContainerRead(ctx context.Context, d *pluginsdk.ResourceDa
 
 	account, err := storageClient.FindAccount(ctx, accountName)
 	if err != nil {
-		return diag.Errorf("retrieving Account %q for Container %q: %s", accountName, containerName, err)
+		return fmt.Errorf("retrieving Account %q for Container %q: %s", accountName, containerName, err)
 	}
 	if account == nil {
-		return diag.Errorf("Unable to locate Account %q for Storage Container %q", accountName, containerName)
+		return fmt.Errorf("Unable to locate Account %q for Storage Container %q", accountName, containerName)
 	}
 
 	client, err := storageClient.ContainersClient(ctx, *account)
 	if err != nil {
-		return diag.Errorf("building Containers Client for Storage Account %q (Resource Group %q): %s", accountName, account.ResourceGroup, err)
+		return fmt.Errorf("building Containers Client for Storage Account %q (Resource Group %q): %s", accountName, account.ResourceGroup, err)
 	}
 
 	id := parse.NewStorageContainerDataPlaneId(accountName, "azurestack", containerName).ID()
@@ -80,10 +68,10 @@ func dataSourceStorageContainerRead(ctx context.Context, d *pluginsdk.ResourceDa
 
 	props, err := client.Get(ctx, account.ResourceGroup, accountName, containerName)
 	if err != nil {
-		return diag.Errorf("retrieving Container %q (Account %q / Resource Group %q): %s", containerName, accountName, account.ResourceGroup, err)
+		return fmt.Errorf("retrieving Container %q (Account %q / Resource Group %q): %s", containerName, accountName, account.ResourceGroup, err)
 	}
 	if props == nil {
-		return diag.Errorf("Container %q was not found in Account %q / Resource Group %q", containerName, accountName, account.ResourceGroup)
+		return fmt.Errorf("Container %q was not found in Account %q / Resource Group %q", containerName, accountName, account.ResourceGroup)
 	}
 
 	d.Set("name", containerName)
@@ -91,7 +79,7 @@ func dataSourceStorageContainerRead(ctx context.Context, d *pluginsdk.ResourceDa
 	d.Set("container_access_type", flattenStorageContainerAccessLevel(props.AccessLevel))
 
 	if err := d.Set("metadata", FlattenMetaData(props.MetaData)); err != nil {
-		return diag.Errorf("setting `metadata`: %+v", err)
+		return fmt.Errorf("setting `metadata`: %+v", err)
 	}
 
 	d.Set("has_immutability_policy", props.HasImmutabilityPolicy)

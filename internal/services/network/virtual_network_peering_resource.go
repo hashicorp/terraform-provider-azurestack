@@ -11,9 +11,9 @@ import (
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceid"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/network/parse"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/network/validate"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/timeouts"
@@ -63,7 +63,7 @@ func virtualNetworkPeering() *pluginsdk.Resource {
 				Type:         pluginsdk.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: resourceid.ValidateResourceID,
+				ValidateFunc: validate.VirtualNetworkID,
 			},
 
 			"allow_virtual_network_access": {

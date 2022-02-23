@@ -8,6 +8,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/network/mgmt/network"
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/locks"
 	lbparse "github.com/hashicorp/terraform-provider-azurestack/internal/services/loadbalancer/parse"
@@ -53,12 +54,10 @@ func loadBalancerBackendAddressPoolAssociation() *pluginsdk.Resource {
 			},
 
 			"ip_configuration_name": {
-				Type:     pluginsdk.TypeString,
-				Required: true,
-				ForceNew: true,
-				Elem: &pluginsdk.Schema{
-					Type: pluginsdk.TypeString,
-				},
+				Type:         pluginsdk.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.StringIsNotEmpty,
 			},
 
 			"backend_address_pool_id": {

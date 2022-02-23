@@ -157,6 +157,7 @@ func loadBalancerBackendAddressPoolAssociationCreateUpdate(d *pluginsdk.Resource
 
 	return loadBalancerBackendAddressPoolAssociationRead(d, meta)
 }
+
 func loadBalancerBackendAddressPoolAssociationRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.InterfacesClient
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
@@ -231,6 +232,7 @@ func loadBalancerBackendAddressPoolAssociationRead(d *pluginsdk.ResourceData, me
 
 	return nil
 }
+
 func loadBalancerBackendAddressPoolAssociationDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.InterfacesClient
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)

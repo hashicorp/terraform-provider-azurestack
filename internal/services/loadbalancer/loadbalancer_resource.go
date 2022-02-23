@@ -60,7 +60,6 @@ func loadBalancer() *pluginsdk.Resource {
 				ForceNew: true,
 				ValidateFunc: validation.StringInSlice([]string{
 					string(network.LoadBalancerSkuNameBasic),
-					string(network.LoadBalancerSkuNameStandard),
 				}, true),
 			},
 
@@ -132,7 +131,7 @@ func loadBalancer() *pluginsdk.Resource {
 							Set: pluginsdk.HashString,
 						},
 
-						"outbound_rules": {
+						"outbound_rules_id": {
 							Type:     pluginsdk.TypeSet,
 							Computed: true,
 							Elem: &pluginsdk.Schema{
@@ -212,15 +211,13 @@ func loadBalancerCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error
 		properties.FrontendIPConfigurations = frontendIPConfigurations
 	}
 
-	sku := network.LoadBalancerSku{
-		Name: network.LoadBalancerSkuName(d.Get("sku").(string)),
-	}
-
 	loadBalancer := network.LoadBalancer{
-		Name:                         pointer.FromString(id.Name),
-		Location:                     pointer.FromString(location.Normalize(d.Get("location").(string))),
-		Tags:                         tags.Expand(d.Get("tags").(map[string]interface{})),
-		Sku:                          &sku,
+		Name:     pointer.FromString(id.Name),
+		Location: pointer.FromString(location.Normalize(d.Get("location").(string))),
+		Tags:     tags.Expand(d.Get("tags").(map[string]interface{})),
+		Sku: &network.LoadBalancerSku{
+			Name: network.LoadBalancerSkuName(d.Get("sku").(string)),
+		},
 		LoadBalancerPropertiesFormat: &properties,
 	}
 
@@ -410,7 +407,7 @@ func flattenLoadBalancerFrontendIpConfiguration(ipConfigs *[]network.FrontendIPC
 					outboundRules = append(outboundRules, *rule.ID)
 				}
 			}
-			ipConfig["outbound_rules"] = pluginsdk.NewSet(pluginsdk.HashString, outboundRules)
+			ipConfig["outbound_rules_id"] = pluginsdk.NewSet(pluginsdk.HashString, outboundRules)
 		}
 
 		result = append(result, ipConfig)

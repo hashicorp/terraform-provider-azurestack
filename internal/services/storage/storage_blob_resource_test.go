@@ -847,49 +847,6 @@ resource "azurestack_storage_blob" "import" {
 `, template)
 }
 
-func (r StorageBlobResource) update(data acceptance.TestData) string {
-	template := r.template(data, "private")
-	return fmt.Sprintf(`
-%s
-provider "azurestack" {
-  features {}
-}
-resource "azurestack_storage_blob" "test" {
-  name                   = "example.vhd"
-  storage_account_name   = azurestack_storage_account.test.name
-  storage_container_name = azurestack_storage_container.test.name
-  type                   = "Block"
-  size                   = 5120
-  content_type           = "vnd/panda+pops"
-  metadata = {
-    hello = "world"
-  }
-}
-`, template)
-}
-
-func (r StorageBlobResource) updateUpdated(data acceptance.TestData) string {
-	template := r.template(data, "private")
-	return fmt.Sprintf(`
-%s
-provider "azurestack" {
-  features {}
-}
-resource "azurestack_storage_blob" "test" {
-  name                   = "example.vhd"
-  storage_account_name   = azurestack_storage_account.test.name
-  storage_container_name = azurestack_storage_container.test.name
-  type                   = "Block"
-  size                   = 5120
-  content_type           = "vnd/mountain-mover-3000"
-  metadata = {
-    hello = "world"
-    panda = "pops"
-  }
-}
-`, template)
-}
-
 func (r StorageBlobResource) cacheControl(data acceptance.TestData, cacheControl string) string {
 	template := r.template(data, "private")
 	return fmt.Sprintf(`
@@ -924,28 +881,6 @@ resource "azurestack_storage_account" "test" {
   account_replication_type = "LRS"
 }
 
-resource "azurestack_storage_container" "test" {
-  name                  = "test"
-  storage_account_name  = azurestack_storage_account.test.name
-  container_access_type = "%s"
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomString, accessLevel)
-}
-
-func (r StorageBlobResource) templateBlockBlobStorage(data acceptance.TestData, accessLevel string) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-resource "azurestack_storage_account" "test" {
-  name                     = "acctestacc%s"
-  resource_group_name      = azurestack_resource_group.test.name
-  location                 = azurestack_resource_group.test.location
-  account_kind             = "BlobStorage"
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
 resource "azurestack_storage_container" "test" {
   name                  = "test"
   storage_account_name  = azurestack_storage_account.test.name

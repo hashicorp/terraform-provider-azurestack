@@ -51,9 +51,6 @@ The following arguments are supported:
 
 * `name` - (Required) The name of the storage blob. Must be unique within the storage container the blob is located.
 
-* `resource_group_name` - (Required) The name of the resource group in which to
-    create the storage container. Changing this forces a new resource to be created.
-
 * `storage_account_name` - (Required) Specifies the storage account in which to create the storage container.
  Changing this forces a new resource to be created.
 
@@ -64,14 +61,22 @@ The following arguments are supported:
 
 * `size` - (Optional) Used only for `page` blobs to specify the size in bytes of the blob to be created. Must be a multiple of 512. Defaults to 0.
 
+* `cache_control` - (Optional) Controls the [cache control header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) content of the response when blob is requested .
+
+* `content_type` - (Optional) The content type of the storage blob. Cannot be defined if `source_uri` is defined. Defaults to `application/octet-stream`.
+
 * `source` - (Optional) An absolute path to a file on the local system. Cannot be defined if `source_uri` is defined.
+
+* `source_content` - (Optional) The content for this blob which should be defined inline. This field can only be specified for Block blobs and cannot be specified if `source` or `source_uri` is specified.
 
 * `source_uri` - (Optional) The URI of an existing blob, or a file in the Azure File service, to use as the source contents
     for the blob to be created. Changing this forces a new resource to be created. Cannot be defined if `source` is defined.
 
+* `content_md5` - (Optional) The MD5 sum of the blob contents. Cannot be defined if `source_uri` is defined, or if blob type is Append or Page. Changing this forces a new resource to be created.
+
 * `parallelism` - (Optional) The number of workers per CPU core to run for concurrent uploads. Defaults to `8`.
 
-* `attempts` - (Optional) The number of attempts to make per page or block when uploading. Defaults to `1`.
+* `metadata` - (Optional) A map of custom blob metadata.
 
 ## Attributes Reference
 

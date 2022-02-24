@@ -1,16 +1,11 @@
 package storage
 
 import (
-	"context"
-	"encoding/base64"
-	"encoding/hex"
 	"fmt"
 	"log"
-	"regexp"
 	"strings"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/blobs"
@@ -26,10 +21,10 @@ import (
 
 func resourceStorageBlob() *schema.Resource {
 	return &schema.Resource{
-		CreateContext: resourceStorageBlobCreate,
-		ReadContext:   resourceStorageBlobRead,
-		DeleteContext: resourceStorageBlobDelete,
-		UpdateContext: resourceStorageBlobUpdate,
+		Create:        resourceStorageBlobCreate,
+		Read:          resourceStorageBlobRead,
+		Delete:        resourceStorageBlobDelete,
+		Update:        resourceStorageBlobUpdate,
 		SchemaVersion: 1,
 		StateUpgraders: pluginsdk.StateUpgrades(map[int]pluginsdk.StateUpgrade{
 			0: migration.BlobV0ToV1{},
@@ -37,10 +32,10 @@ func resourceStorageBlob() *schema.Resource {
 		// TODO: replace this with an importer which validates the ID during import
 		Importer: pluginsdk.DefaultImporter(),
 		Timeouts: &pluginsdk.ResourceTimeout{
-			Create: pluginsdk.DefaultTimeout(30 * time.Minute),
+			Create: pluginsdk.DefaultTimeout(120 * time.Minute),
 			Read:   pluginsdk.DefaultTimeout(5 * time.Minute),
-			Update: pluginsdk.DefaultTimeout(30 * time.Minute),
-			Delete: pluginsdk.DefaultTimeout(30 * time.Minute),
+			Update: pluginsdk.DefaultTimeout(120 * time.Minute),
+			Delete: pluginsdk.DefaultTimeout(120 * time.Minute),
 		},
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -77,16 +72,6 @@ func resourceStorageBlob() *schema.Resource {
 				ForceNew:     true,
 				Default:      0,
 				ValidateFunc: validation.IntDivisibleBy(512),
-			},
-			"access_tier": {
-				Type:     pluginsdk.TypeString,
-				Optional: true,
-				Computed: true,
-				ValidateFunc: validation.StringInSlice([]string{
-					string(blobs.Archive),
-					string(blobs.Cool),
-					string(blobs.Hot),
-				}, false),
 			},
 			"content_type": {
 				Type:     pluginsdk.TypeString,
@@ -134,22 +119,13 @@ func resourceStorageBlob() *schema.Resource {
 				ForceNew:     true,
 				ValidateFunc: validation.IntAtLeast(1),
 			},
-			"metadata": {
-				Type:         pluginsdk.TypeMap,
-				Optional:     true,
-				Computed:     true,
-				ValidateFunc: validateContainerMetaDataKeys,
-				Elem: &pluginsdk.Schema{
-					Type: pluginsdk.TypeString,
-				},
-			},
+			"metadata": MetaDataSchema(),
 		},
 	}
 }
 
-func resourceStorageBlobCreate(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceStorageBlobCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
-	_ = ctx
 	ctx, cancel := timeouts.ForCreate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
@@ -159,15 +135,15 @@ func resourceStorageBlobCreate(ctx context.Context, d *pluginsdk.ResourceData, m
 
 	account, err := storageClient.FindAccount(ctx, accountName)
 	if err != nil {
-		return diag.Errorf("retrieving Account %q for Blob %q (Container %q): %s", accountName, name, containerName, err)
+		return fmt.Errorf("retrieving Account %q for Blob %q (Container %q): %s", accountName, name, containerName, err)
 	}
 	if account == nil {
-		return diag.Errorf("Unable to locate Storage Account %q!", accountName)
+		return fmt.Errorf("Unable to locate Storage Account %q!", accountName)
 	}
 
 	blobsClient, err := storageClient.BlobsClient(ctx, *account)
 	if err != nil {
-		return diag.Errorf("building Blobs Client: %s", err)
+		return fmt.Errorf("building Blobs Client: %s", err)
 	}
 
 	id := blobsClient.GetResourceID(accountName, containerName, name)
@@ -176,11 +152,11 @@ func resourceStorageBlobCreate(ctx context.Context, d *pluginsdk.ResourceData, m
 		props, err := blobsClient.GetProperties(ctx, accountName, containerName, name, input)
 		if err != nil {
 			if !utils.ResponseWasNotFound(props.Response) {
-				return diag.Errorf("checking if Blob %q exists (Container %q / Account %q / Resource Group %q): %s", name, containerName, accountName, account.ResourceGroup, err)
+				return fmt.Errorf("checking if Blob %q exists (Container %q / Account %q / Resource Group %q): %s", name, containerName, accountName, account.ResourceGroup, err)
 			}
 		}
 		if !utils.ResponseWasNotFound(props.Response) {
-			return diag.FromErr(tf.ImportAsExistsError("azurestack_storage_blob", id))
+			return tf.ImportAsExistsError("azurestack_storage_blob", id)
 		}
 	}
 
@@ -190,7 +166,7 @@ func resourceStorageBlobCreate(ctx context.Context, d *pluginsdk.ResourceData, m
 		// Azure uses a Base64 encoded representation of the standard MD5 sum of the file
 		contentMD5, err = convertHexToBase64Encoding(d.Get("content_md5").(string))
 		if err != nil {
-			return diag.Errorf("failed to base64 encode `content_md5` value: %s", err)
+			return fmt.Errorf("failed to base64 encode `content_md5` value: %s", err)
 		}
 	}
 
@@ -206,7 +182,7 @@ func resourceStorageBlobCreate(ctx context.Context, d *pluginsdk.ResourceData, m
 		CacheControl:  d.Get("cache_control").(string),
 		ContentType:   d.Get("content_type").(string),
 		ContentMD5:    contentMD5,
-		MetaData:      expandContainerMetaData(metaDataRaw),
+		MetaData:      ExpandMetaData(metaDataRaw),
 		Parallelism:   d.Get("parallelism").(int),
 		Size:          d.Get("size").(int),
 		Source:        d.Get("source").(string),
@@ -214,48 +190,36 @@ func resourceStorageBlobCreate(ctx context.Context, d *pluginsdk.ResourceData, m
 		SourceUri:     d.Get("source_uri").(string),
 	}
 	if err := blobInput.Create(ctx); err != nil {
-		return diag.Errorf("creating Blob %q (Container %q / Account %q): %s", name, containerName, accountName, err)
+		return fmt.Errorf("creating Blob %q (Container %q / Account %q): %s", name, containerName, accountName, err)
 	}
 	log.Printf("[DEBUG] Created Blob %q in Container %q within Storage Account %q.", name, containerName, accountName)
 
 	d.SetId(id)
 
-	return resourceStorageBlobUpdate(ctx, d, meta)
+	return resourceStorageBlobUpdate(d, meta)
 }
 
-func resourceStorageBlobUpdate(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceStorageBlobUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForUpdate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
 	id, err := blobs.ParseResourceID(d.Id())
 	if err != nil {
-		return diag.Errorf("parsing %q: %s", d.Id(), err)
+		return fmt.Errorf("parsing %q: %s", d.Id(), err)
 	}
 
 	account, err := storageClient.FindAccount(ctx, id.AccountName)
 	if err != nil {
-		return diag.Errorf("retrieving Account %q for Blob %q (Container %q): %s", id.AccountName, id.BlobName, id.ContainerName, err)
+		return fmt.Errorf("retrieving Account %q for Blob %q (Container %q): %s", id.AccountName, id.BlobName, id.ContainerName, err)
 	}
 	if account == nil {
-		return diag.Errorf("Unable to locate Storage Account %q!", id.AccountName)
+		return fmt.Errorf("Unable to locate Storage Account %q!", id.AccountName)
 	}
 
 	blobsClient, err := storageClient.BlobsClient(ctx, *account)
 	if err != nil {
-		return diag.Errorf("building Blobs Client: %s", err)
-	}
-
-	if d.HasChange("access_tier") {
-		// this is only applicable for Gen2/BlobStorage accounts
-		log.Printf("[DEBUG] Updating Access Tier for Blob %q (Container %q / Account %q)...", id.BlobName, id.ContainerName, id.AccountName)
-		accessTier := blobs.AccessTier(d.Get("access_tier").(string))
-
-		if _, err := blobsClient.SetTier(ctx, id.AccountName, id.ContainerName, id.BlobName, accessTier); err != nil {
-			return diag.Errorf("updating Access Tier for Blob %q (Container %q / Account %q): %s", id.BlobName, id.ContainerName, id.AccountName, err)
-		}
-
-		log.Printf("[DEBUG] Updated Access Tier for Blob %q (Container %q / Account %q).", id.BlobName, id.ContainerName, id.AccountName)
+		return fmt.Errorf("building Blobs Client: %s", err)
 	}
 
 	if d.HasChange("content_type") || d.HasChange("cache_control") {
@@ -271,7 +235,7 @@ func resourceStorageBlobUpdate(ctx context.Context, d *pluginsdk.ResourceData, m
 		if contentMD5 := d.Get("content_md5").(string); contentMD5 != "" {
 			data, err := convertHexToBase64Encoding(contentMD5)
 			if err != nil {
-				return diag.Errorf("in converting hex to base64 encoding for content_md5: %s", err)
+				return fmt.Errorf("in converting hex to base64 encoding for content_md5: %s", err)
 			}
 
 			contentMD5data := data
@@ -279,7 +243,7 @@ func resourceStorageBlobUpdate(ctx context.Context, d *pluginsdk.ResourceData, m
 		}
 
 		if _, err := blobsClient.SetProperties(ctx, id.AccountName, id.ContainerName, id.BlobName, input); err != nil {
-			return diag.Errorf("updating Properties for Blob %q (Container %q / Account %q): %s", id.BlobName, id.ContainerName, id.AccountName, err)
+			return fmt.Errorf("updating Properties for Blob %q (Container %q / Account %q): %s", id.BlobName, id.ContainerName, id.AccountName, err)
 		}
 		log.Printf("[DEBUG] Updated Properties for Blob %q (Container %q / Account %q).", id.BlobName, id.ContainerName, id.AccountName)
 	}
@@ -288,31 +252,30 @@ func resourceStorageBlobUpdate(ctx context.Context, d *pluginsdk.ResourceData, m
 		log.Printf("[DEBUG] Updating MetaData for Blob %q (Container %q / Account %q)...", id.BlobName, id.ContainerName, id.AccountName)
 		metaDataRaw := d.Get("metadata").(map[string]interface{})
 		input := blobs.SetMetaDataInput{
-			MetaData: expandContainerMetaData(metaDataRaw),
+			MetaData: ExpandMetaData(metaDataRaw),
 		}
 		if _, err := blobsClient.SetMetaData(ctx, id.AccountName, id.ContainerName, id.BlobName, input); err != nil {
-			return diag.Errorf("updating MetaData for Blob %q (Container %q / Account %q): %s", id.BlobName, id.ContainerName, id.AccountName, err)
+			return fmt.Errorf("updating MetaData for Blob %q (Container %q / Account %q): %s", id.BlobName, id.ContainerName, id.AccountName, err)
 		}
 		log.Printf("[DEBUG] Updated MetaData for Blob %q (Container %q / Account %q).", id.BlobName, id.ContainerName, id.AccountName)
 	}
 
-	return resourceStorageBlobRead(ctx, d, meta)
+	return resourceStorageBlobRead(d, meta)
 }
 
-func resourceStorageBlobRead(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceStorageBlobRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
-	_ = ctx
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
 	id, err := blobs.ParseResourceID(d.Id())
 	if err != nil {
-		return diag.Errorf("parsing %q: %s", d.Id(), err)
+		return fmt.Errorf("parsing %q: %s", d.Id(), err)
 	}
 
 	account, err := storageClient.FindAccount(ctx, id.AccountName)
 	if err != nil {
-		return diag.Errorf("retrieving Account %q for Blob %q (Container %q): %s", id.AccountName, id.BlobName, id.ContainerName, err)
+		return fmt.Errorf("retrieving Account %q for Blob %q (Container %q): %s", id.AccountName, id.BlobName, id.ContainerName, err)
 	}
 	if account == nil {
 		log.Printf("[DEBUG] Unable to locate Account %q for Blob %q (Container %q) - assuming removed & removing from state!", id.AccountName, id.BlobName, id.ContainerName)
@@ -322,7 +285,7 @@ func resourceStorageBlobRead(ctx context.Context, d *pluginsdk.ResourceData, met
 
 	blobsClient, err := storageClient.BlobsClient(ctx, *account)
 	if err != nil {
-		return diag.Errorf("building Blobs Client: %s", err)
+		return fmt.Errorf("building Blobs Client: %s", err)
 	}
 
 	log.Printf("[INFO] Retrieving Storage Blob %q (Container %q / Account %q).", id.BlobName, id.ContainerName, id.AccountName)
@@ -335,14 +298,13 @@ func resourceStorageBlobRead(ctx context.Context, d *pluginsdk.ResourceData, met
 			return nil
 		}
 
-		return diag.Errorf("retrieving properties for Blob %q (Container %q / Account %q): %s", id.BlobName, id.ContainerName, id.AccountName, err)
+		return fmt.Errorf("retrieving properties for Blob %q (Container %q / Account %q): %s", id.BlobName, id.ContainerName, id.AccountName, err)
 	}
 
 	d.Set("name", id.BlobName)
 	d.Set("storage_container_name", id.ContainerName)
 	d.Set("storage_account_name", id.AccountName)
 
-	d.Set("access_tier", string(props.AccessTier))
 	d.Set("content_type", props.ContentType)
 	d.Set("cache_control", props.CacheControl)
 
@@ -351,7 +313,7 @@ func resourceStorageBlobRead(ctx context.Context, d *pluginsdk.ResourceData, met
 	if props.ContentMD5 != "" {
 		contentMD5, err = convertBase64ToHexEncoding(props.ContentMD5)
 		if err != nil {
-			return diag.Errorf("in converting hex to base64 encoding for content_md5: %s", err)
+			return fmt.Errorf("in converting hex to base64 encoding for content_md5: %s", err)
 		}
 	}
 	d.Set("content_md5", contentMD5)
@@ -359,8 +321,8 @@ func resourceStorageBlobRead(ctx context.Context, d *pluginsdk.ResourceData, met
 	d.Set("type", strings.TrimSuffix(string(props.BlobType), "Blob"))
 	d.Set("url", d.Id())
 
-	if err := d.Set("metadata", flattenContainerMetaData(props.MetaData)); err != nil {
-		return diag.Errorf("setting `metadata`: %+v", err)
+	if err := d.Set("metadata", FlattenMetaData(props.MetaData)); err != nil {
+		return fmt.Errorf("setting `metadata`: %+v", err)
 	}
 
 	// The CopySource is only returned if the blob hasn't been modified (e.g. metadata configured etc)
@@ -372,27 +334,27 @@ func resourceStorageBlobRead(ctx context.Context, d *pluginsdk.ResourceData, met
 	return nil
 }
 
-func resourceStorageBlobDelete(ctx context.Context, d *pluginsdk.ResourceData, meta interface{}) diag.Diagnostics {
+func resourceStorageBlobDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
 	id, err := blobs.ParseResourceID(d.Id())
 	if err != nil {
-		return diag.Errorf("parsing %q: %s", d.Id(), err)
+		return fmt.Errorf("parsing %q: %s", d.Id(), err)
 	}
 
 	account, err := storageClient.FindAccount(ctx, id.AccountName)
 	if err != nil {
-		return diag.Errorf("retrieving Account %q for Blob %q (Container %q): %s", id.AccountName, id.BlobName, id.ContainerName, err)
+		return fmt.Errorf("retrieving Account %q for Blob %q (Container %q): %s", id.AccountName, id.BlobName, id.ContainerName, err)
 	}
 	if account == nil {
-		return diag.Errorf("Unable to locate Storage Account %q!", id.AccountName)
+		return fmt.Errorf("Unable to locate Storage Account %q!", id.AccountName)
 	}
 
 	blobsClient, err := storageClient.BlobsClient(ctx, *account)
 	if err != nil {
-		return diag.Errorf("building Blobs Client: %s", err)
+		return fmt.Errorf("building Blobs Client: %s", err)
 	}
 
 	log.Printf("[INFO] Deleting Blob %q from Container %q / Storage Account %q", id.BlobName, id.ContainerName, id.AccountName)
@@ -400,148 +362,8 @@ func resourceStorageBlobDelete(ctx context.Context, d *pluginsdk.ResourceData, m
 		DeleteSnapshots: true,
 	}
 	if _, err := blobsClient.Delete(ctx, id.AccountName, id.ContainerName, id.BlobName, input); err != nil {
-		return diag.Errorf("deleting Blob %q (Container %q / Account %q): %s", id.BlobName, id.ContainerName, id.AccountName, err)
+		return fmt.Errorf("deleting Blob %q (Container %q / Account %q): %s", id.BlobName, id.ContainerName, id.AccountName, err)
 	}
 
 	return nil
-}
-
-func convertHexToBase64Encoding(str string) (string, error) {
-	data, err := hex.DecodeString(str)
-	if err != nil {
-		return "", fmt.Errorf("converting %q from Hex to Base64 Encoding: %+v", str, err)
-	}
-
-	return base64.StdEncoding.EncodeToString(data), nil
-}
-
-func convertBase64ToHexEncoding(str string) (string, error) {
-	data, err := base64.StdEncoding.DecodeString(str)
-	if err != nil {
-		return "", fmt.Errorf("converting %q from Base64 to Hex Encoding: %+v", str, err)
-	}
-
-	return hex.EncodeToString(data), nil
-}
-
-func flattenContainerMetaData(input map[string]string) map[string]interface{} {
-	output := make(map[string]interface{})
-
-	for k, v := range input {
-		output[k] = v
-	}
-
-	return output
-}
-
-func expandContainerMetaData(input map[string]interface{}) map[string]string {
-	output := make(map[string]string)
-
-	for k, v := range input {
-		output[k] = v.(string)
-	}
-
-	return output
-}
-
-//TODO: remove this last to functions when the validate function is available in the repo
-func validateContainerMetaDataKeys(value interface{}, _ string) (warnings []string, errors []error) {
-	v, ok := value.(map[string]interface{})
-	if !ok {
-		return
-	}
-
-	for k := range v {
-		isCSharpKeyword := cSharpKeywords[strings.ToLower(k)] != nil
-		if isCSharpKeyword {
-			errors = append(errors, fmt.Errorf("%q is not a valid key (C# keyword)", k))
-		}
-
-		// must begin with a letter, underscore
-		// the rest: letters, digits and underscores
-		if !regexp.MustCompile(`^([a-z_]{1}[a-z0-9_]{1,})$`).MatchString(k) {
-			errors = append(errors, fmt.Errorf("MetaData must start with letters or an underscores and be all lowercase. Got %q.", k))
-		}
-	}
-
-	return
-}
-
-var cSharpKeywords = map[string]*struct{}{
-	"abstract":   {},
-	"as":         {},
-	"base":       {},
-	"bool":       {},
-	"break":      {},
-	"byte":       {},
-	"case":       {},
-	"catch":      {},
-	"char":       {},
-	"checked":    {},
-	"class":      {},
-	"const":      {},
-	"continue":   {},
-	"decimal":    {},
-	"default":    {},
-	"delegate":   {},
-	"do":         {},
-	"double":     {},
-	"else":       {},
-	"enum":       {},
-	"event":      {},
-	"explicit":   {},
-	"extern":     {},
-	"false":      {},
-	"finally":    {},
-	"fixed":      {},
-	"float":      {},
-	"for":        {},
-	"foreach":    {},
-	"goto":       {},
-	"if":         {},
-	"implicit":   {},
-	"in":         {},
-	"int":        {},
-	"interface":  {},
-	"internal":   {},
-	"is":         {},
-	"lock":       {},
-	"long":       {},
-	"namespace":  {},
-	"new":        {},
-	"null":       {},
-	"object":     {},
-	"operator":   {},
-	"out":        {},
-	"override":   {},
-	"params":     {},
-	"private":    {},
-	"protected":  {},
-	"public":     {},
-	"readonly":   {},
-	"ref":        {},
-	"return":     {},
-	"sbyte":      {},
-	"sealed":     {},
-	"short":      {},
-	"sizeof":     {},
-	"stackalloc": {},
-	"static":     {},
-	"string":     {},
-	"struct":     {},
-	"switch":     {},
-	"this":       {},
-	"throw":      {},
-	"true":       {},
-	"try":        {},
-	"typeof":     {},
-	"uint":       {},
-	"ulong":      {},
-	"unchecked":  {},
-	"unsafe":     {},
-	"ushort":     {},
-	"using":      {},
-	"void":       {},
-	"volatile":   {},
-	"while":      {},
 }

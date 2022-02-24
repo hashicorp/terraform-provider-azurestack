@@ -91,36 +91,6 @@ func TestAccStorageBlob_blockEmptyMetaData(t *testing.T) {
 	})
 }
 
-func TestAccStorageBlob_blockEmptyAccessTier(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
-	r := StorageBlobResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.blockEmptyAccessTier(data, blobs.Cool),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("access_tier").HasValue("Cool"),
-			),
-		},
-		data.ImportStep("parallelism", "size", "type"),
-		{
-			Config: r.blockEmptyAccessTier(data, blobs.Hot),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("access_tier").HasValue("Hot"),
-			),
-		},
-		{
-			Config: r.blockEmptyAccessTier(data, blobs.Cool),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("access_tier").HasValue("Cool"),
-			),
-		},
-	})
-}
-
 func TestAccStorageBlob_blockFromInlineContent(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_storage_blob", "test")
 	r := StorageBlobResource{}
@@ -560,23 +530,6 @@ resource "azurestack_storage_blob" "test" {
   }
 }
 `, template)
-}
-
-func (r StorageBlobResource) blockEmptyAccessTier(data acceptance.TestData, accessTier blobs.AccessTier) string {
-	template := r.templateBlockBlobStorage(data, "private")
-	return fmt.Sprintf(`
-%s
-provider "azurestack" {
-  features {}
-}
-resource "azurestack_storage_blob" "test" {
-  name                   = "example.vhd"
-  storage_account_name   = azurestack_storage_account.test.name
-  storage_container_name = azurestack_storage_container.test.name
-  type                   = "Block"
-  access_tier            = "%s"
-}
-`, template, string(accessTier))
 }
 
 func (r StorageBlobResource) blockFromInlineContent(data acceptance.TestData) string {

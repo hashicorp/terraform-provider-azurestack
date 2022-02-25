@@ -64,20 +64,6 @@ func TestAccVirtualNetworkGateway_lowerCaseSubnetName(t *testing.T) {
 	})
 }
 
-func TestAccVirtualNetworkGateway_vpnGw1(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_network_gateway", "test")
-	r := VirtualNetworkGatewayResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.vpnGw1(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-	})
-}
-
 func TestAccVirtualNetworkGateway_activeActive(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_virtual_network_gateway", "test")
 	r := VirtualNetworkGatewayResource{}
@@ -107,37 +93,7 @@ func TestAccVirtualNetworkGateway_standard(t *testing.T) {
 	})
 }
 
-func TestAccVirtualNetworkGateway_vpnGw2(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_network_gateway", "test")
-	r := VirtualNetworkGatewayResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.sku(data, "VpnGw2"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("sku").HasValue("VpnGw2"),
-			),
-		},
-	})
-}
-
-func TestAccVirtualNetworkGateway_vpnGw3(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_network_gateway", "test")
-	r := VirtualNetworkGatewayResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.sku(data, "VpnGw3"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("sku").HasValue("VpnGw3"),
-			),
-		},
-	})
-}
-
-func TestAccVirtualNetworkGateway_vpnClientConfig(t *testing.T) {
+func TestAccVirtualNetworkGateway_vpnClientConfig2(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_virtual_network_gateway", "test")
 	r := VirtualNetworkGatewayResource{}
 
@@ -149,6 +105,7 @@ func TestAccVirtualNetworkGateway_vpnClientConfig(t *testing.T) {
 				check.That(data.ResourceName).Key("vpn_client_configuration.0.radius_server_address").HasValue("1.2.3.4"),
 				check.That(data.ResourceName).Key("vpn_client_configuration.0.vpn_client_protocols.#").HasValue("2"),
 			),
+			ExpectNonEmptyPlan: true,
 		},
 	})
 }
@@ -165,44 +122,6 @@ func TestAccVirtualNetworkGateway_vpnClientConfigOpenVPN(t *testing.T) {
 				check.That(data.ResourceName).Key("vpn_client_configuration.0.vpn_client_protocols.#").HasValue("1"),
 			),
 		},
-	})
-}
-
-func TestAccVirtualNetworkGateway_expressRoute(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_network_gateway", "test")
-	r := VirtualNetworkGatewayResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.expressRoute(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("type").HasValue("ExpressRoute"),
-				check.That(data.ResourceName).Key("bgp_settings.#").HasValue("0"),
-			),
-		},
-	})
-}
-
-func TestAccVirtualNetworkGateway_privateIpAddressEnabled(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_network_gateway", "test")
-	r := VirtualNetworkGatewayResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.privateIpAddressEnabled(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			Config: r.privateIpAddressEnabledUpdate(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
 	})
 }
 
@@ -339,56 +258,6 @@ resource "azurestack_virtual_network_gateway" "test" {
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger)
 }
 
-func (VirtualNetworkGatewayResource) vpnGw1(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctestvn-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  address_space       = ["10.0.0.0/16"]
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "GatewaySubnet"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.1.0/24"
-}
-
-resource "azurestack_public_ip" "test" {
-  name                = "acctestpip-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  allocation_method   = "Dynamic"
-}
-
-resource "azurestack_virtual_network_gateway" "test" {
-  name                = "acctestvng-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  type     = "Vpn"
-  vpn_type = "RouteBased"
-  sku      = "VpnGw1"
-
-  ip_configuration {
-    public_ip_address_id          = azurestack_public_ip.test.id
-    private_ip_address_allocation = "Dynamic"
-    subnet_id                     = azurestack_subnet.test.id
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger)
-}
-
 func (VirtualNetworkGatewayResource) activeActive(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
@@ -440,7 +309,7 @@ resource "azurestack_virtual_network_gateway" "test" {
 
   type     = "Vpn"
   vpn_type = "RouteBased"
-  sku      = "VpnGw1"
+  sku      = "HighPerformance"
 
   active_active = true
   enable_bgp    = true
@@ -507,7 +376,7 @@ resource "azurestack_virtual_network_gateway" "test" {
 
   type     = "Vpn"
   vpn_type = "RouteBased"
-  sku      = "VpnGw1"
+  sku      = "Standard"
 
   ip_configuration {
     public_ip_address_id          = azurestack_public_ip.test.id
@@ -566,7 +435,7 @@ resource "azurestack_virtual_network_gateway" "test" {
 
   type     = "Vpn"
   vpn_type = "RouteBased"
-  sku      = "VpnGw1"
+  sku      = "Standard"
 
   ip_configuration {
     public_ip_address_id          = azurestack_public_ip.test.id
@@ -630,152 +499,4 @@ resource "azurestack_virtual_network_gateway" "test" {
   }
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger, sku)
-}
-
-func (VirtualNetworkGatewayResource) expressRoute(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctestvn-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  address_space       = ["10.0.0.0/16"]
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "GatewaySubnet"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.1.0/24"
-}
-
-resource "azurestack_public_ip" "test" {
-  name                = "acctestpip1-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  allocation_method   = "Dynamic"
-}
-
-resource "azurestack_virtual_network_gateway" "test" {
-  name                = "acctestvng-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  type     = "ExpressRoute"
-  vpn_type = "PolicyBased"
-  sku      = "Standard"
-
-  ip_configuration {
-    public_ip_address_id          = azurestack_public_ip.test.id
-    private_ip_address_allocation = "Dynamic"
-    subnet_id                     = azurestack_subnet.test.id
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger)
-}
-
-func (VirtualNetworkGatewayResource) privateIpAddressEnabled(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctestvn-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  address_space       = ["10.0.0.0/16"]
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "GatewaySubnet"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.1.0/24"
-}
-
-resource "azurestack_public_ip" "test" {
-  name                = "acctest-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-}
-
-resource "azurestack_virtual_network_gateway" "test" {
-  name                = "acctest-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  type                       = "Vpn"
-  vpn_type                   = "RouteBased"
-  sku                        = "VpnGw1AZ"
-  private_ip_address_enabled = true
-
-  ip_configuration {
-    name                          = "vnetGatewayConfig"
-    public_ip_address_id          = azurestack_public_ip.test.id
-    private_ip_address_allocation = "Dynamic"
-    subnet_id                     = azurestack_subnet.test.id
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger)
-}
-
-func (VirtualNetworkGatewayResource) privateIpAddressEnabledUpdate(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctestvn-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  address_space       = ["10.0.0.0/16"]
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "GatewaySubnet"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.1.0/24"
-}
-
-resource "azurestack_public_ip" "test" {
-  name                = "acctest-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-}
-
-resource "azurestack_virtual_network_gateway" "test" {
-  name                = "acctest-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  type                       = "Vpn"
-  vpn_type                   = "RouteBased"
-  sku                        = "VpnGw1AZ"
-  private_ip_address_enabled = false
-
-  ip_configuration {
-    name                          = "vnetGatewayConfig"
-    public_ip_address_id          = azurestack_public_ip.test.id
-    private_ip_address_allocation = "Dynamic"
-    subnet_id                     = azurestack_subnet.test.id
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger)
 }

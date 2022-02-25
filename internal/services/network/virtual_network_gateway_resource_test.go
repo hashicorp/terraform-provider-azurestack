@@ -93,7 +93,7 @@ func TestAccVirtualNetworkGateway_standard(t *testing.T) {
 	})
 }
 
-func TestAccVirtualNetworkGateway_vpnClientConfig2(t *testing.T) {
+func TestAccVirtualNetworkGateway_vpnClientConfig(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_virtual_network_gateway", "test")
 	r := VirtualNetworkGatewayResource{}
 

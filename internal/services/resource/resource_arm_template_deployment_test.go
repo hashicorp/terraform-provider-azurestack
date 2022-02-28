@@ -91,7 +91,6 @@ func TestAccTemplateDeployment_withParams(t *testing.T) {
 }
 
 func TestAccTemplateDeployment_withParamsBody(t *testing.T) {
-	t.Skip()
 	data := acceptance.BuildTestData(t, "azurestack_template_deployment", "test")
 	r := TemplateDeploymentResource{}
 

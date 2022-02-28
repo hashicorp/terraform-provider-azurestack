@@ -201,6 +201,7 @@ func virtualNetworkGateway() *pluginsdk.Resource {
 						"radius_server_secret": {
 							Type:         pluginsdk.TypeString,
 							Optional:     true,
+							Sensitive:    true,
 							RequiredWith: []string{"vpn_client_configuration.0.radius_server_address"},
 						},
 
@@ -358,7 +359,7 @@ func virtualNetworkGatewayRead(d *pluginsdk.ResourceData, meta interface{}) erro
 			return fmt.Errorf("setting `ip_configuration`: %+v", err)
 		}
 
-		if err := d.Set("vpn_client_configuration", flattenVirtualNetworkGatewayVpnClientConfig(gw.VpnClientConfiguration)); err != nil {
+		if err := d.Set("vpn_client_configuration", flattenVirtualNetworkGatewayVpnClientConfig(d, gw.VpnClientConfiguration)); err != nil {
 			return fmt.Errorf("setting `vpn_client_configuration`: %+v", err)
 		}
 
@@ -631,7 +632,7 @@ func flattenVirtualNetworkGatewayIPConfigurations(ipConfigs *[]network.VirtualNe
 	return flat
 }
 
-func flattenVirtualNetworkGatewayVpnClientConfig(cfg *network.VpnClientConfiguration) []interface{} {
+func flattenVirtualNetworkGatewayVpnClientConfig(d *pluginsdk.ResourceData, cfg *network.VpnClientConfiguration) []interface{} {
 	if cfg == nil {
 		return []interface{}{}
 	}
@@ -680,7 +681,9 @@ func flattenVirtualNetworkGatewayVpnClientConfig(cfg *network.VpnClientConfigura
 	}
 
 	if v := cfg.RadiusServerSecret; v != nil {
-		flat["radius_server_secret"] = *v
+		if v1, ok := d.GetOk("vpn_client_configuration.0.radius_server_secret"); ok {
+			flat["radius_server_secret"] = v1.(string)
+		}
 	}
 
 	return []interface{}{flat}

@@ -105,7 +105,6 @@ func TestAccVirtualNetworkGateway_vpnClientConfig(t *testing.T) {
 				check.That(data.ResourceName).Key("vpn_client_configuration.0.radius_server_address").HasValue("1.2.3.4"),
 				check.That(data.ResourceName).Key("vpn_client_configuration.0.vpn_client_protocols.#").HasValue("2"),
 			),
-			ExpectNonEmptyPlan: true,
 		},
 	})
 }

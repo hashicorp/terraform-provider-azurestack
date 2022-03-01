@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/network/mgmt/network"
-	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/go-multierror"
@@ -126,20 +125,6 @@ func networkSecurityGroup() *pluginsdk.Resource {
 						},
 
 						"destination_address_prefixes": {
-							Type:     pluginsdk.TypeSet,
-							Optional: true,
-							Elem:     &pluginsdk.Schema{Type: pluginsdk.TypeString},
-							Set:      pluginsdk.HashString,
-						},
-
-						"destination_application_security_group_ids": {
-							Type:     pluginsdk.TypeSet,
-							Optional: true,
-							Elem:     &pluginsdk.Schema{Type: pluginsdk.TypeString},
-							Set:      pluginsdk.HashString,
-						},
-
-						"source_application_security_group_ids": {
 							Type:     pluginsdk.TypeSet,
 							Optional: true,
 							Elem:     &pluginsdk.Schema{Type: pluginsdk.TypeString},
@@ -362,28 +347,6 @@ func expandazurestackSecurityRules(d *pluginsdk.ResourceData) ([]network.Securit
 			properties.DestinationAddressPrefixes = &destinationAddressPrefixes
 		}
 
-		if r, ok := sgRule["source_application_security_group_ids"].(*pluginsdk.Set); ok && r.Len() > 0 {
-			var sourceApplicationSecurityGroups []network.ApplicationSecurityGroup
-			for _, v := range r.List() {
-				sg := network.ApplicationSecurityGroup{
-					ID: pointer.FromString(v.(string)),
-				}
-				sourceApplicationSecurityGroups = append(sourceApplicationSecurityGroups, sg)
-			}
-			properties.SourceApplicationSecurityGroups = &sourceApplicationSecurityGroups
-		}
-
-		if r, ok := sgRule["destination_application_security_group_ids"].(*pluginsdk.Set); ok && r.Len() > 0 {
-			var destinationApplicationSecurityGroups []network.ApplicationSecurityGroup
-			for _, v := range r.List() {
-				sg := network.ApplicationSecurityGroup{
-					ID: pointer.FromString(v.(string)),
-				}
-				destinationApplicationSecurityGroups = append(destinationApplicationSecurityGroups, sg)
-			}
-			properties.DestinationApplicationSecurityGroups = &destinationApplicationSecurityGroups
-		}
-
 		rules = append(rules, network.SecurityRule{
 			Name:                         &name,
 			SecurityRulePropertiesFormat: &properties,
@@ -419,28 +382,12 @@ func flattenNetworkSecurityRules(rules *[]network.SecurityRule) []map[string]int
 					sgRule["destination_port_ranges"] = set.FromStringSlice(*props.DestinationPortRanges)
 				}
 
-				destinationApplicationSecurityGroups := make([]string, 0)
-				if props.DestinationApplicationSecurityGroups != nil {
-					for _, g := range *props.DestinationApplicationSecurityGroups {
-						destinationApplicationSecurityGroups = append(destinationApplicationSecurityGroups, *g.ID)
-					}
-				}
-				sgRule["destination_application_security_group_ids"] = set.FromStringSlice(destinationApplicationSecurityGroups)
-
 				if props.SourceAddressPrefix != nil {
 					sgRule["source_address_prefix"] = *props.SourceAddressPrefix
 				}
 				if props.SourceAddressPrefixes != nil {
 					sgRule["source_address_prefixes"] = set.FromStringSlice(*props.SourceAddressPrefixes)
 				}
-
-				sourceApplicationSecurityGroups := make([]string, 0)
-				if props.SourceApplicationSecurityGroups != nil {
-					for _, g := range *props.SourceApplicationSecurityGroups {
-						sourceApplicationSecurityGroups = append(sourceApplicationSecurityGroups, *g.ID)
-					}
-				}
-				sgRule["source_application_security_group_ids"] = set.FromStringSlice(sourceApplicationSecurityGroups)
 
 				if props.SourcePortRange != nil {
 					sgRule["source_port_range"] = *props.SourcePortRange

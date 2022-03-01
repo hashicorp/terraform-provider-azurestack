@@ -173,21 +173,6 @@ func TestAccNetworkSecurityGroup_augmented(t *testing.T) {
 	})
 }
 
-func TestAccNetworkSecurityGroup_applicationSecurityGroup(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_network_security_group", "test")
-	r := NetworkSecurityGroupResource{}
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.applicationSecurityGroup(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("security_rule.#").HasValue("1"),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
 func TestAccNetworkSecurityGroup_deleteRule(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_network_security_group", "test")
 	r := NetworkSecurityGroupResource{}
@@ -468,49 +453,6 @@ resource "azurestack_network_security_group" "test" {
   }
 }
 `, data.RandomInteger, data.Locations.Primary)
-}
-
-func (NetworkSecurityGroupResource) applicationSecurityGroup(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_application_security_group" "first" {
-  name                = "acctest-first%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_application_security_group" "second" {
-  name                = "acctest-second%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_network_security_group" "test" {
-  name                = "acctestnsg-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  security_rule {
-    name                                       = "test123"
-    priority                                   = 100
-    direction                                  = "Inbound"
-    access                                     = "Allow"
-    protocol                                   = "Tcp"
-    source_application_security_group_ids      = [azurestack_application_security_group.first.id]
-    destination_application_security_group_ids = [azurestack_application_security_group.second.id]
-    source_port_ranges                         = ["10000-40000"]
-    destination_port_ranges                    = ["80", "443", "8080", "8190"]
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger)
 }
 
 func (NetworkSecurityGroupResource) deleteRule(data acceptance.TestData) string {

@@ -3,7 +3,7 @@ subcategory: "Network"
 layout: "azurestack"
 page_title: "Azure Resource Manager: Data Source: azurestack_local_network_gateway"
 description: |-
-Gets information about an existing Local Network Gateway.
+  Gets information about an existing Local Network Gateway.
 ---
 
 # Data Source: azurerm_local_network_gateway

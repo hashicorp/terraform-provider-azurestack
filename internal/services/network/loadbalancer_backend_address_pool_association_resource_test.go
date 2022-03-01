@@ -205,9 +205,9 @@ func (r NetworkInterfaceBackendAddressPoolResource) requiresImport(data acceptan
 %s
 
 resource "azurestack_network_interface_backend_address_pool_association" "import" {
-  network_interface_id     = azurestack_network_interface_backend_address_pool_association.test.network_interface_id
-  ip_configuration_name    = azurestack_network_interface_backend_address_pool_association.test.ip_configuration_name
-  backend_address_pool_ids = [azurestack_network_interface_backend_address_pool_association.test.backend_address_pool_id]
+  network_interface_id    = azurestack_network_interface_backend_address_pool_association.test.network_interface_id
+  ip_configuration_name   = azurestack_network_interface_backend_address_pool_association.test.ip_configuration_name
+  backend_address_pool_id = azurestack_network_interface_backend_address_pool_association.test.backend_address_pool_id
 }
 `, r.basic(data))
 }
@@ -228,11 +228,6 @@ resource "azurestack_network_interface" "test" {
     primary                       = true
   }
 
-  ip_configuration {
-    name                          = "testconfiguration2"
-    private_ip_address_version    = "IPv6"
-    private_ip_address_allocation = "dynamic"
-  }
 }
 
 resource "azurestack_network_interface_backend_address_pool_association" "test" {

@@ -10,30 +10,36 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/timeouts"
 )
 
-func dataSourceStorageContainer() *pluginsdk.Resource {
+func storageContainerDataSource() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
-		Read: dataSourceStorageContainerRead,
+		Read: storageContainerDataSourceRead,
 		Timeouts: &pluginsdk.ResourceTimeout{
 			Read: pluginsdk.DefaultTimeout(5 * time.Minute),
 		},
+
 		Schema: map[string]*pluginsdk.Schema{
 			"name": {
 				Type:     pluginsdk.TypeString,
 				Required: true,
 			},
+
 			"storage_account_name": {
 				Type:     pluginsdk.TypeString,
 				Required: true,
 			},
+
 			"container_access_type": {
 				Type:     pluginsdk.TypeString,
 				Computed: true,
 			},
+
 			"metadata": MetaDataSchema(),
+
 			"has_immutability_policy": {
 				Type:     pluginsdk.TypeBool,
 				Computed: true,
 			},
+
 			"has_legal_hold": {
 				Type:     pluginsdk.TypeBool,
 				Computed: true,
@@ -42,7 +48,7 @@ func dataSourceStorageContainer() *pluginsdk.Resource {
 	}
 }
 
-func dataSourceStorageContainerRead(d *pluginsdk.ResourceData, meta interface{}) error {
+func storageContainerDataSourceRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()

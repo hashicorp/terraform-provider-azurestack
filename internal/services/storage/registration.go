@@ -22,7 +22,7 @@ func (r Registration) WebsiteCategories() []string {
 func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
 		"azurestack_storage_account":   storageAccountDataSource(),
-		"azurestack_storage_container": dataSourceStorageContainer(),
+		"azurestack_storage_container": storageContainerDataSource(),
 	}
 }
 
@@ -31,6 +31,6 @@ func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
 		"azurestack_storage_account":   storageAccount(),
 		"azurestack_storage_blob":      storageBlob(),
-		"azurestack_storage_container": resourceStorageContainer(),
+		"azurestack_storage_container": storageContainer(),
 	}
 }

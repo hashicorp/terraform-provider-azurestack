@@ -10,7 +10,7 @@ import (
 
 type StorageContainerDataSource struct{}
 
-func TestAccDataSourceStorageContainer_basic(t *testing.T) {
+func TestAccStorageContainerDataSource_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_storage_container", "test")
 
 	data.DataSourceTest(t, []acceptance.TestStep{
@@ -32,10 +32,12 @@ func (d StorageContainerDataSource) basic(data acceptance.TestData) string {
 provider "azurestack" {
   features {}
 }
+
 resource "azurestack_resource_group" "test" {
-  name     = "containerdstest-%s"
+  name     = "acctestRG-%s"
   location = "%s"
 }
+
 resource "azurestack_storage_account" "test" {
   name                     = "acctestsadsc%s"
   resource_group_name      = "${azurestack_resource_group.test.name}"
@@ -43,6 +45,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
+
 resource "azurestack_storage_container" "test" {
   name                  = "containerdstest-%s"
   storage_account_name  = "${azurestack_storage_account.test.name}"
@@ -52,6 +55,7 @@ resource "azurestack_storage_container" "test" {
     k2 = "v2"
   }
 }
+
 data "azurestack_storage_container" "test" {
   name                 = azurestack_storage_container.test.name
   storage_account_name = azurestack_storage_container.test.storage_account_name

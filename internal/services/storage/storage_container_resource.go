@@ -18,25 +18,28 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/timeouts"
 )
 
-func resourceStorageContainer() *schema.Resource {
+func storageContainer() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceStorageContainerCreate,
-		Read:   resourceStorageContainerRead,
-		Delete: resourceStorageContainerDelete,
-		Update: resourceStorageContainerUpdate,
+		Create: storageContainerCreate,
+		Read:   storageContainerRead,
+		Delete: storageContainerDelete,
+		Update: storageContainerUpdate,
 		// TODO check schema and confirm old stack provider can upgrade to this
 		SchemaVersion: 1,
 		StateUpgraders: pluginsdk.StateUpgrades(map[int]pluginsdk.StateUpgrade{
 			0: migration.ContainerV0ToV1{},
 		}),
+
 		Timeouts: &pluginsdk.ResourceTimeout{
 			Create: pluginsdk.DefaultTimeout(30 * time.Minute),
 			Read:   pluginsdk.DefaultTimeout(5 * time.Minute),
 			Update: pluginsdk.DefaultTimeout(30 * time.Minute),
 			Delete: pluginsdk.DefaultTimeout(30 * time.Minute),
 		},
+
 		// TODO: replace this with an importer which validates the ID during import
 		Importer: pluginsdk.DefaultImporter(),
+
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:         schema.TypeString,
@@ -44,12 +47,14 @@ func resourceStorageContainer() *schema.Resource {
 				ForceNew:     true,
 				ValidateFunc: validate.StorageContainerName,
 			},
+
 			"storage_account_name": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validate.StorageAccountName,
 			},
+
 			"container_access_type": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -61,11 +66,14 @@ func resourceStorageContainer() *schema.Resource {
 					"private",
 				}, false),
 			},
+
 			"metadata": MetaDataSchema(),
+
 			"has_immutability_policy": {
 				Type:     pluginsdk.TypeBool,
 				Computed: true,
 			},
+
 			"has_legal_hold": {
 				Type:     pluginsdk.TypeBool,
 				Computed: true,
@@ -85,7 +93,7 @@ func expandStorageContainerAccessLevel(input string) containers.AccessLevel {
 	return containers.AccessLevel(input)
 }
 
-func resourceStorageContainerCreate(d *pluginsdk.ResourceData, meta interface{}) error {
+func storageContainerCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForCreate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -131,10 +139,10 @@ func resourceStorageContainerCreate(d *pluginsdk.ResourceData, meta interface{})
 	}
 
 	d.SetId(id)
-	return resourceStorageContainerRead(d, meta)
+	return storageContainerRead(d, meta)
 }
 
-func resourceStorageContainerRead(d *pluginsdk.ResourceData, meta interface{}) error {
+func storageContainerRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -191,7 +199,7 @@ func flattenStorageContainerAccessLevel(input containers.AccessLevel) string {
 	return string(input)
 }
 
-func resourceStorageContainerDelete(d *pluginsdk.ResourceData, meta interface{}) error {
+func storageContainerDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -220,7 +228,7 @@ func resourceStorageContainerDelete(d *pluginsdk.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceStorageContainerUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
+func storageContainerUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForUpdate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -266,5 +274,5 @@ func resourceStorageContainerUpdate(d *pluginsdk.ResourceData, meta interface{})
 		log.Printf("[DEBUG] Updated the MetaData for Container %q (Storage Account %q / Resource Group %q)", id.Name, id.AccountName, account.ResourceGroup)
 	}
 
-	return resourceStorageContainerRead(d, meta)
+	return storageContainerRead(d, meta)
 }

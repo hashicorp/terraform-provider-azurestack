@@ -258,6 +258,7 @@ func (r StorageContainerResource) metaData(data acceptance.TestData, accessType 
 	template := r.template(data)
 	return fmt.Sprintf(`
 %s
+
 resource "azurestack_storage_container" "test" {
   name                  = "vhds"
   storage_account_name  = azurestack_storage_account.test.name

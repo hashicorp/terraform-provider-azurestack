@@ -51,7 +51,6 @@ The following arguments are supported:
 
 * `metadata` - (Optional) A mapping of MetaData for this Container. All metadata keys should be lowercase.
 
-
 ## Attributes Reference
 
 The following attributes are exported in addition to the arguments listed above:

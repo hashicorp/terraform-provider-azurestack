@@ -103,13 +103,6 @@ func networkInterfaceDataSource() *pluginsdk.Resource {
 							Set:      pluginsdk.HashString,
 						},
 
-						"application_security_group_ids": {
-							Type:     pluginsdk.TypeSet,
-							Computed: true,
-							Elem:     &pluginsdk.Schema{Type: pluginsdk.TypeString},
-							Set:      pluginsdk.HashString,
-						},
-
 						"primary": {
 							Type:     pluginsdk.TypeBool,
 							Computed: true,
@@ -135,11 +128,6 @@ func networkInterfaceDataSource() *pluginsdk.Resource {
 				Computed: true,
 				Elem:     &pluginsdk.Schema{Type: pluginsdk.TypeString},
 				Set:      pluginsdk.HashString,
-			},
-
-			"enable_accelerated_networking": {
-				Type:     pluginsdk.TypeBool,
-				Computed: true,
 			},
 
 			"enable_ip_forwarding": {
@@ -246,7 +234,6 @@ func networkInterfaceDataSourceRead(d *pluginsdk.ResourceData, meta interface{})
 		d.Set("applied_dns_servers", appliedDNSServers)
 		d.Set("dns_servers", dnsServers)
 		d.Set("enable_ip_forwarding", props.EnableIPForwarding)
-		d.Set("enable_accelerated_networking", props.EnableAcceleratedNetworking)
 	}
 
 	return tags.FlattenAndSet(d, resp.Tags)

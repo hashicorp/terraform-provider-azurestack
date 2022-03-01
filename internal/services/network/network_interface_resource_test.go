@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
+
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/network/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
@@ -61,37 +62,6 @@ func TestAccNetworkInterface_dnsServers(t *testing.T) {
 	})
 }
 
-func TestAccNetworkInterface_enableAcceleratedNetworking(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
-	r := NetworkInterfaceResource{}
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			// Enabled
-			Config: r.enableAcceleratedNetworking(data, true),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			// Disabled
-			Config: r.enableAcceleratedNetworking(data, false),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			// Enabled
-			Config: r.enableAcceleratedNetworking(data, true),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
 func TestAccNetworkInterface_enableIPForwarding(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
 	r := NetworkInterfaceResource{}
@@ -117,43 +87,6 @@ func TestAccNetworkInterface_enableIPForwarding(t *testing.T) {
 			Config: r.enableIPForwarding(data, true),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
-func TestAccNetworkInterface_internalDomainNameLabel(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
-	r := NetworkInterfaceResource{}
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.internalDomainNameLabel(data, "1"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-		{
-			Config: r.internalDomainNameLabel(data, "2"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
-func TestAccNetworkInterface_ipv6(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_network_interface", "test")
-	r := NetworkInterfaceResource{}
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.ipv6(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("ip_configuration.0.private_ip_address_version").HasValue("IPv4"),
-				check.That(data.ResourceName).Key("ip_configuration.1.private_ip_address_version").HasValue("IPv6"),
 			),
 		},
 		data.ImportStep(),
@@ -365,11 +298,10 @@ func (r NetworkInterfaceResource) withMultipleParameters(data acceptance.TestDat
 %s
 
 resource "azurestack_network_interface" "test" {
-  name                    = "acctestni-%d"
-  location                = azurestack_resource_group.test.location
-  resource_group_name     = azurestack_resource_group.test.name
-  enable_ip_forwarding    = true
-  internal_dns_name_label = "acctestni-%s"
+  name                 = "acctestni-%d"
+  location             = azurestack_resource_group.test.location
+  resource_group_name  = azurestack_resource_group.test.name
+  enable_ip_forwarding = true
 
   dns_servers = [
     "10.0.0.5",
@@ -386,7 +318,7 @@ resource "azurestack_network_interface" "test" {
     env = "Test"
   }
 }
-`, r.template(data), data.RandomInteger, data.RandomString)
+`, r.template(data), data.RandomInteger)
 }
 
 func (r NetworkInterfaceResource) updateMultipleParameters(data acceptance.TestData) string {
@@ -394,11 +326,10 @@ func (r NetworkInterfaceResource) updateMultipleParameters(data acceptance.TestD
 %s
 
 resource "azurestack_network_interface" "test" {
-  name                    = "acctestni-%d"
-  location                = azurestack_resource_group.test.location
-  resource_group_name     = azurestack_resource_group.test.name
-  enable_ip_forwarding    = true
-  internal_dns_name_label = "acctestni-%s"
+  name                 = "acctestni-%d"
+  location             = azurestack_resource_group.test.location
+  resource_group_name  = azurestack_resource_group.test.name
+  enable_ip_forwarding = true
 
   dns_servers = [
     "10.0.0.5",
@@ -415,7 +346,7 @@ resource "azurestack_network_interface" "test" {
     env = "Test2"
   }
 }
-`, r.template(data), data.RandomInteger, data.RandomString)
+`, r.template(data), data.RandomInteger)
 }
 
 func (r NetworkInterfaceResource) dnsServers(data acceptance.TestData) string {
@@ -464,25 +395,6 @@ resource "azurestack_network_interface" "test" {
 `, r.template(data), data.RandomInteger)
 }
 
-func (r NetworkInterfaceResource) enableAcceleratedNetworking(data acceptance.TestData, enabled bool) string {
-	return fmt.Sprintf(`
-%s
-
-resource "azurestack_network_interface" "test" {
-  name                          = "acctestni-%d"
-  location                      = azurestack_resource_group.test.location
-  resource_group_name           = azurestack_resource_group.test.name
-  enable_accelerated_networking = %t
-
-  ip_configuration {
-    name                          = "primary"
-    subnet_id                     = azurestack_subnet.test.id
-    private_ip_address_allocation = "Dynamic"
-  }
-}
-`, r.template(data), data.RandomInteger, enabled)
-}
-
 func (r NetworkInterfaceResource) enableIPForwarding(data acceptance.TestData, enabled bool) string {
 	return fmt.Sprintf(`
 %s
@@ -500,50 +412,6 @@ resource "azurestack_network_interface" "test" {
   }
 }
 `, r.template(data), data.RandomInteger, enabled)
-}
-
-func (r NetworkInterfaceResource) internalDomainNameLabel(data acceptance.TestData, suffix string) string {
-	return fmt.Sprintf(`
-%s
-
-resource "azurestack_network_interface" "test" {
-  name                    = "acctestni-%d"
-  location                = azurestack_resource_group.test.location
-  resource_group_name     = azurestack_resource_group.test.name
-  internal_dns_name_label = "acctestni-%s-%s"
-
-  ip_configuration {
-    name                          = "primary"
-    subnet_id                     = azurestack_subnet.test.id
-    private_ip_address_allocation = "Dynamic"
-  }
-}
-`, r.template(data), data.RandomInteger, suffix, data.RandomString)
-}
-
-func (r NetworkInterfaceResource) ipv6(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-%s
-
-resource "azurestack_network_interface" "test" {
-  name                = "acctestni-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  ip_configuration {
-    name                          = "primary"
-    subnet_id                     = azurestack_subnet.test.id
-    private_ip_address_allocation = "Dynamic"
-    primary                       = true
-  }
-
-  ip_configuration {
-    name                          = "secondary"
-    private_ip_address_allocation = "Dynamic"
-    private_ip_address_version    = "IPv6"
-  }
-}
-`, r.template(data), data.RandomInteger)
 }
 
 func (r NetworkInterfaceResource) multipleIPConfigurations(data acceptance.TestData) string {

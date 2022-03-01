@@ -168,8 +168,6 @@ func linuxVirtualMachine() *pluginsdk.Resource {
 				ValidateFunc: utils.ISO8601DurationBetween("PT15M", "PT2H"),
 			},
 
-			"identity": virtualMachineIdentity{}.Schema(),
-
 			"license_type": {
 				Type:     pluginsdk.TypeString,
 				Optional: true,
@@ -389,16 +387,6 @@ func linuxVirtualMachineCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 		Tags: tags.Expand(t),
 	}
 
-	if v, ok := d.GetOk("identity"); ok {
-		identityRaw := v.([]interface{})
-		identity, err := expandVirtualMachineIdentity(identityRaw)
-		if err != nil {
-			return fmt.Errorf("expanding `identity`: %+v", err)
-		}
-
-		params.Identity = identity
-	}
-
 	if v, ok := d.GetOk("license_type"); ok {
 		params.VirtualMachineProperties.LicenseType = utils.String(v.(string))
 	}
@@ -508,14 +496,6 @@ func linuxVirtualMachineRead(d *pluginsdk.ResourceData, meta interface{}) error 
 	d.Set("resource_group_name", id.ResourceGroup)
 	if v := resp.Location; v != nil {
 		d.Set("location", location.Normalize(*v))
-	}
-
-	identity, err := flattenVirtualMachineIdentity(resp.Identity)
-	if err != nil {
-		return err
-	}
-	if err := d.Set("identity", identity); err != nil {
-		return fmt.Errorf("setting `identity`: %+v", err)
 	}
 
 	if err := d.Set("plan", flattenPlan(resp.Plan)); err != nil {
@@ -720,17 +700,6 @@ func linuxVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 		}
 
 		update.VirtualMachineProperties.OsProfile = &profile
-	}
-
-	if d.HasChange("identity") {
-		shouldUpdate = true
-
-		identityRaw := d.Get("identity").([]interface{})
-		identity, err := expandVirtualMachineIdentity(identityRaw)
-		if err != nil {
-			return fmt.Errorf("expanding `identity`: %+v", err)
-		}
-		update.Identity = identity
 	}
 
 	if d.HasChange("license_type") {

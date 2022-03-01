@@ -180,7 +180,6 @@ func virtualMachineOSDiskSchema() *pluginsdk.Schema {
 						// note: OS Disks don't support Ultra SSDs
 						string(compute.StorageAccountTypesPremiumLRS),
 						string(compute.StorageAccountTypesStandardLRS),
-						string(compute.StorageAccountTypesStandardSSDLRS),
 					}, false),
 				},
 

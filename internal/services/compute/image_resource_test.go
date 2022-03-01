@@ -218,6 +218,7 @@ resource "azurestack_network_interface" "testsource" {
     public_ip_address_id          = azurestack_public_ip.test.id
   }
 }
+
 resource "azurestack_storage_account" "test" {
   name                     = "accsa${local.random_string}"
   resource_group_name      = azurestack_resource_group.test.name
@@ -225,6 +226,7 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "%s"
 }
+
 resource "azurestack_storage_container" "test" {
   name                  = "vhds"
   storage_account_name  = azurestack_storage_account.test.name
@@ -243,17 +245,20 @@ resource "azurestack_virtual_machine" "testsource" {
     sku       = "16.04-LTS"
     version   = "latest"
   }
+
   storage_os_disk {
     name          = "myosdisk1"
     vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
     caching       = "ReadWrite"
     create_option = "FromImage"
   }
+
   os_profile {
     computer_name  = "mdimagetestsource"
     admin_username = local.admin_username
     admin_password = local.admin_password
   }
+
   os_profile_linux_config {
     disable_password_authentication = false
   }
@@ -270,22 +275,26 @@ locals {
   admin_username = "testadmin%d"
   admin_password = "Password1234!%d"
 }
+
 resource "azurestack_resource_group" "test" {
   name     = "acctestRG-${local.number}"
   location = local.location
 }
+
 resource "azurestack_virtual_network" "test" {
   name                = "acctvn-${local.number}"
   resource_group_name = azurestack_resource_group.test.name
   location            = azurestack_resource_group.test.location
   address_space       = ["10.0.0.0/16"]
 }
+
 resource "azurestack_subnet" "test" {
   name                 = "internal"
   resource_group_name  = azurestack_resource_group.test.name
   virtual_network_name = azurestack_virtual_network.test.name
   address_prefix       = "10.0.2.0/24"
 }
+
 resource "azurestack_public_ip" "test" {
   name                = "acctpip-${local.number}"
   location            = azurestack_resource_group.test.location

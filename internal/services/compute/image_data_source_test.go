@@ -40,28 +40,33 @@ func (ImageDataSource) basic(data acceptance.TestData) string {
 provider "azurestack" {
   features {}
 }
+
 resource "azurestack_resource_group" "test" {
   name     = "acctestRG-%d"
   location = "%s"
 }
+
 resource "azurestack_virtual_network" "test" {
   name                = "acctestvn-%d"
   address_space       = ["10.0.0.0/16"]
   location            = azurestack_resource_group.test.location
   resource_group_name = azurestack_resource_group.test.name
 }
+
 resource "azurestack_subnet" "test" {
   name                 = "internal"
   resource_group_name  = azurestack_resource_group.test.name
   virtual_network_name = azurestack_virtual_network.test.name
   address_prefix       = "10.0.2.0/24"
 }
+
 resource "azurestack_public_ip" "test" {
   name                = "acctestpip%d"
   location            = azurestack_resource_group.test.location
   resource_group_name = azurestack_resource_group.test.name
   allocation_method   = "Dynamic"
 }
+
 resource "azurestack_network_interface" "testsource" {
   name                = "acctestnic-%d"
   location            = azurestack_resource_group.test.location
@@ -73,6 +78,7 @@ resource "azurestack_network_interface" "testsource" {
     public_ip_address_id          = azurestack_public_ip.test.id
   }
 }
+
 resource "azurestack_storage_account" "test" {
   name                     = "acctestsa%s"
   resource_group_name      = azurestack_resource_group.test.name
@@ -80,11 +86,13 @@ resource "azurestack_storage_account" "test" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
+
 resource "azurestack_storage_container" "test" {
   name                  = "vhds"
   storage_account_name  = azurestack_storage_account.test.name
   container_access_type = "blob"
 }
+
 resource "azurestack_virtual_machine" "testsource" {
   name                  = "acctestvm-%d"
   location              = azurestack_resource_group.test.location
@@ -97,21 +105,25 @@ resource "azurestack_virtual_machine" "testsource" {
     sku       = "16.04-LTS"
     version   = "latest"
   }
+
   storage_os_disk {
     name          = "myosdisk1"
     vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/myosdisk1.vhd"
     caching       = "ReadWrite"
     create_option = "FromImage"
   }
+
   os_profile {
     computer_name  = "acctest-%d"
     admin_username = "tfuser"
     admin_password = "P@ssW0RD7890"
   }
+
   os_profile_linux_config {
     disable_password_authentication = false
   }
 }
+
 resource "azurestack_image" "test" {
   name                = "acctest-%d"
   location            = azurestack_resource_group.test.location
@@ -123,15 +135,18 @@ resource "azurestack_image" "test" {
     size_gb  = 30
     caching  = "None"
   }
+
   tags = {
     environment = "Dev"
     cost-center = "Ops"
   }
 }
+
 data "azurestack_image" "test" {
   name                = azurestack_image.test.name
   resource_group_name = azurestack_resource_group.test.name
 }
+
 output "location" {
   value = data.azurestack_image.test.location
 }

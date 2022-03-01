@@ -203,20 +203,7 @@ func imageDataSourceRead(d *pluginsdk.ResourceData, meta interface{}) error {
 			}
 		}
 
-		// d.Set("zone_resilient", profile.ZoneResilient)
 	}
 
 	return tags.FlattenAndSet(d, img.Tags)
-
-	// img, err := client.Get(ctx, resourceGroup, name, "")
-	// if err != nil {
-	// 	return fmt.Errorf("image %q (Resource Group: %s) was not found", name, resourceGroup)
-	// }
-
-	// d.SetId(*img.ID)
-	// d.Set("name", img.Name)
-	// d.Set("resource_group_name", resourceGroup)
-	// d.Set("location", location.NormalizeNilable(img.Location))
-
-	// return nil
 }

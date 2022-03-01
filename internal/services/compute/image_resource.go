@@ -49,13 +49,6 @@ func image() *pluginsdk.Resource {
 
 			"resource_group_name": commonschema.ResourceGroupNameForDataSource(),
 
-			"zone_resilient": {
-				Type:     pluginsdk.TypeBool,
-				Optional: true,
-				Default:  false,
-				ForceNew: true,
-			},
-
 			"source_virtual_machine_id": {
 				Type:         pluginsdk.TypeString,
 				Optional:     true,
@@ -187,7 +180,7 @@ func resourceImageCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 	log.Printf("[INFO] preparing arguments for AzureStack Image creation.")
 
 	id := parse.NewImageID(subscriptionId, d.Get("resource_group_name").(string), d.Get("name").(string))
-	zoneResilient := d.Get("zone_resilient").(bool)
+	zoneResilient := false
 
 	if d.IsNewResource() {
 		existing, err := client.Get(ctx, id.ResourceGroup, id.Name, "")
@@ -293,7 +286,6 @@ func resourceImageRead(d *pluginsdk.ResourceData, meta interface{}) error {
 				return fmt.Errorf("[DEBUG] Error setting AzureStack Image Data Disks error: %+v", err)
 			}
 		}
-		d.Set("zone_resilient", resp.StorageProfile.ZoneResilient)
 	}
 
 	return tags.FlattenAndSet(d, resp.Tags)

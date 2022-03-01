@@ -57,7 +57,10 @@ The following arguments are supported:
 
 * `custom_domain` - (Optional) A `custom_domain` block as documented below.
 
-* `tags` - (Optional) A mapping of tags to assign to the resource.
+* `tags` - (Optional) A mapping of tags to assign to the resource.\
+
+* `enable_https_traffic_only` - (Optional) Boolean flag which forces HTTPS if enabled, see [here](https://docs.microsoft.com/en-us/azure/storage/storage-require-secure-transfer/)
+  for more information. Defaults to `true`.
 
 ---
 

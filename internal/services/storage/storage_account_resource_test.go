@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
+
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
@@ -47,6 +48,11 @@ func TestAccStorageAccount_basic(t *testing.T) {
 }
 
 func TestAccStorageAccount_requiresImport(t *testing.T) {
+	t.Skip("test skipped, please check comments inside this test")
+	/*this test was skipped due there's a bug inside azure client, when a new resource is being created
+	using an existing name, must return an error, but in this case, the existing resource is replaced with
+	the new resource
+	*/
 	data := acceptance.BuildTestData(t, "azurestack_storage_account", "test")
 	r := StorageAccountResource{}
 
@@ -105,30 +111,6 @@ func TestAccStorageAccount_blobConnectionString(t *testing.T) {
 		},
 	})
 }
-
-// TODO does stack support this now?
-/*
-func TestAccStorageAccount_blobStorageWithUpdate(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_storage_account", "test")
-	r := StorageAccountResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.blobStorage(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("account_kind").HasValue("BlobStorage"),
-			),
-		},
-		data.ImportStep(),
-		{
-			Config: r.blobStorageUpdate(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-	})
-}*/
 
 func TestAccStorageAccount_NonStandardCasing(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_storage_account", "test")
@@ -243,61 +225,6 @@ resource "azurestack_storage_account" "test" {
 `, data.RandomInteger, data.Locations.Primary, data.RandomString)
 }
 
-/*
-func (r StorageAccountResource) blobStorage(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-storage-%d"
-  location = "%s"
-}
-
-resource "azurestack_storage_account" "test" {
-  name                = "unlikely23exst2acct%s"
-  resource_group_name = azurestack_resource_group.test.name
-
-  location                 = azurestack_resource_group.test.location
-  account_kind             = "BlobStorage"
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  tags = {
-    environment = "production"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomString)
-}
-
-func (r StorageAccountResource) blobStorageUpdate(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-storage-%d"
-  location = "%s"
-}
-
-resource "azurestack_storage_account" "test" {
-  name                = "unlikely23exst2acct%s"
-  resource_group_name = azurestack_resource_group.test.name
-
-  location                 = azurestack_resource_group.test.location
-  account_kind             = "BlobStorage"
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  tags = {
-    environment = "production"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomString)
-}*/
-
 func (r StorageAccountResource) nonStandardCasing(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
@@ -315,6 +242,83 @@ resource "azurestack_storage_account" "test" {
   location                 = azurestack_resource_group.test.location
   account_tier             = "standard"
   account_replication_type = "lrs"
+
+  tags = {
+    environment = "production"
+  }
+}
+`, data.RandomInteger, data.Locations.Primary, data.RandomString)
+}
+
+func TestAccStorageAccount_enableHttpsTrafficOnly(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_storage_account", "test")
+	r := StorageAccountResource{}
+
+	data.ResourceTest(t, r, []acceptance.TestStep{
+		{
+			Config: r.enableHttpsTrafficOnly(data),
+			Check: acceptance.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+				check.That(data.ResourceName).Key("enable_https_traffic_only").HasValue("true"),
+			),
+		},
+		data.ImportStep(),
+		{
+			Config: r.enableHttpsTrafficOnlyDisabled(data),
+			Check: acceptance.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+				check.That(data.ResourceName).Key("enable_https_traffic_only").HasValue("false"),
+			),
+		},
+	})
+}
+
+func (r StorageAccountResource) enableHttpsTrafficOnly(data acceptance.TestData) string {
+	return fmt.Sprintf(`
+provider "azurestack" {
+  features {}
+}
+
+resource "azurestack_resource_group" "test" {
+  name     = "acctestRG-storage-%d"
+  location = "%s"
+}
+
+resource "azurestack_storage_account" "test" {
+  name                = "unlikely23exst2acct%s"
+  resource_group_name = azurestack_resource_group.test.name
+
+  location                  = azurestack_resource_group.test.location
+  account_tier              = "Standard"
+  account_replication_type  = "LRS"
+  enable_https_traffic_only = true
+
+  tags = {
+    environment = "production"
+  }
+}
+`, data.RandomInteger, data.Locations.Primary, data.RandomString)
+}
+
+func (r StorageAccountResource) enableHttpsTrafficOnlyDisabled(data acceptance.TestData) string {
+	return fmt.Sprintf(`
+provider "azurestack" {
+  features {}
+}
+
+resource "azurestack_resource_group" "test" {
+  name     = "acctestRG-storage-%d"
+  location = "%s"
+}
+
+resource "azurestack_storage_account" "test" {
+  name                = "unlikely23exst2acct%s"
+  resource_group_name = azurestack_resource_group.test.name
+
+  location                  = azurestack_resource_group.test.location
+  account_tier              = "Standard"
+  account_replication_type  = "LRS"
+  enable_https_traffic_only = false
 
   tags = {
     environment = "production"

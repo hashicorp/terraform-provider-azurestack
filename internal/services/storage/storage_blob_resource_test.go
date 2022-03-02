@@ -484,7 +484,9 @@ func (r StorageBlobResource) appendEmptyMetaData(data acceptance.TestData) strin
 	template := r.template(data, "private")
 	return fmt.Sprintf(`
 provider "azurestack" {}
+
 %s
+
 resource "azurestack_storage_blob" "test" {
   name                   = "example.vhd"
   storage_account_name   = azurestack_storage_account.test.name
@@ -517,9 +519,11 @@ func (r StorageBlobResource) blockEmptyMetaData(data acceptance.TestData) string
 	template := r.template(data, "private")
 	return fmt.Sprintf(`
 %s
+
 provider "azurestack" {
   features {}
 }
+
 resource "azurestack_storage_blob" "test" {
   name                   = "example.vhd"
   storage_account_name   = azurestack_storage_account.test.name
@@ -658,9 +662,11 @@ func (r StorageBlobResource) contentMd5ForLocalFile(data acceptance.TestData, fi
 	template := r.template(data, "blob")
 	return fmt.Sprintf(`
 %s
+
 provider "azurestack" {
   features {}
 }
+
 resource "azurestack_storage_blob" "test" {
   name                   = "example.vhd"
   storage_account_name   = azurestack_storage_account.test.name
@@ -676,9 +682,11 @@ func (r StorageBlobResource) contentType(data acceptance.TestData) string {
 	template := r.template(data, "private")
 	return fmt.Sprintf(`
 %s
+
 provider "azurestack" {
   features {}
 }
+
 resource "azurestack_storage_blob" "test" {
   name                   = "example.ext"
   storage_account_name   = azurestack_storage_account.test.name
@@ -694,9 +702,11 @@ func (r StorageBlobResource) contentTypePremium(data acceptance.TestData) string
 	template := r.templatePremium(data, "private")
 	return fmt.Sprintf(`
 %s
+
 provider "azurestack" {
   features {}
 }
+
 resource "azurestack_storage_blob" "test" {
   name                   = "example.ext"
   storage_account_name   = azurestack_storage_account.test.name
@@ -712,9 +722,11 @@ func (r StorageBlobResource) contentTypeUpdated(data acceptance.TestData) string
 	template := r.template(data, "private")
 	return fmt.Sprintf(`
 %s
+
 provider "azurestack" {
   features {}
 }
+
 resource "azurestack_storage_blob" "test" {
   name                   = "example.ext"
   storage_account_name   = azurestack_storage_account.test.name
@@ -768,9 +780,11 @@ func (r StorageBlobResource) pageEmptyMetaData(data acceptance.TestData) string 
 	template := r.template(data, "private")
 	return fmt.Sprintf(`
 %s
+
 provider "azurestack" {
   features {}
 }
+
 resource "azurestack_storage_blob" "test" {
   name                   = "example.vhd"
   storage_account_name   = azurestack_storage_account.test.name
@@ -851,9 +865,11 @@ func (r StorageBlobResource) cacheControl(data acceptance.TestData, cacheControl
 	template := r.template(data, "private")
 	return fmt.Sprintf(`
 %s
+
 provider "azurestack" {
   features {}
 }
+
 resource "azurestack_storage_blob" "test" {
   name                   = "example.ext"
   storage_account_name   = azurestack_storage_account.test.name

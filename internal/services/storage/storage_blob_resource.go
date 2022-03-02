@@ -19,24 +19,27 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
-func resourceStorageBlob() *schema.Resource {
+func storageBlob() *schema.Resource {
 	return &schema.Resource{
-		Create:        resourceStorageBlobCreate,
-		Read:          resourceStorageBlobRead,
-		Delete:        resourceStorageBlobDelete,
-		Update:        resourceStorageBlobUpdate,
+		Create:        storageBlobCreate,
+		Read:          storageBlobRead,
+		Delete:        storageBlobDelete,
+		Update:        storageBlobUpdate,
 		SchemaVersion: 1,
 		StateUpgraders: pluginsdk.StateUpgrades(map[int]pluginsdk.StateUpgrade{
 			0: migration.BlobV0ToV1{},
 		}),
+
 		// TODO: replace this with an importer which validates the ID during import
 		Importer: pluginsdk.DefaultImporter(),
+
 		Timeouts: &pluginsdk.ResourceTimeout{
 			Create: pluginsdk.DefaultTimeout(120 * time.Minute),
 			Read:   pluginsdk.DefaultTimeout(5 * time.Minute),
 			Update: pluginsdk.DefaultTimeout(120 * time.Minute),
 			Delete: pluginsdk.DefaultTimeout(120 * time.Minute),
 		},
+
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
@@ -44,18 +47,21 @@ func resourceStorageBlob() *schema.Resource {
 				ForceNew: true,
 				// TODO: add validation
 			},
+
 			"storage_account_name": {
 				Type:         pluginsdk.TypeString,
 				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validate.StorageAccountName,
 			},
+
 			"storage_container_name": {
 				Type:         pluginsdk.TypeString,
 				Required:     true,
 				ForceNew:     true,
 				ValidateFunc: validate.StorageContainerName,
 			},
+
 			"type": {
 				Type:     pluginsdk.TypeString,
 				Required: true,
@@ -66,6 +72,7 @@ func resourceStorageBlob() *schema.Resource {
 					"Page",
 				}, false),
 			},
+
 			"size": {
 				Type:         pluginsdk.TypeInt,
 				Optional:     true,
@@ -73,21 +80,25 @@ func resourceStorageBlob() *schema.Resource {
 				Default:      0,
 				ValidateFunc: validation.IntDivisibleBy(512),
 			},
+
 			"content_type": {
 				Type:     pluginsdk.TypeString,
 				Optional: true,
 				Default:  "application/octet-stream",
 			},
+
 			"cache_control": {
 				Type:     pluginsdk.TypeString,
 				Optional: true,
 			},
+
 			"source": {
 				Type:          pluginsdk.TypeString,
 				Optional:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"source_uri", "source_content"},
 			},
+
 			"source_content": {
 				Type:          pluginsdk.TypeString,
 				Optional:      true,
@@ -101,16 +112,19 @@ func resourceStorageBlob() *schema.Resource {
 				ForceNew:      true,
 				ConflictsWith: []string{"source", "source_content"},
 			},
+
 			"content_md5": {
 				Type:          pluginsdk.TypeString,
 				Optional:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"source_uri"},
 			},
+
 			"url": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+
 			"parallelism": {
 				// TODO: @tombuildsstuff - a note this only works for Page blobs
 				Type:         pluginsdk.TypeInt,
@@ -119,12 +133,13 @@ func resourceStorageBlob() *schema.Resource {
 				ForceNew:     true,
 				ValidateFunc: validation.IntAtLeast(1),
 			},
+
 			"metadata": MetaDataSchema(),
 		},
 	}
 }
 
-func resourceStorageBlobCreate(d *pluginsdk.ResourceData, meta interface{}) error {
+func storageBlobCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForCreate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -196,10 +211,10 @@ func resourceStorageBlobCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 
 	d.SetId(id)
 
-	return resourceStorageBlobUpdate(d, meta)
+	return storageBlobUpdate(d, meta)
 }
 
-func resourceStorageBlobUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
+func storageBlobUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForUpdate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -260,10 +275,10 @@ func resourceStorageBlobUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 		log.Printf("[DEBUG] Updated MetaData for Blob %q (Container %q / Account %q).", id.BlobName, id.ContainerName, id.AccountName)
 	}
 
-	return resourceStorageBlobRead(d, meta)
+	return storageBlobRead(d, meta)
 }
 
-func resourceStorageBlobRead(d *pluginsdk.ResourceData, meta interface{}) error {
+func storageBlobRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -334,7 +349,7 @@ func resourceStorageBlobRead(d *pluginsdk.ResourceData, meta interface{}) error 
 	return nil
 }
 
-func resourceStorageBlobDelete(d *pluginsdk.ResourceData, meta interface{}) error {
+func storageBlobDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 	storageClient := meta.(*clients.Client).Storage
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()

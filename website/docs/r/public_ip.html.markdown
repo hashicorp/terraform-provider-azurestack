@@ -42,7 +42,9 @@ The following arguments are supported:
 
 * `location` - (Required) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created.
 
-* `allocation_method` - (Required)  Defines the allocation method for this IP address. Possible values are `Static` or `Dynamic`.
+* `public_ip_address_allocation` - (Optional) Defines whether the IP address is static or dynamic. Options are Static or Dynamic. **Deprecated**, use `allocation_method`  instead.
+
+* `allocation_method` - (Optional)  Defines the allocation method for this IP address. Possible values are `Static` or `Dynamic`. 
 
 ~> **Note** `Dynamic` Public IP Addresses aren't allocated until they're assigned to a resource (such as a Virtual Machine or a Load Balancer) by design within Azure - [more information is available below](#ip_address).
 

@@ -65,7 +65,7 @@ The following attributes are exported:
 * `id` - The LoadBalancer ID.
 * `private_ip_address` - The first private IP address assigned to the load balancer in `frontend_ip_configuration` blocks, if any.
 * `private_ip_addresses` - The list of private IP address assigned to the load balancer in `frontend_ip_configuration` blocks, if any.
-* `outbound_rules_id` - The list of IDs outbound rules that use this frontend IP.
+* `outbound_rules_ids` - The list of IDs outbound rules that use this frontend IP.
 
 ## Import
 

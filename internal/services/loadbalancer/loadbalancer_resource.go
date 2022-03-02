@@ -60,7 +60,7 @@ func loadBalancer() *pluginsdk.Resource {
 				ForceNew: true,
 				ValidateFunc: validation.StringInSlice([]string{
 					string(network.LoadBalancerSkuNameBasic),
-				}, true),
+				}, false),
 			},
 
 			"frontend_ip_configuration": {
@@ -131,7 +131,7 @@ func loadBalancer() *pluginsdk.Resource {
 							Set: pluginsdk.HashString,
 						},
 
-						"outbound_rules_id": {
+						"outbound_rule_ids": {
 							Type:     pluginsdk.TypeSet,
 							Computed: true,
 							Elem: &pluginsdk.Schema{
@@ -407,7 +407,7 @@ func flattenLoadBalancerFrontendIpConfiguration(ipConfigs *[]network.FrontendIPC
 					outboundRules = append(outboundRules, *rule.ID)
 				}
 			}
-			ipConfig["outbound_rules_id"] = pluginsdk.NewSet(pluginsdk.HashString, outboundRules)
+			ipConfig["outbound_rule_ids"] = pluginsdk.NewSet(pluginsdk.HashString, outboundRules)
 		}
 
 		result = append(result, ipConfig)

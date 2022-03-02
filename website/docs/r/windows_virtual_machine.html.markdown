@@ -133,8 +133,6 @@ The following arguments are supported:
 
 * `extensions_time_budget` - (Optional) Specifies the duration allocated for all extensions to start. The time duration should be between 15 minutes and 120 minutes (inclusive) and should be specified in ISO 8601 format. Defaults to 90 minutes (`PT1H30M`).
 
-* `identity` - (Optional) An `identity` block as defined below.
-
 * `license_type` - (Optional) Specifies the type of on-premise license (also known as [Azure Hybrid Use Benefit](https://docs.microsoft.com/en-us/windows-server/get-started/azure-hybrid-benefit)) which should be used for this Virtual Machine. Possible values are `None`, `Windows_Client` and `Windows_Server`.
 
 * `max_bid_price` - (Optional) The maximum price you're willing to pay for this Virtual Machine, in US Dollars; which must be greater than the current spot price. If this bid price falls below the current spot price the Virtual Machine will be evicted using the `eviction_policy`. Defaults to `-1`, which means that the Virtual Machine should not be evicted for price reasons.
@@ -209,17 +207,7 @@ A `diff_disk_settings` block supports the following:
 
 * `option` - (Required) Specifies the Ephemeral Disk Settings for the OS Disk. At this time the only possible value is `Local`. Changing this forces a new resource to be created.
 
----
 
-A `identity` block supports the following:
-
-* `type` - (Required) The type of Managed Identity which should be assigned to the Windows Virtual Machine. Possible values are `SystemAssigned`, `UserAssigned` and `SystemAssigned, UserAssigned`.
-
-* `identity_ids` - (Optional) A list of User Managed Identity ID's which should be assigned to the Windows Virtual Machine.
-
-~> **NOTE:** This is required when `type` is set to `UserAssigned`.
-
----
 
 A `os_disk` block supports the following:
 
@@ -287,8 +275,6 @@ In addition to all arguments above, the following attributes are exported:
 
 * `id` - The ID of the Windows Virtual Machine.
 
-* `identity` - An `identity` block as documented below.
-
 * `private_ip_address` - The Primary Private IP Address assigned to this Virtual Machine.
 
 * `private_ip_addresses` - A list of Private IP Addresses assigned to this Virtual Machine.
@@ -298,14 +284,6 @@ In addition to all arguments above, the following attributes are exported:
 * `public_ip_addresses` - A list of the Public IP Addresses assigned to this Virtual Machine.
 
 * `virtual_machine_id` - A 128-bit identifier which uniquely identifies this Virtual Machine.
-
----
-
-An `identity` block exports the following:
-
-* `principal_id` - The ID of the System Managed Service Principal.
-
-* `tenant_id` - The ID of the Tenant the System Managed Service Principal is assigned in.
 
 ## Timeouts
 

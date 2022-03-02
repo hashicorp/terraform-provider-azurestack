@@ -169,8 +169,6 @@ func windowsVirtualMachine() *pluginsdk.Resource {
 				ValidateFunc: utils.ISO8601DurationBetween("PT15M", "PT2H"),
 			},
 
-			"identity": virtualMachineIdentity{}.Schema(),
-
 			"license_type": {
 				Type:     pluginsdk.TypeString,
 				Optional: true,
@@ -421,16 +419,6 @@ func resourceWindowsVirtualMachineCreate(d *pluginsdk.ResourceData, meta interfa
 		Tags: tags.Expand(t),
 	}
 
-	if v, ok := d.GetOk("identity"); ok {
-		identityRaw := v.([]interface{})
-		identity, err := expandVirtualMachineIdentity(identityRaw)
-		if err != nil {
-			return fmt.Errorf("expanding `identity`: %+v", err)
-		}
-
-		params.Identity = identity
-	}
-
 	if !provisionVMAgent && allowExtensionOperations {
 		return fmt.Errorf("`allow_extension_operations` cannot be set to `true` when `provision_vm_agent` is set to `false`")
 	}
@@ -544,14 +532,6 @@ func resourceWindowsVirtualMachineRead(d *pluginsdk.ResourceData, meta interface
 	d.Set("resource_group_name", id.ResourceGroup)
 	if v := resp.Location; v != nil {
 		d.Set("location", location.Normalize(*v))
-	}
-
-	identity, err := flattenVirtualMachineIdentity(resp.Identity)
-	if err != nil {
-		return err
-	}
-	if err := d.Set("identity", identity); err != nil {
-		return fmt.Errorf("setting `identity`: %+v", err)
 	}
 
 	if err := d.Set("plan", flattenPlan(resp.Plan)); err != nil {
@@ -786,17 +766,6 @@ func resourceWindowsVirtualMachineUpdate(d *pluginsdk.ResourceData, meta interfa
 		update.OsProfile.WindowsConfiguration.PatchSettings = &compute.PatchSettings{
 			PatchMode: compute.InGuestPatchMode(d.Get("patch_mode").(string)),
 		}
-	}
-
-	if d.HasChange("identity") {
-		shouldUpdate = true
-
-		identityRaw := d.Get("identity").([]interface{})
-		identity, err := expandVirtualMachineIdentity(identityRaw)
-		if err != nil {
-			return fmt.Errorf("expanding `identity`: %+v", err)
-		}
-		update.Identity = identity
 	}
 
 	if d.HasChange("extensions_time_budget") {

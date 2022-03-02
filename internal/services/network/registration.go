@@ -38,17 +38,19 @@ func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 // SupportedResources returns the supported Resources supported by this Service
 func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
-		"azurestack_application_security_group":         applicationSecurityGroup(),
-		"azurestack_network_interface":                  networkInterface(),
-		"azurestack_public_ip":                          publicIp(),
-		"azurestack_route_table":                        routeTable(),
-		"azurestack_route":                              resourceRoute(),
-		"azurestack_subnet":                             subnet(),
-		"azurestack_virtual_network":                    virtualNetwork(),
-		"azurestack_network_security_group":             networkSecurityGroup(),
-		"azurestack_network_security_rule":              networkSecurityRule(),
-		"azurestack_virtual_network_gateway_connection": virtualNetworkGatewayConnection(),
-		"azurestack_virtual_network_gateway":            virtualNetworkGateway(),
-		"azurestack_local_network_gateway":              localNetworkGateway(),
+		"azurestack_application_security_group":                         applicationSecurityGroup(),
+		"azurestack_network_interface":                                  networkInterface(),
+		"azurestack_public_ip":                                          publicIp(),
+		"azurestack_route_table":                                        routeTable(),
+		"azurestack_route":                                              resourceRoute(),
+		"azurestack_subnet":                                             subnet(),
+		"azurestack_virtual_network":                                    virtualNetwork(),
+		"azurestack_network_security_group":                             networkSecurityGroup(),
+		"azurestack_network_security_rule":                              networkSecurityRule(),
+		"azurestack_virtual_network_gateway_connection":                 virtualNetworkGatewayConnection(),
+		"azurestack_virtual_network_gateway":                            virtualNetworkGateway(),
+		"azurestack_local_network_gateway":                              localNetworkGateway(),
+		"azurestack_virtual_network_peering":                            virtualNetworkPeering(),
+		"azurestack_network_interface_backend_address_pool_association": loadBalancerBackendAddressPoolAssociation(),
 	}
 }

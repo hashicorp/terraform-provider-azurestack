@@ -88,13 +88,6 @@ func networkSecurityGroupDataSource() *pluginsdk.Resource {
 							Set:      pluginsdk.HashString,
 						},
 
-						"source_application_security_group_ids": {
-							Type:     pluginsdk.TypeSet,
-							Optional: true,
-							Elem:     &pluginsdk.Schema{Type: pluginsdk.TypeString},
-							Set:      pluginsdk.HashString,
-						},
-
 						"destination_address_prefix": {
 							Type:     pluginsdk.TypeString,
 							Computed: true,
@@ -103,13 +96,6 @@ func networkSecurityGroupDataSource() *pluginsdk.Resource {
 						"destination_address_prefixes": {
 							Type:     pluginsdk.TypeSet,
 							Computed: true,
-							Elem:     &pluginsdk.Schema{Type: pluginsdk.TypeString},
-							Set:      pluginsdk.HashString,
-						},
-
-						"destination_application_security_group_ids": {
-							Type:     pluginsdk.TypeSet,
-							Optional: true,
 							Elem:     &pluginsdk.Schema{Type: pluginsdk.TypeString},
 							Set:      pluginsdk.HashString,
 						},

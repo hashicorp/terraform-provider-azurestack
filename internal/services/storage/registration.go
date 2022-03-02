@@ -21,7 +21,8 @@ func (r Registration) WebsiteCategories() []string {
 // SupportedDataSources returns the supported Data Sources supported by this Service
 func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
-		"azurestack_storage_account": storageAccountDataSource(),
+		"azurestack_storage_account":   storageAccountDataSource(),
+		"azurestack_storage_container": storageContainerDataSource(),
 	}
 }
 

@@ -19,7 +19,6 @@ type StorageContainerDataPlaneId struct {
 	Name         string
 }
 
-// only present to comply with the interface
 func (id StorageContainerDataPlaneId) ID() string {
 	return fmt.Sprintf("https://%s.blob.%s/%s", id.AccountName, id.DomainSuffix, id.Name)
 }

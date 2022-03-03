@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	rmResourceProviders "github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceproviders"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceproviders"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 )
 
@@ -40,8 +40,8 @@ func TestAccEnsureRequiredResourceProvidersAreRegistered(t *testing.T) {
 	}
 
 	availableResourceProviders := providerList.Values()
-	requiredResourceProviders := rmResourceProviders.Required()
-	err = rmResourceProviders.EnsureRegistered(ctx, *client, availableResourceProviders, requiredResourceProviders)
+	requiredResourceProviders := resourceproviders.Required()
+	err = resourceproviders.EnsureRegistered(ctx, *client, availableResourceProviders, requiredResourceProviders)
 	if err != nil {
 		t.Fatalf("Error registering Resource Providers: %+v", err)
 	}
@@ -54,7 +54,7 @@ func TestAccEnsureRequiredResourceProvidersAreRegistered(t *testing.T) {
 			"error: %s", err)
 	}
 
-	stillRequiringRegistration := rmResourceProviders.DetermineResourceProvidersRequiringRegistration(providerList.Values(), requiredResourceProviders)
+	stillRequiringRegistration := resourceproviders.DetermineResourceProvidersRequiringRegistration(providerList.Values(), requiredResourceProviders)
 	if len(stillRequiringRegistration) > 0 {
 		t.Fatalf("'%d' Resource Providers are still Pending Registration: %s", len(stillRequiringRegistration), spew.Sprint(stillRequiringRegistration))
 	}

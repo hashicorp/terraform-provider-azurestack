@@ -30,6 +30,7 @@ func (r Registration) WebsiteCategories() []string {
 func (r Registration) SupportedDataSources() map[string]*pluginsdk.Resource {
 	return map[string]*pluginsdk.Resource{
 		"azurestack_resource_group": resourceGroupDataSource(),
+		"azurestack_resources":      resourcesDataSource(),
 	}
 }
 

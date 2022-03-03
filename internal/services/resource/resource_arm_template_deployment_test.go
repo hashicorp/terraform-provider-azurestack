@@ -403,7 +403,7 @@ DEPLOY
 
   deployment_mode = "Complete"
 }
-`, 23, data.Locations.Primary, data.RandomInteger)
+`, data.RandomInteger, data.Locations.Primary, data.RandomInteger)
 }
 
 func (TemplateDeploymentResource) withParamsBody(data acceptance.TestData) string {

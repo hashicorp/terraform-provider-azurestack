@@ -133,12 +133,6 @@ func windowsVirtualMachine() *pluginsdk.Resource {
 
 			"custom_data": base64.OptionalSchema(true),
 
-			"delete_os_disk_on_termination": {
-				Type:     pluginsdk.TypeBool,
-				Optional: true,
-				Default:  false,
-			},
-
 			"enable_automatic_updates": {
 				Type:     pluginsdk.TypeBool,
 				Optional: true,
@@ -1072,8 +1066,8 @@ func resourceWindowsVirtualMachineDelete(d *pluginsdk.ResourceData, meta interfa
 		return err
 	}
 
-	locks.ByName(id.Name, virtualMachineResourceName)
-	defer locks.UnlockByName(id.Name, virtualMachineResourceName)
+	locks.ByName(id.Name, VirtualMachineResourceName)
+	defer locks.UnlockByName(id.Name, VirtualMachineResourceName)
 
 	log.Printf("[DEBUG] Retrieving Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 	existing, err := client.Get(ctx, id.ResourceGroup, id.Name, "")
@@ -1085,23 +1079,26 @@ func resourceWindowsVirtualMachineDelete(d *pluginsdk.ResourceData, meta interfa
 		return fmt.Errorf("retrieving Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
 	}
 
-	if strings.EqualFold(*existing.ProvisioningState, "failed") {
-		log.Printf("[DEBUG] Powering Off Windows Virtual Machine was skipped because the VM was in %q state %q (Resource Group %q).", *existing.ProvisioningState, id.Name, id.ResourceGroup)
-	} else {
-		// ISSUE: 4920
-		// shutting down the Virtual Machine prior to removing it means users are no longer charged for some Azure resources
-		// thus this can be a large cost-saving when deleting larger instances
-		// https://docs.microsoft.com/en-us/azure/virtual-machines/states-lifecycle
-		log.Printf("[DEBUG] Powering Off Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
-		var skipShutdown *bool = nil
-		powerOffFuture, err := client.PowerOff(ctx, id.ResourceGroup, id.Name, skipShutdown)
-		if err != nil {
-			return fmt.Errorf("powering off Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+	if !meta.(*clients.Client).Features.VirtualMachine.SkipShutdownAndForceDelete {
+		// If the VM was in a Failed state we can skip powering off, since that'll fail
+		if strings.EqualFold(*existing.ProvisioningState, "failed") {
+			log.Printf("[DEBUG] Powering Off Windows Virtual Machine was skipped because the VM was in %q state %q (Resource Group %q).", *existing.ProvisioningState, id.Name, id.ResourceGroup)
+		} else {
+			// ISSUE: 4920
+			// shutting down the Virtual Machine prior to removing it means users are no longer charged for some Azure resources
+			// thus this can be a large cost-saving when deleting larger instances
+			// https://docs.microsoft.com/en-us/azure/virtual-machines/states-lifecycle
+			log.Printf("[DEBUG] Powering Off Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
+			var skipShutdown *bool = nil
+			powerOffFuture, err := client.PowerOff(ctx, id.ResourceGroup, id.Name, skipShutdown)
+			if err != nil {
+				return fmt.Errorf("powering off Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+			}
+			if err := powerOffFuture.WaitForCompletionRef(ctx, client.Client); err != nil {
+				return fmt.Errorf("waiting for power off of Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
+			}
+			log.Printf("[DEBUG] Powered Off Windows Virtual Machine %q (Resource Group %q).", id.Name, id.ResourceGroup)
 		}
-		if err := powerOffFuture.WaitForCompletionRef(ctx, client.Client); err != nil {
-			return fmt.Errorf("waiting for power off of Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
-		}
-		log.Printf("[DEBUG] Powered Off Windows Virtual Machine %q (Resource Group %q).", id.Name, id.ResourceGroup)
 	}
 
 	log.Printf("[DEBUG] Deleting Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
@@ -1110,6 +1107,9 @@ func resourceWindowsVirtualMachineDelete(d *pluginsdk.ResourceData, meta interfa
 	// as such we default this to `nil` which matches the previous behaviour (where this isn't sent) and
 	// conditionally set this if required
 	var forceDeletion *bool = nil
+	if meta.(*clients.Client).Features.VirtualMachine.SkipShutdownAndForceDelete {
+		forceDeletion = utils.Bool(true)
+	}
 	deleteFuture, err := client.Delete(ctx, id.ResourceGroup, id.Name, forceDeletion)
 	if err != nil {
 		return fmt.Errorf("deleting Windows Virtual Machine %q (Resource Group %q): %+v", id.Name, id.ResourceGroup, err)
@@ -1119,9 +1119,8 @@ func resourceWindowsVirtualMachineDelete(d *pluginsdk.ResourceData, meta interfa
 	}
 	log.Printf("[DEBUG] Deleted Windows Virtual Machine %q (Resource Group %q).", id.Name, id.ResourceGroup)
 
-	// delete OS Disk if opted in
-	deleteOsDisk := d.Get("delete_os_disk_on_termination").(bool)
-	if deleteOsDisk {
+	deleteOSDisk := meta.(*clients.Client).Features.VirtualMachine.DeleteOSDiskOnDeletion
+	if deleteOSDisk {
 		log.Printf("[DEBUG] Deleting OS Disk from Windows Virtual Machine %q (Resource Group %q)..", id.Name, id.ResourceGroup)
 		disksClient := meta.(*clients.Client).Compute.DisksClient
 		managedDiskId := ""

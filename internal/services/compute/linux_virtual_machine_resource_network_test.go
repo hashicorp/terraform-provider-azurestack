@@ -23,7 +23,7 @@ func TestAccLinuxVirtualMachine_networkMultiple(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("0"),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			// update the Primary IP
 			Config: r.networkMultipleUpdated(data),
@@ -35,7 +35,7 @@ func TestAccLinuxVirtualMachine_networkMultiple(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("0"),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			// remove the secondary IP
 			Config: r.networkMultipleRemoved(data),
@@ -47,7 +47,7 @@ func TestAccLinuxVirtualMachine_networkMultiple(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("0"),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -66,7 +66,7 @@ func TestAccLinuxVirtualMachine_networkMultiplePublic(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("2"),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			// update the Primary IP
 			Config: r.networkMultiplePublicUpdated(data),
@@ -78,7 +78,7 @@ func TestAccLinuxVirtualMachine_networkMultiplePublic(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("2"),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			// remove the secondary IP
 			Config: r.networkMultiplePublicRemoved(data),
@@ -90,7 +90,7 @@ func TestAccLinuxVirtualMachine_networkMultiplePublic(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("1"),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -107,7 +107,7 @@ func TestAccLinuxVirtualMachine_networkPrivateDynamicIP(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_address").HasValue(""),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -124,7 +124,7 @@ func TestAccLinuxVirtualMachine_networkPrivateStaticIP(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_address").HasValue(""),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -141,7 +141,7 @@ func TestAccLinuxVirtualMachine_networkPrivateUpdate(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_address").HasValue(""),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			Config: r.networkPrivateStaticIP(data),
 			Check: acceptance.ComposeTestCheckFunc(
@@ -150,7 +150,7 @@ func TestAccLinuxVirtualMachine_networkPrivateUpdate(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_address").HasValue(""),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -167,7 +167,7 @@ func TestAccLinuxVirtualMachine_networkPublicDynamicPrivateDynamicIP(t *testing.
 				check.That(data.ResourceName).Key("public_ip_address").IsEmpty(),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -184,7 +184,7 @@ func TestAccLinuxVirtualMachine_networkPublicDynamicPrivateStaticIP(t *testing.T
 				check.That(data.ResourceName).Key("public_ip_address").IsEmpty(),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -201,7 +201,7 @@ func TestAccLinuxVirtualMachine_networkPublicDynamicUpdate(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_address").IsEmpty(),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			Config: r.networkPublicDynamicPrivateStaticIP(data),
 			Check: acceptance.ComposeTestCheckFunc(
@@ -210,7 +210,7 @@ func TestAccLinuxVirtualMachine_networkPublicDynamicUpdate(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_address").IsEmpty(),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -227,7 +227,7 @@ func TestAccLinuxVirtualMachine_networkPublicStaticPrivateDynamicIP(t *testing.T
 				check.That(data.ResourceName).Key("public_ip_address").Exists(),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -244,7 +244,7 @@ func TestAccLinuxVirtualMachine_networkPublicStaticPrivateStaticIP(t *testing.T)
 				check.That(data.ResourceName).Key("public_ip_address").Exists(),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -261,7 +261,7 @@ func TestAccLinuxVirtualMachine_networkPublicStaticPrivateUpdate(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_address").Exists(),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			Config: r.networkPublicStaticPrivateStaticIP(data),
 			Check: acceptance.ComposeTestCheckFunc(
@@ -270,7 +270,7 @@ func TestAccLinuxVirtualMachine_networkPublicStaticPrivateUpdate(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_address").Exists(),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 

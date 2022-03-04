@@ -19,7 +19,7 @@ func TestAccWindowsVirtualMachine_diskOSBasic(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -34,21 +34,21 @@ func TestAccWindowsVirtualMachine_diskOSCachingType(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			Config: r.diskOSCachingType(data, "ReadOnly"),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			Config: r.diskOSCachingType(data, "ReadWrite"),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -63,7 +63,7 @@ func TestAccWindowsVirtualMachine_diskOSCustomName(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -78,7 +78,7 @@ func TestAccWindowsVirtualMachine_diskOSCustomSize(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -93,14 +93,14 @@ func TestAccWindowsVirtualMachine_diskOSCustomSizeExpanded(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			Config: r.diskOSCustomSize(data, 140),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -115,7 +115,7 @@ func TestAccWindowsVirtualMachine_diskOSStorageTypeStandardLRS(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -130,7 +130,7 @@ func TestAccWindowsVirtualMachine_diskOSStorageTypePremiumLRS(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -145,21 +145,21 @@ func TestAccWindowsVirtualMachine_diskOSStorageTypeUpdate(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			Config: r.diskOSStorageAccountType(data, "Premium_LRS"),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			Config: r.diskOSStorageAccountType(data, "Standard_LRS"),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -175,7 +175,7 @@ func TestAccWindowsVirtualMachine_diskOSWriteAcceleratorEnabled(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			// Disabled
 			Config: r.diskOSWriteAcceleratorEnabled(data, false),
@@ -183,7 +183,7 @@ func TestAccWindowsVirtualMachine_diskOSWriteAcceleratorEnabled(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			// Enabled
 			Config: r.diskOSWriteAcceleratorEnabled(data, true),
@@ -191,7 +191,7 @@ func TestAccWindowsVirtualMachine_diskOSWriteAcceleratorEnabled(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 

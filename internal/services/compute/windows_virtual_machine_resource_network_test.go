@@ -23,7 +23,7 @@ func TestAccWindowsVirtualMachine_networkMultiple(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("0"),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			// update the Primary IP
 			Config: r.networkMultipleUpdated(data),
@@ -35,7 +35,7 @@ func TestAccWindowsVirtualMachine_networkMultiple(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("0"),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			// remove the secondary IP
 			Config: r.networkMultipleRemoved(data),
@@ -47,7 +47,7 @@ func TestAccWindowsVirtualMachine_networkMultiple(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("0"),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -66,7 +66,7 @@ func TestAccWindowsVirtualMachine_networkMultiplePublic(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("2"),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			// update the Primary IP
 			Config: r.networkMultiplePublicUpdated(data),
@@ -78,7 +78,7 @@ func TestAccWindowsVirtualMachine_networkMultiplePublic(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("2"),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			// remove the secondary IP
 			Config: r.networkMultiplePublicRemoved(data),
@@ -90,7 +90,7 @@ func TestAccWindowsVirtualMachine_networkMultiplePublic(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("1"),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -107,7 +107,7 @@ func TestAccWindowsVirtualMachine_networkPrivateDynamicIP(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_address").HasValue(""),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -124,7 +124,7 @@ func TestAccWindowsVirtualMachine_networkPrivateStaticIP(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_address").HasValue(""),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -141,7 +141,7 @@ func TestAccWindowsVirtualMachine_networkPrivateUpdate(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_address").HasValue(""),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			Config: r.networkPrivateStaticIP(data),
 			Check: acceptance.ComposeTestCheckFunc(
@@ -150,7 +150,7 @@ func TestAccWindowsVirtualMachine_networkPrivateUpdate(t *testing.T) {
 				check.That(data.ResourceName).Key("public_ip_address").HasValue(""),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -166,7 +166,7 @@ func TestAccWindowsVirtualMachine_networkPublicDynamicPrivateDynamicIP(t *testin
 				check.That(data.ResourceName).Key("private_ip_address").Exists(),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -182,7 +182,7 @@ func TestAccWindowsVirtualMachine_networkPublicDynamicPrivateStaticIP(t *testing
 				check.That(data.ResourceName).Key("private_ip_address").Exists(),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -198,7 +198,7 @@ func TestAccWindowsVirtualMachine_networkPublicDynamicUpdate(t *testing.T) {
 				check.That(data.ResourceName).Key("private_ip_address").Exists(),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			Config: r.networkPublicDynamicPrivateStaticIP(data),
 			Check: acceptance.ComposeTestCheckFunc(
@@ -206,7 +206,7 @@ func TestAccWindowsVirtualMachine_networkPublicDynamicUpdate(t *testing.T) {
 				check.That(data.ResourceName).Key("private_ip_address").Exists(),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -223,7 +223,7 @@ func TestAccWindowsVirtualMachine_networkPublicStaticPrivateDynamicIP(t *testing
 				check.That(data.ResourceName).Key("public_ip_address").Exists(),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -240,7 +240,7 @@ func TestAccWindowsVirtualMachine_networkPublicStaticPrivateStaticIP(t *testing.
 				check.That(data.ResourceName).Key("public_ip_address").Exists(),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -257,7 +257,7 @@ func TestAccWindowsVirtualMachine_networkPublicStaticPrivateUpdate(t *testing.T)
 				check.That(data.ResourceName).Key("public_ip_address").Exists(),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 		{
 			Config: r.networkPublicStaticPrivateStaticIP(data),
 			Check: acceptance.ComposeTestCheckFunc(
@@ -266,7 +266,7 @@ func TestAccWindowsVirtualMachine_networkPublicStaticPrivateUpdate(t *testing.T)
 				check.That(data.ResourceName).Key("public_ip_address").Exists(),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 

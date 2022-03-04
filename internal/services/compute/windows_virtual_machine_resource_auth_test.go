@@ -19,7 +19,7 @@ func TestAccWindowsVirtualMachine_authPassword(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 

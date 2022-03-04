@@ -19,7 +19,7 @@ func TestAccLinuxVirtualMachine_diskOSBasic(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -34,21 +34,21 @@ func TestAccLinuxVirtualMachine_diskOSCachingType(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			Config: r.diskOSCachingType(data, "ReadOnly"),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			Config: r.diskOSCachingType(data, "ReadWrite"),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -63,7 +63,7 @@ func TestAccLinuxVirtualMachine_diskOSCustomName(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -78,7 +78,7 @@ func TestAccLinuxVirtualMachine_diskOSCustomSize(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -93,14 +93,14 @@ func TestAccLinuxVirtualMachine_diskOSCustomSizeExpanded(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			Config: r.diskOSCustomSize(data, 60),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -115,7 +115,7 @@ func TestAccLinuxVirtualMachine_diskOSEphemeral(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -130,7 +130,7 @@ func TestAccLinuxVirtualMachine_diskOSStorageTypeStandardLRS(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -145,7 +145,7 @@ func TestAccLinuxVirtualMachine_diskOSStorageTypePremiumLRS(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -160,21 +160,21 @@ func TestAccLinuxVirtualMachine_diskOSStorageTypeUpdate(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			Config: r.diskOSStorageAccountType(data, "Premium_LRS"),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			Config: r.diskOSStorageAccountType(data, "Standard_LRS"),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -190,7 +190,7 @@ func TestAccLinuxVirtualMachine_diskOSWriteAcceleratorEnabled(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			// Disabled
 			Config: r.diskOSWriteAcceleratorEnabled(data, false),
@@ -198,7 +198,7 @@ func TestAccLinuxVirtualMachine_diskOSWriteAcceleratorEnabled(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 		{
 			// Enabled
 			Config: r.diskOSWriteAcceleratorEnabled(data, true),
@@ -206,7 +206,7 @@ func TestAccLinuxVirtualMachine_diskOSWriteAcceleratorEnabled(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 

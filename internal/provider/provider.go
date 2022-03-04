@@ -17,14 +17,14 @@ import (
 )
 
 func AzureProvider() *schema.Provider {
-	return azureProvider()
+	return azureProvider(false)
 }
 
 func TestAzureProvider() *schema.Provider {
-	return azureProvider()
+	return azureProvider(true)
 }
 
-func azureProvider() *schema.Provider {
+func azureProvider(supportLegacyTestSuite bool) *schema.Provider {
 	// avoids this showing up in test output
 	debugLog := func(f string, v ...interface{}) {
 		if os.Getenv("TF_LOG") == "" {
@@ -196,7 +196,7 @@ func azureProvider() *schema.Provider {
 				Description: "Should the AzureStack Provider skip registering all of the Resource Providers that it supports, if they're not already registered?",
 			},
 
-			"features": schemaFeatures(),
+			"features": schemaFeatures(supportLegacyTestSuite),
 		},
 
 		DataSourcesMap: dataSources,

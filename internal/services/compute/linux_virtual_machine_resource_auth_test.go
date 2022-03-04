@@ -19,7 +19,7 @@ func TestAccLinuxVirtualMachine_authPassword(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -34,7 +34,7 @@ func TestAccLinuxVirtualMachine_authPasswordAndSSH(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("admin_password", "delete_os_disk_on_termination"),
+		data.ImportStep("admin_password"),
 	})
 }
 
@@ -49,7 +49,7 @@ func TestAccLinuxVirtualMachine_authSSH(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 
@@ -64,7 +64,7 @@ func TestAccLinuxVirtualMachine_authSSHMultipleKeys(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-		data.ImportStep("delete_os_disk_on_termination"),
+		data.ImportStep(),
 	})
 }
 

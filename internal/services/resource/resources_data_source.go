@@ -191,7 +191,7 @@ func filterResource(inputs []resources.GenericResourceExpanded, requiredTags map
 				"tags":     resTags,
 			})
 		} else {
-			log.Printf("[DEBUG] azurerm_resources - resources %q (id: %q) skipped as a required tag is not set or has the wrong value.", *res.Name, *res.ID)
+			log.Printf("[DEBUG] azurestack_resources - resources %q (id: %q) skipped as a required tag is not set or has the wrong value.", *res.Name, *res.ID)
 		}
 	}
 	return result

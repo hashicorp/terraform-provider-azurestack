@@ -49,9 +49,9 @@ func TestAccStorageAccount_basic(t *testing.T) {
 
 func TestAccStorageAccount_requiresImport(t *testing.T) {
 	t.Skip("test skipped, please check comments inside this test")
-	/*this test was skipped due there's a bug inside azure client, when a new resource is being created
-	using an existing name, must return an error, but in this case, the existing resource is replaced with
-	the new resource
+	/*This test is skipped due to a bug in the Azure autorest client, when the Create request function is used,
+	instead of using a POST request use sa PUT which causes the update of the previous resource instead of throwing
+	an 'Already exists' error.
 	*/
 	data := acceptance.BuildTestData(t, "azurestack_storage_account", "test")
 	r := StorageAccountResource{}

@@ -138,7 +138,6 @@ func imageDataSourceRead(d *pluginsdk.ResourceData, meta interface{}) error {
 			}
 			return fmt.Errorf("making Read request on image %q (Resource Group: %s): %s", name, resourceGroup, err)
 		}
-
 	} else {
 		r := regexp.MustCompile(nameRegex.(string))
 		list := make([]compute.Image, 0)
@@ -202,7 +201,6 @@ func imageDataSourceRead(d *pluginsdk.ResourceData, meta interface{}) error {
 				return fmt.Errorf("[DEBUG] Error setting AzureStack Image Data Disks error: %+v", err)
 			}
 		}
-
 	}
 
 	return tags.FlattenAndSet(d, img.Tags)

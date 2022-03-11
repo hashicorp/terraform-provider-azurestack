@@ -98,7 +98,9 @@ func (r ImageResource) setupUnmanagedDisks(data acceptance.TestData, storageType
 provider "azurestack" {
   features {}
 }
+
 %s
+
 resource "azurestack_network_interface" "testsource" {
   name                = "acctnicsource-${local.number}"
   location            = azurestack_resource_group.test.location

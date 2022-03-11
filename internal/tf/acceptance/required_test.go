@@ -5,8 +5,7 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/hashicorp/go-azure-helpers/resourceproviders"
-	rmResourceProviders "github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceproviders"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceproviders"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 )
 
@@ -41,8 +40,8 @@ func TestAccEnsureRequiredResourceProvidersAreRegistered(t *testing.T) {
 	}
 
 	availableResourceProviders := providerList.Values()
-	requiredResourceProviders := rmResourceProviders.Required()
-	err = rmResourceProviders.EnsureRegistered(ctx, *client, availableResourceProviders, requiredResourceProviders)
+	requiredResourceProviders := resourceproviders.Required()
+	err = resourceproviders.EnsureRegistered(ctx, *client, availableResourceProviders, requiredResourceProviders)
 	if err != nil {
 		t.Fatalf("Error registering Resource Providers: %+v", err)
 	}

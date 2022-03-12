@@ -22,10 +22,10 @@ import (
 
 func image() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
-		Create: resourceImageCreateUpdate,
-		Read:   resourceImageRead,
-		Update: resourceImageCreateUpdate,
-		Delete: resourceImageDelete,
+		Create: imageCreateUpdate,
+		Read:   imageRead,
+		Update: imageCreateUpdate,
+		Delete: imageDelete,
 		Importer: pluginsdk.ImporterValidatingResourceId(func(id string) error {
 			_, err := parse.ImageID(id)
 			return err
@@ -171,7 +171,7 @@ func image() *pluginsdk.Resource {
 	}
 }
 
-func resourceImageCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
+func imageCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Compute.ImageClient
 	subscriptionId := meta.(*clients.Client).Account.SubscriptionId
 	ctx, cancel := timeouts.ForCreateUpdate(meta.(*clients.Client).StopContext, d)
@@ -245,10 +245,10 @@ func resourceImageCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) erro
 
 	d.SetId(id.ID())
 
-	return resourceImageRead(d, meta)
+	return imageRead(d, meta)
 }
 
-func resourceImageRead(d *pluginsdk.ResourceData, meta interface{}) error {
+func imageRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Compute.ImageClient
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -291,7 +291,7 @@ func resourceImageRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	return tags.FlattenAndSet(d, resp.Tags)
 }
 
-func resourceImageDelete(d *pluginsdk.ResourceData, meta interface{}) error {
+func imageDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Compute.ImageClient
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()

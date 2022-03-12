@@ -16,7 +16,7 @@ import (
 
 type ImageResource struct{}
 
-func TestImageReource_standaloneImage(t *testing.T) {
+func TestImage_standaloneImage(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_image", "test")
 	r := ImageResource{}
 
@@ -47,7 +47,6 @@ resource "azurestack_image" "test" {
   name                = "accteste"
   resource_group_name = azurestack_resource_group.test.name
   location            = azurestack_resource_group.test.location
-  zone_resilient      = false
 
   os_disk {
     os_type  = "Linux"

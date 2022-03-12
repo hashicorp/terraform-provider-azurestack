@@ -22,7 +22,6 @@ resource "azurestack_image" "example" {
   name                = "acctest"
   location            = "local"
   resource_group_name = azurestack_resource_group.example.name
-  zone_resilient      = false
 
   os_disk {
     os_type  = "Linux"

@@ -157,7 +157,7 @@ func storageAccountDataSource() *schema.Resource {
 
 			"tags": tags.SchemaDataSource(),
 
-			"enable_https_traffic_only": {
+			"https_traffic_only_enabled": {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
@@ -227,7 +227,7 @@ func storageAccountDataSourceRead(d *schema.ResourceData, meta interface{}) erro
 		// Computed
 		d.Set("primary_location", props.PrimaryLocation)
 		d.Set("secondary_location", props.SecondaryLocation)
-		d.Set("enable_https_traffic_only", props.EnableHTTPSTrafficOnly)
+		d.Set("https_traffic_only_enabled", props.EnableHTTPSTrafficOnly)
 		if encryption := props.Encryption; encryption != nil {
 			if services := encryption.Services; services != nil {
 				if blob := services.Blob; blob != nil {

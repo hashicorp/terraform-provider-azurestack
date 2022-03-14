@@ -179,41 +179,6 @@ func keyVault() *schema.Resource {
 					},
 				},
 
-				// NOTE: not yet supported with ASH 2108
-				// "purge_protection_enabled": {
-				// 	Type:     schema.TypeBool,
-				// 	Optional: true,
-				// },
-
-				// "soft_delete_retention_days": {
-				// 	Type:         schema.TypeInt,
-				// 	Optional:     true,
-				// 	Default:      90,
-				// 	ValidateFunc: validation.IntBetween(7, 90),
-				// },
-
-				// NOTE: not supported
-				// "contact": {
-				// 	Type:     schema.TypeSet,
-				// 	Optional: true,
-				// 	Elem: &schema.Resource{
-				// 		Schema: map[string]*schema.Schema{
-				// 			"email": {
-				// 				Type:     schema.TypeString,
-				// 				Required: true,
-				// 			},
-				// 			"name": {
-				// 				Type:     schema.TypeString,
-				// 				Optional: true,
-				// 			},
-				// 			"phone": {
-				// 				Type:     schema.TypeString,
-				// 				Optional: true,
-				// 			},
-				// 		},
-				// 	},
-				// },
-
 				"tags": tags.Schema(),
 
 				// Computed
@@ -231,7 +196,6 @@ func keyVault() *schema.Resource {
 func keyVaultCreate(d *schema.ResourceData, meta interface{}) error {
 	subscriptionId := meta.(*clients.Client).Account.SubscriptionId
 	client := meta.(*clients.Client).KeyVault.VaultsClient
-	// dataPlaneClient := meta.(*clients.Client).KeyVault.ManagementClient for contact's certificate
 	ctx, cancel := timeouts.ForCreate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
@@ -254,28 +218,6 @@ func keyVaultCreate(d *schema.ResourceData, meta interface{}) error {
 	if !utils.ResponseWasNotFound(existing.Response) {
 		return tf.ImportAsExistsError("azurestack_key_vault", id.ID())
 	}
-
-	// NOTE: soft delete feature not yet supported with ASH 2108
-	// before creating check to see if the key vault exists in the soft delete state
-	// softDeletedKeyVault, err := client.GetDeleted(ctx, id.Name, location)
-	// if err != nil {
-	// 	// If Terraform lacks permission to read at the Subscription we'll get 409, not 404
-	// 	if !utils.ResponseWasNotFound(softDeletedKeyVault.Response) && !utils.ResponseWasForbidden(softDeletedKeyVault.Response) {
-	// 		return fmt.Errorf("checking for the presence of an existing Soft-Deleted Key Vault %q (Location %q): %+v", id.Name, location, err)
-	// 	}
-	// }
-
-	// // if so, does the user want us to recover it?
-
-	// recoverSoftDeletedKeyVault := false
-	// if !utils.ResponseWasNotFound(softDeletedKeyVault.Response) && !utils.ResponseWasForbidden(softDeletedKeyVault.Response) {
-	// 	if !meta.(*clients.Client).Features.KeyVault.RecoverSoftDeletedKeyVaults {
-	// 		// this exists but the users opted out so they must import this it out-of-band
-	// 		return fmt.Errorf(optedOutOfRecoveringSoftDeletedKeyVaultErrorFmt(id.Name, location))
-	// 	}
-
-	// 	recoverSoftDeletedKeyVault = true
-	// }
 
 	tenantUUID := uuid.FromStringOrNil(d.Get("tenant_id").(string))
 	enabledForDeployment := d.Get("enabled_for_deployment").(bool)
@@ -314,18 +256,6 @@ func keyVaultCreate(d *schema.ResourceData, meta interface{}) error {
 		},
 		Tags: tags.Expand(t),
 	}
-
-	// if purgeProtectionEnabled := d.Get("purge_protection_enabled").(bool); purgeProtectionEnabled {
-	// 	parameters.Properties.EnablePurgeProtection = utils.Bool(purgeProtectionEnabled)
-	// }
-
-	// if v := d.Get("soft_delete_retention_days"); v != 90 {
-	// 	parameters.Properties.SoftDeleteRetentionInDays = utils.Int32(int32(v.(int)))
-	// }
-
-	// if recoverSoftDeletedKeyVault {
-	// 	parameters.Properties.CreateMode = keyvault.CreateModeRecover
-	// }
 
 	// also lock on the Virtual Network ID's since modifications in the networking stack are exclusive
 	virtualNetworkNames := make([]string, 0)
@@ -375,24 +305,11 @@ func keyVaultCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	// if v, ok := d.GetOk("contact"); ok {
-	// 	contacts := KeyVaultMgmt.Contacts{
-	// 		ContactList: expandKeyVaultCertificateContactList(v.(*schema.Set).List()),
-	// 	}
-	// 	if read.Properties == nil || read.Properties.VaultURI == nil {
-	// 		return fmt.Errorf("failed to get vault base url for %s: %s", id, err)
-	// 	}
-	// 	if _, err := dataPlaneClient.SetCertificateContacts(ctx, *read.Properties.VaultURI, contacts); err != nil {
-	// 		return fmt.Errorf("failed to set Contacts for %s: %+v", id, err)
-	// 	}
-	// }
-
 	return keyVaultRead(d, meta)
 }
 
 func keyVaultUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).KeyVault.VaultsClient
-	// managementClient := meta.(*clients.Client).KeyVault.ManagementClient for contact's certificate
 	ctx, cancel := timeouts.ForUpdate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
@@ -488,28 +405,6 @@ func keyVaultUpdate(d *schema.ResourceData, meta interface{}) error {
 		update.Properties.NetworkAcls = networkAcls
 	}
 
-	// if d.HasChange("purge_protection_enabled") {
-	// 	if update.Properties == nil {
-	// 		update.Properties = &keyvault.VaultPatchProperties{}
-	// 	}
-
-	// 	newValue := d.Get("purge_protection_enabled").(bool)
-
-	// 	// existing.Properties guaranteed non-nil above
-	// 	oldValue := false
-	// 	if existing.Properties.EnablePurgeProtection != nil {
-	// 		oldValue = *existing.Properties.EnablePurgeProtection
-	// 	}
-
-	// 	// whilst this should have got caught in the customizeDiff this won't work if that fields interpolated
-	// 	// hence the double-checking here
-	// 	if oldValue && !newValue {
-	// 		return fmt.Errorf("updating %s: once Purge Protection has been Enabled it's not possible to disable it", *id)
-	// 	}
-
-	// 	update.Properties.EnablePurgeProtection = utils.Bool(newValue)
-	// }
-
 	if d.HasChange("sku_name") {
 		if update.Properties == nil {
 			update.Properties = &keyvault.VaultPatchProperties{}
@@ -520,27 +415,6 @@ func keyVaultUpdate(d *schema.ResourceData, meta interface{}) error {
 			Name:   keyvault.SkuName(d.Get("sku_name").(string)),
 		}
 	}
-
-	// if d.HasChange("soft_delete_retention_days") {
-	// 	if update.Properties == nil {
-	// 		update.Properties = &keyvault.VaultPatchProperties{}
-	// 	}
-
-	// 	// existing.Properties guaranteed non-nil above
-	// 	var oldValue int32 = 0
-	// 	if existing.Properties.SoftDeleteRetentionInDays != nil {
-	// 		oldValue = *existing.Properties.SoftDeleteRetentionInDays
-	// 	}
-
-	// 	// whilst this should have got caught in the customizeDiff this won't work if that fields interpolated
-	// 	// hence the double-checking here
-	// 	if oldValue != 0 {
-	// 		// Code="BadRequest" Message="The property \"softDeleteRetentionInDays\" has been set already and it can't be modified."
-	// 		return fmt.Errorf("updating %s: once `soft_delete_retention_days` has been configured it cannot be modified", *id)
-	// 	}
-
-	// 	update.Properties.SoftDeleteRetentionInDays = utils.Int32(int32(d.Get("soft_delete_retention_days").(int)))
-	// }
 
 	if d.HasChange("tenant_id") {
 		if update.Properties == nil {
@@ -560,26 +434,6 @@ func keyVaultUpdate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("updating %s: %+v", *id, err)
 	}
 
-	// if d.HasChange("contact") {
-	// 	contacts := KeyVaultMgmt.Contacts{
-	// 		ContactList: expandKeyVaultCertificateContactList(d.Get("contact").(*schema.Set).List()),
-	// 	}
-	// 	if existing.Properties == nil || existing.Properties.VaultURI == nil {
-	// 		return fmt.Errorf("failed to get vault base url for %s: %s", *id, err)
-	// 	}
-
-	// 	var err error
-	// 	if len(*contacts.ContactList) == 0 {
-	// 		_, err = managementClient.DeleteCertificateContacts(ctx, *existing.Properties.VaultURI)
-	// 	} else {
-	// 		_, err = managementClient.SetCertificateContacts(ctx, *existing.Properties.VaultURI, contacts)
-	// 	}
-
-	// 	if err != nil {
-	// 		return fmt.Errorf("setting Contacts for %s: %+v", *id, err)
-	// 	}
-	// }
-
 	d.Partial(false)
 
 	return keyVaultRead(d, meta)
@@ -587,7 +441,6 @@ func keyVaultUpdate(d *schema.ResourceData, meta interface{}) error {
 
 func keyVaultRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).KeyVault.VaultsClient
-	// managementClient := meta.(*clients.Client).KeyVault.ManagementClient for contact's certificate
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
@@ -624,18 +477,7 @@ func keyVaultRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("enabled_for_disk_encryption", props.EnabledForDiskEncryption)
 	d.Set("enabled_for_template_deployment", props.EnabledForTemplateDeployment)
 	d.Set("enable_rbac_authorization", props.EnableRbacAuthorization)
-	// d.Set("purge_protection_enabled", props.EnablePurgeProtection)
 	d.Set("vault_uri", props.VaultURI)
-
-	// @tombuildsstuff: the API doesn't return this field if it's not configured
-	// however https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-overview
-	// defaults this to 90 days, as such we're going to have to assume that for the moment
-	// in lieu of anything being returned
-	// softDeleteRetentionDays := 90
-	// if props.SoftDeleteRetentionInDays != nil && *props.SoftDeleteRetentionInDays != 0 {
-	// 	softDeleteRetentionDays = int(*props.SoftDeleteRetentionInDays)
-	// }
-	// d.Set("soft_delete_retention_days", softDeleteRetentionDays)
 
 	skuName := ""
 	if sku := props.Sku; sku != nil {
@@ -656,16 +498,6 @@ func keyVaultRead(d *schema.ResourceData, meta interface{}) error {
 	if err := d.Set("access_policy", flattenedPolicies); err != nil {
 		return fmt.Errorf("setting `access_policy` for KeyVault %q: %+v", *resp.Name, err)
 	}
-
-	// contactsResp, err := managementClient.GetCertificateContacts(ctx, *props.VaultURI)
-	// if err != nil {
-	// 	if !utils.ResponseWasForbidden(contactsResp.Response) && !utils.ResponseWasNotFound(contactsResp.Response) {
-	// 		return fmt.Errorf("retrieving `contact` for KeyVault: %+v", err)
-	// 	}
-	// }
-	// if err := d.Set("contact", flattenKeyVaultCertificateContactList(contactsResp)); err != nil {
-	// 	return fmt.Errorf("setting `contact` for KeyVault: %+v", err)
-	// }
 
 	return tags.FlattenAndSet(d, resp.Tags)
 }
@@ -699,16 +531,6 @@ func keyVaultDelete(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("retrieving %q: `location` was nil", *id)
 	}
 
-	// Check to see if purge protection is enabled or not...
-	// purgeProtectionEnabled := false
-	// if ppe := read.Properties.EnablePurgeProtection; ppe != nil {
-	// 	purgeProtectionEnabled = *ppe
-	// }
-	// softDeleteEnabled := false
-	// if sde := read.Properties.EnableSoftDelete; sde != nil {
-	// 	softDeleteEnabled = *sde
-	// }
-
 	// ensure we lock on the latest network names, to ensure we handle Azure's networking layer being limited to one change at a time
 	virtualNetworkNames := make([]string, 0)
 	if props := read.Properties; props != nil {
@@ -741,38 +563,6 @@ func keyVaultDelete(d *schema.ResourceData, meta interface{}) error {
 			return fmt.Errorf("retrieving %s: %+v", *id, err)
 		}
 	}
-
-	// Purge the soft deleted key vault permanently if the feature flag is enabled
-	// if meta.(*clients.Client).Features.KeyVault.PurgeSoftDeleteOnDestroy && softDeleteEnabled {
-	// 	// KeyVaults with Purge Protection Enabled cannot be deleted unless done by Azure
-	// 	if purgeProtectionEnabled {
-	// 		deletedInfo, err := getSoftDeletedStateForKeyVault(ctx, client, id.Name, *read.Location)
-	// 		if err != nil {
-	// 			return fmt.Errorf("retrieving the Deletion Details for %s: %+v", *id, err)
-	// 		}
-
-	// 		// in the future it'd be nice to raise a warning, but this is the best we can do for now
-	// 		if deletedInfo != nil {
-	// 			log.Printf("[DEBUG] The Key Vault %q has Purge Protection Enabled and was deleted on %q. Azure will purge this on %q", id.Name, deletedInfo.deleteDate, deletedInfo.purgeDate)
-	// 		} else {
-	// 			log.Printf("[DEBUG] The Key Vault %q has Purge Protection Enabled and will be purged automatically by Azure", id.Name)
-	// 		}
-	// 		return nil
-	// 	}
-
-	// 	log.Printf("[DEBUG] KeyVault %q marked for purge - executing purge", id.Name)
-	// 	future, err := client.PurgeDeleted(ctx, id.Name, *read.Location)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-
-	// 	log.Printf("[DEBUG] Waiting for purge of KeyVault %q..", id.Name)
-	// 	err = future.WaitForCompletionRef(ctx, client.Client)
-	// 	if err != nil {
-	// 		return fmt.Errorf("purging %s: %+v", *id, err)
-	// 	}
-	// 	log.Printf("[DEBUG] Purged KeyVault %q.", id.Name)
-	// }
 
 	meta.(*clients.Client).KeyVault.Purge(*id)
 
@@ -843,25 +633,6 @@ func expandKeyVaultNetworkAcls(input []interface{}) (*keyvault.NetworkRuleSet, [
 	return &ruleSet, subnetIds
 }
 
-// NOTE: kv's contact field not supported yet
-// func expandKeyVaultCertificateContactList(input []interface{}) *[]KeyVaultMgmt.Contact {
-// 	results := make([]KeyVaultMgmt.Contact, 0)
-// 	if len(input) == 0 || input[0] == nil {
-// 		return &results
-// 	}
-
-// 	for _, item := range input {
-// 		v := item.(map[string]interface{})
-// 		results = append(results, KeyVaultMgmt.Contact{
-// 			Name:         utils.String(v["name"].(string)),
-// 			EmailAddress: utils.String(v["email"].(string)),
-// 			Phone:        utils.String(v["phone"].(string)),
-// 		})
-// 	}
-
-// 	return &results
-// }
-
 func flattenKeyVaultNetworkAcls(input *keyvault.NetworkRuleSet) []interface{} {
 	if input == nil {
 		return []interface{}{
@@ -911,87 +682,3 @@ func flattenKeyVaultNetworkAcls(input *keyvault.NetworkRuleSet) []interface{} {
 
 	return []interface{}{output}
 }
-
-// NOTE: kv's contact field not supported yet
-// func flattenKeyVaultCertificateContactList(input KeyVaultMgmt.Contacts) []interface{} {
-// 	results := make([]interface{}, 0)
-// 	if input.ContactList == nil {
-// 		return results
-// 	}
-
-// 	for _, contact := range *input.ContactList {
-// 		emailAddress := ""
-// 		if contact.EmailAddress != nil {
-// 			emailAddress = *contact.EmailAddress
-// 		}
-
-// 		name := ""
-// 		if contact.Name != nil {
-// 			name = *contact.Name
-// 		}
-
-// 		phone := ""
-// 		if contact.Phone != nil {
-// 			phone = *contact.Phone
-// 		}
-
-// 		results = append(results, map[string]interface{}{
-// 			"email": emailAddress,
-// 			"name":  name,
-// 			"phone": phone,
-// 		})
-// 	}
-
-// 	return results
-// }
-
-// func optedOutOfRecoveringSoftDeletedKeyVaultErrorFmt(name, location string) string {
-// 	return fmt.Sprintf(`
-// An existing soft-deleted Key Vault exists with the Name %q in the location %q, however
-// automatically recovering this KeyVault has been disabled via the "features" block.
-
-// Terraform can automatically recover the soft-deleted Key Vault when this behaviour is
-// enabled within the "features" block (located within the "provider" block) - more
-// information can be found here:
-
-// https://www.terraform.io/docs/providers/azurerm/index.html#features
-
-// Alternatively you can manually recover this (e.g. using the Azure CLI) and then import
-// this into Terraform via "terraform import", or pick a different name/location.
-// `, name, location)
-// }
-
-// type keyVaultDeletionStatus struct {
-// 	deleteDate string
-// 	purgeDate  string
-// }
-
-// func getSoftDeletedStateForKeyVault(ctx context.Context, client *keyvault.VaultsClient, name string, location string) (*keyVaultDeletionStatus, error) {
-// 	softDel, err := client.GetDeleted(ctx, name, location)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	// we found an existing key vault that is not soft deleted
-// 	if softDel.Properties == nil {
-// 		return nil, nil // nolint:nilnil
-// 	}
-
-// 	// the logic is this way because the GetDeleted call will return an existing key vault
-// 	// that is not soft deleted, but the Deleted Vault properties will be nil
-// 	props := *softDel.Properties
-
-// 	result := keyVaultDeletionStatus{}
-// 	if props.DeletionDate != nil {
-// 		result.deleteDate = props.DeletionDate.Format(time.RFC3339)
-// 	}
-// 	if props.ScheduledPurgeDate != nil {
-// 		result.purgeDate = props.ScheduledPurgeDate.Format(time.RFC3339)
-// 	}
-
-// 	if result.deleteDate == "" && result.purgeDate == "" {
-// 		return nil, nil // nolint:nilnil
-// 	}
-
-// 	return &result, nil
-// }

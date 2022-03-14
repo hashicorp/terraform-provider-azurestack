@@ -232,32 +232,6 @@ func keyVaultKeyCreate(d *schema.ResourceData, meta interface{}) error {
 
 	if _, err := client.CreateKey(ctx, *keyVaultBaseUri, name, parameters); err != nil {
 		return fmt.Errorf("Error Creating Key: %+v", err)
-		// NOTE: soft delete disabled, cannot recover soft delete key
-		// if meta.(*clients.Client).Features.KeyVault.RecoverSoftDeletedKeyVaults && utils.ResponseWasConflict(resp.Response) {
-		// 	recoveredKey, err := client.RecoverDeletedKey(ctx, *keyVaultBaseUri, name)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	log.Printf("[DEBUG] Recovering Key %q with ID: %q", name, *recoveredKey.Key.Kid)
-		// 	if kid := recoveredKey.Key.Kid; kid != nil {
-		// 		stateConf := &resource.StateChangeConf{
-		// 			Pending:                   []string{"pending"},
-		// 			Target:                    []string{"available"},
-		// 			Refresh:                   keyVaultChildItemRefreshFunc(*kid),
-		// 			Delay:                     30 * time.Second,
-		// 			PollInterval:              10 * time.Second,
-		// 			ContinuousTargetOccurence: 10,
-		// 			Timeout:                   d.Timeout(schema.TimeoutCreate),
-		// 		}
-
-		// 		if _, err := stateConf.WaitForStateContext(ctx); err != nil {
-		// 			return fmt.Errorf("Error waiting for Key Vault Secret %q to become available: %s", name, err)
-		// 		}
-		// 		log.Printf("[DEBUG] Key %q recovered with ID: %q", name, *kid)
-		// 	}
-		// } else {
-		// 	return fmt.Errorf("Error Creating Key: %+v", err)
-		// }
 	}
 
 	// "" indicates the latest version

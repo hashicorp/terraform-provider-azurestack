@@ -52,21 +52,6 @@ func TestAccKeyVaultKey_requiresImport(t *testing.T) {
 	})
 }
 
-// NOTE: Hardware key operation not allowed on standard vault
-// func TestAccKeyVaultKey_basicECHSM(t *testing.T) {
-// 	data := acceptance.BuildTestData(t, "azurestack_key_vault_key", "test")
-// 	r := KeyVaultKeyResource{}
-
-// 	data.ResourceTest(t, r, []resource.TestStep{
-// 		{
-// 			Config: r.basicECHSM(data),
-// 			Check: resource.ComposeTestCheckFunc(
-// 				check.That(data.ResourceName).ExistsInAzure(r),
-// 			),
-// 		},
-// 	})
-// }
-
 func TestAccKeyVaultKey_curveEC(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_key_vault_key", "test")
 	r := KeyVaultKeyResource{}
@@ -97,22 +82,6 @@ func TestAccKeyVaultKey_basicRSA(t *testing.T) {
 	})
 }
 
-// NOTE: Hardware key operation not allowed on standard vault
-// func TestAccKeyVaultKey_basicRSAHSM(t *testing.T) {
-// 	data := acceptance.BuildTestData(t, "azurestack_key_vault_key", "test")
-// 	r := KeyVaultKeyResource{}
-
-// 	data.ResourceTest(t, r, []resource.TestStep{
-// 		{
-// 			Config: r.basicRSAHSM(data),
-// 			Check: resource.ComposeTestCheckFunc(
-// 				check.That(data.ResourceName).ExistsInAzure(r),
-// 			),
-// 		},
-// 		data.ImportStep("key_size"),
-// 	})
-// }
-
 func TestAccKeyVaultKey_complete(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_key_vault_key", "test")
 	r := KeyVaultKeyResource{}
@@ -132,39 +101,6 @@ func TestAccKeyVaultKey_complete(t *testing.T) {
 		data.ImportStep("key_size"),
 	})
 }
-
-// func TestAccKeyVaultKey_softDeleteRecovery(t *testing.T) {
-// 	data := acceptance.BuildTestData(t, "azurestack_key_vault_key", "test")
-// 	r := KeyVaultKeyResource{}
-
-// 	data.ResourceTest(t, r, []resource.TestStep{
-// 		{
-// 			Config: r.softDeleteRecovery(data, false),
-// 			Check: resource.ComposeTestCheckFunc(
-// 				check.That(data.ResourceName).ExistsInAzure(r),
-// 				check.That(data.ResourceName).Key("not_before_date").HasValue("2020-01-01T01:02:03Z"),
-// 				check.That(data.ResourceName).Key("expiration_date").HasValue("2021-01-01T01:02:03Z"),
-// 				check.That(data.ResourceName).Key("tags.%").HasValue("1"),
-// 				check.That(data.ResourceName).Key("tags.hello").HasValue("world"),
-// 			),
-// 		},
-// 		data.ImportStep("key_size"),
-// 		{
-// 			Config:  r.softDeleteRecovery(data, false),
-// 			Destroy: true,
-// 		},
-// 		{
-// 			Config: r.softDeleteRecovery(data, true),
-// 			Check: resource.ComposeTestCheckFunc(
-// 				check.That(data.ResourceName).ExistsInAzure(r),
-// 				check.That(data.ResourceName).Key("not_before_date").HasValue("2020-01-01T01:02:03Z"),
-// 				check.That(data.ResourceName).Key("expiration_date").HasValue("2021-01-01T01:02:03Z"),
-// 				check.That(data.ResourceName).Key("tags.%").HasValue("1"),
-// 				check.That(data.ResourceName).Key("tags.hello").HasValue("world"),
-// 			),
-// 		},
-// 	})
-// }
 
 func TestAccKeyVaultKey_update(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_key_vault_key", "test")
@@ -453,34 +389,6 @@ resource "azurestack_key_vault_key" "test" {
 `, r.templateStandard(data), data.RandomString)
 }
 
-// NOTE: at this moment, only Standard SKU is supported
-// nolint:unused
-func (r KeyVaultKeyResource) basicRSAHSM(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-%s
-
-resource "azurestack_key_vault_key" "test" {
-  name         = "key-%s"
-  key_vault_id = azurestack_key_vault.test.id
-  key_type     = "RSA-HSM"
-  key_size     = 2048
-
-  key_opts = [
-    "decrypt",
-    "encrypt",
-    "sign",
-    "unwrapKey",
-    "verify",
-    "wrapKey",
-  ]
-}
-`, r.templatePremium(data), data.RandomString)
-}
-
 func (r KeyVaultKeyResource) complete(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
@@ -558,68 +466,6 @@ resource "azurestack_key_vault_key" "test" {
   ]
 }
 `, r.templateStandard(data), data.RandomString)
-}
-
-// NOTE: at this moment, only Standard SKU is supported
-// nolint:unused
-func (r KeyVaultKeyResource) basicECHSM(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-%s
-
-resource "azurestack_key_vault_key" "test" {
-  name         = "key-%s"
-  key_vault_id = azurestack_key_vault.test.id
-  key_type     = "EC-HSM"
-  curve        = "P-521"
-
-  key_opts = [
-    "sign",
-    "verify",
-  ]
-}
-`, r.templatePremium(data), data.RandomString)
-}
-
-// nolint:unused
-func (r KeyVaultKeyResource) softDeleteRecovery(data acceptance.TestData, purge bool) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {
-    key_vault {
-      purge_soft_delete_on_destroy    = "%t"
-      recover_soft_deleted_key_vaults = true
-    }
-  }
-}
-
-%s
-
-resource "azurestack_key_vault_key" "test" {
-  name            = "key-%s"
-  key_vault_id    = azurestack_key_vault.test.id
-  key_type        = "RSA"
-  key_size        = 2048
-  not_before_date = "2020-01-01T01:02:03Z"
-  expiration_date = "2021-01-01T01:02:03Z"
-
-  key_opts = [
-    "decrypt",
-    "encrypt",
-    "sign",
-    "unwrapKey",
-    "verify",
-    "wrapKey",
-  ]
-
-  tags = {
-    "hello" = "world"
-  }
-}
-`, purge, r.templateStandard(data), data.RandomString)
 }
 
 func (KeyVaultKeyResource) withExternalAccessPolicy(data acceptance.TestData) string {
@@ -751,11 +597,6 @@ resource "azurestack_key_vault_key" "test" {
 
 func (r KeyVaultKeyResource) templateStandard(data acceptance.TestData) string {
 	return r.template(data, "standard")
-}
-
-// nolint:unused
-func (r KeyVaultKeyResource) templatePremium(data acceptance.TestData) string {
-	return r.template(data, "premium")
 }
 
 func (KeyVaultKeyResource) template(data acceptance.TestData, sku string) string {

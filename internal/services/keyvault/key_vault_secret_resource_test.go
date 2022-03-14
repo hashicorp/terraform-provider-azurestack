@@ -148,33 +148,6 @@ func TestAccKeyVaultSecret_updatingValueChangedExternally(t *testing.T) {
 	})
 }
 
-// func TestAccKeyVaultSecret_recovery(t *testing.T) {
-// 	data := acceptance.BuildTestData(t, "azurestack_key_vault_secret", "test")
-// 	r := KeyVaultSecretResource{}
-
-// 	data.ResourceTest(t, r, []resource.TestStep{
-// 		{
-// 			Config: r.softDeleteRecovery(data, false),
-// 			Check: resource.ComposeTestCheckFunc(
-// 				check.That(data.ResourceName).ExistsInAzure(r),
-// 				check.That(data.ResourceName).Key("value").HasValue("rick-and-morty"),
-// 			),
-// 		},
-// 		{
-// 			Config:  r.softDeleteRecovery(data, false),
-// 			Destroy: true,
-// 		},
-// 		{
-// 			// purge true here to make sure when we end the test there's no soft-deleted items left behind
-// 			Config: r.softDeleteRecovery(data, true),
-// 			Check: resource.ComposeTestCheckFunc(
-// 				check.That(data.ResourceName).ExistsInAzure(r),
-// 				check.That(data.ResourceName).Key("value").HasValue("rick-and-morty"),
-// 			),
-// 		},
-// 	})
-// }
-
 func TestAccKeyVaultSecret_withExternalAccessPolicy(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_key_vault_secret", "test")
 	r := KeyVaultSecretResource{}
@@ -372,28 +345,6 @@ resource "azurestack_key_vault_secret" "test" {
   key_vault_id = azurestack_key_vault.test.id
 }
 `, r.template(data), data.RandomString)
-}
-
-// nolint:unused
-func (r KeyVaultSecretResource) softDeleteRecovery(data acceptance.TestData, purge bool) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {
-    key_vault {
-      purge_soft_delete_on_destroy    = "%t"
-      recover_soft_deleted_key_vaults = true
-    }
-  }
-}
-
-%s
-
-resource "azurestack_key_vault_secret" "test" {
-  name         = "secret-%s"
-  value        = "rick-and-morty"
-  key_vault_id = azurestack_key_vault.test.id
-}
-`, purge, r.template(data), data.RandomString)
 }
 
 func (KeyVaultSecretResource) withExternalAccessPolicy(data acceptance.TestData) string {

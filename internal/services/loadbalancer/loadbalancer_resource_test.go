@@ -308,7 +308,7 @@ resource "azurestack_resource_group" "test" {
 
 resource "azurestack_public_ip" "test" {
   name                = "test-ip-%d"
-  location            = azurestack_resource_group.test.location
+  location            = azurestack_resogit commit "refactor some unsupported parameters"  urce_group.test.location
   resource_group_name = azurestack_resource_group.test.name
   allocation_method   = "Static"
 }

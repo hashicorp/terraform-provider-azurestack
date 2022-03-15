@@ -390,13 +390,6 @@ func flattenLoadBalancerFrontendIpConfiguration(ipConfigs *[]network.FrontendIPC
 				}
 			}
 			ipConfig["inbound_nat_rules"] = pluginsdk.NewSet(pluginsdk.HashString, inboundNatRules)
-
-			outboundRules := make([]interface{}, 0)
-			if rules := props.OutboundRules; rules != nil {
-				for _, rule := range *rules {
-					outboundRules = append(outboundRules, *rule.ID)
-				}
-			}
 		}
 
 		result = append(result, ipConfig)

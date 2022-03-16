@@ -387,9 +387,6 @@ func TestAccVirtualMachine_optionalOSProfile(t *testing.T) {
 		{
 			Destroy: false,
 			Config:  r.basicLinuxMachine_destroy(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).DoesNotExistInAzure(r),
-			),
 		},
 		{
 			Config: r.basicLinuxMachine_attach_without_osProfile(data),
@@ -2268,9 +2265,9 @@ resource "azurestack_virtual_machine" "test" {
   }
 
   plan {
-    name      = "freeloadmaster"
-    publisher = "kemptech"
-    product   = "vlm-azure"
+    name      = "os"
+    product   = "rancheros"
+    publisher = "rancher"
   }
 
   tags = {

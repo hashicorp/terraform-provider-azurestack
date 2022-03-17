@@ -27,6 +27,12 @@ func TestExpandFeatures(t *testing.T) {
 			Name: "Complete Enabled",
 			Input: []interface{}{
 				map[string]interface{}{
+					"key_vault": []interface{}{
+						map[string]interface{}{
+							"purge_soft_delete_on_destroy":    true,
+							"recover_soft_deleted_key_vaults": true,
+						},
+					},
 					"resource_group": []interface{}{
 						map[string]interface{}{
 							"prevent_deletion_if_contains_resources": true,
@@ -44,6 +50,12 @@ func TestExpandFeatures(t *testing.T) {
 			Name: "Complete Disabled",
 			Input: []interface{}{
 				map[string]interface{}{
+					"key_vault": []interface{}{
+						map[string]interface{}{
+							"purge_soft_delete_on_destroy":    false,
+							"recover_soft_deleted_key_vaults": false,
+						},
+					},
 					"resource_group": []interface{}{
 						map[string]interface{}{
 							"prevent_deletion_if_contains_resources": false,

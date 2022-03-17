@@ -10,6 +10,7 @@ import (
 	authorization "github.com/hashicorp/terraform-provider-azurestack/internal/services/authorization/client"
 	compute "github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/client"
 	dns "github.com/hashicorp/terraform-provider-azurestack/internal/services/dns/client"
+	keyvault "github.com/hashicorp/terraform-provider-azurestack/internal/services/keyvault/client"
 	loadbalancer "github.com/hashicorp/terraform-provider-azurestack/internal/services/loadbalancer/client"
 	network "github.com/hashicorp/terraform-provider-azurestack/internal/services/network/client"
 	resource "github.com/hashicorp/terraform-provider-azurestack/internal/services/resource/client"
@@ -24,6 +25,7 @@ type Client struct {
 	Authorization *authorization.Client
 	Compute       *compute.Client
 	Dns           *dns.Client
+	KeyVault      *keyvault.Client
 	LoadBalancer  *loadbalancer.Client
 	Network       *network.Client
 	Resource      *resource.Client
@@ -44,6 +46,7 @@ func (client *Client) Build(ctx context.Context, o *common.ClientOptions) error 
 	client.Authorization = authorization.NewClient(o)
 	client.Compute = compute.NewClient(o)
 	client.Dns = dns.NewClient(o)
+	client.KeyVault = keyvault.NewClient(o)
 	client.LoadBalancer = loadbalancer.NewClient(o)
 	client.Network = network.NewClient(o)
 	client.Resource = resource.NewClient(o)

@@ -69,15 +69,15 @@ func Build(ctx context.Context, builder ClientBuilder) (*Client, error) {
 	}
 
 	// Key Vault Endpoints
-	// keyVaultAuth := builder.AuthConfig.BearerAuthorizerCallback(ctx, sender, oauthConfig)
+	keyVaultAuth := builder.AuthConfig.ADALBearerAuthorizerCallback(ctx, sender, oauthConfig)
 
 	o := &common.ClientOptions{
-		SubscriptionId:   builder.AuthConfig.SubscriptionID,
-		TenantID:         builder.AuthConfig.TenantID,
-		TerraformVersion: builder.TerraformVersion,
-		GraphAuthorizer:  graphAuth,
-		GraphEndpoint:    graphEndpoint,
-		// KeyVaultAuthorizer:          keyVaultAuth,
+		SubscriptionId:              builder.AuthConfig.SubscriptionID,
+		TenantID:                    builder.AuthConfig.TenantID,
+		TerraformVersion:            builder.TerraformVersion,
+		GraphAuthorizer:             graphAuth,
+		GraphEndpoint:               graphEndpoint,
+		KeyVaultAuthorizer:          keyVaultAuth,
 		ResourceManagerAuthorizer:   auth,
 		ResourceManagerEndpoint:     endpoint,
 		StorageAuthorizer:           storageAuth,

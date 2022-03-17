@@ -2240,9 +2240,9 @@ resource "azurestack_virtual_machine" "test" {
   vm_size               = "Standard_DS1_v2"
 
   storage_image_reference {
-    publisher = "kemptech"
-    offer     = "vlm-azure"
-    sku       = "freeloadmaster"
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "16.04-LTS"
     version   = "latest"
   }
 

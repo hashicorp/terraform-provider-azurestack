@@ -740,8 +740,6 @@ func virtualMachineScaleSet() *pluginsdk.Resource {
 		},
 
 		CustomizeDiff: pluginsdk.CustomizeDiffShim(azureRmVirtualMachineScaleSetCustomizeDiff),
-
-		DeprecationMessage: "use `linux_virtual_machine_scale_set` or `windows_virtual_machine_scale_set` instead",
 	}
 }
 

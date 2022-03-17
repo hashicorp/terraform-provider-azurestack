@@ -53,6 +53,16 @@ func loadBalancer() *pluginsdk.Resource {
 
 			"resource_group_name": commonschema.ResourceGroupName(),
 
+			"sku": {
+				Type:     pluginsdk.TypeString,
+				Optional: true,
+				Default:  string(network.LoadBalancerSkuNameBasic),
+				ForceNew: true,
+				ValidateFunc: validation.StringInSlice([]string{
+					string(network.LoadBalancerSkuNameBasic),
+				}, false),
+			},
+
 			"frontend_ip_configuration": {
 				Type:     pluginsdk.TypeList,
 				Optional: true,
@@ -192,9 +202,12 @@ func loadBalancerCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error
 	}
 
 	loadBalancer := network.LoadBalancer{
-		Name:                         pointer.FromString(id.Name),
-		Location:                     pointer.FromString(location.Normalize(d.Get("location").(string))),
-		Tags:                         tags.Expand(d.Get("tags").(map[string]interface{})),
+		Name:     pointer.FromString(id.Name),
+		Location: pointer.FromString(location.Normalize(d.Get("location").(string))),
+		Tags:     tags.Expand(d.Get("tags").(map[string]interface{})),
+		Sku: &network.LoadBalancerSku{
+			Name: network.LoadBalancerSkuName(d.Get("sku").(string)),
+		},
 		LoadBalancerPropertiesFormat: &properties,
 	}
 
@@ -234,6 +247,10 @@ func loadBalancerRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	d.Set("name", id.Name)
 	d.Set("resource_group_name", id.ResourceGroup)
 	d.Set("location", location.NormalizeNilable(resp.Location))
+
+	if sku := resp.Sku; sku != nil {
+		d.Set("sku", string(sku.Name))
+	}
 
 	if props := resp.LoadBalancerPropertiesFormat; props != nil {
 		if feipConfigs := props.FrontendIPConfigurations; feipConfigs != nil {

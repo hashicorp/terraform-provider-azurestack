@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/parse"
@@ -155,6 +156,11 @@ func storageAccountDataSource() *schema.Resource {
 			},
 
 			"tags": tags.SchemaDataSource(),
+
+			"https_traffic_only_enabled": {
+				Type:     schema.TypeBool,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -221,7 +227,7 @@ func storageAccountDataSourceRead(d *schema.ResourceData, meta interface{}) erro
 		// Computed
 		d.Set("primary_location", props.PrimaryLocation)
 		d.Set("secondary_location", props.SecondaryLocation)
-
+		d.Set("https_traffic_only_enabled", props.EnableHTTPSTrafficOnly)
 		if encryption := props.Encryption; encryption != nil {
 			if services := encryption.Services; services != nil {
 				if blob := services.Blob; blob != nil {

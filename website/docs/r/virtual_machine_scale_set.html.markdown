@@ -129,7 +129,6 @@ The following arguments are supported:
 * `storage_profile_image_reference` - (Optional) A storage profile image reference block as documented below.
 * `extension` - (Optional) Can be specified multiple times to add extension profiles to the scale set. Each `extension` block supports the fields documented below.
 * `plan` - (Optional) A plan block as documented below.
-* `priority` - (Optional) **NOT SUPPORTED** Specifies the priority for the virtual machines in the scale set, defaults to `Regular`. Possible values are `Low` and `Regular`.
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 
 -> **Please Note**: Availability Zones are [in Preview and only supported in several regions at this time](https://docs.microsoft.com/en-us/azure/availability-zones/az-overview) - as such you must be opted into the Preview to use this functionality. You can [opt into the Availability Zones Preview in the Azure Portal](http://aka.ms/azenroll).

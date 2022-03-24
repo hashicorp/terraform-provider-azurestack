@@ -9,6 +9,7 @@ import (
 )
 
 func TestAccLinuxVirtualMachine_networkMultiple(t *testing.T) {
+	t.Skip("Skipped because the investigation about if multiple nic are supported is still ongoing")
 	data := acceptance.BuildTestData(t, "azurestack_linux_virtual_machine", "test")
 	r := LinuxVirtualMachineResource{}
 
@@ -52,6 +53,7 @@ func TestAccLinuxVirtualMachine_networkMultiple(t *testing.T) {
 }
 
 func TestAccLinuxVirtualMachine_networkMultiplePublic(t *testing.T) {
+	t.Skip("Skipped because the investigation about if multiple nic are supported is still ongoing")
 	data := acceptance.BuildTestData(t, "azurestack_linux_virtual_machine", "test")
 	r := LinuxVirtualMachineResource{}
 

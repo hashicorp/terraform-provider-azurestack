@@ -79,6 +79,7 @@ func TestAccVirtualMachine_basicLinuxMachine_disappears(t *testing.T) {
 }
 
 func TestAccVirtualMachine_basicLinuxMachineUseExistingOsDiskImage(t *testing.T) {
+	t.Skip("Skipped because the investigation about blob error still ongoing")
 	data := acceptance.BuildTestData(t, "azurestack_virtual_machine", "test")
 	r := VirtualMachineResource{}
 

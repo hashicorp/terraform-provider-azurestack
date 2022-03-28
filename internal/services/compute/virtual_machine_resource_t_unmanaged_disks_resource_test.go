@@ -780,6 +780,7 @@ resource "azurestack_virtual_machine" "test" {
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger)
 }
 
+//nolint:unused
 func (r VirtualMachineResource) basicLinuxMachineUseExistingOsDiskImage(data acceptance.TestData) string {
 	return fmt.Sprintf(`%s
 resource "azurestack_network_interface" "mirror" {

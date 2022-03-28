@@ -79,7 +79,12 @@ func TestAccVirtualMachine_basicLinuxMachine_disappears(t *testing.T) {
 }
 
 func TestAccVirtualMachine_basicLinuxMachineUseExistingOsDiskImage(t *testing.T) {
-	t.Skip("Skipped because the investigation about blob error still ongoing")
+	t.Skip("Skipped because of blob error. Check in comments for more information.")
+	/* During this test causes an error when trying to mirror an existing VM,
+	needs to be confirmed if it's supported for mirroring an existent VM or
+	the reason of blob error.
+	*/
+
 	data := acceptance.BuildTestData(t, "azurestack_virtual_machine", "test")
 	r := VirtualMachineResource{}
 

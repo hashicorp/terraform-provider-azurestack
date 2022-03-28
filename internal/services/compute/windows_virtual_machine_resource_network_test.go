@@ -9,7 +9,11 @@ import (
 )
 
 func TestAccWindowsVirtualMachine_networkMultiple(t *testing.T) {
-	t.Skip("Skipped because the investigation about if multiple nic are supported is still ongoing")
+	t.Skip("Skipped because the investigation about if multiple nic are supported is still ongoing. Check in comments for more information.")
+	/* During this test causes an error when using multiple NICs, needs to be confirmed if it's supported for multiple NICs, because using with a single
+	NIC works without issues.
+	*/
+
 	data := acceptance.BuildTestData(t, "azurestack_windows_virtual_machine", "test")
 	r := WindowsVirtualMachineResource{}
 
@@ -53,7 +57,11 @@ func TestAccWindowsVirtualMachine_networkMultiple(t *testing.T) {
 }
 
 func TestAccWindowsVirtualMachine_networkMultiplePublic(t *testing.T) {
-	t.Skip("Skipped because the investigation about if multiple nic are supported is still ongoing")
+	t.Skip("Skipped because the investigation about if multiple nic are supported is still ongoing. Check in comments for more information.")
+	/* During this test causes an error when using multiple NICs, needs to be confirmed if it's supported for multiple NICs, because using with a single
+	NIC works without issues.
+	*/
+
 	data := acceptance.BuildTestData(t, "azurestack_windows_virtual_machine", "test")
 	r := WindowsVirtualMachineResource{}
 

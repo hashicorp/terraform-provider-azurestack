@@ -284,6 +284,7 @@ func TestAccLinuxVirtualMachine_networkPublicStaticPrivateUpdate(t *testing.T) {
 	})
 }
 
+//nolint:unused
 func (r LinuxVirtualMachineResource) networkMultipleTemplate(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -314,6 +315,7 @@ resource "azurestack_network_interface" "second" {
 `, r.templateBase(data), data.RandomInteger, data.RandomInteger)
 }
 
+//nolint:unused
 func (r LinuxVirtualMachineResource) networkMultiple(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -349,6 +351,7 @@ resource "azurestack_linux_virtual_machine" "test" {
 `, r.networkMultipleTemplate(data), data.RandomInteger)
 }
 
+//nolint:unused
 func (r LinuxVirtualMachineResource) networkMultipleUpdated(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -384,6 +387,7 @@ resource "azurestack_linux_virtual_machine" "test" {
 `, r.networkMultipleTemplate(data), data.RandomInteger)
 }
 
+//nolint:unused
 func (r LinuxVirtualMachineResource) networkMultipleRemoved(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -418,6 +422,7 @@ resource "azurestack_linux_virtual_machine" "test" {
 `, r.networkMultipleTemplate(data), data.RandomInteger)
 }
 
+//nolint:unused
 func (r LinuxVirtualMachineResource) networkMultiplePublicTemplate(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -464,6 +469,7 @@ resource "azurestack_network_interface" "second" {
 `, r.templateBase(data), data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger)
 }
 
+//nolint:unused
 func (r LinuxVirtualMachineResource) networkMultiplePublic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -499,6 +505,7 @@ resource "azurestack_linux_virtual_machine" "test" {
 `, r.networkMultiplePublicTemplate(data), data.RandomInteger)
 }
 
+//nolint:unused
 func (r LinuxVirtualMachineResource) networkMultiplePublicUpdated(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -534,6 +541,7 @@ resource "azurestack_linux_virtual_machine" "test" {
 `, r.networkMultiplePublicTemplate(data), data.RandomInteger)
 }
 
+//nolint:unused
 func (r LinuxVirtualMachineResource) networkMultiplePublicRemoved(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s

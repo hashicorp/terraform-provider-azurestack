@@ -280,6 +280,7 @@ func TestAccWindowsVirtualMachine_networkPublicStaticPrivateUpdate(t *testing.T)
 	})
 }
 
+//nolint:unused
 func (r WindowsVirtualMachineResource) networkMultipleTemplate(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -310,6 +311,7 @@ resource "azurestack_network_interface" "second" {
 `, r.templateBase(data), data.RandomInteger, data.RandomInteger)
 }
 
+//nolint:unused
 func (r WindowsVirtualMachineResource) networkMultiple(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -341,6 +343,7 @@ resource "azurestack_windows_virtual_machine" "test" {
 `, r.networkMultipleTemplate(data))
 }
 
+//nolint:unused
 func (r WindowsVirtualMachineResource) networkMultipleUpdated(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -372,6 +375,7 @@ resource "azurestack_windows_virtual_machine" "test" {
 `, r.networkMultipleTemplate(data))
 }
 
+//nolint:unused
 func (r WindowsVirtualMachineResource) networkMultipleRemoved(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -402,6 +406,7 @@ resource "azurestack_windows_virtual_machine" "test" {
 `, r.networkMultipleTemplate(data))
 }
 
+//nolint:unused
 func (r WindowsVirtualMachineResource) networkMultiplePublicTemplate(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -448,6 +453,7 @@ resource "azurestack_network_interface" "second" {
 `, r.templateBase(data), data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger)
 }
 
+//nolint:unused
 func (r WindowsVirtualMachineResource) networkMultiplePublic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -479,6 +485,7 @@ resource "azurestack_windows_virtual_machine" "test" {
 `, r.networkMultiplePublicTemplate(data))
 }
 
+//nolint:unused
 func (r WindowsVirtualMachineResource) networkMultiplePublicUpdated(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -510,6 +517,7 @@ resource "azurestack_windows_virtual_machine" "test" {
 `, r.networkMultiplePublicTemplate(data))
 }
 
+//nolint:unused
 func (r WindowsVirtualMachineResource) networkMultiplePublicRemoved(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s

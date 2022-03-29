@@ -134,7 +134,7 @@ func storageBlob() *schema.Resource {
 				ValidateFunc: validation.IntAtLeast(1),
 			},
 
-			"metadata": MetaDataSchema(),
+			"metadata": MetaDataComputedSchema(),
 		},
 	}
 }

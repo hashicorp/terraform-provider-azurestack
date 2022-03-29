@@ -32,38 +32,6 @@ func TestExpandFeatures(t *testing.T) {
 			Name: "Complete Enabled",
 			Input: []interface{}{
 				map[string]interface{}{
-					"api_management": []interface{}{
-						map[string]interface{}{
-							"purge_soft_delete_on_destroy": true,
-						},
-					},
-					"cognitive_account": []interface{}{
-						map[string]interface{}{
-							"purge_soft_delete_on_destroy": true,
-						},
-					},
-					"key_vault": []interface{}{
-						map[string]interface{}{
-							"purge_soft_deleted_certificates_on_destroy": true,
-							"purge_soft_deleted_keys_on_destroy":         true,
-							"purge_soft_deleted_secrets_on_destroy":      true,
-							"purge_soft_delete_on_destroy":               true,
-							"recover_soft_deleted_certificates":          true,
-							"recover_soft_deleted_keys":                  true,
-							"recover_soft_deleted_key_vaults":            true,
-							"recover_soft_deleted_secrets":               true,
-						},
-					},
-					"log_analytics_workspace": []interface{}{
-						map[string]interface{}{
-							"permanently_delete_on_destroy": true,
-						},
-					},
-					"network": []interface{}{
-						map[string]interface{}{
-							"relaxed_locking": true,
-						},
-					},
 					"resource_group": []interface{}{
 						map[string]interface{}{
 							"prevent_deletion_if_contains_resources": true,
@@ -105,38 +73,6 @@ func TestExpandFeatures(t *testing.T) {
 			Name: "Complete Disabled",
 			Input: []interface{}{
 				map[string]interface{}{
-					"api_management": []interface{}{
-						map[string]interface{}{
-							"purge_soft_delete_on_destroy": false,
-						},
-					},
-					"cognitive_account": []interface{}{
-						map[string]interface{}{
-							"purge_soft_delete_on_destroy": false,
-						},
-					},
-					"key_vault": []interface{}{
-						map[string]interface{}{
-							"purge_soft_deleted_certificates_on_destroy": false,
-							"purge_soft_deleted_keys_on_destroy":         false,
-							"purge_soft_deleted_secrets_on_destroy":      false,
-							"purge_soft_delete_on_destroy":               false,
-							"recover_soft_deleted_certificates":          false,
-							"recover_soft_deleted_keys":                  false,
-							"recover_soft_deleted_key_vaults":            false,
-							"recover_soft_deleted_secrets":               false,
-						},
-					},
-					"log_analytics_workspace": []interface{}{
-						map[string]interface{}{
-							"permanently_delete_on_destroy": false,
-						},
-					},
-					"network_locking": []interface{}{
-						map[string]interface{}{
-							"relaxed_locking": false,
-						},
-					},
 					"resource_group": []interface{}{
 						map[string]interface{}{
 							"prevent_deletion_if_contains_resources": false,

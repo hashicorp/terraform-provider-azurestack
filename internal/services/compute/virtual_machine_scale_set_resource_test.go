@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"regexp"
 	"testing"
-	"time"
 
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -49,37 +48,6 @@ func TestAccVirtualMachineScaleSet_requiresImport(t *testing.T) {
 			Config:      r.requiresImport(data),
 			ExpectError: acceptance.RequiresImportError("azurestack_virtual_machine_scale_set"),
 		},
-	})
-}
-
-func TestAccVirtualMachineScaleSet_evictionPolicyDelete(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine_scale_set", "test")
-	r := VirtualMachineScaleSetResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.evictionPolicyDelete(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("eviction_policy").HasValue("Delete"),
-			),
-		},
-		data.ImportStep("os_profile.0.admin_password"),
-	})
-}
-
-func TestAccVirtualMachineScaleSet_standardSSD(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine_scale_set", "test")
-	r := VirtualMachineScaleSetResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.standardSSD(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("os_profile.0.admin_password"),
 	})
 }
 
@@ -182,21 +150,6 @@ func TestAccVirtualMachineScaleSet_verify_key_data_changed(t *testing.T) {
 			),
 		},
 		data.ImportStep("os_profile.0.admin_password", "os_profile.0.custom_data"),
-	})
-}
-
-func TestAccVirtualMachineScaleSet_basicAcceleratedNetworking(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine_scale_set", "test")
-	r := VirtualMachineScaleSetResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.basicAcceleratedNetworking(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("os_profile.0.admin_password"),
 	})
 }
 
@@ -420,21 +373,6 @@ func TestAccVirtualMachineScaleSet_planManagedDisk(t *testing.T) {
 	})
 }
 
-func TestAccVirtualMachineScaleSet_applicationGateway(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine_scale_set", "test")
-	r := VirtualMachineScaleSetResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.applicationGatewayTemplate(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				data.CheckWithClient(r.hasApplicationGateway),
-			),
-		},
-	})
-}
-
 func TestAccVirtualMachineScaleSet_loadBalancer(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_virtual_machine_scale_set", "test")
 	r := VirtualMachineScaleSetResource{}
@@ -482,22 +420,6 @@ func TestAccVirtualMachineScaleSet_overprovision(t *testing.T) {
 	})
 }
 
-func TestAccVirtualMachineScaleSet_priority(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine_scale_set", "test")
-	r := VirtualMachineScaleSetResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.priorityTemplate(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("priority").HasValue("Low"),
-				check.That(data.ResourceName).Key("eviction_policy").HasValue("Deallocate"),
-			),
-		},
-	})
-}
-
 func TestAccVirtualMachineScaleSet_extension(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_virtual_machine_scale_set", "test")
 	r := VirtualMachineScaleSetResource{}
@@ -530,36 +452,6 @@ func TestAccVirtualMachineScaleSet_extensionUpdate(t *testing.T) {
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
-	})
-}
-
-func TestAccVirtualMachineScaleSet_multipleExtensions(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine_scale_set", "test")
-	r := VirtualMachineScaleSetResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.multipleExtensionsTemplate(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("os_profile.0.admin_password"),
-	})
-}
-
-func TestAccVirtualMachineScaleSet_multipleExtensions_provision_after_extension(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine_scale_set", "test")
-	r := VirtualMachineScaleSetResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.multipleExtensionsTemplate_provision_after_extension(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("os_profile.0.admin_password"),
 	})
 }
 
@@ -626,93 +518,6 @@ func TestAccVirtualMachineScaleSet_multipleNetworkProfiles(t *testing.T) {
 	})
 }
 
-func TestAccVirtualMachineScaleSet_AutoUpdates(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine_scale_set", "test")
-	r := VirtualMachineScaleSetResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.rollingAutoUpdates(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-	})
-}
-
-func TestAccVirtualMachineScaleSet_upgradeModeUpdate(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine_scale_set", "test")
-	r := VirtualMachineScaleSetResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.upgradeModeUpdate(data, "Manual"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("upgrade_policy_mode").HasValue("Manual"),
-				acceptance.TestCheckNoResourceAttr(data.ResourceName, "rolling_upgrade_policy.#"),
-			),
-		},
-		{
-			Config: r.upgradeModeUpdate(data, "Automatic"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("upgrade_policy_mode").HasValue("Automatic"),
-				acceptance.TestCheckNoResourceAttr(data.ResourceName, "rolling_upgrade_policy.#"),
-			),
-		},
-		{
-			Config: r.upgradeModeUpdate(data, "Rolling"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("upgrade_policy_mode").HasValue("Rolling"),
-				check.That(data.ResourceName).Key("rolling_upgrade_policy.#").HasValue("1"),
-				check.That(data.ResourceName).Key("rolling_upgrade_policy.0.max_batch_instance_percent").HasValue("21"),
-				check.That(data.ResourceName).Key("rolling_upgrade_policy.0.max_unhealthy_instance_percent").HasValue("22"),
-				check.That(data.ResourceName).Key("rolling_upgrade_policy.0.max_unhealthy_upgraded_instance_percent").HasValue("23"),
-			),
-		},
-		{
-			PreConfig: func() { time.Sleep(1 * time.Minute) }, // VM Scale Set updates are not allowed while there is a Rolling Upgrade in progress.
-			Config:    r.upgradeModeUpdate(data, "Automatic"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("upgrade_policy_mode").HasValue("Automatic"),
-				check.That(data.ResourceName).Key("rolling_upgrade_policy.#").HasValue("1"),
-				check.That(data.ResourceName).Key("rolling_upgrade_policy.0.max_batch_instance_percent").HasValue("20"),
-				check.That(data.ResourceName).Key("rolling_upgrade_policy.0.max_unhealthy_instance_percent").HasValue("20"),
-				check.That(data.ResourceName).Key("rolling_upgrade_policy.0.max_unhealthy_upgraded_instance_percent").HasValue("20"),
-			),
-		},
-		{
-			Config: r.upgradeModeUpdate(data, "Manual"),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("upgrade_policy_mode").HasValue("Manual"),
-				check.That(data.ResourceName).Key("rolling_upgrade_policy.#").HasValue("1"),
-				check.That(data.ResourceName).Key("rolling_upgrade_policy.0.max_batch_instance_percent").HasValue("20"),
-				check.That(data.ResourceName).Key("rolling_upgrade_policy.0.max_unhealthy_instance_percent").HasValue("20"),
-				check.That(data.ResourceName).Key("rolling_upgrade_policy.0.max_unhealthy_upgraded_instance_percent").HasValue("20"),
-			),
-		},
-	})
-}
-
-func TestAccVirtualMachineScaleSet_importBasic_managedDisk_withZones(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine_scale_set", "test")
-	r := VirtualMachineScaleSetResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.basicLinux_managedDisk_withZones(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep("os_profile.0.admin_password"),
-	})
-}
-
 func (VirtualMachineScaleSetResource) Destroy(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
 	id, err := parse.VirtualMachineScaleSetID(state.ID)
 	if err != nil {
@@ -768,44 +573,6 @@ func (VirtualMachineScaleSetResource) hasLoadBalancer(ctx context.Context, clien
 	}
 
 	return fmt.Errorf("load balancer configuration was missing")
-}
-
-func (VirtualMachineScaleSetResource) hasApplicationGateway(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) error {
-	id, err := parse.VirtualMachineScaleSetID(state.ID)
-	if err != nil {
-		return err
-	}
-
-	read, err := client.Compute.VMScaleSetClient.Get(ctx, id.ResourceGroup, id.Name)
-	if err != nil {
-		return err
-	}
-
-	if props := read.VirtualMachineScaleSetProperties; props != nil {
-		if vmProfile := props.VirtualMachineProfile; vmProfile != nil {
-			if nwProfile := vmProfile.NetworkProfile; nwProfile != nil {
-				if nics := nwProfile.NetworkInterfaceConfigurations; nics != nil {
-					for _, nic := range *nics {
-						if nic.IPConfigurations == nil {
-							continue
-						}
-
-						for _, config := range *nic.IPConfigurations {
-							if config.ApplicationGatewayBackendAddressPools == nil {
-								continue
-							}
-
-							if len(*config.ApplicationGatewayBackendAddressPools) > 0 {
-								return nil
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return fmt.Errorf("application gateway configuration was missing")
 }
 
 func (t VirtualMachineScaleSetResource) Exists(ctx context.Context, clients *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
@@ -962,187 +729,6 @@ resource "azurestack_virtual_machine_scale_set" "import" {
 `, r.basic(data), data.RandomInteger, data.RandomInteger)
 }
 
-func (VirtualMachineScaleSetResource) evictionPolicyDelete(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%[1]d"
-  location = "%[2]s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%[1]d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%[1]d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_storage_account" "test" {
-  name                     = "accsa%[1]d"
-  resource_group_name      = azurestack_resource_group.test.name
-  location                 = azurestack_resource_group.test.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  tags = {
-    environment = "staging"
-  }
-}
-
-resource "azurestack_storage_container" "test" {
-  name                  = "vhds"
-  storage_account_name  = azurestack_storage_account.test.name
-  container_access_type = "private"
-}
-
-resource "azurestack_virtual_machine_scale_set" "test" {
-  name                = "acctvmss-%[1]d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  upgrade_policy_mode = "Manual"
-  priority            = "Low"
-  eviction_policy     = "Delete"
-
-  sku {
-    name     = "Standard_D1_v2"
-    tier     = "Standard"
-    capacity = 2
-  }
-
-  os_profile {
-    computer_name_prefix = "testvm-%[1]d"
-    admin_username       = "myadmin"
-    admin_password       = "Passwword1234"
-  }
-
-  network_profile {
-    name    = "TestNetworkProfile-%[1]d"
-    primary = true
-
-    ip_configuration {
-      name      = "TestIPConfiguration"
-      primary   = true
-      subnet_id = azurestack_subnet.test.id
-    }
-  }
-
-  storage_profile_os_disk {
-    name           = "osDiskProfile"
-    caching        = "ReadWrite"
-    create_option  = "FromImage"
-    vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
-  }
-
-  storage_profile_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary)
-}
-
-func (VirtualMachineScaleSetResource) standardSSD(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%[1]d"
-  location = "%[2]s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%[1]d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%[1]d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_storage_account" "test" {
-  name                     = "accsa%[1]d"
-  resource_group_name      = azurestack_resource_group.test.name
-  location                 = azurestack_resource_group.test.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  tags = {
-    environment = "staging"
-  }
-}
-
-resource "azurestack_storage_container" "test" {
-  name                  = "vhds"
-  storage_account_name  = azurestack_storage_account.test.name
-  container_access_type = "private"
-}
-
-resource "azurestack_virtual_machine_scale_set" "test" {
-  name                   = "acctvmss-%[1]d"
-  location               = azurestack_resource_group.test.location
-  resource_group_name    = azurestack_resource_group.test.name
-  upgrade_policy_mode    = "Manual"
-  single_placement_group = false
-
-  sku {
-    name     = "Standard_D1_v2"
-    tier     = "Standard"
-    capacity = 2
-  }
-
-  os_profile {
-    computer_name_prefix = "testvm-%[1]d"
-    admin_username       = "myadmin"
-    admin_password       = "Passwword1234"
-  }
-
-  network_profile {
-    name    = "TestNetworkProfile-%[1]d"
-    primary = true
-
-    ip_configuration {
-      name      = "TestIPConfiguration"
-      primary   = true
-      subnet_id = azurestack_subnet.test.id
-    }
-  }
-
-  storage_profile_os_disk {
-    name              = ""
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "StandardSSD_LRS"
-  }
-
-  storage_profile_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary)
-}
-
 func (VirtualMachineScaleSetResource) basicPublicIP(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
@@ -1212,12 +798,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
       name      = "TestIPConfiguration"
       subnet_id = azurestack_subnet.test.id
       primary   = true
-
-      public_ip_address_configuration {
-        name              = "TestPublicIPConfiguration"
-        domain_name_label = "test-domain-label-%[1]d"
-        idle_timeout      = 4
-      }
     }
   }
 
@@ -1311,12 +891,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
       name      = "TestIPConfiguration"
       subnet_id = azurestack_subnet.test.id
       primary   = true
-
-      public_ip_address_configuration {
-        name              = "TestPublicIPConfiguration"
-        domain_name_label = "test-domain-label-%[1]d"
-        idle_timeout      = 4
-      }
     }
   }
 
@@ -1410,12 +984,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
       name      = "TestIPConfiguration"
       subnet_id = azurestack_subnet.test.id
       primary   = true
-
-      public_ip_address_configuration {
-        name              = "TestPublicIPConfiguration"
-        domain_name_label = "test-domain-label-%[1]d"
-        idle_timeout      = 4
-      }
     }
   }
 
@@ -1510,12 +1078,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
       name      = "TestIPConfiguration"
       subnet_id = azurestack_subnet.test.id
       primary   = true
-
-      public_ip_address_configuration {
-        name              = "TestPublicIPConfiguration"
-        domain_name_label = "test-domain-label-%[1]d"
-        idle_timeout      = 4
-      }
     }
   }
 
@@ -1609,102 +1171,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
       name      = "TestIPConfiguration"
       subnet_id = azurestack_subnet.test.id
       primary   = true
-
-      public_ip_address_configuration {
-        name              = "TestPublicIPConfiguration"
-        domain_name_label = "test-updated-domain-label-%[1]d"
-        idle_timeout      = 4
-      }
-    }
-  }
-
-  storage_profile_os_disk {
-    name           = "osDiskProfile"
-    caching        = "ReadWrite"
-    create_option  = "FromImage"
-    vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
-  }
-
-  storage_profile_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary)
-}
-
-func (VirtualMachineScaleSetResource) basicAcceleratedNetworking(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%[1]d"
-  location = "%[2]s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%[1]d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%[1]d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_storage_account" "test" {
-  name                     = "accsa%[1]d"
-  resource_group_name      = azurestack_resource_group.test.name
-  location                 = azurestack_resource_group.test.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  tags = {
-    environment = "staging"
-  }
-}
-
-resource "azurestack_storage_container" "test" {
-  name                  = "vhds"
-  storage_account_name  = azurestack_storage_account.test.name
-  container_access_type = "private"
-}
-
-resource "azurestack_virtual_machine_scale_set" "test" {
-  name                = "acctvmss-%[1]d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  upgrade_policy_mode = "Manual"
-
-  sku {
-    name     = "Standard_D4_v2"
-    tier     = "Standard"
-    capacity = 2
-  }
-
-  os_profile {
-    computer_name_prefix = "testvm-%[1]d"
-    admin_username       = "myadmin"
-    admin_password       = "Passwword1234"
-  }
-
-  network_profile {
-    name                   = "TestNetworkProfile-%[1]d"
-    primary                = true
-    accelerated_networking = true
-
-    ip_configuration {
-      name      = "TestIPConfiguration"
-      primary   = true
-      subnet_id = azurestack_subnet.test.id
     }
   }
 
@@ -2077,12 +1543,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
       name      = "TestIPConfiguration"
       subnet_id = azurestack_subnet.test.id
       primary   = true
-
-      public_ip_address_configuration {
-        name              = "TestPublicIPConfiguration"
-        domain_name_label = "test-domain-label-%[1]d"
-        idle_timeout      = 4
-      }
     }
   }
 
@@ -2846,77 +2306,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
 `, data.RandomInteger, data.Locations.Primary)
 }
 
-func (VirtualMachineScaleSetResource) basicLinux_managedDisk_withZones(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%[1]d"
-  location = "%[2]s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%[1]d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%[1]d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_virtual_machine_scale_set" "test" {
-  name                = "acctvmss-%[1]d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  upgrade_policy_mode = "Manual"
-  zones               = ["1", "2"]
-
-  sku {
-    name     = "Standard_D1_v2"
-    tier     = "Standard"
-    capacity = 2
-  }
-
-  os_profile {
-    computer_name_prefix = "testvm-%[1]d"
-    admin_username       = "myadmin"
-    admin_password       = "Passwword1234"
-  }
-
-  network_profile {
-    name    = "TestNetworkProfile-%[1]d"
-    primary = true
-
-    ip_configuration {
-      name      = "TestIPConfiguration"
-      primary   = true
-      subnet_id = azurestack_subnet.test.id
-    }
-  }
-
-  storage_profile_os_disk {
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-
-  storage_profile_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary)
-}
-
 func (VirtualMachineScaleSetResource) basicWindows_managedDisk(data acceptance.TestData, vmSize string) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
@@ -2969,13 +2358,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
       component    = "Microsoft-Windows-Shell-Setup"
       setting_name = "AutoLogon"
       content      = "<AutoLogon><Username>myadmin</Username><Password><Value>Passwword1234</Value></Password><Enabled>true</Enabled><LogonCount>1</LogonCount></AutoLogon>"
-    }
-
-    additional_unattend_config {
-      pass         = "oobeSystem"
-      component    = "Microsoft-Windows-Shell-Setup"
-      setting_name = "FirstLogonCommands"
-      content      = "<FirstLogonCommands><SynchronousCommand><CommandLine>shutdown /r /t 0 /c \"initial reboot\"</CommandLine><Description>reboot</Description><Order>1</Order></SynchronousCommand></FirstLogonCommands>"
     }
   }
 
@@ -3072,205 +2454,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
     offer     = "UbuntuServer"
     sku       = "16.04-LTS"
     version   = "latest"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary)
-}
-
-func (VirtualMachineScaleSetResource) applicationGatewayTemplate(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%[1]d"
-  location = "%[2]s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%[1]d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%[1]d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_storage_account" "test" {
-  name                     = "accsa%[1]d"
-  resource_group_name      = azurestack_resource_group.test.name
-  location                 = azurestack_resource_group.test.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
-
-resource "azurestack_storage_container" "test" {
-  name                  = "vhds"
-  storage_account_name  = azurestack_storage_account.test.name
-  container_access_type = "private"
-}
-
-resource "azurestack_virtual_machine_scale_set" "test" {
-  name                = "acctvmss-%[1]d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  upgrade_policy_mode = "Manual"
-
-  sku {
-    name     = "Standard_D1_v2"
-    tier     = "Standard"
-    capacity = 1
-  }
-
-  os_profile {
-    computer_name_prefix = "testvm-%[1]d"
-    admin_username       = "myadmin"
-    admin_password       = "Passwword1234"
-  }
-
-  network_profile {
-    name    = "TestNetworkProfile"
-    primary = true
-
-    ip_configuration {
-      name                                         = "TestIPConfiguration"
-      primary                                      = true
-      subnet_id                                    = azurestack_subnet.test.id
-      application_gateway_backend_address_pool_ids = [azurestack_application_gateway.test.backend_address_pool[0].id]
-    }
-  }
-
-  storage_profile_os_disk {
-    name           = "os-disk"
-    caching        = "ReadWrite"
-    create_option  = "FromImage"
-    vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
-  }
-
-  storage_profile_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-}
-
-# application gateway
-resource "azurestack_subnet" "gwtest" {
-  name                 = "gw-subnet-%[1]d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.3.0/24"
-}
-
-resource "azurestack_public_ip" "test" {
-  name                = "acctest-pubip-%[1]d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  allocation_method   = "Dynamic"
-}
-
-resource "azurestack_application_gateway" "test" {
-  name                = "acctestgw-%[1]d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  sku {
-    name     = "Standard_Medium"
-    tier     = "Standard"
-    capacity = 1
-  }
-
-  gateway_ip_configuration {
-    # id = computed
-    name      = "gw-ip-config1"
-    subnet_id = azurestack_subnet.gwtest.id
-  }
-
-  frontend_ip_configuration {
-    # id = computed
-    name                 = "ip-config-public"
-    public_ip_address_id = azurestack_public_ip.test.id
-  }
-
-  frontend_ip_configuration {
-    # id = computed
-    name      = "ip-config-private"
-    subnet_id = azurestack_subnet.gwtest.id
-
-    # private_ip_address = computed
-    private_ip_address_allocation = "Dynamic"
-  }
-
-  frontend_port {
-    # id = computed
-    name = "port-8080"
-    port = 8080
-  }
-
-  backend_address_pool {
-    # id = computed
-    name = "pool-1"
-  }
-
-  backend_http_settings {
-    # id = computed
-    name                  = "backend-http-1"
-    port                  = 8010
-    protocol              = "Http"
-    cookie_based_affinity = "Enabled"
-    request_timeout       = 30
-
-    # probe_id = computed
-    probe_name = "probe-1"
-  }
-
-  http_listener {
-    # id = computed
-    name = "listener-1"
-
-    # frontend_ip_configuration_id = computed
-    frontend_ip_configuration_name = "ip-config-public"
-
-    # frontend_ip_port_id = computed
-    frontend_port_name = "port-8080"
-    protocol           = "Http"
-  }
-
-  probe {
-    # id = computed
-    name                = "probe-1"
-    protocol            = "Http"
-    path                = "/test"
-    host                = "azure.com"
-    timeout             = 120
-    interval            = 300
-    unhealthy_threshold = 8
-  }
-
-  request_routing_rule {
-    # id = computed
-    name      = "rule-basic-1"
-    rule_type = "Basic"
-
-    # http_listener_id = computed
-    http_listener_name = "listener-1"
-
-    # backend_address_pool_id = computed
-    backend_address_pool_name = "pool-1"
-
-    # backend_http_settings_id = computed
-    backend_http_settings_name = "backend-http-1"
-  }
-
-  tags = {
-    environment = "tf01"
   }
 }
 `, data.RandomInteger, data.Locations.Primary)
@@ -3437,94 +2620,6 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   resource_group_name = azurestack_resource_group.test.name
   upgrade_policy_mode = "Manual"
   overprovision       = false
-
-  sku {
-    name     = "Standard_D1_v2"
-    tier     = "Standard"
-    capacity = 1
-  }
-
-  os_profile {
-    computer_name_prefix = "testvm-%[1]d"
-    admin_username       = "myadmin"
-    admin_password       = "Passwword1234"
-  }
-
-  network_profile {
-    name    = "TestNetworkProfile"
-    primary = true
-
-    ip_configuration {
-      name      = "TestIPConfiguration"
-      primary   = true
-      subnet_id = azurestack_subnet.test.id
-    }
-  }
-
-  storage_profile_os_disk {
-    name           = "os-disk"
-    caching        = "ReadWrite"
-    create_option  = "FromImage"
-    vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
-  }
-
-  storage_profile_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary)
-}
-
-func (VirtualMachineScaleSetResource) priorityTemplate(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%[1]d"
-  location = "%[2]s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%[1]d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%[1]d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_storage_account" "test" {
-  name                     = "accsa%[1]d"
-  resource_group_name      = azurestack_resource_group.test.name
-  location                 = azurestack_resource_group.test.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
-
-resource "azurestack_storage_container" "test" {
-  name                  = "vhds"
-  storage_account_name  = azurestack_storage_account.test.name
-  container_access_type = "private"
-}
-
-resource "azurestack_virtual_machine_scale_set" "test" {
-  name                = "acctvmss-%[1]d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  upgrade_policy_mode = "Manual"
-  overprovision       = false
-  priority            = "Low"
-  eviction_policy     = "Deallocate"
 
   sku {
     name     = "Standard_D1_v2"
@@ -3801,241 +2896,6 @@ SETTINGS
 `, data.RandomInteger, data.Locations.Primary)
 }
 
-func (VirtualMachineScaleSetResource) multipleExtensionsTemplate(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%[1]d"
-  location = "%[2]s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%[1]d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%[1]d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_storage_account" "test" {
-  name                     = "accsa%[1]d"
-  resource_group_name      = azurestack_resource_group.test.name
-  location                 = azurestack_resource_group.test.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
-
-resource "azurestack_storage_container" "test" {
-  name                  = "vhds"
-  storage_account_name  = azurestack_storage_account.test.name
-  container_access_type = "private"
-}
-
-resource "azurestack_virtual_machine_scale_set" "test" {
-  name                = "acctvmss-%[1]d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  upgrade_policy_mode = "Manual"
-  overprovision       = false
-
-  sku {
-    name     = "Standard_D1_v2"
-    tier     = "Standard"
-    capacity = 1
-  }
-
-  os_profile {
-    computer_name_prefix = "testvm-%[1]d"
-    admin_username       = "myadmin"
-    admin_password       = "Passwword1234"
-  }
-
-  network_profile {
-    name    = "TestNetworkProfile"
-    primary = true
-
-    ip_configuration {
-      name      = "TestIPConfiguration"
-      primary   = true
-      subnet_id = azurestack_subnet.test.id
-    }
-  }
-
-  storage_profile_os_disk {
-    name           = "os-disk"
-    caching        = "ReadWrite"
-    create_option  = "FromImage"
-    vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
-  }
-
-  storage_profile_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-
-  extension {
-    name                       = "CustomScript"
-    publisher                  = "Microsoft.Azure.Extensions"
-    type                       = "CustomScript"
-    type_handler_version       = "2.0"
-    auto_upgrade_minor_version = true
-
-    settings = <<SETTINGS
-		{
-			"commandToExecute": "echo $HOSTNAME"
-		}
-SETTINGS
-
-
-    protected_settings = <<SETTINGS
-		{
-			"storageAccountName": "${azurestack_storage_account.test.name}",
-			"storageAccountKey": "${azurestack_storage_account.test.primary_access_key}"
-		}
-SETTINGS
-
-  }
-
-  extension {
-    name                       = "Docker"
-    publisher                  = "Microsoft.Azure.Extensions"
-    type                       = "DockerExtension"
-    type_handler_version       = "1.0"
-    auto_upgrade_minor_version = true
-  }
-}
-`, data.RandomInteger, data.Locations.Primary)
-}
-
-func (VirtualMachineScaleSetResource) multipleExtensionsTemplate_provision_after_extension(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%[1]d"
-  location = "%[2]s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%[1]d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%[1]d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_storage_account" "test" {
-  name                     = "accsa%[1]d"
-  resource_group_name      = azurestack_resource_group.test.name
-  location                 = azurestack_resource_group.test.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
-
-resource "azurestack_storage_container" "test" {
-  name                  = "vhds"
-  storage_account_name  = azurestack_storage_account.test.name
-  container_access_type = "private"
-}
-
-resource "azurestack_virtual_machine_scale_set" "test" {
-  name                = "acctvmss-%[1]d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  upgrade_policy_mode = "Manual"
-  overprovision       = false
-
-  sku {
-    name     = "Standard_D1_v2"
-    tier     = "Standard"
-    capacity = 1
-  }
-
-  os_profile {
-    computer_name_prefix = "testvm-%[1]d"
-    admin_username       = "myadmin"
-    admin_password       = "Passwword1234"
-  }
-
-  network_profile {
-    name    = "TestNetworkProfile"
-    primary = true
-
-    ip_configuration {
-      name      = "TestIPConfiguration"
-      primary   = true
-      subnet_id = azurestack_subnet.test.id
-    }
-  }
-
-  storage_profile_os_disk {
-    name           = "os-disk"
-    caching        = "ReadWrite"
-    create_option  = "FromImage"
-    vhd_containers = ["${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}"]
-  }
-
-  storage_profile_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-
-  extension {
-    name                       = "CustomScript"
-    publisher                  = "Microsoft.Azure.Extensions"
-    type                       = "CustomScript"
-    type_handler_version       = "2.0"
-    auto_upgrade_minor_version = true
-
-    settings = <<SETTINGS
-		{
-			"commandToExecute": "echo $HOSTNAME"
-		}
-SETTINGS
-
-
-    protected_settings = <<SETTINGS
-		{
-			"storageAccountName": "${azurestack_storage_account.test.name}",
-			"storageAccountKey": "${azurestack_storage_account.test.primary_access_key}"
-		}
-SETTINGS
-
-  }
-
-  extension {
-    name                       = "Docker"
-    publisher                  = "Microsoft.Azure.Extensions"
-    type                       = "DockerExtension"
-    type_handler_version       = "1.0"
-    auto_upgrade_minor_version = true
-    provision_after_extensions = ["CustomScript"]
-  }
-}
-`, data.RandomInteger, data.Locations.Primary)
-}
-
 func (VirtualMachineScaleSetResource) osDiskTypeConflict(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
@@ -4199,7 +3059,7 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   storage_profile_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "16.04.0-LTS"
+    sku       = "16.04-LTS"
     version   = "latest"
   }
 }
@@ -4362,9 +3222,9 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   }
 
   storage_profile_image_reference {
-    publisher = "rancher"
-    offer     = "rancheros"
-    sku       = "os"
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "16.04-LTS"
     version   = "latest"
   }
 }
@@ -4469,279 +3329,4 @@ resource "azurestack_virtual_machine_scale_set" "test" {
   }
 }
 `, data.RandomInteger, data.Locations.Primary)
-}
-
-func (VirtualMachineScaleSetResource) rollingAutoUpdates(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%[1]d"
-  location = "%[2]s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%[1]d"
-  address_space       = ["10.0.0.0/8"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%[1]d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.0.0/16"
-}
-
-resource "azurestack_public_ip" "test" {
-  name                    = "acctestpip-%[1]d"
-  location                = azurestack_resource_group.test.location
-  resource_group_name     = azurestack_resource_group.test.name
-  allocation_method       = "Dynamic"
-  idle_timeout_in_minutes = 4
-}
-
-resource "azurestack_lb" "test" {
-  name                = "acctestlb-%[1]d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  frontend_ip_configuration {
-    name                 = "PublicIPAddress"
-    public_ip_address_id = azurestack_public_ip.test.id
-  }
-}
-
-resource "azurestack_lb_rule" "test" {
-  resource_group_name            = azurestack_resource_group.test.name
-  loadbalancer_id                = azurestack_lb.test.id
-  name                           = "AccTestLBRule"
-  protocol                       = "Tcp"
-  frontend_port                  = 22
-  backend_port                   = 22
-  frontend_ip_configuration_name = "PublicIPAddress"
-  probe_id                       = azurestack_lb_probe.test.id
-  backend_address_pool_id        = azurestack_lb_backend_address_pool.test.id
-}
-
-resource "azurestack_lb_probe" "test" {
-  resource_group_name = azurestack_resource_group.test.name
-  loadbalancer_id     = azurestack_lb.test.id
-  name                = "acctest-lb-probe"
-  port                = 22
-  protocol            = "Tcp"
-}
-
-resource "azurestack_lb_backend_address_pool" "test" {
-  name                = "acctestbapool"
-  resource_group_name = azurestack_resource_group.test.name
-  loadbalancer_id     = azurestack_lb.test.id
-}
-
-resource "azurestack_virtual_machine_scale_set" "test" {
-  name                = "acctvmss-%[1]d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  upgrade_policy_mode = "Rolling"
-  health_probe_id     = azurestack_lb_probe.test.id
-  depends_on          = [azurestack_lb_rule.test]
-
-  rolling_upgrade_policy {
-    max_batch_instance_percent              = 21
-    max_unhealthy_instance_percent          = 22
-    max_unhealthy_upgraded_instance_percent = 23
-    pause_time_between_batches              = "PT30S"
-  }
-
-  sku {
-    name     = "Standard_F2"
-    tier     = "Standard"
-    capacity = 1
-  }
-
-  os_profile {
-    computer_name_prefix = "testvm-%[1]d"
-    admin_username       = "myadmin"
-    admin_password       = "Passwword1234"
-  }
-
-  network_profile {
-    name    = "TestNetworkProfile"
-    primary = true
-
-    ip_configuration {
-      name                                   = "TestIPConfiguration"
-      subnet_id                              = azurestack_subnet.test.id
-      load_balancer_backend_address_pool_ids = [azurestack_lb_backend_address_pool.test.id]
-      primary                                = true
-    }
-  }
-
-  storage_profile_os_disk {
-    name              = ""
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-
-  storage_profile_data_disk {
-    lun               = 0
-    caching           = "ReadWrite"
-    create_option     = "Empty"
-    disk_size_gb      = 10
-    managed_disk_type = "Standard_LRS"
-  }
-
-  storage_profile_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary)
-}
-
-func (VirtualMachineScaleSetResource) upgradeModeUpdate(data acceptance.TestData, mode string) string {
-	policy := ""
-	if mode == "Rolling" {
-		policy = `
-  rolling_upgrade_policy {
-    max_batch_instance_percent              = 21
-    max_unhealthy_instance_percent          = 22
-    max_unhealthy_upgraded_instance_percent = 23
-  }`
-	}
-
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%[1]d"
-  location = "%[2]s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%[1]d"
-  address_space       = ["10.0.0.0/8"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%[1]d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.0.0/16"
-}
-
-resource "azurestack_public_ip" "test" {
-  name                    = "acctestpip-%[1]d"
-  location                = azurestack_resource_group.test.location
-  resource_group_name     = azurestack_resource_group.test.name
-  allocation_method       = "Dynamic"
-  idle_timeout_in_minutes = 4
-}
-
-resource "azurestack_lb" "test" {
-  name                = "acctestlb-%[1]d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  frontend_ip_configuration {
-    name                 = "PublicIPAddress"
-    public_ip_address_id = azurestack_public_ip.test.id
-  }
-}
-
-resource "azurestack_lb_rule" "test" {
-  resource_group_name            = azurestack_resource_group.test.name
-  loadbalancer_id                = azurestack_lb.test.id
-  name                           = "AccTestLBRule"
-  protocol                       = "Tcp"
-  frontend_port                  = 22
-  backend_port                   = 22
-  frontend_ip_configuration_name = "PublicIPAddress"
-  probe_id                       = azurestack_lb_probe.test.id
-  backend_address_pool_id        = azurestack_lb_backend_address_pool.test.id
-}
-
-resource "azurestack_lb_probe" "test" {
-  resource_group_name = azurestack_resource_group.test.name
-  loadbalancer_id     = azurestack_lb.test.id
-  name                = "acctest-lb-probe"
-  port                = 22
-  protocol            = "Tcp"
-}
-
-resource "azurestack_lb_backend_address_pool" "test" {
-  name                = "acctestbapool"
-  resource_group_name = azurestack_resource_group.test.name
-  loadbalancer_id     = azurestack_lb.test.id
-}
-
-resource "azurestack_virtual_machine_scale_set" "test" {
-  name                = "acctvmss-%[1]d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  upgrade_policy_mode = "%[3]s"
-  health_probe_id     = azurestack_lb_probe.test.id
-  depends_on          = [azurestack_lb_rule.test]
-
-  %[4]s
-
-  sku {
-    name     = "Standard_F2"
-    tier     = "Standard"
-    capacity = 1
-  }
-
-  os_profile {
-    computer_name_prefix = "testvm-%[1]d"
-    admin_username       = "myadmin"
-    admin_password       = "Passwword1234"
-  }
-
-  network_profile {
-    name    = "TestNetworkProfile"
-    primary = true
-
-    ip_configuration {
-      name                                   = "TestIPConfiguration"
-      subnet_id                              = azurestack_subnet.test.id
-      load_balancer_backend_address_pool_ids = [azurestack_lb_backend_address_pool.test.id]
-      primary                                = true
-    }
-  }
-
-  storage_profile_os_disk {
-    name              = ""
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-
-  storage_profile_data_disk {
-    lun               = 0
-    caching           = "ReadWrite"
-    create_option     = "Empty"
-    disk_size_gb      = 10
-    managed_disk_type = "Standard_LRS"
-  }
-
-  storage_profile_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, mode, policy)
 }

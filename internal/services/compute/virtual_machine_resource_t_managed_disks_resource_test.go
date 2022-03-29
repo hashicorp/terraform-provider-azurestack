@@ -18,7 +18,7 @@ func TestAccVirtualMachine_requiresImport(t *testing.T) {
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
-			Config: r.basicLinuxMachine_managedDisk_standardSSD(data),
+			Config: r.basicLinuxMachine_managedDisk_standard(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
@@ -255,37 +255,6 @@ func TestAccVirtualMachine_multipleNICs(t *testing.T) {
 	})
 }
 
-func TestAccVirtualMachine_managedServiceIdentity(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine", "test")
-	r := VirtualMachineResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.withManagedServiceIdentity(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("identity.0.type").HasValue("SystemAssigned"),
-				// TODO acceptance.TestMatchResourceAttr(data.ResourceName, "identity.0.principal_id", validate.UUIDRegExp),
-				// TODO acceptance.TestMatchOutput("principal_id", validate.UUIDRegExp),
-			),
-		},
-	})
-}
-
-func TestAccVirtualMachine_enableAnWithVM(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine", "test")
-	r := VirtualMachineResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.anWithVM(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-	})
-}
-
 func TestAccVirtualMachine_basicLinuxMachine_managedDisk_changeOsWriteAcceleratorEnabled(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_virtual_machine", "test")
 	r := VirtualMachineResource{}
@@ -366,22 +335,6 @@ func TestAccVirtualMachine_hasDiskInfoWhenStopped(t *testing.T) {
 				check.That(data.ResourceName).Key("storage_data_disk.0.disk_size_gb").HasValue("64"),
 			),
 		},
-	})
-}
-
-func TestAccVirtualMachine_importBasic_withZone(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine", "test")
-	r := VirtualMachineResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.basicLinuxMachine_managedDisk_implicit_withZone(data),
-		},
-
-		data.ImportStep(
-			"delete_data_disks_on_termination",
-			"delete_os_disk_on_termination",
-		),
 	})
 }
 
@@ -582,91 +535,6 @@ resource "azurestack_virtual_machine" "test" {
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, enabled, data.RandomInteger)
 }
 
-func (VirtualMachineResource) withManagedServiceIdentity(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_network_interface" "test" {
-  name                = "acctni-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  ip_configuration {
-    name                          = "testconfiguration1"
-    subnet_id                     = azurestack_subnet.test.id
-    private_ip_address_allocation = "Dynamic"
-  }
-}
-
-resource "azurestack_virtual_machine" "test" {
-  name                  = "acctvm-%d"
-  location              = azurestack_resource_group.test.location
-  resource_group_name   = azurestack_resource_group.test.name
-  network_interface_ids = [azurestack_network_interface.test.id]
-  vm_size               = "Standard_D1_v2"
-
-  identity {
-    type = "SystemAssigned"
-  }
-
-  storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-
-  storage_os_disk {
-    name              = "osd-%d"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    disk_size_gb      = "50"
-    managed_disk_type = "Standard_LRS"
-  }
-
-  os_profile {
-    computer_name  = "hn%d"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = false
-  }
-
-  tags = {
-    environment = "Production"
-    cost-center = "Ops"
-  }
-}
-
-output "principal_id" {
-  value = azurestack_virtual_machine.test.identity[0].principal_id
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger)
-}
-
 func (VirtualMachineResource) basicLinuxMachine_managedDisk_explicit(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
@@ -744,7 +612,7 @@ resource "azurestack_virtual_machine" "test" {
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger)
 }
 
-func (VirtualMachineResource) basicLinuxMachine_managedDisk_standardSSD(data acceptance.TestData) string {
+func (VirtualMachineResource) basicLinuxMachine_managedDisk_standard(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
   features {}
@@ -800,7 +668,7 @@ resource "azurestack_virtual_machine" "test" {
     caching           = "ReadWrite"
     create_option     = "FromImage"
     disk_size_gb      = "50"
-    managed_disk_type = "StandardSSD_LRS"
+    managed_disk_type = "Standard_LRS"
   }
 
   os_profile {
@@ -844,7 +712,7 @@ resource "azurestack_virtual_machine" "import" {
     caching           = "ReadWrite"
     create_option     = "FromImage"
     disk_size_gb      = "50"
-    managed_disk_type = "StandardSSD_LRS"
+    managed_disk_type = "Standard_LRS"
   }
 
   os_profile {
@@ -862,7 +730,7 @@ resource "azurestack_virtual_machine" "import" {
     cost-center = "Ops"
   }
 }
-`, r.basicLinuxMachine_managedDisk_standardSSD(data), data.RandomInteger, data.RandomInteger)
+`, r.basicLinuxMachine_managedDisk_standard(data), data.RandomInteger, data.RandomInteger)
 }
 
 func (VirtualMachineResource) basicLinuxMachine_managedDisk_implicit(data acceptance.TestData) string {
@@ -908,83 +776,6 @@ resource "azurestack_virtual_machine" "test" {
   resource_group_name   = azurestack_resource_group.test.name
   network_interface_ids = [azurestack_network_interface.test.id]
   vm_size               = "Standard_D1_v2"
-
-  storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-
-  storage_os_disk {
-    name          = "osd-%d"
-    caching       = "ReadWrite"
-    create_option = "FromImage"
-    disk_size_gb  = "50"
-  }
-
-  os_profile {
-    computer_name  = "hn%d"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = false
-  }
-
-  tags = {
-    environment = "Production"
-    cost-center = "Ops"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger)
-}
-
-func (VirtualMachineResource) basicLinuxMachine_managedDisk_implicit_withZone(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctvn-%d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "acctsub-%d"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_network_interface" "test" {
-  name                = "acctni-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-
-  ip_configuration {
-    name                          = "testconfiguration1"
-    subnet_id                     = azurestack_subnet.test.id
-    private_ip_address_allocation = "Dynamic"
-  }
-}
-
-resource "azurestack_virtual_machine" "test" {
-  name                  = "acctvm-%d"
-  location              = azurestack_resource_group.test.location
-  resource_group_name   = azurestack_resource_group.test.name
-  network_interface_ids = [azurestack_network_interface.test.id]
-  vm_size               = "Standard_D1_v2"
-  zones                 = ["1"]
 
   storage_image_reference {
     publisher = "Canonical"
@@ -2012,84 +1803,6 @@ resource "azurestack_virtual_machine" "test" {
   }
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomString, data.RandomString)
-}
-
-func (VirtualMachineResource) anWithVM(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test" {
-  name                = "acctestvn-%d"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_subnet" "test" {
-  name                 = "testsubnet"
-  resource_group_name  = azurestack_resource_group.test.name
-  virtual_network_name = azurestack_virtual_network.test.name
-  address_prefix       = "10.0.2.0/24"
-}
-
-resource "azurestack_network_interface" "test" {
-  name                          = "acctestni-%d"
-  location                      = azurestack_resource_group.test.location
-  resource_group_name           = azurestack_resource_group.test.name
-  enable_ip_forwarding          = false
-  enable_accelerated_networking = true
-
-  ip_configuration {
-    name                          = "testconfiguration1"
-    subnet_id                     = azurestack_subnet.test.id
-    private_ip_address_allocation = "Dynamic"
-  }
-}
-
-resource "azurestack_virtual_machine" "test" {
-  name                         = "acctestvm-%d"
-  location                     = azurestack_resource_group.test.location
-  resource_group_name          = azurestack_resource_group.test.name
-  primary_network_interface_id = azurestack_network_interface.test.id
-  network_interface_ids        = [azurestack_network_interface.test.id]
-
-  // Only large VMs allow AN
-  vm_size                       = "Standard_D8_v3"
-  delete_os_disk_on_termination = true
-
-  storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-
-  storage_os_disk {
-    name              = "antest-%d-OSDisk"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-    disk_size_gb      = 32
-  }
-
-  os_profile {
-    computer_name  = "antestMachine-%d"
-    admin_username = "antestuser"
-    admin_password = "Password1234!"
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = false
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger)
 }
 
 func (VirtualMachineResource) hasDiskInfoWhenStopped(data acceptance.TestData) string {

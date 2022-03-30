@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/az/zones"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
@@ -71,8 +70,6 @@ func managedDiskDataSource() *pluginsdk.Resource {
 			},
 
 			"tags": tags.Schema(),
-
-			"zones": zones.SchemaZoneComputed(),
 		},
 	}
 }
@@ -120,8 +117,6 @@ func managedDiskDataSourceRead(d *pluginsdk.ResourceData, meta interface{}) erro
 		d.Set("disk_size_gb", props.DiskSizeGB)
 		d.Set("os_type", props.OsType)
 	}
-
-	d.Set("zones", utils.FlattenStringSlice(resp.Zones))
 
 	return tags.FlattenAndSet(d, resp.Tags)
 }

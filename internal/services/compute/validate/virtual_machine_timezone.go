@@ -5,6 +5,11 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 )
 
+// VirtualMachineTimeZone returns a case-sensitive validation function for the Time Zones for a Virtual Machine
+func VirtualMachineTimeZone() pluginsdk.SchemaValidateFunc {
+	return virtualMachineTimeZone(false)
+}
+
 // VirtualMachineTimeZone returns a case-insensitive validation function for the Time Zones for a Virtual Machine
 func VirtualMachineTimeZoneCaseInsensitive() pluginsdk.SchemaValidateFunc {
 	return virtualMachineTimeZone(true)

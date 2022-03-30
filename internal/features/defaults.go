@@ -6,5 +6,10 @@ func Default() UserFeatures {
 		ResourceGroup: ResourceGroupFeatures{
 			PreventDeletionIfContainsResources: false,
 		},
+		VirtualMachine: VirtualMachineFeatures{
+			DeleteOSDiskOnDeletion:     true,
+			GracefulShutdown:           false,
+			SkipShutdownAndForceDelete: false,
+		},
 	}
 }

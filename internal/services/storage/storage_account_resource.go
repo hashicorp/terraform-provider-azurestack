@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/migration"
@@ -213,6 +214,12 @@ func storageAccount() *schema.Resource {
 			},
 
 			"tags": tags.Schema(),
+
+			"enable_https_traffic_only": {
+				Type:     pluginsdk.TypeBool,
+				Optional: true,
+				Default:  true,
+			},
 		},
 	}
 }
@@ -227,6 +234,7 @@ func storageAccountCreate(d *schema.ResourceData, meta interface{}) error {
 	accountKind := d.Get("account_kind").(string)
 
 	location := d.Get("location").(string)
+	enableHTTPSTrafficOnly := d.Get("enable_https_traffic_only").(bool)
 
 	accountTier := d.Get("account_tier").(string)
 	replicationType := d.Get("account_replication_type").(string)
@@ -249,7 +257,9 @@ func storageAccountCreate(d *schema.ResourceData, meta interface{}) error {
 		Kind: storage.Kind(accountKind),
 
 		// If any paramers are specified withouth the right values this will fail
-		AccountPropertiesCreateParameters: &storage.AccountPropertiesCreateParameters{},
+		AccountPropertiesCreateParameters: &storage.AccountPropertiesCreateParameters{
+			EnableHTTPSTrafficOnly: &enableHTTPSTrafficOnly,
+		},
 	}
 
 	if _, ok := d.GetOk("custom_domain"); ok {
@@ -392,6 +402,20 @@ func storageAccountUpdate(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
+	if d.HasChange("enable_https_traffic_only") {
+		enableHTTPSTrafficOnly := d.Get("enable_https_traffic_only").(bool)
+
+		opts := storage.AccountUpdateParameters{
+			AccountPropertiesUpdateParameters: &storage.AccountPropertiesUpdateParameters{
+				EnableHTTPSTrafficOnly: &enableHTTPSTrafficOnly,
+			},
+		}
+
+		if _, err := client.Update(ctx, id.ResourceGroup, id.Name, opts); err != nil {
+			return fmt.Errorf("updating Azure Storage Account enable_https_traffic_only %q: %+v", id.Name, err)
+		}
+	}
+
 	d.Partial(false)
 	return nil
 }
@@ -447,6 +471,8 @@ func storageAccountRead(d *schema.ResourceData, meta interface{}) error {
 			}
 			d.Set("account_encryption_source", string(encryption.KeySource))
 		}
+
+		d.Set("enable_https_traffic_only", props.EnableHTTPSTrafficOnly)
 
 		// Computed
 		d.Set("primary_location", props.PrimaryLocation)

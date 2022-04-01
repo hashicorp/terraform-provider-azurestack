@@ -48,6 +48,9 @@ output "storage_account_tier" {
 
 * `tags` - A mapping of tags to assigned to the resource.
 
+* `enable_https_traffic_only` - Is traffic only allowed via HTTPS? See [here](https://docs.microsoft.com/en-us/azure/storage/storage-require-secure-transfer/)
+  for more information.
+
 * `primary_location` - The primary location of the Storage Account.
 
 * `secondary_location` - The secondary location of the Storage Account.

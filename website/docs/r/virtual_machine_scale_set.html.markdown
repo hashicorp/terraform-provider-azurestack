@@ -129,7 +129,6 @@ The following arguments are supported:
 * `storage_profile_image_reference` - (Optional) A storage profile image reference block as documented below.
 * `extension` - (Optional) Can be specified multiple times to add extension profiles to the scale set. Each `extension` block supports the fields documented below.
 * `plan` - (Optional) A plan block as documented below.
-* `priority` - (Optional) Specifies the priority for the virtual machines in the scale set, defaults to `Regular`. Possible values are `Low` and `Regular`.
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 
 -> **Please Note**: Availability Zones are [in Preview and only supported in several regions at this time](https://docs.microsoft.com/en-us/azure/availability-zones/az-overview) - as such you must be opted into the Preview to use this functionality. You can [opt into the Availability Zones Preview in the Azure Portal](http://aka.ms/azenroll).
@@ -140,7 +139,6 @@ The following arguments are supported:
 * `tier` - (Optional) Specifies the tier of virtual machines in a scale set. Possible values, `standard` or `basic`.
 * `capacity` - (Required) Specifies the number of virtual machines in the scale set.
 
-`identity` supports the following:
 
 * `type` - (Required) Specifies the identity type to be assigned to the scale set. The only allowable value is `SystemAssigned`. To enable Managed Service Identity (MSI) on all machines in the scale set, an extension with the type "ManagedIdentityExtensionForWindows" or "ManagedIdentityExtensionForLinux" must also be added. The scale set's Service Principal ID (SPN) can be retrieved after the scale set has been created.
 

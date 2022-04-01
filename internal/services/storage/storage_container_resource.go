@@ -6,6 +6,9 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/containers"
+
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/migration"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/parse"
@@ -13,7 +16,6 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/timeouts"
-	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/containers"
 )
 
 func storageContainer() *schema.Resource {
@@ -21,7 +23,7 @@ func storageContainer() *schema.Resource {
 		Create: storageContainerCreate,
 		Read:   storageContainerRead,
 		Delete: storageContainerDelete,
-
+		Update: storageContainerUpdate,
 		// TODO check schema and confirm old stack provider can upgrade to this
 		SchemaVersion: 1,
 		StateUpgraders: pluginsdk.StateUpgrades(map[int]pluginsdk.StateUpgrade{
@@ -46,9 +48,6 @@ func storageContainer() *schema.Resource {
 				ValidateFunc: validate.StorageContainerName,
 			},
 
-			// "resource_group_name": commonschema.ResourceGroupName(),
-			// todo property deprecate
-
 			"storage_account_name": {
 				Type:         schema.TypeString,
 				Required:     true,
@@ -61,27 +60,28 @@ func storageContainer() *schema.Resource {
 				Optional: true,
 				ForceNew: true,
 				Default:  "private",
-				// todo validate correctly
-				/*ValidateFunc: validation.StringInSlice([]string{
+				ValidateFunc: validation.StringInSlice([]string{
 					string(containers.Blob),
 					string(containers.Container),
 					"private",
-				}, false),*/
+				}, false),
 			},
 
-			// todo: replace with metadata
-			/*"properties": {
-				Type:     schema.TypeMap,
+			"metadata": MetaDataSchema(),
+
+			"has_immutability_policy": {
+				Type:     pluginsdk.TypeBool,
 				Computed: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},*/
+			},
+
+			"has_legal_hold": {
+				Type:     pluginsdk.TypeBool,
+				Computed: true,
+			},
 		},
 	}
 }
 
-// TODO inline this?
 func expandStorageContainerAccessLevel(input string) containers.AccessLevel {
 	// for historical reasons, "private" above is an empty string in the API
 	// so the enum doesn't 1:1 match. You could argue the SDK should handle this
@@ -102,6 +102,9 @@ func storageContainerCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 	accountName := d.Get("storage_account_name").(string)
 	accessLevelRaw := d.Get("container_access_type").(string)
 	accessLevel := expandStorageContainerAccessLevel(accessLevelRaw)
+
+	metaDataRaw := d.Get("metadata").(map[string]interface{})
+	metaData := ExpandMetaData(metaDataRaw)
 
 	account, err := storageClient.FindAccount(ctx, accountName)
 	if err != nil {
@@ -128,6 +131,7 @@ func storageContainerCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Creating Container %q in Storage Account %q", containerName, accountName)
 	input := containers.CreateInput{
 		AccessLevel: accessLevel,
+		MetaData:    metaData,
 	}
 
 	if err := client.Create(ctx, account.ResourceGroup, accountName, containerName, input); err != nil {
@@ -176,10 +180,16 @@ func storageContainerRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	d.Set("storage_account_name", id.AccountName)
 	d.Set("container_access_type", flattenStorageContainerAccessLevel(props.AccessLevel))
 
+	if err := d.Set("metadata", FlattenMetaData(props.MetaData)); err != nil {
+		return fmt.Errorf("setting `metadata`: %+v", err)
+	}
+
+	d.Set("has_immutability_policy", props.HasImmutabilityPolicy)
+	d.Set("has_legal_hold", props.HasLegalHold)
+
 	return nil
 }
 
-// todo inline this?
 func flattenStorageContainerAccessLevel(input containers.AccessLevel) string {
 	// for historical reasons, "private" above is an empty string in the API
 	if input == containers.Private {
@@ -216,4 +226,53 @@ func storageContainerDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 	}
 
 	return nil
+}
+
+func storageContainerUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
+	storageClient := meta.(*clients.Client).Storage
+	ctx, cancel := timeouts.ForUpdate(meta.(*clients.Client).StopContext, d)
+	defer cancel()
+
+	id, err := parse.StorageContainerDataPlaneID(d.Id())
+	if err != nil {
+		return err
+	}
+
+	account, err := storageClient.FindAccount(ctx, id.AccountName)
+	if err != nil {
+		return fmt.Errorf("retrieving Account %q for Container %q: %s", id.AccountName, id.Name, err)
+	}
+	if account == nil {
+		return fmt.Errorf("Unable to locate Storage Account %q!", id.AccountName)
+	}
+	client, err := storageClient.ContainersClient(ctx, *account)
+	if err != nil {
+		return fmt.Errorf("building Containers Client for Storage Account %q (Resource Group %q): %s", id.AccountName, account.ResourceGroup, err)
+	}
+
+	if d.HasChange("container_access_type") {
+		log.Printf("[DEBUG] Updating the Access Control for Container %q (Storage Account %q / Resource Group %q)..", id.Name, id.AccountName, account.ResourceGroup)
+		accessLevelRaw := d.Get("container_access_type").(string)
+		accessLevel := expandStorageContainerAccessLevel(accessLevelRaw)
+
+		if err := client.UpdateAccessLevel(ctx, account.ResourceGroup, id.AccountName, id.Name, accessLevel); err != nil {
+			return fmt.Errorf("updating the Access Control for Container %q (Storage Account %q / Resource Group %q): %s", id.Name, id.AccountName, account.ResourceGroup, err)
+		}
+
+		log.Printf("[DEBUG] Updated the Access Control for Container %q (Storage Account %q / Resource Group %q)", id.Name, id.AccountName, account.ResourceGroup)
+	}
+
+	if d.HasChange("metadata") {
+		log.Printf("[DEBUG] Updating the MetaData for Container %q (Storage Account %q / Resource Group %q)..", id.Name, id.AccountName, account.ResourceGroup)
+		metaDataRaw := d.Get("metadata").(map[string]interface{})
+		metaData := ExpandMetaData(metaDataRaw)
+
+		if err := client.UpdateMetaData(ctx, account.ResourceGroup, id.AccountName, id.Name, metaData); err != nil {
+			return fmt.Errorf("updating the MetaData for Container %q (Storage Account %q / Resource Group %q): %s", id.Name, id.AccountName, account.ResourceGroup, err)
+		}
+
+		log.Printf("[DEBUG] Updated the MetaData for Container %q (Storage Account %q / Resource Group %q)", id.Name, id.AccountName, account.ResourceGroup)
+	}
+
+	return storageContainerRead(d, meta)
 }

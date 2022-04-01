@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceid"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -83,7 +84,6 @@ func networkInterface() *pluginsdk.Resource {
 							Default:  string(network.IPv4),
 							ValidateFunc: validation.StringInSlice([]string{
 								string(network.IPv4),
-								string(network.IPv6),
 							}, false),
 						},
 
@@ -109,43 +109,6 @@ func networkInterface() *pluginsdk.Resource {
 							Optional: true,
 							Computed: true,
 						},
-
-						/*
-							TODO missing from azurestack, put back?
-
-							"application_gateway_backend_address_pools_ids": {
-									Type:     schema.TypeSet,
-									Optional: true,
-									Computed: true,
-									Elem:     &schema.Schema{Type: schema.TypeString},
-									Set:      schema.HashString,
-								},
-
-								"load_balancer_backend_address_pools_ids": {
-									Type:     schema.TypeSet,
-									Optional: true,
-									Computed: true,
-									Elem:     &schema.Schema{Type: schema.TypeString},
-									Set:      schema.HashString,
-								},
-
-								"load_balancer_inbound_nat_rules_ids": {
-									Type:     schema.TypeSet,
-									Optional: true,
-									Computed: true,
-									Elem:     &schema.Schema{Type: schema.TypeString},
-									Set:      schema.HashString,
-								},
-
-								"application_security_group_ids": {
-									Type:     schema.TypeSet,
-									Optional: true,
-									Computed: true,
-									Elem:     &schema.Schema{Type: schema.TypeString},
-									Set:      schema.HashString,
-								},
-
-						*/
 					},
 				},
 			},
@@ -160,23 +123,10 @@ func networkInterface() *pluginsdk.Resource {
 				},
 			},
 
-			"enable_accelerated_networking": {
-				Type:     pluginsdk.TypeBool,
-				Optional: true,
-				Default:  false,
-			},
-
 			"enable_ip_forwarding": {
 				Type:     pluginsdk.TypeBool,
 				Optional: true,
 				Default:  false,
-			},
-
-			"internal_dns_name_label": {
-				Type:         pluginsdk.TypeString,
-				Optional:     true,
-				Computed:     true,
-				ValidateFunc: validation.StringIsNotEmpty,
 			},
 
 			"internal_domain_name_suffix": {
@@ -243,30 +193,23 @@ func networkInterfaceCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 
 	location := location.Normalize(d.Get("location").(string))
 	enableIpForwarding := d.Get("enable_ip_forwarding").(bool)
-	enableAcceleratedNetworking := d.Get("enable_accelerated_networking").(bool)
 	t := d.Get("tags").(map[string]interface{})
 
 	properties := network.InterfacePropertiesFormat{
-		EnableIPForwarding:          &enableIpForwarding,
-		EnableAcceleratedNetworking: &enableAcceleratedNetworking,
+		EnableIPForwarding: &enableIpForwarding,
 	}
 
 	locks.ByName(id.Name, networkInterfaceResourceName)
 	defer locks.UnlockByName(id.Name, networkInterfaceResourceName)
 
 	dns, hasDns := d.GetOk("dns_servers")
-	nameLabel, hasNameLabel := d.GetOk("internal_dns_name_label")
-	if hasDns || hasNameLabel {
+	if hasDns {
 		dnsSettings := network.InterfaceDNSSettings{}
 
 		if hasDns {
 			dnsRaw := dns.([]interface{})
 			dns := expandNetworkInterfaceDnsServers(dnsRaw)
 			dnsSettings.DNSServers = &dns
-		}
-
-		if hasNameLabel {
-			dnsSettings.InternalDNSNameLabel = pointer.FromString(nameLabel.(string))
 		}
 
 		properties.DNSSettings = &dnsSettings
@@ -340,8 +283,7 @@ func networkInterfaceUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		Name:     pointer.FromString(id.Name),
 		Location: pointer.FromString(location),
 		InterfacePropertiesFormat: &network.InterfacePropertiesFormat{
-			EnableAcceleratedNetworking: pointer.FromBool(d.Get("enable_accelerated_networking").(bool)),
-			DNSSettings:                 &network.InterfaceDNSSettings{},
+			DNSSettings: &network.InterfaceDNSSettings{},
 		},
 	}
 
@@ -358,12 +300,6 @@ func networkInterfaceUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		update.InterfacePropertiesFormat.EnableIPForwarding = pointer.FromBool(d.Get("enable_ip_forwarding").(bool))
 	} else {
 		update.InterfacePropertiesFormat.EnableIPForwarding = existing.InterfacePropertiesFormat.EnableIPForwarding
-	}
-
-	if d.HasChange("internal_dns_name_label") {
-		update.InterfacePropertiesFormat.DNSSettings.InternalDNSNameLabel = pointer.FromString(d.Get("internal_dns_name_label").(string))
-	} else {
-		update.InterfacePropertiesFormat.DNSSettings.InternalDNSNameLabel = existing.InterfacePropertiesFormat.DNSSettings.InternalDNSNameLabel
 	}
 
 	if d.HasChange("ip_configuration") {
@@ -454,15 +390,10 @@ func networkInterfaceRead(d *pluginsdk.ResourceData, meta interface{}) error {
 
 		appliedDNSServers := make([]string, 0)
 		dnsServers := make([]string, 0)
-		internalDnsNameLabel := ""
 		internalDomainNameSuffix := ""
 		if dnsSettings := props.DNSSettings; dnsSettings != nil {
 			appliedDNSServers = flattenNetworkInterfaceDnsServers(dnsSettings.AppliedDNSServers)
 			dnsServers = flattenNetworkInterfaceDnsServers(dnsSettings.DNSServers)
-
-			if dnsSettings.InternalDNSNameLabel != nil {
-				internalDnsNameLabel = *dnsSettings.InternalDNSNameLabel
-			}
 
 			if dnsSettings.InternalDomainNameSuffix != nil {
 				internalDomainNameSuffix = *dnsSettings.InternalDomainNameSuffix
@@ -483,8 +414,6 @@ func networkInterfaceRead(d *pluginsdk.ResourceData, meta interface{}) error {
 		}
 
 		d.Set("enable_ip_forwarding", resp.EnableIPForwarding)
-		d.Set("enable_accelerated_networking", resp.EnableAcceleratedNetworking)
-		d.Set("internal_dns_name_label", internalDnsNameLabel)
 		d.Set("internal_domain_name_suffix", internalDomainNameSuffix)
 		d.Set("mac_address", props.MacAddress)
 		d.Set("private_ip_address", primaryPrivateIPAddress)

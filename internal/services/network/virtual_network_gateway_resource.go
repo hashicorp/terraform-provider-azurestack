@@ -59,7 +59,6 @@ func virtualNetworkGateway() *pluginsdk.Resource {
 				ForceNew:         true,
 				DiffSuppressFunc: suppress.CaseDifference,
 				ValidateFunc: validation.StringInSlice([]string{
-					string(network.VirtualNetworkGatewayTypeExpressRoute),
 					string(network.VirtualNetworkGatewayTypeVpn),
 				}, true),
 			},
@@ -72,7 +71,6 @@ func virtualNetworkGateway() *pluginsdk.Resource {
 				DiffSuppressFunc: suppress.CaseDifference,
 				ValidateFunc: validation.StringInSlice([]string{
 					string(network.RouteBased),
-					string(network.PolicyBased),
 				}, true),
 			},
 
@@ -98,9 +96,6 @@ func virtualNetworkGateway() *pluginsdk.Resource {
 				// and validateVirtualNetworkGatewayExpressRouteSku.
 				ValidateFunc: validation.Any(
 					validateVirtualNetworkGatewayPolicyBasedVpnSku(),
-					validateVirtualNetworkGatewayRouteBasedVpnSkuGeneration1(),
-					validateVirtualNetworkGatewayRouteBasedVpnSkuGeneration2(),
-					validateVirtualNetworkGatewayExpressRouteSku(),
 				),
 			},
 
@@ -148,6 +143,7 @@ func virtualNetworkGateway() *pluginsdk.Resource {
 			"vpn_client_configuration": {
 				Type:     pluginsdk.TypeList,
 				Optional: true,
+				Computed: true,
 				MaxItems: 1,
 				Elem: &pluginsdk.Resource{
 					Schema: map[string]*pluginsdk.Schema{
@@ -205,6 +201,7 @@ func virtualNetworkGateway() *pluginsdk.Resource {
 						"radius_server_secret": {
 							Type:         pluginsdk.TypeString,
 							Optional:     true,
+							Sensitive:    true,
 							RequiredWith: []string{"vpn_client_configuration.0.radius_server_address"},
 						},
 
@@ -217,6 +214,7 @@ func virtualNetworkGateway() *pluginsdk.Resource {
 								ValidateFunc: validation.StringInSlice([]string{
 									string(network.IkeV2),
 									string(network.SSTP),
+									string(network.OpenVPN),
 								}, true),
 							},
 						},
@@ -361,7 +359,7 @@ func virtualNetworkGatewayRead(d *pluginsdk.ResourceData, meta interface{}) erro
 			return fmt.Errorf("setting `ip_configuration`: %+v", err)
 		}
 
-		if err := d.Set("vpn_client_configuration", flattenVirtualNetworkGatewayVpnClientConfig(gw.VpnClientConfiguration)); err != nil {
+		if err := d.Set("vpn_client_configuration", flattenVirtualNetworkGatewayVpnClientConfig(d, gw.VpnClientConfiguration)); err != nil {
 			return fmt.Errorf("setting `vpn_client_configuration`: %+v", err)
 		}
 
@@ -449,13 +447,6 @@ func getVirtualNetworkGatewayProperties(d *pluginsdk.ResourceData) (*network.Vir
 	// Sku validation for policy-based VPN gateways
 	if props.GatewayType == network.VirtualNetworkGatewayTypeVpn && props.VpnType == network.PolicyBased {
 		if ok, err := evaluateSchemaValidateFunc(string(props.Sku.Name), "sku", validateVirtualNetworkGatewayPolicyBasedVpnSku()); !ok {
-			return nil, err
-		}
-	}
-
-	// Sku validation for ExpressRoute gateways
-	if props.GatewayType == network.VirtualNetworkGatewayTypeExpressRoute {
-		if ok, err := evaluateSchemaValidateFunc(string(props.Sku.Name), "sku", validateVirtualNetworkGatewayExpressRouteSku()); !ok {
 			return nil, err
 		}
 	}
@@ -641,7 +632,7 @@ func flattenVirtualNetworkGatewayIPConfigurations(ipConfigs *[]network.VirtualNe
 	return flat
 }
 
-func flattenVirtualNetworkGatewayVpnClientConfig(cfg *network.VpnClientConfiguration) []interface{} {
+func flattenVirtualNetworkGatewayVpnClientConfig(d *pluginsdk.ResourceData, cfg *network.VpnClientConfiguration) []interface{} {
 	if cfg == nil {
 		return []interface{}{}
 	}
@@ -690,7 +681,9 @@ func flattenVirtualNetworkGatewayVpnClientConfig(cfg *network.VpnClientConfigura
 	}
 
 	if v := cfg.RadiusServerSecret; v != nil {
-		flat["radius_server_secret"] = *v
+		if v1, ok := d.GetOk("vpn_client_configuration.0.radius_server_secret"); ok {
+			flat["radius_server_secret"] = v1.(string)
+		}
 	}
 
 	return []interface{}{flat}
@@ -719,31 +712,7 @@ func hashVirtualNetworkGatewayRevokedCert(v interface{}) int {
 func validateVirtualNetworkGatewayPolicyBasedVpnSku() pluginsdk.SchemaValidateFunc {
 	return validation.StringInSlice([]string{
 		string(network.VirtualNetworkGatewaySkuTierBasic),
-	}, true)
-}
-
-func validateVirtualNetworkGatewayRouteBasedVpnSkuGeneration1() pluginsdk.SchemaValidateFunc {
-	return validation.StringInSlice([]string{
-		string(network.VirtualNetworkGatewaySkuTierBasic),
 		string(network.VirtualNetworkGatewaySkuTierStandard),
 		string(network.VirtualNetworkGatewaySkuTierHighPerformance),
-		string(network.VirtualNetworkGatewaySkuNameVpnGw1),
-		string(network.VirtualNetworkGatewaySkuNameVpnGw2),
-		string(network.VirtualNetworkGatewaySkuNameVpnGw3),
-	}, true)
-}
-
-func validateVirtualNetworkGatewayRouteBasedVpnSkuGeneration2() pluginsdk.SchemaValidateFunc {
-	return validation.StringInSlice([]string{
-		string(network.VirtualNetworkGatewaySkuNameVpnGw2),
-		string(network.VirtualNetworkGatewaySkuNameVpnGw3),
-	}, true)
-}
-
-func validateVirtualNetworkGatewayExpressRouteSku() pluginsdk.SchemaValidateFunc {
-	return validation.StringInSlice([]string{
-		string(network.VirtualNetworkGatewaySkuTierStandard),
-		string(network.VirtualNetworkGatewaySkuTierHighPerformance),
-		string(network.VirtualNetworkGatewaySkuTierUltraPerformance),
 	}, true)
 }

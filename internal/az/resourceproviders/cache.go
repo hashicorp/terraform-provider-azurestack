@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources"
+	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/resources/mgmt/resources"
 )
 
 // cachedResourceProviders can be (validly) nil - as such this shouldn't be relied on

@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/network/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
@@ -50,16 +51,6 @@ func subnetDataSource() *pluginsdk.Resource {
 				Type:     pluginsdk.TypeString,
 				Computed: true,
 			},
-			/*
-
-				todo put back in??
-				"ip_configurations": {
-					Type:     schema.TypeSet,
-					Computed: true,
-					Elem:     &schema.Schema{Type: schema.TypeString},
-					Set:      schema.HashString,
-				},*/
-
 		},
 	}
 }
@@ -74,7 +65,7 @@ func subnetDataSourceRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	resp, err := client.Get(ctx, id.ResourceGroup, id.VirtualNetworkName, id.Name, "")
 	if err != nil {
 		if utils.ResponseWasNotFound(resp.Response) {
-			return fmt.Errorf("Error: %s was not found", id)
+			return fmt.Errorf("error: %s was not found", id)
 		}
 		return fmt.Errorf("retrieving %s: %+v", id, err)
 	}

@@ -18,6 +18,7 @@ type Client struct {
 	VnetGatewayConnectionsClient    *network.VirtualNetworkGatewayConnectionsClient
 	VnetGatewayClient               *network.VirtualNetworkGatewaysClient
 	VnetClient                      *network.VirtualNetworksClient
+	VnetPeeringsClient              *network.VirtualNetworkPeeringsClient
 }
 
 func NewClient(o *common.ClientOptions) *Client {
@@ -97,5 +98,6 @@ func NewClient(o *common.ClientOptions) *Client {
 		VnetGatewayConnectionsClient:    &VnetGatewayConnectionsClient,
 		VnetGatewayClient:               &VnetGatewayClient,
 		VnetClient:                      &VnetClient,
+		VnetPeeringsClient:              &VnetPeeringsClient,
 	}
 }

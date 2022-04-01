@@ -95,20 +95,6 @@ func TestAccNetworkSecurityRule_augmented(t *testing.T) {
 	})
 }
 
-func TestAccNetworkSecurityRule_applicationSecurityGroups(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_network_security_rule", "test1")
-	r := NetworkSecurityRuleResource{}
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.applicationSecurityGroups(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
 func (t NetworkSecurityRuleResource) Exists(ctx context.Context, clients *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
 	id, err := parse.SecurityRuleID(state.ID)
 	if err != nil {
@@ -307,61 +293,4 @@ resource "azurestack_network_security_rule" "test1" {
   network_security_group_name  = azurestack_network_security_group.test1.name
 }
 `, data.RandomInteger, data.Locations.Primary)
-}
-
-func (NetworkSecurityRuleResource) applicationSecurityGroups(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_application_security_group" "source1" {
-  name                = "acctest-source1-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_application_security_group" "source2" {
-  name                = "acctest-source2-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_application_security_group" "destination1" {
-  name                = "acctest-destination1-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_application_security_group" "destination2" {
-  name                = "acctest-destination2-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_network_security_group" "test" {
-  name                = "acctestnsg-%d"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-}
-
-resource "azurestack_network_security_rule" "test1" {
-  name                                       = "test123"
-  resource_group_name                        = azurestack_resource_group.test.name
-  network_security_group_name                = azurestack_network_security_group.test.name
-  priority                                   = 100
-  direction                                  = "Outbound"
-  access                                     = "Allow"
-  protocol                                   = "Tcp"
-  source_application_security_group_ids      = [azurestack_application_security_group.source1.id, azurestack_application_security_group.source2.id]
-  destination_application_security_group_ids = [azurestack_application_security_group.destination1.id, azurestack_application_security_group.destination2.id]
-  source_port_ranges                         = ["10000-40000"]
-  destination_port_ranges                    = ["80", "443", "8080", "8190"]
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger)
 }

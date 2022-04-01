@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/network/mgmt/network"
-	"github.com/hashicorp/go-azure-helpers/lang/pointer"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonschema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -124,24 +123,6 @@ func networkSecurityRule() *pluginsdk.Resource {
 				Elem:          &pluginsdk.Schema{Type: pluginsdk.TypeString},
 				Set:           pluginsdk.HashString,
 				ConflictsWith: []string{"destination_address_prefix"},
-			},
-
-			// lintignore:S018
-			"source_application_security_group_ids": {
-				Type:     pluginsdk.TypeSet,
-				MaxItems: 10,
-				Optional: true,
-				Elem:     &pluginsdk.Schema{Type: pluginsdk.TypeString},
-				Set:      pluginsdk.HashString,
-			},
-
-			// lintignore:S018
-			"destination_application_security_group_ids": {
-				Type:     pluginsdk.TypeSet,
-				MaxItems: 10,
-				Optional: true,
-				Elem:     &pluginsdk.Schema{Type: pluginsdk.TypeString},
-				Set:      pluginsdk.HashString,
 			},
 
 			"access": {
@@ -268,28 +249,6 @@ func networkSecurityRuleCreateUpdate(d *pluginsdk.ResourceData, meta interface{}
 		rule.SecurityRulePropertiesFormat.DestinationAddressPrefixes = &destinationAddressPrefixes
 	}
 
-	if r, ok := d.GetOk("source_application_security_group_ids"); ok {
-		var sourceApplicationSecurityGroups []network.ApplicationSecurityGroup
-		for _, v := range r.(*pluginsdk.Set).List() {
-			sg := network.ApplicationSecurityGroup{
-				ID: pointer.FromString(v.(string)),
-			}
-			sourceApplicationSecurityGroups = append(sourceApplicationSecurityGroups, sg)
-		}
-		rule.SourceApplicationSecurityGroups = &sourceApplicationSecurityGroups
-	}
-
-	if r, ok := d.GetOk("destination_application_security_group_ids"); ok {
-		var destinationApplicationSecurityGroups []network.ApplicationSecurityGroup
-		for _, v := range r.(*pluginsdk.Set).List() {
-			sg := network.ApplicationSecurityGroup{
-				ID: pointer.FromString(v.(string)),
-			}
-			destinationApplicationSecurityGroups = append(destinationApplicationSecurityGroups, sg)
-		}
-		rule.DestinationApplicationSecurityGroups = &destinationApplicationSecurityGroups
-	}
-
 	future, err := client.CreateOrUpdate(ctx, id.ResourceGroup, id.NetworkSecurityGroupName, id.Name, rule)
 	if err != nil {
 		return fmt.Errorf("creating/updating %s: %+v", id, err)
@@ -341,14 +300,6 @@ func networkSecurityRuleRead(d *pluginsdk.ResourceData, meta interface{}) error 
 		d.Set("access", string(props.Access))
 		d.Set("priority", int(*props.Priority))
 		d.Set("direction", string(props.Direction))
-
-		if err := d.Set("source_application_security_group_ids", flattenApplicationSecurityGroupIds(props.SourceApplicationSecurityGroups)); err != nil {
-			return fmt.Errorf("setting `source_application_security_group_ids`: %+v", err)
-		}
-
-		if err := d.Set("destination_application_security_group_ids", flattenApplicationSecurityGroupIds(props.DestinationApplicationSecurityGroups)); err != nil {
-			return fmt.Errorf("setting `source_application_security_group_ids`: %+v", err)
-		}
 	}
 
 	return nil
@@ -380,16 +331,4 @@ func networkSecurityRuleDelete(d *pluginsdk.ResourceData, meta interface{}) erro
 	}
 
 	return nil
-}
-
-func flattenApplicationSecurityGroupIds(groups *[]network.ApplicationSecurityGroup) []string {
-	ids := make([]string, 0)
-
-	if groups != nil {
-		for _, v := range *groups {
-			ids = append(ids, *v.ID)
-		}
-	}
-
-	return ids
 }

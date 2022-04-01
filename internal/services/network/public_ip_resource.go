@@ -86,7 +86,6 @@ func publicIp() *pluginsdk.Resource {
 				DiffSuppressFunc: suppress.CaseDifference,
 				ValidateFunc: validation.StringInSlice([]string{
 					string(network.IPv4),
-					string(network.IPv6),
 				}, true),
 			},
 
@@ -98,7 +97,6 @@ func publicIp() *pluginsdk.Resource {
 				DiffSuppressFunc: suppress.CaseDifference,
 				ValidateFunc: validation.StringInSlice([]string{
 					string(network.PublicIPAddressSkuNameBasic),
-					string(network.PublicIPAddressSkuNameStandard),
 				}, true),
 			},
 

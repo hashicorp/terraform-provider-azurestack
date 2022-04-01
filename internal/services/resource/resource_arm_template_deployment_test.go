@@ -115,7 +115,7 @@ func TestAccTemplateDeployment_withOutputs(t *testing.T) {
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 				acceptance.TestCheckOutput("tfIntOutput", "-123"),
-				acceptance.TestCheckOutput("tfStringOutput", "Standard_GRS"),
+				acceptance.TestCheckOutput("tfStringOutput", "Standard_LRS"),
 
 				// these values *should* be 'true' and 'false' but,
 				// due to a bug in the way terraform represents bools at various times these are for now 0 and 1
@@ -123,7 +123,7 @@ func TestAccTemplateDeployment_withOutputs(t *testing.T) {
 				// at a later date these may return the expected 'true' / 'false' and should be changed back
 				acceptance.TestCheckOutput("tfFalseOutput", "false"),
 				acceptance.TestCheckOutput("tfTrueOutput", "true"),
-				check.That(data.ResourceName).Key("outputs.stringOutput").HasValue("Standard_GRS"),
+				check.That(data.ResourceName).Key("outputs.stringOutput").HasValue("Standard_LRS"),
 			),
 		},
 	})
@@ -136,7 +136,7 @@ func TestAccTemplateDeployment_withError(t *testing.T) {
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
 			Config:      r.withError(data),
-			ExpectError: regexp.MustCompile("Error waiting for deployment"),
+			ExpectError: regexp.MustCompile("Error: creating Template Deployment"),
 		},
 	})
 }
@@ -474,7 +474,7 @@ locals {
     }
   },
 "storageAccountType": {
-   "value": "Standard_GRS"
+   "value": "Standard_LRS"
   }
 }
 TPL
@@ -653,7 +653,7 @@ DEPLOY
 
   parameters = {
     dnsLabelPrefix     = "terraform-test-%d"
-    storageAccountType = "Standard_GRS"
+    storageAccountType = "Standard_LRS"
   }
 
   deployment_mode = "Complete"
@@ -782,7 +782,7 @@ DEPLOY
 
   parameters = {
     dnsLabelPrefix     = "terraform-test-%d"
-    storageAccountType = "Standard_GRS"
+    storageAccountType = "Standard_LRS"
   }
 
   deployment_mode = "Incremental"
@@ -855,7 +855,7 @@ DEPLOY
 
 
   parameters = {
-    storageAccountType = "Standard_GRS"
+    storageAccountType = "Standard_LRS"
   }
 
   deployment_mode = "Complete"

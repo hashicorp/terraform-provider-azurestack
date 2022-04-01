@@ -4,6 +4,7 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/authorization"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/dns"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/services/keyvault"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/loadbalancer"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/network"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/resource"
@@ -18,6 +19,7 @@ func SupportedUntypedServices() []sdk.UntypedServiceRegistration {
 		authorization.Registration{},
 		compute.Registration{},
 		dns.Registration{},
+		keyvault.Registration{},
 		loadbalancer.Registration{},
 		network.Registration{},
 		resource.Registration{},

@@ -76,6 +76,10 @@ The following arguments are supported:
 
 * `ip_configuration` - (Required) One or two ip_configuration blocks documented below. An active-standby gateway requires exactly one ip_configuration block whereas an active-active gateway requires exactly two ip_configuration blocks.
 
+* `vpn_client_configuration` (Optional) A `vpn_client_configuration` block which
+  is documented below. In this block the Virtual Network Gateway can be configured
+  to accept IPSec point-to-site connections.
+* 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 
 The `ip_configuration` block supports:
@@ -88,12 +92,50 @@ The `ip_configuration` block supports:
 
 * `public_ip_address_id` - (Optional) The ID of the public ip address to associate with the Virtual Network Gateway.
 
+The `vpn_client_configuration` block supports:
+
+* `address_space` - (Required) The address space out of which ip addresses for
+  vpn clients will be taken. You can provide more than one address space, e.g.
+  in CIDR notation.
+
+* `root_certificate` - (Optional) One or more `root_certificate` blocks which are
+  defined below. These root certificates are used to sign the client certificate
+  used by the VPN clients to connect to the gateway.
+
+* `revoked_certificate` - (Optional) One or more `revoked_certificate` blocks which
+  are defined below.
+
+* `radius_server_address` - (Optional) The address of the Radius server.
+
+* `radius_server_secret` - (Optional) The secret used by the Radius server.
+
+* `vpn_client_protocols` - (Optional) List of the protocols supported by the vpn client.
+  The supported values are `SSTP`, `IkeV2` and `OpenVPN`.
+
 The `bgp_settings` block supports:
 
 * `asn` - (Optional) The Autonomous System Number (ASN) to use as part of the BGP.
 
 * `peering_address` - (Optional) The BGP peer IP address of the virtual network gateway. This address is needed to configure the created gateway as a BGP Peer on the on-premises VPN devices. The IP address must be part of the subnet of the Virtual Network Gateway. Changing this forces a new resource to be created
 
+
+The `root_certificate` block supports:
+
+* `name` - (Required) A user-defined name of the root certificate.
+
+* `public_cert_data` - (Required) The public certificate of the root certificate
+  authority. The certificate must be provided in Base-64 encoded X.509 format
+  (PEM). In particular, this argument *must not* include the
+  `-----BEGIN CERTIFICATE-----` or `-----END CERTIFICATE-----` markers.
+
+---
+
+The `revoked_certificate` block supports:
+
+* `name` - (Required) A user-defined name of the revoked certificate.
+
+* `thumbprint` - (Required) The SHA1 thumbprint of the certificate to be
+  revoked.
 
 ## Attributes Reference
 

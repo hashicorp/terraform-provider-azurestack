@@ -8,6 +8,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/blobs"
+
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/migration"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/storage/validate"
@@ -15,16 +17,14 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/timeouts"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
-	"github.com/tombuildsstuff/giovanni/storage/2018-11-09/blob/blobs"
 )
 
 func storageBlob() *schema.Resource {
 	return &schema.Resource{
-		Create: storageBlobCreate,
-		Read:   storageBlobRead,
-		Delete: storageBlobDelete,
-
-		// TODO check schema and confirm old stack provider can upgrade to this
+		Create:        storageBlobCreate,
+		Read:          storageBlobRead,
+		Delete:        storageBlobDelete,
+		Update:        storageBlobUpdate,
 		SchemaVersion: 1,
 		StateUpgraders: pluginsdk.StateUpgrades(map[int]pluginsdk.StateUpgrade{
 			0: migration.BlobV0ToV1{},
@@ -34,10 +34,10 @@ func storageBlob() *schema.Resource {
 		Importer: pluginsdk.DefaultImporter(),
 
 		Timeouts: &pluginsdk.ResourceTimeout{
-			Create: pluginsdk.DefaultTimeout(30 * time.Minute),
+			Create: pluginsdk.DefaultTimeout(120 * time.Minute),
 			Read:   pluginsdk.DefaultTimeout(5 * time.Minute),
-			Update: pluginsdk.DefaultTimeout(30 * time.Minute),
-			Delete: pluginsdk.DefaultTimeout(30 * time.Minute),
+			Update: pluginsdk.DefaultTimeout(120 * time.Minute),
+			Delete: pluginsdk.DefaultTimeout(120 * time.Minute),
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -47,9 +47,6 @@ func storageBlob() *schema.Resource {
 				ForceNew: true,
 				// TODO: add validation
 			},
-
-			// "resource_group_name": commonschema.ResourceGroupName(),
-			// todo property deprecate
 
 			"storage_account_name": {
 				Type:         pluginsdk.TypeString,
@@ -84,6 +81,17 @@ func storageBlob() *schema.Resource {
 				ValidateFunc: validation.IntDivisibleBy(512),
 			},
 
+			"content_type": {
+				Type:     pluginsdk.TypeString,
+				Optional: true,
+				Default:  "application/octet-stream",
+			},
+
+			"cache_control": {
+				Type:     pluginsdk.TypeString,
+				Optional: true,
+			},
+
 			"source": {
 				Type:          pluginsdk.TypeString,
 				Optional:      true,
@@ -105,6 +113,13 @@ func storageBlob() *schema.Resource {
 				ConflictsWith: []string{"source", "source_content"},
 			},
 
+			"content_md5": {
+				Type:          pluginsdk.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				ConflictsWith: []string{"source_uri"},
+			},
+
 			"url": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -119,14 +134,7 @@ func storageBlob() *schema.Resource {
 				ValidateFunc: validation.IntAtLeast(1),
 			},
 
-			// removed in new storage sdk
-			/*"attempts": {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      1,
-				ForceNew:     true,
-				ValidateFunc: validation.IntAtLeast(1),
-			},*/
+			"metadata": MetaDataComputedSchema(),
 		},
 	}
 }
@@ -167,7 +175,18 @@ func storageBlobCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 		}
 	}
 
+	contentMD5Raw := d.Get("content_md5").(string)
+	contentMD5 := ""
+	if contentMD5Raw != "" {
+		// Azure uses a Base64 encoded representation of the standard MD5 sum of the file
+		contentMD5, err = convertHexToBase64Encoding(d.Get("content_md5").(string))
+		if err != nil {
+			return fmt.Errorf("failed to base64 encode `content_md5` value: %s", err)
+		}
+	}
+
 	log.Printf("[DEBUG] Creating Blob %q in Container %q within Storage Account %q..", name, containerName, accountName)
+	metaDataRaw := d.Get("metadata").(map[string]interface{})
 	blobInput := BlobUpload{
 		AccountName:   accountName,
 		ContainerName: containerName,
@@ -175,6 +194,10 @@ func storageBlobCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 		Client:        blobsClient,
 
 		BlobType:      d.Get("type").(string),
+		CacheControl:  d.Get("cache_control").(string),
+		ContentType:   d.Get("content_type").(string),
+		ContentMD5:    contentMD5,
+		MetaData:      ExpandMetaData(metaDataRaw),
 		Parallelism:   d.Get("parallelism").(int),
 		Size:          d.Get("size").(int),
 		Source:        d.Get("source").(string),
@@ -209,11 +232,49 @@ func storageBlobUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Unable to locate Storage Account %q!", id.AccountName)
 	}
 
-	/*	blobsClient, err := storageClient.BlobsClient(ctx, *account)
-		if err != nil {
-			return fmt.Errorf("building Blobs Client: %s", err)
+	blobsClient, err := storageClient.BlobsClient(ctx, *account)
+	if err != nil {
+		return fmt.Errorf("building Blobs Client: %s", err)
+	}
+
+	if d.HasChange("content_type") || d.HasChange("cache_control") {
+		log.Printf("[DEBUG] Updating Properties for Blob %q (Container %q / Account %q)...", id.BlobName, id.ContainerName, id.AccountName)
+		contentType := d.Get("content_type").(string)
+		cacheControl := d.Get("cache_control").(string)
+		input := blobs.SetPropertiesInput{
+			ContentType:  &contentType,
+			CacheControl: &cacheControl,
 		}
-	*/
+
+		// `content_md5` is `ForceNew` but must be included in the `SetPropertiesInput` update payload or it will be zeroed on the blob.
+		if contentMD5 := d.Get("content_md5").(string); contentMD5 != "" {
+			data, err := convertHexToBase64Encoding(contentMD5)
+			if err != nil {
+				return fmt.Errorf("in converting hex to base64 encoding for content_md5: %s", err)
+			}
+
+			contentMD5data := data
+			input.ContentMD5 = &contentMD5data
+		}
+
+		if _, err := blobsClient.SetProperties(ctx, id.AccountName, id.ContainerName, id.BlobName, input); err != nil {
+			return fmt.Errorf("updating Properties for Blob %q (Container %q / Account %q): %s", id.BlobName, id.ContainerName, id.AccountName, err)
+		}
+		log.Printf("[DEBUG] Updated Properties for Blob %q (Container %q / Account %q).", id.BlobName, id.ContainerName, id.AccountName)
+	}
+
+	if d.HasChange("metadata") {
+		log.Printf("[DEBUG] Updating MetaData for Blob %q (Container %q / Account %q)...", id.BlobName, id.ContainerName, id.AccountName)
+		metaDataRaw := d.Get("metadata").(map[string]interface{})
+		input := blobs.SetMetaDataInput{
+			MetaData: ExpandMetaData(metaDataRaw),
+		}
+		if _, err := blobsClient.SetMetaData(ctx, id.AccountName, id.ContainerName, id.BlobName, input); err != nil {
+			return fmt.Errorf("updating MetaData for Blob %q (Container %q / Account %q): %s", id.BlobName, id.ContainerName, id.AccountName, err)
+		}
+		log.Printf("[DEBUG] Updated MetaData for Blob %q (Container %q / Account %q).", id.BlobName, id.ContainerName, id.AccountName)
+	}
+
 	return storageBlobRead(d, meta)
 }
 
@@ -259,8 +320,25 @@ func storageBlobRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	d.Set("storage_container_name", id.ContainerName)
 	d.Set("storage_account_name", id.AccountName)
 
+	d.Set("content_type", props.ContentType)
+	d.Set("cache_control", props.CacheControl)
+
+	// Set the ContentMD5 value to md5 hash in hex
+	contentMD5 := ""
+	if props.ContentMD5 != "" {
+		contentMD5, err = convertBase64ToHexEncoding(props.ContentMD5)
+		if err != nil {
+			return fmt.Errorf("in converting hex to base64 encoding for content_md5: %s", err)
+		}
+	}
+	d.Set("content_md5", contentMD5)
+
 	d.Set("type", strings.TrimSuffix(string(props.BlobType), "Blob"))
 	d.Set("url", d.Id())
+
+	if err := d.Set("metadata", FlattenMetaData(props.MetaData)); err != nil {
+		return fmt.Errorf("setting `metadata`: %+v", err)
+	}
 
 	// The CopySource is only returned if the blob hasn't been modified (e.g. metadata configured etc)
 	// as such, we need to conditionally set this to ensure it's trackable if possible

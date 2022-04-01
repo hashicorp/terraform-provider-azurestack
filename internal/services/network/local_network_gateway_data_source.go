@@ -38,11 +38,6 @@ func localNetworkGatewayDataSource() *pluginsdk.Resource {
 				Computed: true,
 			},
 
-			"gateway_fqdn": {
-				Type:     pluginsdk.TypeString,
-				Computed: true,
-			},
-
 			"address_space": {
 				Type:     pluginsdk.TypeList,
 				Computed: true,

@@ -101,16 +101,6 @@ func virtualNetworkGatewayDataSource() *pluginsdk.Resource {
 							},
 						},
 
-						"aad_audience": {
-							Type:     pluginsdk.TypeString,
-							Computed: true,
-						},
-
-						"aad_issuer": {
-							Type:     pluginsdk.TypeString,
-							Computed: true,
-						},
-
 						"root_certificate": {
 							Type:     pluginsdk.TypeList,
 							Computed: true,

@@ -90,110 +90,66 @@ The following example shows a connection between two Azure virtual network
 in different locations/regions.
 
 ```hcl
-resource "azurestack_resource_group" "us" {
+resource "azurestack_resource_group" "example" {
   name     = "us"
   location = "East US"
 }
 
-resource "azurestack_virtual_network" "us" {
-  name                = "us"
-  location            = azurestack_resource_group.us.location
-  resource_group_name = azurestack_resource_group.us.name
+resource "azurestack_virtual_network" "example" {
+  name                = "example"
+  location            = azurestack_resource_group.example.location
+  resource_group_name = azurestack_resource_group.example.name
   address_space       = ["10.0.0.0/16"]
 }
 
-resource "azurestack_subnet" "us_gateway" {
+resource "azurestack_subnet" "example" {
   name                 = "GatewaySubnet"
-  resource_group_name  = azurestack_resource_group.us.name
-  virtual_network_name = azurestack_virtual_network.us.name
+  resource_group_name  = azurestack_resource_group.example.name
+  virtual_network_name = azurestack_virtual_network.example.name
   address_prefix       = "10.0.1.0/24"
 }
 
-resource "azurestack_public_ip" "us" {
-  name                         = "us"
-  location                     = azurestack_resource_group.us.location
-  resource_group_name          = azurestack_resource_group.us.name
-  public_ip_address_allocation = "Dynamic"
+resource "azurestack_public_ip" "example" {
+  name                = "example"
+  location            = azurestack_resource_group.example.location
+  resource_group_name = azurestack_resource_group.example.name
+  allocation_method   = "Dynamic"
 }
 
-resource "azurestack_virtual_network_gateway" "us" {
-  name                = "us-gateway"
-  location            = azurestack_resource_group.us.location
-  resource_group_name = azurestack_resource_group.us.name
+resource "azurestack_virtual_network_gateway" "example" {
+  name                = "example"
+  location            = azurestack_resource_group.example.location
+  resource_group_name = azurestack_resource_group.example.name
 
   type     = "Vpn"
   vpn_type = "RouteBased"
   sku      = "Basic"
 
   ip_configuration {
-    public_ip_address_id          = azurestack_public_ip.us.id
+    name                          = "vnetGatewayConfig"
+    public_ip_address_id          = azurestack_public_ip.example.id
     private_ip_address_allocation = "Dynamic"
-    subnet_id                     = azurestack_subnet.us_gateway.id
+    subnet_id                     = azurestack_subnet.example.id
   }
 }
 
-resource "azurestack_resource_group" "europe" {
-  name     = "europe"
-  location = "West Europe"
+resource "azurestack_local_network_gateway" "example" {
+  name                = "example"
+  location            = azurestack_resource_group.example.location
+  resource_group_name = azurestack_resource_group.example.name
+
+  gateway_address = "168.62.225.12"
+  address_space   = ["10.1.1.0/24"]
 }
 
-resource "azurestack_virtual_network" "europe" {
-  name                = "europe"
-  location            = azurestack_resource_group.europe.location
-  resource_group_name = azurestack_resource_group.europe.name
-  address_space       = ["10.1.0.0/16"]
-}
+resource "azurestack_virtual_network_gateway_connection" "test" {
+  name                = "example"
+  location            = azurestack_resource_group.example.location
+  resource_group_name = azurestack_resource_group.example.name
 
-resource "azurestack_subnet" "europe_gateway" {
-  name                 = "GatewaySubnet"
-  resource_group_name  = azurestack_resource_group.europe.name
-  virtual_network_name = azurestack_virtual_network.europe.name
-  address_prefix       = "10.1.1.0/24"
-}
-
-resource "azurestack_public_ip" "europe" {
-  name                         = "europe"
-  location                     = azurestack_resource_group.europe.location
-  resource_group_name          = azurestack_resource_group.europe.name
-  public_ip_address_allocation = "Dynamic"
-}
-
-resource "azurestack_virtual_network_gateway" "europe" {
-  name                = "europe-gateway"
-  location            = azurestack_resource_group.europe.location
-  resource_group_name = azurestack_resource_group.europe.name
-
-  type     = "Vpn"
-  vpn_type = "RouteBased"
-  sku      = "Basic"
-
-  ip_configuration {
-    public_ip_address_id          = azurestack_public_ip.europe.id
-    private_ip_address_allocation = "Dynamic"
-    subnet_id                     = azurestack_subnet.europe_gateway.id
-  }
-}
-
-resource "azurestack_virtual_network_gateway_connection" "us_to_europe" {
-  name                = "us-to-europe"
-  location            = azurestack_resource_group.us.location
-  resource_group_name = azurestack_resource_group.us.name
-
-  type                            = "Vnet2Vnet"
-  virtual_network_gateway_id      = azurestack_virtual_network_gateway.us.id
-  peer_virtual_network_gateway_id = azurestack_virtual_network_gateway.europe.id
-
-  shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
-}
-
-resource "azurestack_virtual_network_gateway_connection" "europe_to_us" {
-  name                = "europe-to-us"
-  location            = azurestack_resource_group.europe.location
-  resource_group_name = azurestack_resource_group.europe.name
-
-  type                            = "Vnet2Vnet"
-  virtual_network_gateway_id      = azurestack_virtual_network_gateway.europe.id
-  peer_virtual_network_gateway_id = azurestack_virtual_network_gateway.us.id
+  type                       = "IPsec"
+  virtual_network_gateway_id = azurestack_virtual_network_gateway.example.id
+  local_network_gateway_id   = azurestack_local_network_gateway.example.id
 
   shared_key = "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
 }
@@ -213,7 +169,7 @@ The following arguments are supported:
     located. Changing this forces a new resource to be created.
 
 * `type` - (Required) The type of connection. Valid options are `IPsec`
-    (Site-to-Site), `ExpressRoute` (ExpressRoute), and `Vnet2Vnet` (VNet-to-VNet).
+    (Site-to-Site), `ExpressRoute` (ExpressRoute).
     Each connection type requires different mandatory arguments (refer to the
     examples above). Changing the connection type will force a new connection
     to be created.

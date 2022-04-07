@@ -27,8 +27,6 @@ func TestAccManagedDiskDataSource_basic(t *testing.T) {
 				check.That(data.ResourceName).Key("disk_size_gb").HasValue("10"),
 				check.That(data.ResourceName).Key("tags.%").HasValue("1"),
 				check.That(data.ResourceName).Key("tags.environment").HasValue("acctest"),
-				check.That(data.ResourceName).Key("zones.#").HasValue("1"),
-				check.That(data.ResourceName).Key("zones.0").HasValue("2"),
 			),
 		},
 	})
@@ -52,7 +50,6 @@ resource "azurestack_managed_disk" "test" {
   storage_account_type = "Premium_LRS"
   create_option        = "Empty"
   disk_size_gb         = "10"
-  zones                = ["2"]
 
   tags = {
     environment = "acctest"

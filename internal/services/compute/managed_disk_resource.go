@@ -13,7 +13,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/resourceid"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/az/tags"
-	"github.com/hashicorp/terraform-provider-azurestack/internal/az/zones"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/locks"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
@@ -55,8 +54,6 @@ func managedDisk() *pluginsdk.Resource {
 
 			"resource_group_name": commonschema.ResourceGroupName(),
 
-			"zones": zones.SchemaSingleZone(),
-
 			"storage_account_type": {
 				Type:     pluginsdk.TypeString,
 				Required: true,
@@ -66,6 +63,8 @@ func managedDisk() *pluginsdk.Resource {
 				}, false),
 				DiffSuppressFunc: suppress.CaseDifference,
 			},
+
+			"encryption": encryptionSettingsSchema(),
 
 			"disk_size_gb": {
 				Type:         pluginsdk.TypeInt,
@@ -83,6 +82,16 @@ func managedDisk() *pluginsdk.Resource {
 					string(compute.Empty),
 					string(compute.FromImage),
 					string(compute.Import),
+				}, false),
+			},
+
+			"hyper_v_generation": {
+				Type:     pluginsdk.TypeString,
+				Optional: true,
+				ForceNew: true, // Not supported by disk update
+				ValidateFunc: validation.StringInSlice([]string{
+					string(compute.HyperVGenerationTypesV1),
+					string(compute.HyperVGenerationTypeV2),
 				}, false),
 			},
 
@@ -157,7 +166,6 @@ func resourceManagedDiskCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 	osType := d.Get("os_type").(string)
 
 	t := d.Get("tags").(map[string]interface{})
-	zones := zones.ExpandZones(d.Get("zones").([]interface{}))
 	skuName := compute.DiskStorageAccountTypes(storageAccountType)
 
 	props := &compute.DiskProperties{
@@ -204,6 +212,16 @@ func resourceManagedDiskCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 		}
 	}
 
+	if v, ok := d.GetOk("encryption"); ok {
+		encryptionSettings := v.([]interface{})
+		settings := encryptionSettings[0].(map[string]interface{})
+		props.EncryptionSettingsCollection = expandManagedDiskEncryptionSettings(settings)
+	}
+
+	if v, ok := d.GetOk("hyper_v_generation"); ok {
+		props.HyperVGeneration = compute.HyperVGeneration(v.(string))
+	}
+
 	createDisk := compute.Disk{
 		Name:           &name,
 		Location:       &location,
@@ -211,8 +229,7 @@ func resourceManagedDiskCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 		Sku: &compute.DiskSku{
 			Name: skuName,
 		},
-		Tags:  tags.Expand(t),
-		Zones: zones,
+		Tags: tags.Expand(t),
 	}
 
 	future, err := client.CreateOrUpdate(ctx, resourceGroup, name, createDisk)
@@ -436,8 +453,6 @@ func resourceManagedDiskRead(d *pluginsdk.ResourceData, meta interface{}) error 
 
 	d.Set("name", resp.Name)
 	d.Set("resource_group_name", id.ResourceGroup)
-	d.Set("zones", utils.FlattenStringSlice(resp.Zones))
-
 	d.Set("location", location.NormalizeNilable(resp.Location))
 
 	if sku := resp.Sku; sku != nil {
@@ -460,6 +475,11 @@ func resourceManagedDiskRead(d *pluginsdk.ResourceData, meta interface{}) error 
 
 		d.Set("disk_size_gb", props.DiskSizeGB)
 		d.Set("os_type", props.OsType)
+		d.Set("hyper_v_generation", props.HyperVGeneration)
+
+		if err := d.Set("encryption", flattenManagedDiskEncryptionSettings(props.EncryptionSettingsCollection)); err != nil {
+			return fmt.Errorf("setting `encryption`: %+v", err)
+		}
 	}
 
 	return tags.FlattenAndSet(d, resp.Tags)

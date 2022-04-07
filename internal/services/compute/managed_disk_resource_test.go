@@ -7,6 +7,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/compute/mgmt/compute"
 	"github.com/hashicorp/go-azure-helpers/lang/pointer"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/services/compute/parse"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
@@ -147,21 +148,6 @@ func TestAccManagedDisk_update(t *testing.T) {
 	})
 }
 
-func TestAccManagedDisk_importEmpty_withZone(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_managed_disk", "test")
-	r := ManagedDiskResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.empty_withZone(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-			),
-		},
-		data.ImportStep(),
-	})
-}
-
 func TestAccManagedDisk_attachedDiskUpdate(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_managed_disk", "test")
 	r := ManagedDiskResource{}
@@ -207,27 +193,40 @@ func TestAccManagedDisk_attachedStorageTypeUpdate(t *testing.T) {
 	})
 }
 
-func TestAccManagedDisk_attachedTierUpdate(t *testing.T) {
+func TestAccManagedDisk_create_withHyperVGeneration(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_managed_disk", "test")
 	r := ManagedDiskResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
-			Config: r.tierUpdateWhileAttached(data, "P10"),
-			Check: acceptance.ComposeTestCheckFunc(
+			Config: r.create_withHyperVGeneration(data),
+			Check: resource.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("tier").HasValue("P10"),
 			),
 		},
 		data.ImportStep(),
+	})
+}
+
+func TestAccManagedDisk_encryption(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_managed_disk", "test")
+	r := ManagedDiskResource{}
+
+	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
-			Config: r.tierUpdateWhileAttached(data, "P20"),
+			Config: r.encryption(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("tier").HasValue("P20"),
+				check.That(data.ResourceName).Key("encryption.#").HasValue("1"),
+				check.That(data.ResourceName).Key("encryption.0.enabled").HasValue("true"),
+				check.That(data.ResourceName).Key("encryption.0.disk_encryption_key.#").HasValue("1"),
+				check.That(data.ResourceName).Key("encryption.0.disk_encryption_key.0.secret_url").Exists(),
+				check.That(data.ResourceName).Key("encryption.0.disk_encryption_key.0.source_vault_id").Exists(),
+				check.That(data.ResourceName).Key("encryption.0.key_encryption_key.#").HasValue("1"),
+				check.That(data.ResourceName).Key("encryption.0.key_encryption_key.0.key_url").Exists(),
+				check.That(data.ResourceName).Key("encryption.0.key_encryption_key.0.source_vault_id").Exists(),
 			),
 		},
-		data.ImportStep(),
 	})
 }
 
@@ -308,34 +307,6 @@ resource "azurestack_managed_disk" "import" {
   }
 }
 `, template)
-}
-
-func (ManagedDiskResource) empty_withZone(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_managed_disk" "test" {
-  name                 = "acctestd-%d"
-  location             = azurestack_resource_group.test.location
-  resource_group_name  = azurestack_resource_group.test.name
-  storage_account_type = "Standard_LRS"
-  create_option        = "Empty"
-  disk_size_gb         = "1"
-  zones                = ["1"]
-
-  tags = {
-    environment = "acctest"
-    cost-center = "ops"
-  }
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomInteger)
 }
 
 func (ManagedDiskResource) importConfig(data acceptance.TestData) string {
@@ -475,6 +446,7 @@ resource "azurestack_managed_disk" "test" {
   location             = azurestack_resource_group.test.location
   resource_group_name  = azurestack_resource_group.test.name
   os_type              = "Linux"
+  hyper_v_generation   = "V1"
   create_option        = "FromImage"
   image_reference_id   = data.azurestack_platform_image.test.id
   storage_account_type = "Standard_LRS"
@@ -537,33 +509,6 @@ resource "azurestack_virtual_machine_data_disk_attachment" "test" {
   caching            = "None"
 }
 `, r.templateAttached(data), data.RandomInteger, diskSize)
-}
-
-func (r ManagedDiskResource) tierUpdateWhileAttached(data acceptance.TestData, tier string) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-%s
-
-resource "azurestack_managed_disk" "test" {
-  name                 = "%d-disk1"
-  location             = azurestack_resource_group.test.location
-  resource_group_name  = azurestack_resource_group.test.name
-  storage_account_type = "Premium_LRS"
-  create_option        = "Empty"
-  disk_size_gb         = 10
-  tier                 = "%s"
-}
-
-resource "azurestack_virtual_machine_data_disk_attachment" "test" {
-  managed_disk_id    = azurestack_managed_disk.test.id
-  virtual_machine_id = azurestack_linux_virtual_machine.test.id
-  lun                = "0"
-  caching            = "None"
-}
-`, r.templateAttached(data), data.RandomInteger, tier)
 }
 
 func (r ManagedDiskResource) storageTypeUpdateWhilstAttached(data acceptance.TestData, storageAccountType string) string {
@@ -629,7 +574,7 @@ resource "azurestack_linux_virtual_machine" "test" {
   name                            = "acctestvm-%d"
   resource_group_name             = azurestack_resource_group.test.name
   location                        = azurestack_resource_group.test.location
-  size                            = "Standard_D2s_v3"
+  size                            = "Standard_D2_v2"
   admin_username                  = "adminuser"
   admin_password                  = "Password1234!"
   disable_password_authentication = false
@@ -651,4 +596,122 @@ resource "azurestack_linux_virtual_machine" "test" {
   }
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger)
+}
+
+func (ManagedDiskResource) create_withHyperVGeneration(data acceptance.TestData) string {
+	return fmt.Sprintf(`
+provider "azurestack" {
+  features {}
+}
+resource "azurestack_resource_group" "test" {
+  name     = "acctestRG-%d"
+  location = "%s"
+}
+resource "azurestack_managed_disk" "test" {
+  name                 = "acctestd-%d"
+  location             = azurestack_resource_group.test.location
+  resource_group_name  = azurestack_resource_group.test.name
+  storage_account_type = "Premium_LRS"
+  create_option        = "Empty"
+  disk_size_gb         = "1023"
+  hyper_v_generation   = "V2"
+  tags = {
+    environment = "acctest"
+    cost-center = "ops"
+  }
+}
+`, data.RandomInteger, data.Locations.Primary, data.RandomInteger)
+}
+
+func (ManagedDiskResource) encryption(data acceptance.TestData) string {
+	return fmt.Sprintf(`
+provider "azurestack" {
+  features {}
+}
+
+data "azurestack_client_config" "current" {}
+
+resource "azurestack_resource_group" "test" {
+  name     = "acctestRG-%d"
+  location = "%s"
+}
+
+resource "azurestack_key_vault" "test" {
+  name                = "acctestkv-%s"
+  location            = azurestack_resource_group.test.location
+  resource_group_name = azurestack_resource_group.test.name
+  tenant_id           = data.azurestack_client_config.current.tenant_id
+  sku_name            = "standard"
+
+  access_policy {
+    tenant_id = data.azurestack_client_config.current.tenant_id
+    object_id = data.azurestack_client_config.current.service_principal_object_id
+
+    key_permissions = [
+      "Create",
+      "Delete",
+      "Get",
+      "Purge",
+      "Recover",
+      "Update",
+    ]
+
+    secret_permissions = [
+      "Get",
+      "Delete",
+      "Set",
+    ]
+  }
+
+  tags = {
+    environment = "Production"
+  }
+}
+
+resource "azurestack_key_vault_secret" "test" {
+  name         = "secret-%s"
+  value        = "rick-and-morty"
+  key_vault_id = azurestack_key_vault.test.id
+}
+
+resource "azurestack_key_vault_key" "test" {
+  name         = "key-%s"
+  key_vault_id = azurestack_key_vault.test.id
+  key_type     = "EC"
+  key_size     = 2048
+
+  key_opts = [
+    "sign",
+    "verify",
+  ]
+}
+
+resource "azurestack_managed_disk" "test" {
+  name                 = "acctestd-%d"
+  location             = "${azurestack_resource_group.test.location}"
+  resource_group_name  = "${azurestack_resource_group.test.name}"
+  storage_account_type = "Standard_LRS"
+  create_option        = "Empty"
+  disk_size_gb         = "1"
+
+  encryption {
+    enabled = true
+
+    disk_encryption_key {
+      secret_url      = "${azurestack_key_vault_secret.test.id}"
+      source_vault_id = "${azurestack_key_vault.test.id}"
+    }
+
+    key_encryption_key {
+      key_url         = "${azurestack_key_vault_key.test.id}"
+      source_vault_id = "${azurestack_key_vault.test.id}"
+    }
+  }
+
+  tags = {
+    environment = "acctest"
+    cost-center = "ops"
+  }
+}
+`, data.RandomInteger, data.Locations.Primary, data.RandomString, data.RandomString, data.RandomString, data.RandomInteger)
 }

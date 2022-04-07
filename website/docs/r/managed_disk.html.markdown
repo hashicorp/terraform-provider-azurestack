@@ -102,7 +102,23 @@ The following arguments are supported:
 * `disk_size_gb` - (Optional, Required for a new managed disk) Specifies the size of the managed disk to create in gigabytes.
     If `create_option` is `Copy` or `FromImage`, then the value must be equal to or greater than the source's size.
 
+* `encryption` - (Optional) A `encryption` block as defined below.
+
+* `hyper_v_generation` - (Optional) The HyperV Generation of the Disk when the source of an `Import` or `Copy` operation targets a source that contains an operating system. Possible values are `V1` and `V2`. Changing this forces a new resource to be created.
+
 * `tags` - (Optional) A mapping of tags to assign to the resource.
+
+---
+
+The `encryption` block supports:
+
+* `enabled` - (Required) Is Encryption enabled on this Managed Disk? Changing this forces a new resource to be created.
+
+* `disk_encryption_key` - (Optional) A `disk_encryption_key` block as defined above.
+
+* `key_encryption_key` - (Optional) A `key_encryption_key` block as defined below.
+
+---
 
 For more information on managed disks, such as sizing options and pricing, please check out the
 [azure documentation](https://docs.microsoft.com/en-us/azure/storage/storage-managed-disks-overview).

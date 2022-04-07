@@ -64,7 +64,7 @@ func managedDisk() *pluginsdk.Resource {
 				DiffSuppressFunc: suppress.CaseDifference,
 			},
 
-			"encryption_settings": encryptionSettingsSchema(),
+			"encryption": encryptionSettingsSchema(),
 
 			"disk_size_gb": {
 				Type:         pluginsdk.TypeInt,
@@ -212,7 +212,7 @@ func resourceManagedDiskCreate(d *pluginsdk.ResourceData, meta interface{}) erro
 		}
 	}
 
-	if v, ok := d.GetOk("encryption_settings"); ok {
+	if v, ok := d.GetOk("encryption"); ok {
 		encryptionSettings := v.([]interface{})
 		settings := encryptionSettings[0].(map[string]interface{})
 		props.EncryptionSettingsCollection = expandManagedDiskEncryptionSettings(settings)
@@ -477,8 +477,8 @@ func resourceManagedDiskRead(d *pluginsdk.ResourceData, meta interface{}) error 
 		d.Set("os_type", props.OsType)
 		d.Set("hyper_v_generation", props.HyperVGeneration)
 
-		if err := d.Set("encryption_settings", flattenManagedDiskEncryptionSettings(props.EncryptionSettingsCollection)); err != nil {
-			return fmt.Errorf("setting `encryption_settings`: %+v", err)
+		if err := d.Set("encryption", flattenManagedDiskEncryptionSettings(props.EncryptionSettingsCollection)); err != nil {
+			return fmt.Errorf("setting `encryption`: %+v", err)
 		}
 	}
 

@@ -217,14 +217,14 @@ func TestAccManagedDisk_encryption(t *testing.T) {
 			Config: r.encryption(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("encryption_settings.#").HasValue("1"),
-				check.That(data.ResourceName).Key("encryption_settings.0.enabled").HasValue("true"),
-				check.That(data.ResourceName).Key("encryption_settings.0.disk_encryption_key.#").HasValue("1"),
-				check.That(data.ResourceName).Key("encryption_settings.0.disk_encryption_key.0.secret_url").Exists(),
-				check.That(data.ResourceName).Key("encryption_settings.0.disk_encryption_key.0.source_vault_id").Exists(),
-				check.That(data.ResourceName).Key("encryption_settings.0.key_encryption_key.#").HasValue("1"),
-				check.That(data.ResourceName).Key("encryption_settings.0.key_encryption_key.0.key_url").Exists(),
-				check.That(data.ResourceName).Key("encryption_settings.0.key_encryption_key.0.source_vault_id").Exists(),
+				check.That(data.ResourceName).Key("encryption.#").HasValue("1"),
+				check.That(data.ResourceName).Key("encryption.0.enabled").HasValue("true"),
+				check.That(data.ResourceName).Key("encryption.0.disk_encryption_key.#").HasValue("1"),
+				check.That(data.ResourceName).Key("encryption.0.disk_encryption_key.0.secret_url").Exists(),
+				check.That(data.ResourceName).Key("encryption.0.disk_encryption_key.0.source_vault_id").Exists(),
+				check.That(data.ResourceName).Key("encryption.0.key_encryption_key.#").HasValue("1"),
+				check.That(data.ResourceName).Key("encryption.0.key_encryption_key.0.key_url").Exists(),
+				check.That(data.ResourceName).Key("encryption.0.key_encryption_key.0.source_vault_id").Exists(),
 			),
 		},
 	})
@@ -694,7 +694,7 @@ resource "azurestack_managed_disk" "test" {
   create_option        = "Empty"
   disk_size_gb         = "1"
 
-  encryption_settings {
+  encryption {
     enabled = true
 
     disk_encryption_key {

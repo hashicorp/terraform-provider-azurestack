@@ -102,7 +102,7 @@ The following arguments are supported:
 * `disk_size_gb` - (Optional, Required for a new managed disk) Specifies the size of the managed disk to create in gigabytes.
     If `create_option` is `Copy` or `FromImage`, then the value must be equal to or greater than the source's size.
 
-* `encryption_settings` - (Optional) A `encryption_settings` block as defined below.
+* `encryption` - (Optional) A `encryption` block as defined below.
 
 * `hyper_v_generation` - (Optional) The HyperV Generation of the Disk when the source of an `Import` or `Copy` operation targets a source that contains an operating system. Possible values are `V1` and `V2`. Changing this forces a new resource to be created.
 
@@ -110,7 +110,7 @@ The following arguments are supported:
 
 ---
 
-The `encryption_settings` block supports:
+The `encryption` block supports:
 
 * `enabled` - (Required) Is Encryption enabled on this Managed Disk? Changing this forces a new resource to be created.
 

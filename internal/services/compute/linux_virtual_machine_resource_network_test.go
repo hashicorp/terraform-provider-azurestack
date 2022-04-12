@@ -9,29 +9,12 @@ import (
 )
 
 func TestAccLinuxVirtualMachine_networkMultiple(t *testing.T) {
-	t.Skip("Skipped because the investigation about if multiple nic are supported is still ongoing. Check in comments for more information.")
-	/* During this test causes an error when using multiple NICs, needs to be confirmed if it's supported for multiple NICs, because using with a single
-	NIC works without issues.
-	*/
-
 	data := acceptance.BuildTestData(t, "azurestack_linux_virtual_machine", "test")
 	r := LinuxVirtualMachineResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
 			Config: r.networkMultiple(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("private_ip_address").Exists(),
-				check.That(data.ResourceName).Key("private_ip_addresses.#").HasValue("2"),
-				check.That(data.ResourceName).Key("public_ip_address").HasValue(""),
-				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("0"),
-			),
-		},
-		data.ImportStep(),
-		{
-			// update the Primary IP
-			Config: r.networkMultipleUpdated(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 				check.That(data.ResourceName).Key("private_ip_address").Exists(),
@@ -57,29 +40,12 @@ func TestAccLinuxVirtualMachine_networkMultiple(t *testing.T) {
 }
 
 func TestAccLinuxVirtualMachine_networkMultiplePublic(t *testing.T) {
-	t.Skip("Skipped because the investigation about if multiple nic are supported is still ongoing. Check in comments for more information.")
-	/* During this test causes an error when using multiple NICs, needs to be confirmed if it's supported for multiple NICs, because using with a single
-	NIC works without issues.
-	*/
-
 	data := acceptance.BuildTestData(t, "azurestack_linux_virtual_machine", "test")
 	r := LinuxVirtualMachineResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
 			Config: r.networkMultiplePublic(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).Key("private_ip_address").Exists(),
-				check.That(data.ResourceName).Key("private_ip_addresses.#").HasValue("2"),
-				check.That(data.ResourceName).Key("public_ip_address").Exists(),
-				check.That(data.ResourceName).Key("public_ip_addresses.#").HasValue("2"),
-			),
-		},
-		data.ImportStep(),
-		{
-			// update the Primary IP
-			Config: r.networkMultiplePublicUpdated(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 				check.That(data.ResourceName).Key("private_ip_address").Exists(),
@@ -284,7 +250,6 @@ func TestAccLinuxVirtualMachine_networkPublicStaticPrivateUpdate(t *testing.T) {
 	})
 }
 
-//nolint:unused
 func (r LinuxVirtualMachineResource) networkMultipleTemplate(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -315,7 +280,6 @@ resource "azurestack_network_interface" "second" {
 `, r.templateBase(data), data.RandomInteger, data.RandomInteger)
 }
 
-//nolint:unused
 func (r LinuxVirtualMachineResource) networkMultiple(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -351,8 +315,7 @@ resource "azurestack_linux_virtual_machine" "test" {
 `, r.networkMultipleTemplate(data), data.RandomInteger)
 }
 
-//nolint:unused
-func (r LinuxVirtualMachineResource) networkMultipleUpdated(data acceptance.TestData) string {
+func (r LinuxVirtualMachineResource) networkMultipleRemoved(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
@@ -363,7 +326,6 @@ resource "azurestack_linux_virtual_machine" "test" {
   size                = "Standard_F2"
   admin_username      = "adminuser"
   network_interface_ids = [
-    azurestack_network_interface.second.id,
     azurestack_network_interface.first.id,
   ]
 
@@ -387,42 +349,6 @@ resource "azurestack_linux_virtual_machine" "test" {
 `, r.networkMultipleTemplate(data), data.RandomInteger)
 }
 
-//nolint:unused
-func (r LinuxVirtualMachineResource) networkMultipleRemoved(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-%s
-
-resource "azurestack_linux_virtual_machine" "test" {
-  name                = "acctestVM-%d"
-  resource_group_name = azurestack_resource_group.test.name
-  location            = azurestack_resource_group.test.location
-  size                = "Standard_F2"
-  admin_username      = "adminuser"
-  network_interface_ids = [
-    azurestack_network_interface.second.id,
-  ]
-
-  admin_ssh_key {
-    username   = "adminuser"
-    public_key = local.first_public_key
-  }
-
-  os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
-
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-}
-`, r.networkMultipleTemplate(data), data.RandomInteger)
-}
-
-//nolint:unused
 func (r LinuxVirtualMachineResource) networkMultiplePublicTemplate(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -469,7 +395,6 @@ resource "azurestack_network_interface" "second" {
 `, r.templateBase(data), data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger)
 }
 
-//nolint:unused
 func (r LinuxVirtualMachineResource) networkMultiplePublic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -505,43 +430,6 @@ resource "azurestack_linux_virtual_machine" "test" {
 `, r.networkMultiplePublicTemplate(data), data.RandomInteger)
 }
 
-//nolint:unused
-func (r LinuxVirtualMachineResource) networkMultiplePublicUpdated(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-%s
-
-resource "azurestack_linux_virtual_machine" "test" {
-  name                = "acctestVM-%d"
-  resource_group_name = azurestack_resource_group.test.name
-  location            = azurestack_resource_group.test.location
-  size                = "Standard_F2"
-  admin_username      = "adminuser"
-  network_interface_ids = [
-    azurestack_network_interface.second.id,
-    azurestack_network_interface.first.id,
-  ]
-
-  admin_ssh_key {
-    username   = "adminuser"
-    public_key = local.first_public_key
-  }
-
-  os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
-
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
-    version   = "latest"
-  }
-}
-`, r.networkMultiplePublicTemplate(data), data.RandomInteger)
-}
-
-//nolint:unused
 func (r LinuxVirtualMachineResource) networkMultiplePublicRemoved(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
@@ -553,7 +441,7 @@ resource "azurestack_linux_virtual_machine" "test" {
   size                = "Standard_F2"
   admin_username      = "adminuser"
   network_interface_ids = [
-    azurestack_network_interface.second.id,
+    azurestack_network_interface.first.id,
   ]
 
   admin_ssh_key {

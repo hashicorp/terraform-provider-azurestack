@@ -16,7 +16,6 @@ func TestAccDataSourceLoadBalancer_basic(t *testing.T) {
 		{
 			Config: d.dataSourceBasic(data),
 			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).Key("sku").HasValue("Basic"),
 				check.That(data.ResourceName).Key("location").Exists(),
 				check.That(data.ResourceName).Key("tags.Environment").HasValue("production"),
 				check.That(data.ResourceName).Key("tags.Purpose").HasValue("AcceptanceTests"),

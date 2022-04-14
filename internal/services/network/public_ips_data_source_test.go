@@ -28,40 +28,6 @@ func TestAccPublicIPsDataSource_namePrefix(t *testing.T) {
 	})
 }
 
-func TestAccPublicIPsDataSource_assigned(t *testing.T) {
-	data := acceptance.BuildTestData(t, "data.azurestack_public_ips", "test")
-	r := PublicIPsResource{}
-
-	attachedDataSourceName := "data.azurestack_public_ips.attached"
-	attachedDataSourceName2 := "data.azurestack_public_ips.attached2"
-	unattachedDataSourceName := "data.azurestack_public_ips.unattached"
-	unattachedDataSourceName2 := "data.azurestack_public_ips.unattached2"
-	unattachedAndAttachedDataSourceName := "data.azurestack_public_ips.unattached_and_attached"
-
-	data.DataSourceTest(t, []acceptance.TestStep{
-		{
-			Config: r.attached(data),
-		},
-		{
-			Config: r.attachedDataSource(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				acceptance.TestCheckResourceAttr(attachedDataSourceName, "public_ips.#", "4"),
-				acceptance.TestCheckResourceAttr(attachedDataSourceName, "public_ips.0.name", fmt.Sprintf("acctestpip%s-0", data.RandomString)),
-				acceptance.TestCheckResourceAttr(attachedDataSourceName, "public_ips.3.name", fmt.Sprintf("acctestpip%s-3", data.RandomString)),
-				acceptance.TestCheckResourceAttr(attachedDataSourceName2, "public_ips.#", "4"),
-				acceptance.TestCheckResourceAttr(attachedDataSourceName2, "public_ips.0.name", fmt.Sprintf("acctestpip%s-0", data.RandomString)),
-				acceptance.TestCheckResourceAttr(attachedDataSourceName2, "public_ips.3.name", fmt.Sprintf("acctestpip%s-3", data.RandomString)),
-				acceptance.TestCheckResourceAttr(unattachedDataSourceName, "public_ips.#", "4"),
-				acceptance.TestCheckResourceAttr(unattachedDataSourceName, "public_ips.0.name", fmt.Sprintf("acctestpip%s-4", data.RandomString)),
-				acceptance.TestCheckResourceAttr(unattachedDataSourceName2, "public_ips.#", "4"),
-				acceptance.TestCheckResourceAttr(unattachedDataSourceName2, "public_ips.0.name", fmt.Sprintf("acctestpip%s-4", data.RandomString)),
-				acceptance.TestCheckResourceAttr(unattachedAndAttachedDataSourceName, "public_ips.#", "8"),
-				acceptance.TestCheckResourceAttr(unattachedAndAttachedDataSourceName, "public_ips.0.name", fmt.Sprintf("acctestpip%s-0", data.RandomString)),
-			),
-		},
-	})
-}
-
 func TestAccDataSourcePublicIPs_allocationType(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_public_ips", "test")
 	r := PublicIPsResource{}
@@ -83,90 +49,6 @@ func TestAccDataSourcePublicIPs_allocationType(t *testing.T) {
 			),
 		},
 	})
-}
-
-func (PublicIPsResource) attached(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-provider "azurestack" {
-  features {}
-}
-
-resource "azurestack_resource_group" "test" {
-  name     = "acctestRG-%d"
-  location = "%s"
-}
-
-resource "azurestack_public_ip" "test" {
-  count                   = 8
-  name                    = "acctestpip%s-${count.index}"
-  location                = azurestack_resource_group.test.location
-  resource_group_name     = azurestack_resource_group.test.name
-  allocation_method       = "Static"
-  idle_timeout_in_minutes = 30
-  sku                     = "Standard"
-
-  tags = {
-    environment = "test"
-  }
-}
-
-resource "azurestack_lb" "test" {
-  count               = 3
-  name                = "acctestlb-${count.index}"
-  location            = azurestack_resource_group.test.location
-  resource_group_name = azurestack_resource_group.test.name
-  sku                 = "Standard"
-
-  frontend_ip_configuration {
-    name                 = "frontend"
-    public_ip_address_id = element(azurestack_public_ip.test.*.id, count.index)
-  }
-}
-
-resource "azurestack_nat_gateway" "test" {
-  name                    = "nat-Gateway"
-  location                = azurestack_resource_group.test.location
-  resource_group_name     = azurestack_resource_group.test.name
-  sku_name                = "Standard"
-  idle_timeout_in_minutes = 10
-}
-
-resource "azurestack_nat_gateway_public_ip_association" "test" {
-  nat_gateway_id       = azurestack_nat_gateway.test.id
-  public_ip_address_id = element(azurestack_public_ip.test.*.id, 3)
-}
-`, data.RandomInteger, data.Locations.Primary, data.RandomString)
-}
-
-func (r PublicIPsResource) attachedDataSource(data acceptance.TestData) string {
-	return fmt.Sprintf(`
-%s
-
-data "azurestack_public_ips" "unattached" {
-  resource_group_name = azurestack_resource_group.test.name
-  attachment_status   = "Unattached"
-}
-
-data "azurestack_public_ips" "unattached2" {
-  resource_group_name = azurestack_resource_group.test.name
-  attached            = false
-}
-
-data "azurestack_public_ips" "unattached_and_attached" {
-  resource_group_name = azurestack_resource_group.test.name
-  attachment_status   = "All"
-}
-
-data "azurestack_public_ips" "attached" {
-  resource_group_name = azurestack_resource_group.test.name
-  attachment_status   = "Attached"
-}
-
-data "azurestack_public_ips" "attached2" {
-  resource_group_name = azurestack_resource_group.test.name
-  attached            = true
-}
-`, r.attached(data))
 }
 
 func (PublicIPsResource) prefix(data acceptance.TestData) string {

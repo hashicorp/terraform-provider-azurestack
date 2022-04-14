@@ -127,7 +127,7 @@ func loadBalancerBackendAddressPoolAssociationCreateUpdate(d *pluginsdk.Resource
 		for _, existingPool := range *p.LoadBalancerBackendAddressPools {
 			if id := existingPool.ID; id != nil {
 				if *id == backendAddressPoolId {
-					return tf.ImportAsExistsError("azurerm_network_interface_backend_address_pool_association", resourceId)
+					return tf.ImportAsExistsError("azurestack_network_interface_backend_address_pool_association", resourceId)
 				}
 
 				pools = append(pools, existingPool)

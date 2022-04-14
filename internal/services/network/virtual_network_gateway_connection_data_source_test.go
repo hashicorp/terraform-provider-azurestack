@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/Azure/azure-sdk-for-go/profiles/2020-09-01/network/mgmt/network"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 )
@@ -22,26 +23,6 @@ func TestAccDataSourceVirtualNetworkGatewayConnection_sitetosite(t *testing.T) {
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).Key("shared_key").HasValue(sharedKey),
 				check.That(data.ResourceName).Key("type").HasValue(string(network.IPsec)),
-			),
-		},
-	})
-}
-
-func TestAccDataSourceVirtualNetworkGatewayConnection_vnettovnet(t *testing.T) {
-	data1 := acceptance.BuildTestData(t, "data.azurestack_virtual_network_gateway_connection", "test_1")
-	data2 := acceptance.BuildTestData(t, "data.azurestack_virtual_network_gateway_connection", "test_2")
-	r := VirtualNetworkGatewayConnectionDataSource{}
-
-	sharedKey := "4-v3ry-53cr37-1p53c-5h4r3d-k3y"
-
-	data1.DataSourceTest(t, []acceptance.TestStep{
-		{
-			Config: r.vnettovnet(data1, data2.RandomInteger, sharedKey),
-			Check: acceptance.ComposeTestCheckFunc(
-				acceptance.TestCheckResourceAttr(data1.ResourceName, "shared_key", sharedKey),
-				acceptance.TestCheckResourceAttr(data2.ResourceName, "shared_key", sharedKey),
-				acceptance.TestCheckResourceAttr(data1.ResourceName, "type", string(network.Vnet2Vnet)),
-				acceptance.TestCheckResourceAttr(data2.ResourceName, "type", string(network.Vnet2Vnet)),
 			),
 		},
 	})
@@ -124,7 +105,7 @@ resource "azurestack_local_network_gateway" "test" {
   name                = "acctest-${var.random}"
   location            = azurestack_resource_group.test.location
   resource_group_name = azurestack_resource_group.test.name
-  gateway_address     = "168.62.225.23"
+  gateway_address     = "168.62.225.%d"
   address_space       = ["10.1.1.0/24"]
 }
 
@@ -142,143 +123,7 @@ data "azurestack_virtual_network_gateway_connection" "test" {
   name                = azurestack_virtual_network_gateway_connection.test.name
   resource_group_name = azurestack_virtual_network_gateway_connection.test.resource_group_name
 }
-`, data.RandomInteger, data.Locations.Primary)
-}
-
-func (VirtualNetworkGatewayConnectionDataSource) vnettovnet(data acceptance.TestData, rInt2 int, sharedKey string) string {
-	return fmt.Sprintf(`
-variable "random1" {
-  default = "%d"
-}
-
-variable "random2" {
-  default = "%d"
-}
-
-variable "shared_key" {
-  default = "%s"
-}
-
-resource "azurestack_resource_group" "test_1" {
-  name     = "acctestRG-${var.random1}"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test_1" {
-  name                = "acctestvn-${var.random1}"
-  location            = azurestack_resource_group.test_1.location
-  resource_group_name = azurestack_resource_group.test_1.name
-  address_space       = ["10.0.0.0/16"]
-}
-
-resource "azurestack_subnet" "test_1" {
-  name                 = "GatewaySubnet"
-  resource_group_name  = azurestack_resource_group.test_1.name
-  virtual_network_name = azurestack_virtual_network.test_1.name
-  address_prefix       = "10.0.1.0/24"
-}
-
-resource "azurestack_public_ip" "test_1" {
-  name                = "acctest-${var.random1}"
-  location            = azurestack_resource_group.test_1.location
-  resource_group_name = azurestack_resource_group.test_1.name
-  allocation_method   = "Dynamic"
-}
-
-resource "azurestack_virtual_network_gateway" "test_1" {
-  name                = "acctest-${var.random1}"
-  location            = azurestack_resource_group.test_1.location
-  resource_group_name = azurestack_resource_group.test_1.name
-
-  type     = "Vpn"
-  vpn_type = "RouteBased"
-  sku      = "Basic"
-
-  ip_configuration {
-    name                          = "vnetGatewayConfig"
-    public_ip_address_id          = azurestack_public_ip.test_1.id
-    private_ip_address_allocation = "Dynamic"
-    subnet_id                     = azurestack_subnet.test_1.id
-  }
-}
-
-resource "azurestack_virtual_network_gateway_connection" "test_1" {
-  name                = "acctest-${var.random1}"
-  location            = azurestack_resource_group.test_1.location
-  resource_group_name = azurestack_resource_group.test_1.name
-
-  type                            = "Vnet2Vnet"
-  virtual_network_gateway_id      = azurestack_virtual_network_gateway.test_1.id
-  peer_virtual_network_gateway_id = azurestack_virtual_network_gateway.test_2.id
-
-  shared_key = var.shared_key
-}
-
-resource "azurestack_resource_group" "test_2" {
-  name     = "acctestRG-${var.random2}"
-  location = "%s"
-}
-
-resource "azurestack_virtual_network" "test_2" {
-  name                = "acctest-${var.random2}"
-  location            = azurestack_resource_group.test_2.location
-  resource_group_name = azurestack_resource_group.test_2.name
-  address_space       = ["10.1.0.0/16"]
-}
-
-resource "azurestack_subnet" "test_2" {
-  name                 = "GatewaySubnet"
-  resource_group_name  = azurestack_resource_group.test_2.name
-  virtual_network_name = azurestack_virtual_network.test_2.name
-  address_prefix       = "10.1.1.0/24"
-}
-
-resource "azurestack_public_ip" "test_2" {
-  name                = "acctest-${var.random2}"
-  location            = azurestack_resource_group.test_2.location
-  resource_group_name = azurestack_resource_group.test_2.name
-  allocation_method   = "Dynamic"
-}
-
-resource "azurestack_virtual_network_gateway" "test_2" {
-  name                = "acctest-${var.random2}"
-  location            = azurestack_resource_group.test_2.location
-  resource_group_name = azurestack_resource_group.test_2.name
-
-  type     = "Vpn"
-  vpn_type = "RouteBased"
-  sku      = "Basic"
-
-  ip_configuration {
-    name                          = "vnetGatewayConfig"
-    public_ip_address_id          = azurestack_public_ip.test_2.id
-    private_ip_address_allocation = "Dynamic"
-    subnet_id                     = azurestack_subnet.test_2.id
-  }
-}
-
-resource "azurestack_virtual_network_gateway_connection" "test_2" {
-  name                = "acctest-${var.random2}"
-  location            = azurestack_resource_group.test_2.location
-  resource_group_name = azurestack_resource_group.test_2.name
-
-  type                            = "Vnet2Vnet"
-  virtual_network_gateway_id      = azurestack_virtual_network_gateway.test_2.id
-  peer_virtual_network_gateway_id = azurestack_virtual_network_gateway.test_1.id
-
-  shared_key = var.shared_key
-}
-
-data "azurestack_virtual_network_gateway_connection" "test_1" {
-  name                = azurestack_virtual_network_gateway_connection.test_1.name
-  resource_group_name = azurestack_virtual_network_gateway_connection.test_1.resource_group_name
-}
-
-data "azurestack_virtual_network_gateway_connection" "test_2" {
-  name                = azurestack_virtual_network_gateway_connection.test_2.name
-  resource_group_name = azurestack_virtual_network_gateway_connection.test_2.resource_group_name
-}
-`, data.RandomInteger, rInt2, sharedKey, data.Locations.Primary, data.Locations.Secondary)
+`, data.RandomInteger, data.Locations.Primary, acctest.RandIntRange(2, 253))
 }
 
 func (VirtualNetworkGatewayConnectionDataSource) ipsecpolicy(data acceptance.TestData) string {
@@ -319,7 +164,7 @@ resource "azurestack_virtual_network_gateway" "test" {
   resource_group_name = azurestack_resource_group.test.name
   type                = "Vpn"
   vpn_type            = "RouteBased"
-  sku                 = "VpnGw1"
+  sku                 = "Standard"
 
   ip_configuration {
     name                          = "vnetGatewayConfig"
@@ -333,7 +178,7 @@ resource "azurestack_local_network_gateway" "test" {
   name                = "acctest-${var.random}"
   location            = azurestack_resource_group.test.location
   resource_group_name = azurestack_resource_group.test.name
-  gateway_address     = "168.62.225.23"
+  gateway_address     = "168.62.225.%d"
   address_space       = ["10.1.1.0/24"]
 }
 
@@ -365,5 +210,5 @@ data "azurestack_virtual_network_gateway_connection" "test" {
   name                = azurestack_virtual_network_gateway_connection.test.name
   resource_group_name = azurestack_virtual_network_gateway_connection.test.resource_group_name
 }
-`, data.RandomInteger, data.Locations.Primary)
+`, data.RandomInteger, data.Locations.Primary, acctest.RandIntRange(2, 253))
 }

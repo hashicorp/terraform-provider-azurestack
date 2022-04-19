@@ -42,6 +42,7 @@ func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 		"azurestack_virtual_machine_scale_set_extension":  virtualMachineScaleSetExtension(),
 		"azurestack_image":                                image(),
 		"azurestack_windows_virtual_machine":              windowsVirtualMachine(),
+		"azurestack_windows_virtual_machine_scale_set":    resourceWindowsVirtualMachineScaleSet(),
 	}
 
 	return resources

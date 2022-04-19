@@ -8,9 +8,9 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 )
 
-func TestAccLinuxVirtualMachineScaleSet_disksDataDiskBasic(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_linux_virtual_machine_scale_set", "test")
-	r := LinuxVirtualMachineScaleSetResource{}
+func TestAccWindowsVirtualMachineScaleSet_disksDataDiskBasic(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_windows_virtual_machine_scale_set", "test")
+	r := WindowsVirtualMachineScaleSetResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -23,9 +23,9 @@ func TestAccLinuxVirtualMachineScaleSet_disksDataDiskBasic(t *testing.T) {
 	})
 }
 
-func TestAccLinuxVirtualMachineScaleSet_disksDataDiskCaching(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_linux_virtual_machine_scale_set", "test")
-	r := LinuxVirtualMachineScaleSetResource{}
+func TestAccWindowsVirtualMachineScaleSet_disksDataDiskCaching(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_windows_virtual_machine_scale_set", "test")
+	r := WindowsVirtualMachineScaleSetResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -52,9 +52,9 @@ func TestAccLinuxVirtualMachineScaleSet_disksDataDiskCaching(t *testing.T) {
 	})
 }
 
-func TestAccLinuxVirtualMachineScaleSet_disksDataDiskResizing(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_linux_virtual_machine_scale_set", "test")
-	r := LinuxVirtualMachineScaleSetResource{}
+func TestAccWindowsVirtualMachineScaleSet_disksDataDiskResizing(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_windows_virtual_machine_scale_set", "test")
+	r := WindowsVirtualMachineScaleSetResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -76,9 +76,9 @@ func TestAccLinuxVirtualMachineScaleSet_disksDataDiskResizing(t *testing.T) {
 	})
 }
 
-func TestAccLinuxVirtualMachineScaleSet_disksDataDiskMultiple(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_linux_virtual_machine_scale_set", "test")
-	r := LinuxVirtualMachineScaleSetResource{}
+func TestAccWindowsVirtualMachineScaleSet_disksDataDiskMultiple(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_windows_virtual_machine_scale_set", "test")
+	r := WindowsVirtualMachineScaleSetResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -91,9 +91,9 @@ func TestAccLinuxVirtualMachineScaleSet_disksDataDiskMultiple(t *testing.T) {
 	})
 }
 
-func TestAccLinuxVirtualMachineScaleSet_disksDataDiskRemove(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_linux_virtual_machine_scale_set", "test")
-	r := LinuxVirtualMachineScaleSetResource{}
+func TestAccWindowsVirtualMachineScaleSet_disksDataDiskRemove(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_windows_virtual_machine_scale_set", "test")
+	r := WindowsVirtualMachineScaleSetResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -113,9 +113,9 @@ func TestAccLinuxVirtualMachineScaleSet_disksDataDiskRemove(t *testing.T) {
 	})
 }
 
-func TestAccLinuxVirtualMachineScaleSet_disksDataDiskScaling(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_linux_virtual_machine_scale_set", "test")
-	r := LinuxVirtualMachineScaleSetResource{}
+func TestAccWindowsVirtualMachineScaleSet_disksDataDiskScaling(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_windows_virtual_machine_scale_set", "test")
+	r := WindowsVirtualMachineScaleSetResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -153,9 +153,9 @@ func TestAccLinuxVirtualMachineScaleSet_disksDataDiskScaling(t *testing.T) {
 	})
 }
 
-func TestAccLinuxVirtualMachineScaleSet_disksDataDiskStorageAccountTypeStandardLRS(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_linux_virtual_machine_scale_set", "test")
-	r := LinuxVirtualMachineScaleSetResource{}
+func TestAccWindowsVirtualMachineScaleSet_disksDataDiskStorageAccountTypeStandardLRS(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_windows_virtual_machine_scale_set", "test")
+	r := WindowsVirtualMachineScaleSetResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -168,9 +168,9 @@ func TestAccLinuxVirtualMachineScaleSet_disksDataDiskStorageAccountTypeStandardL
 	})
 }
 
-func TestAccLinuxVirtualMachineScaleSet_disksDataDiskStorageAccountTypePremiumLRS(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_linux_virtual_machine_scale_set", "test")
-	r := LinuxVirtualMachineScaleSetResource{}
+func TestAccWindowsVirtualMachineScaleSet_disksDataDiskStorageAccountTypePremiumLRS(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_windows_virtual_machine_scale_set", "test")
+	r := WindowsVirtualMachineScaleSetResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -183,9 +183,9 @@ func TestAccLinuxVirtualMachineScaleSet_disksDataDiskStorageAccountTypePremiumLR
 	})
 }
 
-func TestAccLinuxVirtualMachineScaleSet_disksDataDiskWriteAcceleratorEnabled(t *testing.T) {
-	data := acceptance.BuildTestData(t, "azurestack_linux_virtual_machine_scale_set", "test")
-	r := LinuxVirtualMachineScaleSetResource{}
+func TestAccWindowsVirtualMachineScaleSet_disksDataDiskWriteAcceleratorEnabled(t *testing.T) {
+	data := acceptance.BuildTestData(t, "azurestack_windows_virtual_machine_scale_set", "test")
+	r := WindowsVirtualMachineScaleSetResource{}
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
@@ -198,12 +198,12 @@ func TestAccLinuxVirtualMachineScaleSet_disksDataDiskWriteAcceleratorEnabled(t *
 	})
 }
 
-func (r LinuxVirtualMachineScaleSetResource) disksDataDiskBasic(data acceptance.TestData) string {
+func (r WindowsVirtualMachineScaleSetResource) disksDataDiskBasic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurestack_linux_virtual_machine_scale_set" "test" {
-  name                = "acctestvmss-%d"
+resource "azurestack_windows_virtual_machine_scale_set" "test" {
+  name                = local.vm_name
   resource_group_name = azurestack_resource_group.test.name
   location            = azurestack_resource_group.test.location
   sku                 = "Standard_F2"
@@ -211,12 +211,10 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
   admin_username      = "adminuser"
   admin_password      = "P@ssword1234!"
 
-  disable_password_authentication = false
-
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 
@@ -243,15 +241,15 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
     }
   }
 }
-`, r.template(data), data.RandomInteger)
+`, r.template(data))
 }
 
-func (r LinuxVirtualMachineScaleSetResource) disksDataDiskCaching(data acceptance.TestData, caching string) string {
+func (r WindowsVirtualMachineScaleSetResource) disksDataDiskCaching(data acceptance.TestData, caching string) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurestack_linux_virtual_machine_scale_set" "test" {
-  name                = "acctestvmss-%d"
+resource "azurestack_windows_virtual_machine_scale_set" "test" {
+  name                = local.vm_name
   resource_group_name = azurestack_resource_group.test.name
   location            = azurestack_resource_group.test.location
   sku                 = "Standard_F2"
@@ -259,12 +257,10 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
   admin_username      = "adminuser"
   admin_password      = "P@ssword1234!"
 
-  disable_password_authentication = false
-
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 
@@ -291,15 +287,15 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
     }
   }
 }
-`, r.template(data), data.RandomInteger, caching)
+`, r.template(data), caching)
 }
 
-func (r LinuxVirtualMachineScaleSetResource) disksDataDiskResize(data acceptance.TestData, diskSizeGb int) string {
+func (r WindowsVirtualMachineScaleSetResource) disksDataDiskResize(data acceptance.TestData, diskSizeGb int) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurestack_linux_virtual_machine_scale_set" "test" {
-  name                = "acctestvmss-%d"
+resource "azurestack_windows_virtual_machine_scale_set" "test" {
+  name                = local.vm_name
   resource_group_name = azurestack_resource_group.test.name
   location            = azurestack_resource_group.test.location
   sku                 = "Standard_F2"
@@ -307,12 +303,10 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
   admin_username      = "adminuser"
   admin_password      = "P@ssword1234!"
 
-  disable_password_authentication = false
-
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 
@@ -339,15 +333,15 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
     }
   }
 }
-`, r.template(data), data.RandomInteger, diskSizeGb)
+`, r.template(data), diskSizeGb)
 }
 
-func (r LinuxVirtualMachineScaleSetResource) disksDataDiskMultiple(data acceptance.TestData) string {
+func (r WindowsVirtualMachineScaleSetResource) disksDataDiskMultiple(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurestack_linux_virtual_machine_scale_set" "test" {
-  name                = "acctestvmss-%d"
+resource "azurestack_windows_virtual_machine_scale_set" "test" {
+  name                = local.vm_name
   resource_group_name = azurestack_resource_group.test.name
   location            = azurestack_resource_group.test.location
   sku                 = "Standard_F2"
@@ -355,12 +349,10 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
   admin_username      = "adminuser"
   admin_password      = "P@ssword1234!"
 
-  disable_password_authentication = false
-
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 
@@ -394,15 +386,15 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
     }
   }
 }
-`, r.template(data), data.RandomInteger)
+`, r.template(data))
 }
 
-func (r LinuxVirtualMachineScaleSetResource) disksDataDiskStorageAccountType(data acceptance.TestData, storageAccountType string) string {
+func (r WindowsVirtualMachineScaleSetResource) disksDataDiskStorageAccountType(data acceptance.TestData, storageAccountType string) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurestack_linux_virtual_machine_scale_set" "test" {
-  name                = "acctestvmss-%d"
+resource "azurestack_windows_virtual_machine_scale_set" "test" {
+  name                = local.vm_name
   resource_group_name = azurestack_resource_group.test.name
   location            = azurestack_resource_group.test.location
   sku                 = "Standard_F2s_v2"
@@ -410,12 +402,10 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
   admin_username      = "adminuser"
   admin_password      = "P@ssword1234!"
 
-  disable_password_authentication = false
-
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 
@@ -442,15 +432,15 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
     }
   }
 }
-`, r.template(data), data.RandomInteger, storageAccountType)
+`, r.template(data), storageAccountType)
 }
 
-func (r LinuxVirtualMachineScaleSetResource) disksDataDiskWriteAcceleratorEnabled(data acceptance.TestData) string {
+func (r WindowsVirtualMachineScaleSetResource) disksDataDiskWriteAcceleratorEnabled(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 %s
 
-resource "azurestack_linux_virtual_machine_scale_set" "test" {
-  name                = "acctestvmss-%d"
+resource "azurestack_windows_virtual_machine_scale_set" "test" {
+  name                = local.vm_name
   resource_group_name = azurestack_resource_group.test.name
   location            = azurestack_resource_group.test.location
   sku                 = "Standard_DS14_v2"
@@ -458,12 +448,10 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
   admin_username      = "adminuser"
   admin_password      = "P@ssword1234!"
 
-  disable_password_authentication = false
-
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2012-Datacenter-smalldisk"
     version   = "latest"
   }
 
@@ -491,5 +479,5 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
     }
   }
 }
-`, r.template(data), data.RandomInteger)
+`, r.template(data))
 }

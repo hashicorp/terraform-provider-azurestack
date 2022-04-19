@@ -2,7 +2,6 @@ package compute_test
 
 import (
 	"fmt"
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
@@ -75,30 +74,6 @@ func TestAccVirtualMachine_basicLinuxMachine_disappears(t *testing.T) {
 			Config:       r.basicLinuxMachine,
 			TestResource: r,
 		}),
-	})
-}
-
-func TestAccVirtualMachine_basicLinuxMachineUseExistingOsDiskImage(t *testing.T) {
-	t.Skip("Skipped because of blob error. Check in comments for more information.")
-	/* During this test causes an error when trying to mirror an existing VM,
-	needs to be confirmed if it's supported for mirroring an existent VM or
-	the reason of blob error.
-	*/
-
-	data := acceptance.BuildTestData(t, "azurestack_virtual_machine", "test")
-	r := VirtualMachineResource{}
-
-	data.ResourceTest(t, r, []acceptance.TestStep{
-		{
-			Config: r.basicLinuxMachineUseExistingOsDiskImage(data),
-			Check: acceptance.ComposeTestCheckFunc(
-				check.That(data.ResourceName).ExistsInAzure(r),
-				check.That(data.ResourceName).ExistsInAzure(r),
-				data.CheckWithClientForResource(r.unmanagedDiskExistsInContainer("myosdisk1.vhd", true), "azurestack_storage_container.test"),
-				data.CheckWithClientForResource(r.unmanagedDiskExistsInContainer("mirrorosdisk.vhd", true), "azurestack_storage_container.test"),
-				acceptance.TestMatchResourceAttr("azurestack_virtual_machine.mirror", "storage_os_disk.0.image_uri", regexp.MustCompile("myosdisk1.vhd$")),
-			),
-		},
 	})
 }
 
@@ -778,50 +753,6 @@ resource "azurestack_virtual_machine" "test" {
   }
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger, data.RandomInteger)
-}
-
-//nolint:unused
-func (r VirtualMachineResource) basicLinuxMachineUseExistingOsDiskImage(data acceptance.TestData) string {
-	return fmt.Sprintf(`%s
-resource "azurestack_network_interface" "mirror" {
-  name                = "acctmirrorni-%d"
-  location            = "${azurestack_resource_group.test.location}"
-  resource_group_name = "${azurestack_resource_group.test.name}"
-
-  ip_configuration {
-    name                          = "testconfiguration1"
-    subnet_id                     = "${azurestack_subnet.test.id}"
-    private_ip_address_allocation = "Dynamic"
-  }
-}
-
-resource "azurestack_virtual_machine" "mirror" {
-  name                          = "acctmirrorvm-%d"
-  location                      = "${azurestack_resource_group.test.location}"
-  resource_group_name           = "${azurestack_resource_group.test.name}"
-  network_interface_ids         = ["${azurestack_network_interface.mirror.id}"]
-  vm_size                       = "Standard_F2"
-  delete_os_disk_on_termination = false
-
-  os_profile {
-    computer_name  = "hnmirror%d"
-    admin_username = "testadmin"
-    admin_password = "Password1234!"
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = false
-  }
-
-  storage_os_disk {
-    name          = "mirror"
-    image_uri     = "${azurestack_virtual_machine.test.storage_os_disk.0.vhd_uri}"
-    vhd_uri       = "${azurestack_storage_account.test.primary_blob_endpoint}${azurestack_storage_container.test.name}/mirrorosdisk.vhd"
-    create_option = "FromImage"
-    os_type       = "Linux"
-  }
-}
-`, r.basicLinuxMachine(data), data.RandomInteger, data.RandomInteger, data.RandomInteger)
 }
 
 func (VirtualMachineResource) machineNameBeforeUpdate(data acceptance.TestData) string {

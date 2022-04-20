@@ -463,9 +463,9 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
     primary = true
 
     ip_configuration {
-      name                                  = "internal"
-      primary                               = true
-      subnet_id                             = azurestack_subnet.test.id
+      name                                   = "internal"
+      primary                                = true
+      subnet_id                              = azurestack_subnet.test.id
       load_balancer_backend_address_pool_ids = [azurestack_lb_backend_address_pool.test.id]
     }
   }

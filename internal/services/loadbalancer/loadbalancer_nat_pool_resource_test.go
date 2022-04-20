@@ -23,7 +23,7 @@ func TestAccLoadBalancerNatPool_basic(t *testing.T) {
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
-			Config: r.basic(data, "Basic"),
+			Config: r.basic(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
@@ -38,7 +38,7 @@ func TestAccLoadBalancerNatPool_complete(t *testing.T) {
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
-			Config: r.complete(data, "Standard"),
+			Config: r.complete(data, "Basic"),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
@@ -53,20 +53,20 @@ func TestAccLoadBalancerNatPool_update(t *testing.T) {
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
-			Config: r.basic(data, "Standard"),
+			Config: r.basic(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
 		data.ImportStep(),
 		{
-			Config: r.complete(data, "Standard"),
+			Config: r.complete(data, "Basic"),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
 		{
-			Config: r.basic(data, "Standard"),
+			Config: r.basic(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
@@ -81,7 +81,7 @@ func TestAccLoadBalancerNatPool_requiresImport(t *testing.T) {
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
-			Config: r.basic(data, "Basic"),
+			Config: r.basic(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
@@ -96,9 +96,7 @@ func TestAccLoadBalancerNatPool_disappears(t *testing.T) {
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		data.DisappearsStep(acceptance.DisappearsStepData{
-			Config: func(data acceptance.TestData) string {
-				return r.basic(data, "Basic")
-			},
+			Config:       r.basic,
 			TestResource: r,
 		}),
 	})
@@ -202,7 +200,7 @@ func (r LoadBalancerNatPool) Destroy(ctx context.Context, client *clients.Client
 	return pointer.FromBool(true), nil
 }
 
-func (r LoadBalancerNatPool) basic(data acceptance.TestData, sku string) string {
+func (r LoadBalancerNatPool) basic(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
   features {}
@@ -218,7 +216,7 @@ resource "azurestack_public_ip" "test" {
   location            = azurestack_resource_group.test.location
   resource_group_name = azurestack_resource_group.test.name
   allocation_method   = "Static"
-  sku                 = "%[3]s"
+  sku                 = "Basic"
 }
 
 resource "azurestack_lb" "test" {
@@ -242,7 +240,7 @@ resource "azurestack_lb_nat_pool" "test" {
   backend_port                   = 3389
   frontend_ip_configuration_name = "one-%[1]d"
 }
-`, data.RandomInteger, data.Locations.Primary, sku)
+`, data.RandomInteger, data.Locations.Primary)
 }
 
 func (r LoadBalancerNatPool) complete(data acceptance.TestData, sku string) string {
@@ -285,7 +283,7 @@ resource "azurestack_lb_nat_pool" "test" {
 }
 
 func (r LoadBalancerNatPool) requiresImport(data acceptance.TestData) string {
-	template := r.basic(data, "Basic")
+	template := r.basic(data)
 	return fmt.Sprintf(`
 %s
 

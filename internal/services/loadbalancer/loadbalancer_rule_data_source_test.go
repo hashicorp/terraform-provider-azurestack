@@ -64,7 +64,7 @@ data "azurestack_lb_rule" "test" {
 }
 
 func (r LoadBalancerRule) completeDataSource(data acceptance.TestData) string {
-	template := r.template(data, "Standard")
+	template := r.template(data, "Basic")
 	return fmt.Sprintf(`
 %s
 resource "azurestack_lb_backend_address_pool" "test" {
@@ -90,7 +90,6 @@ resource "azurestack_lb_rule" "test" {
   frontend_port = 3389
   backend_port  = 3389
 
-  disable_outbound_snat   = true
   enable_floating_ip      = true
   idle_timeout_in_minutes = 10
 

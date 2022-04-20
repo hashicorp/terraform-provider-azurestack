@@ -23,7 +23,7 @@ func TestAccLoadBalancerNatRule_basic(t *testing.T) {
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
-			Config: r.basic(data, "Basic"),
+			Config: r.basic(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
@@ -38,7 +38,7 @@ func TestAccLoadBalancerNatRule_complete(t *testing.T) {
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
-			Config: r.complete(data, "Standard"),
+			Config: r.complete(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
@@ -53,21 +53,21 @@ func TestAccLoadBalancerNatRule_update(t *testing.T) {
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
-			Config: r.basic(data, "Standard"),
+			Config: r.basic(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
 		data.ImportStep(),
 		{
-			Config: r.complete(data, "Standard"),
+			Config: r.complete(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
 		data.ImportStep(),
 		{
-			Config: r.basic(data, "Standard"),
+			Config: r.basic(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
@@ -82,7 +82,7 @@ func TestAccLoadBalancerNatRule_requiresImport(t *testing.T) {
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
-			Config: r.basic(data, "Basic"),
+			Config: r.basic(data),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
@@ -97,9 +97,7 @@ func TestAccLoadBalancerNatRule_disappears(t *testing.T) {
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		data.DisappearsStep(acceptance.DisappearsStepData{
-			Config: func(data acceptance.TestData) string {
-				return r.basic(data, "Basic")
-			},
+			Config:       r.basic,
 			TestResource: r,
 		}),
 	})
@@ -204,7 +202,7 @@ func (r LoadBalancerNatRule) Destroy(ctx context.Context, client *clients.Client
 	return pointer.FromBool(true), nil
 }
 
-func (r LoadBalancerNatRule) template(data acceptance.TestData, sku string) string {
+func (r LoadBalancerNatRule) template(data acceptance.TestData) string {
 	return fmt.Sprintf(`
 provider "azurestack" {
   features {}
@@ -220,7 +218,7 @@ resource "azurestack_public_ip" "test" {
   location            = azurestack_resource_group.test.location
   resource_group_name = azurestack_resource_group.test.name
   allocation_method   = "Static"
-  sku                 = "%[3]s"
+  sku                 = "Basic"
 }
 
 resource "azurestack_lb" "test" {
@@ -233,11 +231,11 @@ resource "azurestack_lb" "test" {
     public_ip_address_id = azurestack_public_ip.test.id
   }
 }
-`, data.RandomInteger, data.Locations.Primary, sku)
+`, data.RandomInteger, data.Locations.Primary)
 }
 
-func (r LoadBalancerNatRule) basic(data acceptance.TestData, sku string) string {
-	template := r.template(data, sku)
+func (r LoadBalancerNatRule) basic(data acceptance.TestData) string {
+	template := r.template(data)
 	return fmt.Sprintf(`
 %s
 
@@ -253,8 +251,8 @@ resource "azurestack_lb_nat_rule" "test" {
 `, template, data.RandomInteger)
 }
 
-func (r LoadBalancerNatRule) complete(data acceptance.TestData, sku string) string {
-	template := r.template(data, sku)
+func (r LoadBalancerNatRule) complete(data acceptance.TestData) string {
+	template := r.template(data)
 	return fmt.Sprintf(`
 %s
 
@@ -276,7 +274,7 @@ resource "azurestack_lb_nat_rule" "test" {
 }
 
 func (r LoadBalancerNatRule) requiresImport(data acceptance.TestData) string {
-	template := r.basic(data, "Basic")
+	template := r.basic(data)
 	return fmt.Sprintf(`
 %s
 
@@ -293,7 +291,7 @@ resource "azurestack_lb_nat_rule" "import" {
 }
 
 func (r LoadBalancerNatRule) multipleRules(data, data2 acceptance.TestData) string {
-	template := r.template(data, "Basic")
+	template := r.template(data)
 	return fmt.Sprintf(`
 %s
 
@@ -320,7 +318,7 @@ resource "azurestack_lb_nat_rule" "test2" {
 }
 
 func (r LoadBalancerNatRule) multipleRulesUpdate(data, data2 acceptance.TestData) string {
-	template := r.template(data, "Basic")
+	template := r.template(data)
 	return fmt.Sprintf(`
 %s
 resource "azurestack_lb_nat_rule" "test" {

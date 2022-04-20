@@ -201,7 +201,7 @@ resource "azurestack_lb_backend_address_pool" "import" {
 }
 
 func (r LoadBalancerBackendAddressPool) standardSkuBasic(data acceptance.TestData) string {
-	template := r.template(data, "Standard")
+	template := r.template(data, "Basic")
 	return fmt.Sprintf(`
 provider "azurestack" {
   features {}

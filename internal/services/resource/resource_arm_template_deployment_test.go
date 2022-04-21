@@ -327,6 +327,7 @@ DEPLOY
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger)
 }
 
+//nolint:unused
 func (TemplateDeploymentResource) requiresImport(data acceptance.TestData) string {
 	template := TemplateDeploymentResource{}.basicMultiple(data)
 	return fmt.Sprintf(`

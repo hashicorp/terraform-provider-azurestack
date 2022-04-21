@@ -39,7 +39,7 @@ func TestAccPlatformImageDataSource_withVersion(t *testing.T) {
 				check.That(data.ResourceName).Key("publisher").HasValue("Canonical"),
 				check.That(data.ResourceName).Key("offer").HasValue("UbuntuServer"),
 				check.That(data.ResourceName).Key("sku").HasValue("16.04-LTS"),
-				check.That(data.ResourceName).Key("version").HasValue("16.04.201811010"),
+				check.That(data.ResourceName).Key("version").HasValue("16.04.202007080"),
 			),
 		},
 	})
@@ -71,7 +71,7 @@ data "azurestack_platform_image" "test" {
   publisher = "Canonical"
   offer     = "UbuntuServer"
   sku       = "16.04-LTS"
-  version   = "16.04.201811010"
+  version   = "16.04.202007080"
 }
 `, data.Locations.Primary)
 }

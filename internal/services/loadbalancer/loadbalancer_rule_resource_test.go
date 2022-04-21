@@ -161,21 +161,21 @@ func TestAccLoadBalancerRule_vmssBackendPoolUpdateRemoveLBRule(t *testing.T) {
 
 	data.ResourceTest(t, r, []acceptance.TestStep{
 		{
-			Config: r.vmssBackendPool(data, lbRuleName, "Standard"),
+			Config: r.vmssBackendPool(data, lbRuleName, "Basic"),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
 		data.ImportStep(),
 		{
-			Config: r.vmssBackendPoolUpdate(data, lbRuleName, "Standard"),
+			Config: r.vmssBackendPoolUpdate(data, lbRuleName, "Basic"),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).ExistsInAzure(r),
 			),
 		},
 		data.ImportStep(),
 		{
-			Config: r.vmssBackendPoolWithoutLBRule(data, "Standard"),
+			Config: r.vmssBackendPoolWithoutLBRule(data, "Basic"),
 		},
 	})
 }
@@ -286,7 +286,7 @@ resource "azurestack_lb_rule" "test" {
 }
 
 func (r LoadBalancerRule) complete(data acceptance.TestData) string {
-	template := r.template(data, "Standard")
+	template := r.template(data, "Basic")
 	return fmt.Sprintf(`
 %s
 
@@ -299,7 +299,6 @@ resource "azurestack_lb_rule" "test" {
   frontend_port = 3389
   backend_port  = 3389
 
-  disable_outbound_snat   = true
   enable_floating_ip      = true
   idle_timeout_in_minutes = 10
 
@@ -464,10 +463,10 @@ resource "azurestack_linux_virtual_machine_scale_set" "test" {
     primary = true
 
     ip_configuration {
-      name                                  = "internal"
-      primary                               = true
-      subnet_id                             = azurestack_subnet.test.id
-      load_balancer_backend_address_pool_id = azurestack_lb_backend_address_pool.test.id
+      name                                   = "internal"
+      primary                                = true
+      subnet_id                              = azurestack_subnet.test.id
+      load_balancer_backend_address_pool_ids = [azurestack_lb_backend_address_pool.test.id]
     }
   }
 }

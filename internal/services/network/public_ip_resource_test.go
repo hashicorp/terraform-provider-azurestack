@@ -468,7 +468,7 @@ resource "azurestack_public_ip" "test" {
   resource_group_name = azurestack_resource_group.test.name
 
   allocation_method = "Static"
-  domain_name_label = "%s"
+  domain_name_label = "a%s"
 }
 `, data.RandomInteger, data.Locations.Primary, data.RandomInteger, data.RandomStringOfLength(62))
 }

@@ -146,7 +146,7 @@ func azureProvider(supportLegacyTestSuite bool) *schema.Provider {
 			"environment": {
 				Type:        schema.TypeString,
 				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("AZURESTACK_ENVIRONMENT", "public"),
+				DefaultFunc: schema.EnvDefaultFunc("ARM_ENVIRONMENT", "public"),
 				Description: "The Cloud Environment which should be used. Possible values are public, usgovernment, and china. Defaults to public.",
 			},
 

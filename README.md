@@ -137,7 +137,6 @@ The following Environment Variables must be set in your shell prior to running a
 - `ARM_CLIENT_SECRET`
 - `ARM_SUBSCRIPTION_ID`
 - `ARM_TENANT_ID`
-- `ARM_ENVIRONMENT`
 - `ARM_ENDPOINT`
 - `ARM_TEST_LOCATION`
 

@@ -143,6 +143,13 @@ func azureProvider(supportLegacyTestSuite bool) *schema.Provider {
 				},
 			},
 
+			"environment": {
+				Type:        schema.TypeString,
+				Required:    true,
+				DefaultFunc: schema.EnvDefaultFunc("AZURESTACK_ENVIRONMENT", "public"),
+				Description: "The Cloud Environment which should be used. Possible values are public, usgovernment, and china. Defaults to public.",
+			},
+
 			// Client Certificate specific fields
 			"client_certificate_path": {
 				Type:        schema.TypeString,
@@ -227,7 +234,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
 			ClientSecret:                  d.Get("client_secret").(string),
 			TenantID:                      d.Get("tenant_id").(string),
 			CustomResourceManagerEndpoint: d.Get("arm_endpoint").(string),
-			Environment:                   "AZURESTACKCLOUD",
+			Environment:                   d.Get("environment").(string),
 			AuxiliaryTenantIDs:            auxTenants,
 			MsiEndpoint:                   d.Get("msi_endpoint").(string),
 			ClientCertPassword:            d.Get("client_certificate_password").(string),

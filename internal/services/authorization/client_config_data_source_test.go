@@ -41,7 +41,7 @@ func testAccCheckRegexSIDs(resourceName string) pluginsdk.TestCheckFunc {
 		}
 
 		objectIdRegex := regexp.MustCompile("^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$")
-		adfsID := regexp.MustCompile("^S-\\d-\\d+-(\\d+-){1,14}\\d+$")
+		adfsID := regexp.MustCompile(`^S-\d-(\d+-){1,14}\d+$`)
 
 		if !objectIdRegex.MatchString(rs.Primary.Attributes["object_id"]) {
 			// For ADFS validation

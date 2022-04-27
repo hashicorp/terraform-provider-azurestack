@@ -31,6 +31,31 @@ func schemaFeatures(supportLegacyTestSuite bool) *pluginsdk.Schema {
 				},
 			},
 		},
+
+		"virtual_machine_scale_set": {
+			Type:     pluginsdk.TypeList,
+			Optional: true,
+			MaxItems: 1,
+			Elem: &pluginsdk.Resource{
+				Schema: map[string]*pluginsdk.Schema{
+					"force_delete": {
+						Type:     pluginsdk.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+					"roll_instances_when_required": {
+						Type:     pluginsdk.TypeBool,
+						Required: true,
+					},
+					"scale_to_zero_before_deletion": {
+						Type:     pluginsdk.TypeBool,
+						Optional: true,
+						Default:  false,
+					},
+				},
+			},
+		},
+
 		"resource_group": {
 			Type:     pluginsdk.TypeList,
 			Optional: true,
@@ -91,6 +116,22 @@ func expandFeatures(input []interface{}) features.UserFeatures {
 			}
 			if v, ok := virtualMachinesRaw["skip_shutdown_and_force_delete"]; ok {
 				featuresMap.VirtualMachine.SkipShutdownAndForceDelete = v.(bool)
+			}
+		}
+	}
+
+	if raw, ok := val["virtual_machine_scale_set"]; ok {
+		items := raw.([]interface{})
+		if len(items) > 0 {
+			scaleSetRaw := items[0].(map[string]interface{})
+			if v, ok := scaleSetRaw["roll_instances_when_required"]; ok {
+				featuresMap.VirtualMachineScaleSet.RollInstancesWhenRequired = v.(bool)
+			}
+			if v, ok := scaleSetRaw["force_delete"]; ok {
+				featuresMap.VirtualMachineScaleSet.ForceDelete = v.(bool)
+			}
+			if v, ok := scaleSetRaw["scale_to_zero_before_deletion"]; ok {
+				featuresMap.VirtualMachineScaleSet.ScaleToZeroOnDelete = v.(bool)
 			}
 		}
 	}

@@ -796,7 +796,7 @@ func virtualMachineScaleSetCreateUpdate(d *pluginsdk.ResourceData, meta interfac
 		return err
 	}
 
-	extensions, err := expandVirtualMachineScaleSetExtensions(d)
+	extensions, _, err := expandVirtualMachineScaleSetExtensions(d.Get("extension").(*pluginsdk.Set).List())
 	if err != nil {
 		return err
 	}
@@ -2128,54 +2128,6 @@ func expandVirtualMachineScaleSetOsProfileSecrets(d *pluginsdk.ResourceData) *[]
 	}
 
 	return &secrets
-}
-
-func expandVirtualMachineScaleSetExtensions(d *pluginsdk.ResourceData) (*compute.VirtualMachineScaleSetExtensionProfile, error) {
-	extensions := d.Get("extension").(*pluginsdk.Set).List()
-	resources := make([]compute.VirtualMachineScaleSetExtension, 0, len(extensions))
-	for _, e := range extensions {
-		config := e.(map[string]interface{})
-		name := config["name"].(string)
-		publisher := config["publisher"].(string)
-		t := config["type"].(string)
-		version := config["type_handler_version"].(string)
-
-		extension := compute.VirtualMachineScaleSetExtension{
-			Name: &name,
-			VirtualMachineScaleSetExtensionProperties: &compute.VirtualMachineScaleSetExtensionProperties{
-				Publisher:          &publisher,
-				Type:               &t,
-				TypeHandlerVersion: &version,
-			},
-		}
-
-		if u := config["auto_upgrade_minor_version"]; u != nil {
-			upgrade := u.(bool)
-			extension.VirtualMachineScaleSetExtensionProperties.AutoUpgradeMinorVersion = &upgrade
-		}
-
-		if s := config["settings"].(string); s != "" {
-			settings, err := pluginsdk.ExpandJsonFromString(s)
-			if err != nil {
-				return nil, fmt.Errorf("unable to parse settings: %+v", err)
-			}
-			extension.VirtualMachineScaleSetExtensionProperties.Settings = &settings
-		}
-
-		if s := config["protected_settings"].(string); s != "" {
-			protectedSettings, err := pluginsdk.ExpandJsonFromString(s)
-			if err != nil {
-				return nil, fmt.Errorf("unable to parse protected_settings: %+v", err)
-			}
-			extension.VirtualMachineScaleSetExtensionProperties.ProtectedSettings = &protectedSettings
-		}
-
-		resources = append(resources, extension)
-	}
-
-	return &compute.VirtualMachineScaleSetExtensionProfile{
-		Extensions: &resources,
-	}, nil
 }
 
 func expandVirtualMachineScaleSetPlan(d *pluginsdk.ResourceData) *compute.Plan {

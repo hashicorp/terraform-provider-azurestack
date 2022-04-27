@@ -11,5 +11,10 @@ func Default() UserFeatures {
 			GracefulShutdown:           false,
 			SkipShutdownAndForceDelete: false,
 		},
+		VirtualMachineScaleSet: VirtualMachineScaleSetFeatures{
+			ForceDelete:               false,
+			RollInstancesWhenRequired: true,
+			ScaleToZeroOnDelete:       true,
+		},
 	}
 }

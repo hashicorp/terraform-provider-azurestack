@@ -1,8 +1,9 @@
 package features
 
 type UserFeatures struct {
-	ResourceGroup  ResourceGroupFeatures
-	VirtualMachine VirtualMachineFeatures
+	ResourceGroup          ResourceGroupFeatures
+	VirtualMachine         VirtualMachineFeatures
+	VirtualMachineScaleSet VirtualMachineScaleSetFeatures
 }
 
 type ResourceGroupFeatures struct {
@@ -13,4 +14,10 @@ type VirtualMachineFeatures struct {
 	DeleteOSDiskOnDeletion     bool
 	GracefulShutdown           bool
 	SkipShutdownAndForceDelete bool
+}
+
+type VirtualMachineScaleSetFeatures struct {
+	ForceDelete               bool
+	RollInstancesWhenRequired bool
+	ScaleToZeroOnDelete       bool
 }

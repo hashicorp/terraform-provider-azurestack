@@ -43,10 +43,10 @@ func testAccCheckRegexSIDs(resourceName string) pluginsdk.TestCheckFunc {
 		objectIdRegex := regexp.MustCompile("^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$")
 		adfsID := regexp.MustCompile(`^S-\d-(\d+-){1,14}\d+$`)
 
-		if !objectIdRegex.MatchString(rs.Primary.Attributes["service_principal_object_id"]) {
+		if !objectIdRegex.MatchString(rs.Primary.Attributes["object_id"]) {
 			// For ADFS validation
-			if !adfsID.MatchString(rs.Primary.Attributes["service_principal_object_id"]) {
-				return fmt.Errorf("service_principal_object_id didn't match %v or %v, got %v", objectIdRegex, adfsID, rs.Primary.Attributes["object_id"])
+			if !adfsID.MatchString(rs.Primary.Attributes["object_id"]) {
+				return fmt.Errorf("object_id didn't match %v or %v, got %v", objectIdRegex, adfsID, rs.Primary.Attributes["object_id"])
 			}
 		}
 

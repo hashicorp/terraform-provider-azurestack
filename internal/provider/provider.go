@@ -227,7 +227,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
 			ClientSecret:                  d.Get("client_secret").(string),
 			TenantID:                      d.Get("tenant_id").(string),
 			CustomResourceManagerEndpoint: d.Get("arm_endpoint").(string),
-			Environment:                   "AZURESTACKCLOUD",
+			Environment:                   "public",
 			AuxiliaryTenantIDs:            auxTenants,
 			MsiEndpoint:                   d.Get("msi_endpoint").(string),
 			ClientCertPassword:            d.Get("client_certificate_password").(string),

@@ -1,6 +1,7 @@
 package authorization
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/hashicorp/terraform-provider-azurestack/internal/clients"
@@ -42,12 +43,36 @@ func clientConfigDataSource() *pluginsdk.Resource {
 
 func clientConfigRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client)
-	_, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
+	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
 	d.SetId(time.Now().UTC().String())
 	d.Set("client_id", client.Account.ClientId)
 	d.Set("object_id", client.Account.ObjectId)
+
+	if len(client.Account.ObjectId) == 0 { // if empty because of ADFS issues
+		if client.Account.AuthenticatedAsAServicePrincipal {
+			spClient := client.Authorization.ServicePrincipalsClient
+			// Application & Service Principal is 1:1 per tenant. Since we know the appId (client_id)
+			// here, we can query for the Service Principal whose appId matches.
+			filter := fmt.Sprintf("appId eq '%s'", client.Account.ClientId)
+			listResult, listErr := spClient.List(ctx, filter)
+
+			if listErr != nil {
+				return fmt.Errorf("listing Service Principals: %#v", listErr)
+			}
+
+			if listResult.Values() == nil || len(listResult.Values()) != 1 {
+				return fmt.Errorf("Unexpected Service Principal query result: %#v", listResult.Values())
+			}
+
+			servicePrincipal := &(listResult.Values())[0]
+			if principal := servicePrincipal; principal != nil {
+				d.Set("object_id", principal.ObjectID)
+			}
+		}
+	}
+
 	d.Set("subscription_id", client.Account.SubscriptionId)
 	d.Set("tenant_id", client.Account.TenantId)
 

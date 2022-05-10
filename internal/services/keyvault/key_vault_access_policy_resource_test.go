@@ -164,7 +164,7 @@ resource "azurestack_key_vault_access_policy" "test" {
   ]
 
   tenant_id = data.azurestack_client_config.current.tenant_id
-  object_id = data.azurestack_client_config.current.service_principal_object_id
+  object_id = data.azurestack_client_config.current.object_id
 }
 `, r.template(data))
 }
@@ -214,7 +214,7 @@ resource "azurestack_key_vault_access_policy" "test_with_application_id" {
 
   application_id = data.azurestack_client_config.current.client_id
   tenant_id      = data.azurestack_client_config.current.tenant_id
-  object_id      = data.azurestack_client_config.current.service_principal_object_id
+  object_id      = data.azurestack_client_config.current.object_id
 }
 
 resource "azurestack_key_vault_access_policy" "test_no_application_id" {
@@ -253,7 +253,7 @@ resource "azurestack_key_vault_access_policy" "test_no_application_id" {
   ]
 
   tenant_id = data.azurestack_client_config.current.tenant_id
-  object_id = data.azurestack_client_config.current.service_principal_object_id
+  object_id = data.azurestack_client_config.current.object_id
 }
 `, r.template(data))
 }
@@ -273,7 +273,7 @@ resource "azurestack_key_vault_access_policy" "test" {
   secret_permissions = []
 
   tenant_id = data.azurestack_client_config.current.tenant_id
-  object_id = data.azurestack_client_config.current.service_principal_object_id
+  object_id = data.azurestack_client_config.current.object_id
 }
 `, r.template(data))
 }
@@ -339,7 +339,7 @@ resource "azurestack_key_vault_access_policy" "test" {
   key_vault_id = "${azurestack_key_vault.test.id}NOPE"
 
   tenant_id = data.azurestack_client_config.current.tenant_id
-  object_id = data.azurestack_client_config.current.service_principal_object_id
+  object_id = data.azurestack_client_config.current.object_id
 
   key_permissions = [
     "Get",

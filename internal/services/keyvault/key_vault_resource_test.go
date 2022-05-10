@@ -214,7 +214,7 @@ resource "azurestack_key_vault" "test" {
 
   access_policy {
     tenant_id = data.azurestack_client_config.current.tenant_id
-    object_id = data.azurestack_client_config.current.service_principal_object_id
+    object_id = data.azurestack_client_config.current.object_id
 
     certificate_permissions = [
       "Managecontacts",
@@ -245,7 +245,7 @@ resource "azurestack_key_vault" "import" {
 
   access_policy {
     tenant_id = data.azurestack_client_config.current.tenant_id
-    object_id = data.azurestack_client_config.current.service_principal_object_id
+    object_id = data.azurestack_client_config.current.object_id
 
     key_permissions = [
       "Create",
@@ -282,7 +282,7 @@ resource "azurestack_key_vault" "test" {
 
   access_policy {
     tenant_id = data.azurestack_client_config.current.tenant_id
-    object_id = data.azurestack_client_config.current.service_principal_object_id
+    object_id = data.azurestack_client_config.current.object_id
 
     key_permissions = [
       "Get",
@@ -396,7 +396,7 @@ resource "azurestack_key_vault" "test" {
 
   access_policy {
     tenant_id      = data.azurestack_client_config.current.tenant_id
-    object_id      = data.azurestack_client_config.current.service_principal_object_id
+    object_id      = data.azurestack_client_config.current.object_id
     application_id = data.azurestack_client_config.current.client_id
 
     certificate_permissions = [
@@ -442,7 +442,7 @@ resource "azurestack_key_vault" "test" {
 
   access_policy {
     tenant_id = data.azurestack_client_config.current.tenant_id
-    object_id = data.azurestack_client_config.current.service_principal_object_id
+    object_id = data.azurestack_client_config.current.object_id
 
     certificate_permissions = [
       "Get",

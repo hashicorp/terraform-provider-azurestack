@@ -24,14 +24,15 @@ func NewResourceManagerAccount(ctx context.Context, config authentication.Config
 
 	// TODO remove this when we confirm that MSI no longer returns nil with getAuthenticatedObjectID
 	// todo comment out for now as it is not stack env aware, add in a env param for it to use so it doens't look it up?
-	if getAuthenticatedObjectID := config.GetAuthenticatedObjectID; getAuthenticatedObjectID != nil {
-		v, err := getAuthenticatedObjectID(ctx)
-		if err != nil {
-			if !strings.Contains(err.Error(), "Original:adal.tokenRefreshError") { // Ignore the error if is in ADFS environment
+
+	if !strings.EqualFold(config.TenantID, "adfs") {
+		if getAuthenticatedObjectID := config.GetAuthenticatedObjectID; getAuthenticatedObjectID != nil {
+			v, err := getAuthenticatedObjectID(ctx)
+			if err != nil {
 				return nil, fmt.Errorf("getting authenticated object ID: %v", err)
 			}
+			objectId = *v
 		}
-		objectId = *v
 	}
 
 	account := ResourceManagerAccount{

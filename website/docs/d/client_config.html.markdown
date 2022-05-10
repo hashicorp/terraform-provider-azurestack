@@ -32,5 +32,4 @@ There are no arguments available for this data source.
 * `subscription_id` is set to the Azure Subscription ID.
 * `object_id` is set to the Azure Object ID.
 
-~> **Note:** To better understand "application" and "service principal", please read
-[Application and service principal objects in Azure Active Directory](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-application-objects).
+-> **Note:** This is only applicable when not using ADFS.

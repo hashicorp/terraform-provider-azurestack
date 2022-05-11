@@ -24,6 +24,11 @@ func NewResourceManagerAccount(ctx context.Context, config authentication.Config
 
 	// TODO remove this when we confirm that MSI no longer returns nil with getAuthenticatedObjectID
 	// todo comment out for now as it is not stack env aware, add in a env param for it to use so it doens't look it up?
+	splitEndpoint := strings.Split(env.ActiveDirectoryEndpoint, "/")
+	splitEndpointlastIndex := len(splitEndpoint) - 1
+	if splitEndpoint[splitEndpointlastIndex] == "adfs" || splitEndpoint[splitEndpointlastIndex] == "adfs/" {
+		config.TenantID = "adfs"
+	}
 
 	if !strings.EqualFold(config.TenantID, "adfs") {
 		if getAuthenticatedObjectID := config.GetAuthenticatedObjectID; getAuthenticatedObjectID != nil {

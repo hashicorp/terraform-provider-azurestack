@@ -26,7 +26,7 @@ func NewResourceManagerAccount(ctx context.Context, config authentication.Config
 	// todo comment out for now as it is not stack env aware, add in a env param for it to use so it doens't look it up?
 	splitEndpoint := strings.Split(env.ActiveDirectoryEndpoint, "/")
 	splitEndpointlastIndex := len(splitEndpoint) - 1
-	if splitEndpoint[splitEndpointlastIndex] == "adfs" || splitEndpoint[splitEndpointlastIndex] == "adfs/" {
+	if strings.EqualFold(splitEndpoint[splitEndpointlastIndex], "adfs") || strings.EqualFold(splitEndpoint[splitEndpointlastIndex], "adfs/") {
 		config.TenantID = "adfs"
 	}
 

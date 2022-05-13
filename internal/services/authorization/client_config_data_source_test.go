@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"regexp"
-	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -19,6 +18,7 @@ type ClientConfigDataSource struct{}
 func TestAccClientConfigDataSource_basic(t *testing.T) {
 	data := acceptance.BuildTestData(t, "data.azurestack_client_config", "current")
 	clientId := os.Getenv("ARM_CLIENT_ID")
+	tenantId := os.Getenv("ARM_TENANT_ID")
 	subscriptionId := os.Getenv("ARM_SUBSCRIPTION_ID")
 
 	data.DataSourceTest(t, []acceptance.TestStep{
@@ -26,6 +26,7 @@ func TestAccClientConfigDataSource_basic(t *testing.T) {
 			Config: ClientConfigDataSource{}.basic(),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).Key("client_id").HasValue(clientId),
+				check.That(data.ResourceName).Key("tenant_id").HasValue(tenantId),
 				check.That(data.ResourceName).Key("subscription_id").HasValue(subscriptionId),
 				testAccCheckRegexSIDs("data.azurestack_client_config.current"),
 			),
@@ -41,15 +42,10 @@ func testAccCheckRegexSIDs(resourceName string) pluginsdk.TestCheckFunc {
 		}
 
 		// TODO: Remove the validation until the bug of object_id in ADFS environment is fixed
-		if strings.EqualFold(rs.Primary.Attributes["tenant_id"], "adfs") && rs.Primary.Attributes["object_id"] == "" {
-			log.Println("[WARN] Validation passed when tenant_id is adfs and object_id is empty")
+		if rs.Primary.Attributes["object_id"] == "" {
+			log.Println("[WARN] Validation passed when object_id is empty")
 			// Will be passed until the bug of object id is fixed in ADFS environment
 			return nil
-		}
-
-		tenantId := os.Getenv("ARM_TENANT_ID")
-		if tenantId != rs.Primary.Attributes["tenant_id"] {
-			return fmt.Errorf("tenant_id didn't match %v, expected %v", tenantId, rs.Primary.Attributes["tenant_id"])
 		}
 
 		objectIdRegex := regexp.MustCompile("^[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}$")

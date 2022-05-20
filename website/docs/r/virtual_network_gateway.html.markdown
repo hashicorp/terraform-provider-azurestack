@@ -78,10 +78,10 @@ The following arguments are supported:
 
 * `ip_configuration` - (Required) One or two ip_configuration blocks documented below. An active-standby gateway requires exactly one ip_configuration block whereas an active-active gateway requires exactly two ip_configuration blocks.
 
-* `vpn_client_configuration` (Optional) A `vpn_client_configuration` block which
-  is documented below. In this block the Virtual Network Gateway can be configured
-  to accept IPSec point-to-site connections.
-* 
+* `vpn_client_configuration` (Optional) A `vpn_client_configuration` block which is documented below. In this block the Virtual Network Gateway can be configured to accept IPSec point-to-site connections.
+
+* `bgp_settings` - (Optional) A `bgp_settings` block which is documented below. In this block the BGP specfic settings can be defined.
+
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 
 The `ip_configuration` block supports:

@@ -72,6 +72,8 @@ The following arguments are supported:
 
 * `enable_bgp` - (Optional) If `true`, BGP (Border Gateway Protocol) is enabled for this connection. Defaults to `false`.
 
+* `bgp_settings` - (Optional) A `bgp_settings` block which is documented below. In this block the BGP specfic settings can be defined.
+
 * `sku` - (Required) Configuration of the size and capacity of the virtual network gateway. Valid options are `Basic`, `Standard` and `HighPerformance`.
 
 * `active_active` - (Optional) If true, an active-active Virtual Network Gateway will be created. An active-active gateway requires the HighPerformance SKU. If false, an active-standby gateway will be created. Defaults to false.
@@ -79,8 +81,6 @@ The following arguments are supported:
 * `ip_configuration` - (Required) One or two ip_configuration blocks documented below. An active-standby gateway requires exactly one ip_configuration block whereas an active-active gateway requires exactly two ip_configuration blocks.
 
 * `vpn_client_configuration` (Optional) A `vpn_client_configuration` block which is documented below. In this block the Virtual Network Gateway can be configured to accept IPSec point-to-site connections.
-
-* `bgp_settings` - (Optional) A `bgp_settings` block which is documented below. In this block the BGP specfic settings can be defined.
 
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 

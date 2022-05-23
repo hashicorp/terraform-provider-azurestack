@@ -50,6 +50,8 @@ The following arguments are supported:
 
 * `route` - (Optional) Can be specified multiple times to define multiple routes. Each `route` block supports fields documented below.
 
+* `disable_bgp_route_propagation` - (Optional) Boolean flag which controls propagation of routes learned by BGP on that route table. True means disable.
+
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 
 The `route` block supports:
@@ -68,6 +70,7 @@ The `route` block supports:
 The following attributes are exported:
 
 * `id` - The Route Table ID.
+
 * `subnets` - The collection of Subnets associated with this route table.
 
 ## Import

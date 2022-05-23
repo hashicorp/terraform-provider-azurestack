@@ -72,14 +72,16 @@ The following arguments are supported:
 
 * `enable_bgp` - (Optional) If `true`, BGP (Border Gateway Protocol) is enabled for this connection. Defaults to `false`.
 
+* `bgp_settings` - (Optional) A `bgp_settings` block which is documented below. In this block the BGP specfic settings can be defined.
+
 * `sku` - (Required) Configuration of the size and capacity of the virtual network gateway. Valid options are `Basic`, `Standard` and `HighPerformance`.
+
+* `active_active` - (Optional) If true, an active-active Virtual Network Gateway will be created. An active-active gateway requires the HighPerformance SKU. If false, an active-standby gateway will be created. Defaults to false.
 
 * `ip_configuration` - (Required) One or two ip_configuration blocks documented below. An active-standby gateway requires exactly one ip_configuration block whereas an active-active gateway requires exactly two ip_configuration blocks.
 
-* `vpn_client_configuration` (Optional) A `vpn_client_configuration` block which
-  is documented below. In this block the Virtual Network Gateway can be configured
-  to accept IPSec point-to-site connections.
-* 
+* `vpn_client_configuration` (Optional) A `vpn_client_configuration` block which is documented below. In this block the Virtual Network Gateway can be configured to accept IPSec point-to-site connections.
+
 * `tags` - (Optional) A mapping of tags to assign to the resource.
 
 The `ip_configuration` block supports:
@@ -118,6 +120,7 @@ The `bgp_settings` block supports:
 
 * `peering_address` - (Optional) The BGP peer IP address of the virtual network gateway. This address is needed to configure the created gateway as a BGP Peer on the on-premises VPN devices. The IP address must be part of the subnet of the Virtual Network Gateway. Changing this forces a new resource to be created
 
+* `peer_weight` - (Optional) The weight added to routes which have been learned through BGP peering. Valid values can be between 0 and 100.
 
 The `root_certificate` block supports:
 

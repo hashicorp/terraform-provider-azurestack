@@ -123,15 +123,41 @@ Below we'll cover each of the Data Sources and Resources which will be affected 
 
 -> **NOTE:** This guide is a Work In Progress and as such Fields, Resources and Data Sources may be added to this guide until version 2.0 of the azurestack Provider is released.
 
-TODO TODO
+### Resource: `azurerm_*`
 
-### Resource: `azurestack_virtual_network_peering`
+All tags properties are no longer computed.
 
-The `allow_virtual_network_access` field now defaults to true.
+### Resource: `azurestack_network_interface`
 
-### Resource: `azurestack_virtual_wan`
+The `application_security_group_ids` and `enable_accelerated_networking` fields have been removed as they are not supported by Azure Stack.
 
-The deprecated `security_provider_name` field will be removed, since this option is no longer supported by Azure.
+### Resource: `azurestack_managed_disk`
+
+The `zones` field has been removed as it is not supported by Azure Stack.
+
+### Resource: `azurestack_subnet`
+
+The `ip_configurations` field has been removed.
+
+### Resource: `azurestack_managed_disk`
+
+The `zones` property has been removed as it is no longer supported by Azure Stack.
+
+### Resource: `azurestack_network_interface`
+
+The `load_balancer_backend_address_pools_ids`, `load_balancer_inbound_nat_rules_ids`, `internal_fqdn`,  and `internal_dns_name_label` properties have been removed.
+
+### Resource: `azurestack_storage_blob`
+
+The `resource_group_name` property has been removed in favour of the `azurerm_storage_account_id` property.
+
+### Resource: `azurestack_storage_container`
+
+The `resource_group_name` property has been removed in favour of the `azurerm_storage_account_id` property.
+
+### Resource: `azurestack_virtual_network_gateway_connection`
+
+The `type` property no longer supports `Vnet2Vnet`.
 
 ---
 

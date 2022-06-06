@@ -143,6 +143,20 @@ func azureProvider(supportLegacyTestSuite bool) *schema.Provider {
 				},
 			},
 
+			"environment": {
+				Type:        schema.TypeString,
+				Required:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ARM_ENVIRONMENT", "public"),
+				Description: "The Cloud Environment which should be used. Defaults to public.",
+			},
+
+			"metadata_host": {
+				Type:        schema.TypeString,
+				Required:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ARM_METADATA_HOSTNAME", ""),
+				Description: "The Hostname which should be used for the Azure Metadata Service.",
+			},
+
 			// Client Certificate specific fields
 			"client_certificate_path": {
 				Type:        schema.TypeString,
@@ -227,7 +241,8 @@ func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
 			ClientSecret:                  d.Get("client_secret").(string),
 			TenantID:                      d.Get("tenant_id").(string),
 			CustomResourceManagerEndpoint: d.Get("arm_endpoint").(string),
-			Environment:                   "public",
+			Environment:                   d.Get("environment").(string),
+			MetadataHost:                  d.Get("metadata_host").(string),
 			AuxiliaryTenantIDs:            auxTenants,
 			MsiEndpoint:                   d.Get("msi_endpoint").(string),
 			ClientCertPassword:            d.Get("client_certificate_password").(string),

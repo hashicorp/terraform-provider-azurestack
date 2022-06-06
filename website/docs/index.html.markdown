@@ -95,10 +95,6 @@ For some advanced scenarios, such as where more granular permissions are necessa
 
 * `skip_provider_registration` - (Optional) Should the Azure Stack Provider skip registering any required Resource Providers? This can also be sourced from the `ARM_SKIP_PROVIDER_REGISTRATION` Environment Variable. Defaults to `false`.
 
-* `metadata_host` - (Optional) The Hostname of the Azure Metadata Service (for example `management.azure.com`), used to obtain the Cloud Environment when using a Custom Azure Environment. This can also be sourced from the `ARM_METADATA_HOSTNAME` Environment Variable.
-
-~> **Note:** `environment` must be set to the requested environment name in the list of available environments held in the `metadata_host`.
-
 
 ## Testing
 

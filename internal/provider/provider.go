@@ -235,6 +235,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
 			TenantID:                      d.Get("tenant_id").(string),
 			CustomResourceManagerEndpoint: d.Get("arm_endpoint").(string),
 			Environment:                   d.Get("environment").(string),
+			MetadataHost:                  d.Get("arm_endpoint").(string),
 			AuxiliaryTenantIDs:            auxTenants,
 			MsiEndpoint:                   d.Get("msi_endpoint").(string),
 			ClientCertPassword:            d.Get("client_certificate_password").(string),

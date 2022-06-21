@@ -21,19 +21,13 @@ func Build() (*clients.Client, error) {
 	defer clientLock.Unlock()
 
 	if _client == nil {
-		environment, exists := os.LookupEnv("ARM_ENVIRONMENT")
-		if !exists {
-			environment = "public"
-		}
-
 		builder := authentication.Builder{
-			SubscriptionID:                os.Getenv("ARM_SUBSCRIPTION_ID"),
-			ClientID:                      os.Getenv("ARM_CLIENT_ID"),
-			TenantID:                      os.Getenv("ARM_TENANT_ID"),
-			ClientSecret:                  os.Getenv("ARM_CLIENT_SECRET"),
-			CustomResourceManagerEndpoint: os.Getenv("ARM_ENDPOINT"),
-			Environment:                   environment,
-			MetadataHost:                  os.Getenv("ARM_ENDPOINT"),
+			SubscriptionID: os.Getenv("ARM_SUBSCRIPTION_ID"),
+			ClientID:       os.Getenv("ARM_CLIENT_ID"),
+			TenantID:       os.Getenv("ARM_TENANT_ID"),
+			ClientSecret:   os.Getenv("ARM_CLIENT_SECRET"),
+			MetadataHost:   os.Getenv("ARM_METADATA_HOSTNAME"),
+			Environment:    os.Getenv("ARM_ENVIRONMENT"),
 
 			// we intentionally only support Client Secret auth for tests (since those variables are used all over)
 			SupportsClientSecretAuth: true,

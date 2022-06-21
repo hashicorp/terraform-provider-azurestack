@@ -21,9 +21,9 @@ type ClientBuilder struct {
 }
 
 func Build(ctx context.Context, builder ClientBuilder) (*Client, error) {
-	env, err := authentication.LoadEnvironmentFromUrl(builder.AuthConfig.CustomResourceManagerEndpoint)
+	env, err := authentication.AzureEnvironmentByNameFromEndpoint(ctx, builder.AuthConfig.MetadataHost, builder.AuthConfig.Environment)
 	if err != nil {
-		return nil, fmt.Errorf("unable to load stack encironment from endpoint %q: %+v", builder.AuthConfig.CustomResourceManagerEndpoint, err)
+		return nil, fmt.Errorf("determining environment: %v", err)
 	}
 
 	// client declarations:

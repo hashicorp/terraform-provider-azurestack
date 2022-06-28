@@ -119,19 +119,18 @@ func azureProvider(supportLegacyTestSuite bool) *schema.Provider {
 				Description: "The Tenant ID which should be used.",
 			},
 
-			"arm_endpoint": {
+			"environment": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ARM_ENDPOINT", ""),
-				Deprecated:  "use `endpoint` instead",
-				Description: "The Azure Stack management endpoint which should be used.",
+				Required:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ARM_ENVIRONMENT", ""),
+				Description: "The Cloud Environment which should be used.",
 			},
 
-			"endpoint": {
+			"metadata_host": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ARM_ENDPOINT", ""),
-				Description: "The Azure Stack management endpoint which should be used.",
+				Required:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ARM_METADATA_HOSTNAME", ""),
+				Description: "The Hostname which should be used for the Azure Metadata Service.",
 			},
 
 			"auxiliary_tenant_ids": {
@@ -222,16 +221,16 @@ func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
 		}
 
 		builder := &authentication.Builder{
-			SubscriptionID:                d.Get("subscription_id").(string),
-			ClientID:                      d.Get("client_id").(string),
-			ClientSecret:                  d.Get("client_secret").(string),
-			TenantID:                      d.Get("tenant_id").(string),
-			CustomResourceManagerEndpoint: d.Get("arm_endpoint").(string),
-			Environment:                   "public",
-			AuxiliaryTenantIDs:            auxTenants,
-			MsiEndpoint:                   d.Get("msi_endpoint").(string),
-			ClientCertPassword:            d.Get("client_certificate_password").(string),
-			ClientCertPath:                d.Get("client_certificate_path").(string),
+			SubscriptionID:     d.Get("subscription_id").(string),
+			ClientID:           d.Get("client_id").(string),
+			ClientSecret:       d.Get("client_secret").(string),
+			TenantID:           d.Get("tenant_id").(string),
+			Environment:        d.Get("environment").(string),
+			MetadataHost:       d.Get("metadata_host").(string),
+			AuxiliaryTenantIDs: auxTenants,
+			MsiEndpoint:        d.Get("msi_endpoint").(string),
+			ClientCertPassword: d.Get("client_certificate_password").(string),
+			ClientCertPath:     d.Get("client_certificate_path").(string),
 
 			// Feature Toggles
 			SupportsClientCertAuth:   true,

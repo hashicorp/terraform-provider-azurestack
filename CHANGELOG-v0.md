@@ -2,11 +2,14 @@
 
 NOTES:
 
-* This is a special deprecation release in preparation of the upcoming `v1.0` release in where all properties and attributes that will be removed are marked as deprecated.
+* provider: This is a special deprecation release in preparation for the provider hitting `v1.0`. It is just marking every resource and property that will be removed as deprecated.
 
-IMPROVEMENTS:
+DEPRECATIONS:
 
-* the x has been marked as deprecated because y
+* Data Source: `azurestack_subnet` - the `ip_configurations` attribute has been marked as deprecated
+* `azurestack_network_interface` - the `load_balancer_backend_address_pools_ids`, `load_balancer_inbound_nat_rules_ids`, `internal_fqdn`,  and `internal_dns_name_label` properties have been marked as deprecated
+* `azurestack_storage_blob` - the `resource_group_name` property has been marked as deprecated
+* `azurestack_storage_container` - the `resource_group_name` property has been marked as deprecated
 
 ## 0.10.0 (April 27, 2021)
 

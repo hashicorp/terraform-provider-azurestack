@@ -72,7 +72,7 @@ The following arguments are supported:
 
 * `enable_bgp` - (Optional) If `true`, BGP (Border Gateway Protocol) is enabled for this connection. Defaults to `false`.
 
-* `bgp_settings` - (Optional) A `bgp_settings` block which is documented below. In this block the BGP specfic settings can be defined.
+* `bgp_settings` - (Optional) A `bgp_settings` block which is documented below. In this block the BGP specific settings can be defined.
 
 * `sku` - (Required) Configuration of the size and capacity of the virtual network gateway. Valid options are `Basic`, `Standard` and `HighPerformance`.
 

@@ -19,7 +19,7 @@ linters:
     - exportloopref
     - gocritic
     - gofmt
-    - gofumpt
+    #- gofumpt
     - goimports
     - gosimple
     - govet
@@ -29,7 +29,7 @@ linters:
     - ifshort
     - nakedret
     - nilnil
-    - nolintlint
+    #- nolintlint
     - makezero
     - misspell
     - staticcheck

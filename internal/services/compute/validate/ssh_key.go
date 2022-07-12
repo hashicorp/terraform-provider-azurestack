@@ -21,8 +21,7 @@ func SSHKey(i interface{}, k string) (warnings []string, errors []error) {
 		return nil, []error{fmt.Errorf("expected %q to not be an empty string or whitespace", k)}
 	}
 
-	keyParts := strings.Fields(v)
-	if len(keyParts) > 1 {
+	if keyParts := strings.Fields(v); len(keyParts) > 1 {
 		byteStr, err := base64.StdEncoding.DecodeString(keyParts[1])
 		if err != nil {
 			return nil, []error{fmt.Errorf("decoding %q for public key data", k)}

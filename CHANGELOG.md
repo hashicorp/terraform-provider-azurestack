@@ -47,10 +47,7 @@ FEATURES:
 BREAKING CHANGES:
 
 * all `tags` properties are no longer `computed`
-* Data Source: `azurestack_network_interface` - the `application_security_group_ids` and `enable_accelerated_networking` attributes has been removed [GH-164]
-* Data Source: `azurestack_managed_disk` - the `zones` attribute has been removed [GH-175]
 * Data Source: `azurestack_subnet` - the `ip_configurations` attribute has been removed [GH-167]
-* `azurestack_managed_disk` - the `zones` property has been removed as it is no longer supported in the API [GH-175]
 * `azurestack_network_interface` - the `load_balancer_backend_address_pools_ids`, `load_balancer_inbound_nat_rules_ids`, `internal_fqdn`,  and `internal_dns_name_label` properties have been removed [GH-164]
 * `azurestack_storage_blob` - the `resource_group_name` property has been removed [GH-163]
 * `azurestack_storage_container` - the `resource_group_name` property has been removed [GH-157Z]

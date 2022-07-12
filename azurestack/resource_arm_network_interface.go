@@ -98,19 +98,21 @@ func resourceArmNetworkInterface() *schema.Resource {
 						},
 
 						"load_balancer_backend_address_pools_ids": {
-							Type:     schema.TypeSet,
-							Optional: true,
-							Computed: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
+							Type:       schema.TypeSet,
+							Optional:   true,
+							Computed:   true,
+							Elem:       &schema.Schema{Type: schema.TypeString},
+							Set:        schema.HashString,
+							Deprecated: "This property has been deprecated and will be removed in v1.0 of the provider",
 						},
 
 						"load_balancer_inbound_nat_rules_ids": {
-							Type:     schema.TypeSet,
-							Optional: true,
-							Computed: true,
-							Elem:     &schema.Schema{Type: schema.TypeString},
-							Set:      schema.HashString,
+							Type:       schema.TypeSet,
+							Optional:   true,
+							Computed:   true,
+							Elem:       &schema.Schema{Type: schema.TypeString},
+							Set:        schema.HashString,
+							Deprecated: "This property has been deprecated and will be removed in v1.0 of the provider",
 						},
 
 						"application_security_group_ids": {
@@ -139,9 +141,10 @@ func resourceArmNetworkInterface() *schema.Resource {
 			},
 
 			"internal_dns_name_label": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				Computed:   true,
+				Deprecated: "This property has been deprecated and will be removed in v1.0 of the provider",
 			},
 
 			"applied_dns_servers": {
@@ -153,9 +156,10 @@ func resourceArmNetworkInterface() *schema.Resource {
 			},
 
 			"internal_fqdn": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Type:       schema.TypeString,
+				Optional:   true,
+				Computed:   true,
+				Deprecated: "This property has been deprecated and will be removed in v1.0 of the provider",
 			},
 
 			/**

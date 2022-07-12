@@ -42,10 +42,11 @@ func dataSourceArmSubnet() *schema.Resource {
 			},
 
 			"ip_configurations": {
-				Type:     schema.TypeSet,
-				Computed: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      schema.HashString,
+				Type:       schema.TypeSet,
+				Computed:   true,
+				Elem:       &schema.Schema{Type: schema.TypeString},
+				Set:        schema.HashString,
+				Deprecated: "This property has been deprecated and will be removed in v1.0 of the provider",
 			},
 		},
 	}

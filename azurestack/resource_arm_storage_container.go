@@ -27,7 +27,15 @@ func resourceArmStorageContainer() *schema.Resource {
 				ForceNew:     true,
 				ValidateFunc: validateArmStorageContainerName,
 			},
-			"resource_group_name": resourceGroupNameSchema(),
+
+			"resource_group_name": {
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validateArmResourceGroupName,
+				Deprecated:   "This property has been deprecated and will be removed in v1.0 of the provider",
+			},
+
 			"storage_account_name": {
 				Type:     schema.TypeString,
 				Required: true,

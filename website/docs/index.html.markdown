@@ -93,15 +93,6 @@ For some advanced scenarios, such as where more granular permissions are necessa
 
 * `skip_provider_registration` - (Optional) Should the Azure Stack Provider skip registering any required Resource Providers? This can also be sourced from the `ARM_SKIP_PROVIDER_REGISTRATION` Environment Variable. Defaults to `false`.
 
-## Testing
+## Features
 
-The following Environment Variables must be set to run the acceptance tests:
-
-~> **NOTE:** The Acceptance Tests require the use of a Service Principal using a Client Secret.
-
-* `ARM_ENDPOINT` - The Azure Resource Manager API Endpoint for Azure Stack.
-* `ARM_SUBSCRIPTION_ID` - The ID of the Azure Subscription in which to run the Acceptance Tests.
-* `ARM_CLIENT_ID` - The Client ID of the Service Principal.
-* `ARM_CLIENT_SECRET` - The Client Secret associated with the Service Principal.
-* `ARM_TENANT_ID` - The Tenant ID to use.
-* `ARM_TEST_LOCATION` - The Azure Stack Location to provision resources in for the Acceptance Tests.
+The `features` block allows configuring the behaviour of the Azure Provider, more information can be found on [the dedicated page for the `features` block](guides/features-block.html).

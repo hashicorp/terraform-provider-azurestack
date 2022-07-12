@@ -1,105 +1,81 @@
-## 0.10.0 (April 27, 2021)
+
+
+## 1.0.0 (Unreleased)
 
 NOTES:
 
-* provider: The underlying Terraform codebase dependency for the provider SDK and acceptance testing framework has been migrated from `github.com/hashicorp/terraform` to `github.com/hashicorp/terraform-plugin-sdk`. They are functionally equivalent and this should only impact codebase development to switch imports. For more information see the [Terraform Plugin SDK page in the Extending Terraform documentation](https://www.terraform.io/docs/extend/plugin-sdk.html). ([#108](https://github.com/terraform-providers/terraform-provider-azurestack/issues/108))
-* dependencies: upgrading to go `1.16.0` [[#128](https://github.com/terraform-providers/terraform-provider-azurestack/issues/128)] 
-
-## 0.9.0 (August 30, 2019)
-
-IMPROVEMENTS:
-
-* dependencies: upgrading `github.com/hashicorp/terraform` to `0.12.6` ([#102](https://github.com/terraform-providers/terraform-provider-azurestack/issues/102))
-* dependencies: upgrading `github.com/hashicorp/go-azure-helpers` to `0.7.0` ([#103](https://github.com/terraform-providers/terraform-provider-azurestack/issues/103))
-* dependencies: upgrading `github.com/Azure/go-autorest` to `13.0.0` ([#103](https://github.com/terraform-providers/terraform-provider-azurestack/issues/103))
-* dependencies: upgrading `github.com/Azure/terraform` to `32.0.0` ([#103](https://github.com/terraform-providers/terraform-provider-azurestack/issues/103))
-* provider: automatically set authentication tenant ID to `adfs` in AD environments ([#105](https://github.com/terraform-providers/terraform-provider-azurestack/issues/105))
-* `azurestack_availability_set` - support for the `managed` property ([#104](https://github.com/terraform-providers/terraform-provider-azurestack/issues/104))
-
-## 0.8.1 (July 09, 2019)
-
-BUG FIXES:
-
-* `azurestack_storage_account` - handling the casing of the Storage Account ID changing in Azure Stack 1905 ([#99](https://github.com/terraform-providers/terraform-provider-azurestack/issues/99))
-
-## 0.8.0 (June 24, 2019)
+* **Major Version**: Version `1.0` of the Azure Stack Provider is a major version - some behaviours have changed and some deprecated fields/resources have been removed - please refer to [the 1.0 upgrade guide for more information](https://registry.terraform.io/providers/hashicorp/azurestack/latest/docs/guides/1.0-upgrade-guide).
+* **Provider Block:** The Azure Stack Provider now requires that a `features` block is specified within the Provider block, which can be used to alter the behaviour of certain resources - [more information on the `features` block can be found in the documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#features).
+* **Terraform 0.10/0.11:** Version `1.0` of the Azure Stack Provider no longer supports Terraform `0.10` or `0.11` - you must upgrade to Terraform `0.12` to use version `1.0` of the Azure Stack Provider.
+* When upgrading to `v1.0` of the AzureRM Provider, we recommend upgrading to the latest version of Terraform Core ([which can be found here](https://www.terraform.io/downloads)) - the next major release of the AzureRM Provider (`v2.0`) will require Terraform `1.0` or later.
 
 FEATURES:
 
-* **New Data Source:** `azurestack_platform_image` ([#85](https://github.com/terraform-providers/terraform-provider-azurestack/issues/85))
-* **New Resource:** `azurestack_managed_disk` ([#85](https://github.com/terraform-providers/terraform-provider-azurestack/issues/85))
+* **Custom Timeouts:** - all resources within the Azure Stack Provider now allow configuring custom timeouts - please [see Terraform's Timeout documentation](https://www.terraform.io/docs/configuration/resources.html#operation-timeouts) and the documentation in each data source resource for more information.
+* **Requires Import:** The Azure Stack Provider now checks for the presence of an existing resource prior to creating it - which means that if you try and create a resource which already exists (without importing it) you'll be prompted to import this into the state.
+* **Import:** The Azure Stack Provider now checks import IDs for the correct resource ID formatting and reports what segments are either missing or incorrect.
+* **New Service**: `keyvault` [GH-151]
+* **New Data Source**: `azurestack_dns_zone` [GH-149]
+* **New Data Source**: `azurestack_image` [GH-143]
+* **New Data Source**: `azurestack_key_vault` [GH-151]
+* **New Data Source**: `azurestack_key_vault_key` [GH-151]
+* **New Data Source**: `azurestack_key_vault_secret` [GH-151]
+* **New Data Source**: `azurestack_key_vault_access_policy` [GH-151]
+* **New Data Source**: `azurestack_resources` [GH-170]
+* **New Data Source**: `azurestack_storage_container` [GH-157]
+* **New Resource**: `azurestack_dns_aaaa_record` [GH-149]
+* **New Resource**: `azurestack_dns_cname_record` [GH-149]
+* **New Resource**: `azurestack_dns_mx_record` [GH-149]
+* **New Resource**: `azurestack_dns_ns_record` [GH-149]
+* **New Resource**: `azurestack_dns_ptr_record` [GH-149]
+* **New Resource**: `azurestack_dns_srv_record` [GH-149]
+* **New Resource**: `azurestack_dns_txt_record` [GH-149]
+* **New Resource**: `azurestack_dns_zone` [GH-149]
+* **New Resource**: `azurestack_image` [GH-143]
+* **New Resource**: `azurestack_key_vault` [GH-151]
+* **New Resource**: `azurestack_key_vault_key` [GH-151]
+* **New Resource**: `azurestack_key_vault_secret` [GH-151]
+* **New Resource**: `azurestack_key_vault_access_policy` [GH-151]
+* **New Resource**: `azurestack_linux_virtual_machine_scale_set` [GH-182]
+* **New Resource**: `azurestack_linux_virtual_machine` [GH-148]
+* **New Resource**: `azurestack_network_interface_backend_address_pool_association` [GH-155]
+* **New Resource**: `azurestack_virtual_network_peering` [GH-147]
+* **New Resource**: `azurestack_windows_virtual_machine_scale_set` [GH-182]
+* **New Resource**: `azurestack_windows_virtual_machine` [GH-148]
 
-IMPROVEMENTS:
 
-* dependencies: Changing to the `2019-03-01` profile ([#84](https://github.com/terraform-providers/terraform-provider-azurestack/issues/84))
-* dependencies: upgrading to `v30.0.0` of `github.com/Azure/azure-sdk-for-go` ([#88](https://github.com/terraform-providers/terraform-provider-azurestack/issues/88))
-* `azurestack_virtual_machine` - support for manage disks ([#85](https://github.com/terraform-providers/terraform-provider-azurestack/issues/85))
-* `azurestack_virtual_machine_scale_set` - add support for managed disks ([#93](https://github.com/terraform-providers/terraform-provider-azurestack/issues/93))
+BREAKING CHANGES:
 
-## 0.7.0 (May 23, 2019)
+* all `tags` properties are no longer `computed`
+* Data Source: `azurestack_network_interface` - the `application_security_group_ids` and `enable_accelerated_networking` attributes has been removed [GH-164]
+* Data Source: `azurestack_managed_disk` - the `zones` attribute has been removed [GH-175]
+* Data Source: `azurestack_subnet` - the `ip_configurations` attribute has been removed [GH-167]
+* `azurestack_managed_disk` - the `zones` property has been removed as it is no longer supported in the API [GH-175]
+* `azurestack_network_interface` - the `load_balancer_backend_address_pools_ids`, `load_balancer_inbound_nat_rules_ids`, `internal_fqdn`,  and `internal_dns_name_label` properties have been removed [GH-164]
+* `azurestack_storage_blob` - the `resource_group_name` property has been removed [GH-163]
+* `azurestack_storage_container` - the `resource_group_name` property has been removed [GH-157Z]
+* `azurestack_virtual_network_gateway_connection` - the `type` property no longer supports `Vnet2Vnet` [GH-173]
 
-* dependencies: upgrading to `v29.0.0` of `github.com/Azure/azure-sdk-for-go` ([#83](https://github.com/terraform-providers/terraform-provider-azurestack/issues/83))
-* dependencies: upgrading to `v11.7.0` of `github.com/Azure/go-autorest` ([#83](https://github.com/terraform-providers/terraform-provider-azurestack/issues/83))
-* dependencies: upgrading to `v0.12.0` of `github.com/hashicorp/terraform` ([#86](https://github.com/terraform-providers/terraform-provider-azurestack/issues/86))
+ENHANCEMENTS:
 
-## 0.6.0 (April 19, 2019)
+* dependencies: `azure-sdk-for-go` profile has been upgraded to `v59.2.0` 
+* dependencies: the `azure-sdk-for-go` profile has been updated to `2020-09-01`
+* provider: added a new feature flag within the `resource_group` block for `prevent_deletion_if_contains_resources`, for configuring whether Terraform should prevent the deletion of a Resource Group which still contains items
+* provider: added a new feature flag `force_delete` within the `virtual_machine_scale_set` block to configure whether the VMSS should be force deleted during deletion [GH-182]
+* provider: added a new feature flag `roll_instances_when_required` within the `virtual_machine_scale_set` block to configure whether the VMSS should be rolled when required [GH-182]
+* provider: added a new feature flag `scale_to_zero_before_deletion` within the `virtual_machine_scale_set` block to configure whether the VMSS should be scaled to zero during deletion [GH-182]
 
-NOTES:
+* Data Source: `azurestack_storage_account` - support for the `enable_https_traffic_only` attributes [GH-169]
+* `azurestack_loadbalancer` - support for the `sku` property [GH-152]
+* `azurestack_managed_disk` - support for the `encryption` block and `hyper_v_generation` property [GH-175]
+* `azurerm_resource_group` - Terraform now checks during the deletion of a Resource Group if there's any items remaining and will raise an error if so by default (to avoid deleting items unintentionally). This behaviour can be controlled using the `prevent_deletion_if_contains_resources` feature-flag within the `resource_group` block within the `features` block
+* `azurestack_storage_account` - support for the `enable_https_traffic_only` property [GH-169]
+* `azurestack_storage_blob` - support for the `has_immutability_policy`, `content_type`, `source_content`, `content_md5`, and `metadata` properties [GH-163]
+* `azurestack_storage_container` - now exports the `cache_control` and `has_legal_hold` attributes [GH-157]
+* `azurestack_storage_container` - the `properties` property has been renamed to `metadata` [GH-157]
+* `azurestack_virtual_network_gateway_connection` - the `ike_encryption` property now supports `GCMAES128` and `GCMAES256` [GH-173]
+* `azurestack_virtual_network_gateway_connection` - the `pfs_group` property now supports `PFS14` and `PFSMM` [GH-173]
 
-* This release includes a Terraform SDK upgrade with compatibility for Terraform v0.12. The provider remains backwards compatible with Terraform v0.11 and there should not be any significant behavioural changes. ([#75](https://github.com/terraform-providers/terraform-provider-azurestack/issues/75))
+---
 
-## 0.5.0 (April 05, 2019)
-
-IMPROVEMENTS:
-
-* dependencies: switching to Go Modules ([#70](https://github.com/terraform-providers/terraform-provider-azurestack/issues/70))
-* dependencies: upgrading to Go 1.11 ([#53](https://github.com/terraform-providers/terraform-provider-azurestack/issues/53))
-* dependencies: upgrading to version 21.3.0 of github.com/Azure/azure-sdk-for-go ([#53](https://github.com/terraform-providers/terraform-provider-azurestack/issues/53))
-* dependencies: upgrading to terraform 0.11.13 ([#78](https://github.com/terraform-providers/terraform-provider-azurestack/issues/78))
-* authentication: switching to use the new authentication package ([#54](https://github.com/terraform-providers/terraform-provider-azurestack/issues/54))
-* authentication: support for Client Certificate authentication ([#56](https://github.com/terraform-providers/terraform-provider-azurestack/issues/56))
-* authentication: support for CLI authentication ([#57](https://github.com/terraform-providers/terraform-provider-azurestack/issues/57))
-
-BUG FIXES:
-
-* `azurestack_virtual_network_gateway` - will no longer panic when the API/SDK return an empty `bgp_settings` property ([#71](https://github.com/terraform-providers/terraform-provider-azurestack/issues/71))
-
-## 0.4.0 (September 18, 2018)
-
-* **New Resource:** `azurestack_route_table` ([#26](https://github.com/terraform-providers/terraform-provider-azurestack/issues/26))
-* **New Resource:** `azurestack_route` ([#27](https://github.com/terraform-providers/terraform-provider-azurestack/issues/27))
-* **New Resource:** `azurestack_template_deployment` ([#33](https://github.com/terraform-providers/terraform-provider-azurestack/issues/33))
-* **New Resource:** `azurestack_virtual_machine_scale_set` ([#15](https://github.com/terraform-providers/terraform-provider-azurestack/issues/15))
-* **New Resource:** `azurestack_virtual_network_gateway` ([#31](https://github.com/terraform-providers/terraform-provider-azurestack/issues/31))
-* **New Resource:** `azurestack_virtual_network_gateway_connection` ([#35](https://github.com/terraform-providers/terraform-provider-azurestack/issues/35))
-* **New Data Source:** `azurestack_public_ip` ([#34](https://github.com/terraform-providers/terraform-provider-azurestack/issues/34))
-* **New Data Source:** `azurestack_route_table` ([#26](https://github.com/terraform-providers/terraform-provider-azurestack/issues/26))
-* **New Data Source:** `azurestack_subnet` ([#34](https://github.com/terraform-providers/terraform-provider-azurestack/issues/34))
-* **New Data Source:** `azurestack_virtual_network_gateway` ([#31](https://github.com/terraform-providers/terraform-provider-azurestack/issues/31))
-
-IMPROVEMENTS:
-
-* dependencies: upgrading to `v20.1.0` of `github.com/Azure/azure-sdk-for-go` ([#38](https://github.com/terraform-providers/terraform-provider-azurestack/issues/38))
-* dependencies: upgrading to `v10.15.4` of `github.com/Azure/go-autorest` ([#38](https://github.com/terraform-providers/terraform-provider-azurestack/issues/38))
-
-BUG FIXES:
-
-* `azurestack_public_ip` - now correctly reading and importing the `idle_timeout_in_minutes` property ([#42](https://github.com/terraform-providers/terraform-provider-azurestack/issues/42))
-
-## 0.3.0 (August 13, 2018)
-
-* **New Resource:** `azurestack_lb` ([#16](https://github.com/terraform-providers/terraform-provider-azurestack/issues/16))
-* **New Resource:** `azurestack_lb_backend_address_pool` ([#21](https://github.com/terraform-providers/terraform-provider-azurestack/issues/21))
-* **New Resource:** `azurestack_lb_nat_rule` ([#22](https://github.com/terraform-providers/terraform-provider-azurestack/issues/22))
-* **New Resource:** `azurestack_lb_nat_pool` ([#24](https://github.com/terraform-providers/terraform-provider-azurestack/issues/24))
-* **New Resource:** `azurestack_lb_probe` ([#23](https://github.com/terraform-providers/terraform-provider-azurestack/issues/23))
-* **New Resource:** `azurestack_lb_rule` ([#25](https://github.com/terraform-providers/terraform-provider-azurestack/issues/25))
-
-## 0.2.0 (July 26, 2018)
-
-* **New Resource:** `azurestack_local_network_gateway` ([#13](https://github.com/terraform-providers/terraform-provider-azurestack/issues/13))
-* **New Data Source:** `azurestack_client_config` ([#9](https://github.com/terraform-providers/terraform-provider-azurestack/issues/9))
-
-## 0.1.0 (June 19, 2018) 
-
-* Initial Release
+For information on changes prior to the v1.0.0 release, please see [the v0.x changelog](https://github.com/hashicorp/terraform-provider-azurestack/blob/main/CHANGELOG-v0.md).

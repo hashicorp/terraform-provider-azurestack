@@ -59,7 +59,7 @@ type TestData struct {
 // BuildTestData generates some test data for the given resource
 func BuildTestData(t *testing.T, resourceType string, resourceLabel string) TestData {
 	if os.Getenv(resource.TestEnvVar) == "" {
-		t.Skip(fmt.Sprintf("Integration test skipped unless env '%s' set", resource.TestEnvVar))
+		t.Skipf("Integration test skipped unless env '%s' set", resource.TestEnvVar)
 		return TestData{}
 	}
 

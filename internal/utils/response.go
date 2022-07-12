@@ -31,7 +31,7 @@ func ResponseErrorIsRetryable(err error) bool {
 	// nolint:gocritic
 	switch e := err.(type) {
 	case net.Error:
-		if e.Temporary() || e.Timeout() {
+		if e.Temporary() || e.Timeout() { // nolint:staticcheck
 			return true
 		}
 	}

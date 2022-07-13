@@ -63,6 +63,8 @@ The following arguments are supported:
 
 -> Note: The `arm_endpoint` property, and corresponding environment variable `ARM_ENDPOINT`, have been replaced by `metadata_host` and `ARM_METADATA_HOSTNAME` respectively. In many installations the value of this property will remain the same.
 
+* `environment` - (Optional) The Cloud Environment which should be used. Only required when multiple environments are supported for your Azure Stack Instance.
+
 * `client_id` - (Optional) The Client ID which should be used. This can also be sourceed from the `ARM_CLIENT_ID` Environment Variable.
 
 * `subscription_id` - (Optional) The Subscription ID which should be used. This can also be sourced from the `ARM_SUBSCRIPTION_ID` Environment Variable.

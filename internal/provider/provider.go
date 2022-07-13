@@ -120,13 +120,6 @@ func azureProvider(supportLegacyTestSuite bool) *schema.Provider {
 				Description: "The Tenant ID which should be used.",
 			},
 
-			"environment": {
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ARM_ENVIRONMENT", ""),
-				Description: "The Cloud Environment which should be used.",
-			},
-
 			"metadata_host": {
 				Type:        schema.TypeString,
 				Optional:    true, // TODO: make Required when `arm_endpoint` is removed
@@ -140,6 +133,13 @@ func azureProvider(supportLegacyTestSuite bool) *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("ARM_ENDPOINT", ""),
 				Description: "The Hostname which should be used for the Azure Metadata Service.",
 				Deprecated:  "`arm_endpoint` is deprecated in favour of `metadata_host` and will be removed in version 1.0 of the AzureStack provider.",
+			},
+
+			"environment": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ARM_ENVIRONMENT", ""),
+				Description: "The Cloud Environment which should be used.",
 			},
 
 			"auxiliary_tenant_ids": {

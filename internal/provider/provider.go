@@ -127,10 +127,20 @@ func azureProvider(supportLegacyTestSuite bool) *schema.Provider {
 			},
 
 			"metadata_host": {
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("ARM_METADATA_HOSTNAME", ""),
-				Description: "The Hostname which should be used for the Azure Metadata Service.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ExactlyOneOf: []string{"metadata_host", "arm_endpoint"},
+				DefaultFunc:  schema.EnvDefaultFunc("ARM_METADATA_HOSTNAME", ""),
+				Description:  "The Hostname which should be used for the Azure Metadata Service.",
+			},
+
+			"arm_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ExactlyOneOf: []string{"metadata_host", "arm_endpoint"},
+				DefaultFunc:  schema.EnvDefaultFunc("ARM_ENDPOINT", ""),
+				Description:  "The Hostname which should be used for the Azure Metadata Service.",
+				Deprecated:   "`arm_endpoint` is deprecated in favour of `metadata_host` and will be removed in version 1.0 of the AzureStack provider.",
 			},
 
 			"auxiliary_tenant_ids": {
@@ -220,13 +230,24 @@ func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
 			return nil, diag.FromErr(fmt.Errorf("The provider only supports 3 auxiliary tenant IDs"))
 		}
 
+		var metadataHost string
+		if v := d.Get("metadata_host").(string); v != "" {
+			metadataHost = v
+		} else if v := d.Get("arm_endpoint").(string); v != "" {
+			metadataHost = v
+		}
+
+		if len(metadataHost) == 0 {
+			return nil, diag.Errorf("provider: `metadata_host` must be set")
+		}
+
 		builder := &authentication.Builder{
 			SubscriptionID:     d.Get("subscription_id").(string),
 			ClientID:           d.Get("client_id").(string),
 			ClientSecret:       d.Get("client_secret").(string),
 			TenantID:           d.Get("tenant_id").(string),
 			Environment:        d.Get("environment").(string),
-			MetadataHost:       d.Get("metadata_host").(string),
+			MetadataHost:       metadataHost,
 			AuxiliaryTenantIDs: auxTenants,
 			MsiEndpoint:        d.Get("msi_endpoint").(string),
 			ClientCertPassword: d.Get("client_certificate_password").(string),

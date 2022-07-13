@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"strings"
 
@@ -127,20 +128,18 @@ func azureProvider(supportLegacyTestSuite bool) *schema.Provider {
 			},
 
 			"metadata_host": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ExactlyOneOf: []string{"metadata_host", "arm_endpoint"},
-				DefaultFunc:  schema.EnvDefaultFunc("ARM_METADATA_HOSTNAME", ""),
-				Description:  "The Hostname which should be used for the Azure Metadata Service.",
+				Type:        schema.TypeString,
+				Optional:    true, // TODO: make Required when `arm_endpoint` is removed
+				DefaultFunc: schema.EnvDefaultFunc("ARM_METADATA_HOSTNAME", ""),
+				Description: "The Hostname which should be used for the Azure Metadata Service.",
 			},
 
 			"arm_endpoint": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ExactlyOneOf: []string{"metadata_host", "arm_endpoint"},
-				DefaultFunc:  schema.EnvDefaultFunc("ARM_ENDPOINT", ""),
-				Description:  "The Hostname which should be used for the Azure Metadata Service.",
-				Deprecated:   "`arm_endpoint` is deprecated in favour of `metadata_host` and will be removed in version 1.0 of the AzureStack provider.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("ARM_ENDPOINT", ""),
+				Description: "The Hostname which should be used for the Azure Metadata Service.",
+				Deprecated:  "`arm_endpoint` is deprecated in favour of `metadata_host` and will be removed in version 1.0 of the AzureStack provider.",
 			},
 
 			"auxiliary_tenant_ids": {
@@ -241,13 +240,18 @@ func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
 			return nil, diag.Errorf("provider: `metadata_host` must be set")
 		}
 
+		u, err := url.Parse(metadataHost)
+		if err != nil {
+			return nil, diag.Errorf("parsing `metadata_host`: %v", err)
+		}
+
 		builder := &authentication.Builder{
 			SubscriptionID:     d.Get("subscription_id").(string),
 			ClientID:           d.Get("client_id").(string),
 			ClientSecret:       d.Get("client_secret").(string),
 			TenantID:           d.Get("tenant_id").(string),
 			Environment:        d.Get("environment").(string),
-			MetadataHost:       metadataHost,
+			MetadataHost:       u.Host,
 			AuxiliaryTenantIDs: auxTenants,
 			MsiEndpoint:        d.Get("msi_endpoint").(string),
 			ClientCertPassword: d.Get("client_certificate_password").(string),

@@ -49,8 +49,8 @@ type TestData struct {
 	// EnvironmentName is the name of the Azure Environment where we're running
 	EnvironmentName string
 
-	// MetadataURL is the url of the endpoint where the environment is obtained
-	MetadataURL string
+	// MetadataHost is the url of the endpoint where the environment is obtained
+	MetadataHost string
 
 	// resourceLabel is the local used for the resource - generally "test""
 	resourceLabel string
@@ -74,7 +74,7 @@ func BuildTestData(t *testing.T, resourceType string, resourceLabel string) Test
 		ResourceName:    fmt.Sprintf("%s.%s", resourceType, resourceLabel),
 		Environment:     *env,
 		EnvironmentName: os.Getenv("ARM_ENVIRONMENT"),
-		MetadataURL:     os.Getenv("ARM_METADATA_HOSTNAME"),
+		MetadataHost:    os.Getenv("ARM_METADATA_HOSTNAME"),
 
 		ResourceType:  resourceType,
 		resourceLabel: resourceLabel,

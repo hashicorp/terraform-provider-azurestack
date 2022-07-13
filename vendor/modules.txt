@@ -97,7 +97,7 @@ github.com/google/go-cmp/cmp/internal/value
 # github.com/hashicorp/errwrap v1.0.0
 ## explicit
 github.com/hashicorp/errwrap
-# github.com/hashicorp/go-azure-helpers v0.36.0
+# github.com/hashicorp/go-azure-helpers v0.38.0
 ## explicit; go 1.17
 github.com/hashicorp/go-azure-helpers/authentication
 github.com/hashicorp/go-azure-helpers/lang/pointer

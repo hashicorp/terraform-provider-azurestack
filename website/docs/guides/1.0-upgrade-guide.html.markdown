@@ -62,7 +62,7 @@ The be more descriptive and better align with the AzureRM provider and the provi
 ```hcl
 provider "azurestack" {
   version = "~> 1.x"
-  
+
   arm_endpoint = "https://management.region.mystack.ca"
 }
 ```
@@ -72,7 +72,7 @@ It woud now have to be:
 ```hcl
 provider "azurestack" {
   version = "~> 1.x"
-  
+
   metadata_host = "management.region.mystack.ca"
 }
 ```

@@ -26,7 +26,7 @@ func Build() (*clients.Client, error) {
 			ClientID:       os.Getenv("ARM_CLIENT_ID"),
 			TenantID:       os.Getenv("ARM_TENANT_ID"),
 			ClientSecret:   os.Getenv("ARM_CLIENT_SECRET"),
-			MetadataHost:   os.Getenv("ARM_METADATA_HOSTNAME"),
+			MetadataHost:   os.Getenv("ARM_METADATA_HOST"),
 			Environment:    os.Getenv("ARM_ENVIRONMENT"),
 
 			// we intentionally only support Client Secret auth for tests (since those variables are used all over)

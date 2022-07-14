@@ -18,7 +18,7 @@ func PreCheck(t *testing.T) {
 		"ARM_CLIENT_SECRET",
 		"ARM_SUBSCRIPTION_ID",
 		"ARM_TENANT_ID",
-		"ARM_METADATA_HOSTNAME",
+		"ARM_METADATA_HOST",
 		"ARM_TEST_LOCATION",
 		"ARM_TEST_LOCATION_ALT",
 		"ARM_TEST_LOCATION_ALT2",
@@ -33,7 +33,7 @@ func PreCheck(t *testing.T) {
 }
 
 func Environment() (*azure.Environment, error) {
-	return authentication.AzureEnvironmentByNameFromEndpoint(context.TODO(), os.Getenv("ARM_METADATA_HOSTNAME"), os.Getenv("ARM_ENVIRONMENT"))
+	return authentication.AzureEnvironmentByNameFromEndpoint(context.TODO(), os.Getenv("ARM_METADATA_HOST"), os.Getenv("ARM_ENVIRONMENT"))
 }
 
 func GetAuthConfig(t *testing.T) *authentication.Config {
@@ -47,7 +47,7 @@ func GetAuthConfig(t *testing.T) *authentication.Config {
 		ClientID:       os.Getenv("ARM_CLIENT_ID"),
 		TenantID:       os.Getenv("ARM_TENANT_ID"),
 		ClientSecret:   os.Getenv("ARM_CLIENT_SECRET"),
-		MetadataHost:   os.Getenv("ARM_METADATA_HOSTNAME"),
+		MetadataHost:   os.Getenv("ARM_METADATA_HOST"),
 		Environment:    os.Getenv("ARM_ENVIRONMENT"),
 
 		// we intentionally only support Client Secret auth for tests (since those variables are used all over)

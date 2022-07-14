@@ -27,7 +27,7 @@ terraform {
   required_providers {
     azurestack = {
       source = "hashicorp/azurestack"
-      version = "=0.9.0"
+      version = "=1.0.0"
     }
   }
 }
@@ -40,10 +40,11 @@ provider "azurestack" {
   # the AzureStack Provider can be found here:
   # https://registry.terraform.io/providers/hashicorp/azurestack/latest/docs
 
-  # subscription_id = "..."
-  # client_id       = "..."
-  # client_secret   = "..."
-  # tenant_id       = "..."
+  # metadata_hostname = "..."
+  # subscription_id   = "..."
+  # client_id         = "..."
+  # client_secret     = "..."
+  # tenant_id         = "..."
 }
 
 # Create a resource group
@@ -137,7 +138,7 @@ The following Environment Variables must be set in your shell prior to running a
 - `ARM_CLIENT_SECRET`
 - `ARM_SUBSCRIPTION_ID`
 - `ARM_TENANT_ID`
-- `ARM_ENDPOINT`
+- `ARM_METADATA_HOST`
 - `ARM_TEST_LOCATION`
 
 ---

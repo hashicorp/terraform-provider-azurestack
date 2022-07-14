@@ -86,7 +86,7 @@ export ARM_ARM_ENDPOINT="management.region.mystack.ca"
 it would now be
 
 ```azure
-export ARM_METADATA_HOSTNAME="management.region.mystack.ca"
+export ARM_METADATA_HOST="management.region.mystack.ca"
 ```
 
 ## Changes when Importing Existing Resources

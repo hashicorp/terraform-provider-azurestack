@@ -13,7 +13,7 @@ class LocationConfiguration(var primary : String, var secondary : String, var te
 fun ParametrizedWithType.ConfigureAzureSpecificTestParameters(config: ClientConfiguration, locationsForEnv: LocationConfiguration) {
     hiddenPasswordVariable("env.ARM_CLIENT_ID", config.clientId, "The ID of the Service Principal used for Testing")
     hiddenPasswordVariable("env.ARM_CLIENT_SECRET", config.clientSecret, "The Client Secret of the Service Principal used for Testing")
-    hiddenVariable("env.ARM_METADATA_HOSTNAME", config.endpoint, "The Azure Stack Endpoint to use")
+    hiddenVariable("env.ARM_METADATA_HOST", config.endpoint, "The Azure Stack Endpoint to use")
     hiddenPasswordVariable("env.ARM_SUBSCRIPTION_ID", config.subscriptionId, "The ID of the Azure Subscription used for Testing")
     hiddenPasswordVariable("env.ARM_TENANT_ID", config.tenantId, "The ID of the Azure Tenant used for Testing")
     hiddenVariable("env.ARM_TEST_LOCATION", locationsForEnv.primary, "The Primary region which should be used for testing")

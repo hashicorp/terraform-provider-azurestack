@@ -123,7 +123,7 @@ func azureProvider(supportLegacyTestSuite bool) *schema.Provider {
 			"metadata_host": {
 				Type:        schema.TypeString,
 				Optional:    true, // TODO: make Required when `arm_endpoint` is removed
-				DefaultFunc: schema.EnvDefaultFunc("ARM_METADATA_HOSTNAME", ""),
+				DefaultFunc: schema.EnvDefaultFunc("ARM_METADATA_HOST", ""),
 				Description: "The Hostname which should be used for the Azure Metadata Service.",
 			},
 

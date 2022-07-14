@@ -83,7 +83,7 @@ At this point the newly created Azure Active Directory Application should be ass
 It should then be possible to configure these credentials in Terraform, either by using setting the relevant Environment Variables:
 
 ```bash
-export ARM_METADATA_HOSTNAME="management.region.mycloud.ca"
+export ARM_METADATA_HOST="management.region.mycloud.ca"
 export ARM_CLIENT_CERTIFICATE_PASSWORD="hello-world"
 export ARM_CLIENT_CERTIFICATE_PATH="/Users/myuser/keys/service-principal.pfx"
 export ARM_CLIENT_ID="00000000-0000-0000-0000-000000000000"

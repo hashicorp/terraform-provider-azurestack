@@ -39,7 +39,7 @@ data "azurestack_resources" "spokes" {
 }
 
 resource "azurestack_virtual_network_peering" "spoke_peers" {
-  count = length(data.azurerm_resources.spokes.resources)
+  count = length(data.AzureStack_resources.spokes.resources)
 
   name                      = "hub2${data.azurestack_resources.spokes.resources[count.index].name}"
   resource_group_name       = azurestack_resource_group.hub.name

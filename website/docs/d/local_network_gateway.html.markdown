@@ -6,7 +6,7 @@ description: |-
   Gets information about an existing Local Network Gateway.
 ---
 
-# Data Source: azurerm_local_network_gateway
+# Data Source: AzureStack_local_network_gateway
 
 Use this data source to access information about an existing Local Network Gateway.
 

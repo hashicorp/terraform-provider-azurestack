@@ -86,11 +86,11 @@ provider "azurestack" {
   # Whilst version is optional, we /strongly recommend/ using it to pin the version of the Provider being used
   version = "=1.0.0"
 
-  metadata_hostname = "https://management.region.myazurestack.com"
-  subscription_id   = "00000000-0000-0000-0000-000000000000"
-  client_id         = "00000000-0000-0000-0000-000000000000"
-  client_secret     = "${var.client_secret}"
-  tenant_id         = "00000000-0000-0000-0000-000000000000"
+  metadata_host   = "https://management.region.myazurestack.com"
+  subscription_id = "00000000-0000-0000-0000-000000000000"
+  client_id       = "00000000-0000-0000-0000-000000000000"
+  client_secret   = "${var.client_secret}"
+  tenant_id       = "00000000-0000-0000-0000-000000000000"
 }
 ```
 

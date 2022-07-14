@@ -73,7 +73,7 @@ It woud now have to be:
 provider "azurestack" {
   version = "~> 1.x"
   
-  metadata_endpoint = "management.region.mystack.ca"
+  metadata_host = "management.region.mystack.ca"
 }
 ```
 

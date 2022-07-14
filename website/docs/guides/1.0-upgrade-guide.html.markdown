@@ -24,7 +24,7 @@ provider "azurestack" {
 }
 ```
 
-.. or to any 0.x release:
+.. or to any 1.x release:
 
 ```hcl
 provider "azurestack" {

@@ -57,7 +57,7 @@ Each of these topics is covered in more detail below.
 
 ## The `arm_endpoint` property has been replaced with `metadata_host`
 
-The be more descriptive and better align with the AzureRM provider and the provider block property `arm_endpoint` has been deprecated in favour of the `metadata_hostname` property which expects a FQDN hostname instead of a URI. For instance if you were setting it in the provider block previously:
+The be more descriptive and better align with the AzureRM provider and the provider block property `arm_endpoint` has been deprecated in favour of the `metadata_host` property which expects a FQDN hostname instead of a URI. For instance if you were setting it in the provider block previously:
 
 ```hcl
 provider "azurestack" {

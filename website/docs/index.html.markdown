@@ -59,7 +59,11 @@ resource "azurestack_virtual_network" "test" {
 
 The following arguments are supported:
 
-* `arm_endpoint` - (Optional) The Azure Resource Manager Endpoint for your Azure Stack instance, for example `https://management.westus.mydomain.com`. This can also be sourceed from the `ARM_ENDPOINT` Environment Variable.
+* `metadata_host` - (Required) The Hostname of the Azure Metadata Service, used to obtain the Cloud Environment. Often the same as the Azure Resource Manager Endpoint for your Azure Stack instance, for example `https://management.westus.mydomain.com`. This can also be sourceed from the `ARM_METADATA_HOSTNAME` Environment Variable.
+
+-> Note: The `arm_endpoint` property, and corresponding environment variable `ARM_ENDPOINT`, have been replaced by `metadata_host` and `ARM_METADATA_HOSTNAME` respectively. In many installations the value of this property will remain the same.
+
+* `environment` - (Optional) The Cloud Environment which should be used. Only required when multiple environments are supported for your Azure Stack Instance.
 
 * `client_id` - (Optional) The Client ID which should be used. This can also be sourceed from the `ARM_CLIENT_ID` Environment Variable.
 

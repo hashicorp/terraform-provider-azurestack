@@ -80,7 +80,7 @@ provider "azurestack" {
 Alternatively, if it was being set via environment variables:
 
 ```azure
-export ARM_ARM_ENFPOINT="management.region.mystack.ca"
+export ARM_ARM_ENDPOINT="management.region.mystack.ca"
 ```
 
 it would now be

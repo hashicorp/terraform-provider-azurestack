@@ -77,7 +77,7 @@ provider "azurestack" {
 }
 ```
 
-Alternatively you if it was being set via environment variables:
+Alternatively, if it was being set via environment variables:
 
 ```azure
 export ARM_ARM_ENFPOINT="management.region.mystack.ca"

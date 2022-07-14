@@ -46,6 +46,7 @@ FEATURES:
 
 BREAKING CHANGES:
 
+* provider: the `arm_enspoint` provider block property has been renamed to `metadata_host` and now only takes a hostname instead of a uri [GH-189]
 * all `tags` properties are no longer `computed`
 * Data Source: `azurestack_subnet` - the `ip_configurations` attribute has been removed [GH-167]
 * `azurestack_network_interface` - the `load_balancer_backend_address_pools_ids`, `load_balancer_inbound_nat_rules_ids`, `internal_fqdn`,  and `internal_dns_name_label` properties have been removed [GH-164]
@@ -61,7 +62,6 @@ ENHANCEMENTS:
 * provider: added a new feature flag `force_delete` within the `virtual_machine_scale_set` block to configure whether the VMSS should be force deleted during deletion [GH-182]
 * provider: added a new feature flag `roll_instances_when_required` within the `virtual_machine_scale_set` block to configure whether the VMSS should be rolled when required [GH-182]
 * provider: added a new feature flag `scale_to_zero_before_deletion` within the `virtual_machine_scale_set` block to configure whether the VMSS should be scaled to zero during deletion [GH-182]
-
 * Data Source: `azurestack_storage_account` - support for the `enable_https_traffic_only` attributes [GH-169]
 * `azurestack_loadbalancer` - support for the `sku` property [GH-152]
 * `azurestack_managed_disk` - support for the `encryption` block and `hyper_v_generation` property [GH-175]

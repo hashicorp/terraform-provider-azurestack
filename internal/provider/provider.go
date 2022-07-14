@@ -236,13 +236,16 @@ func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
 			metadataHost = v
 		}
 
-		if len(metadataHost) == 0 {
-			return nil, diag.Errorf("provider: `metadata_host` must be set")
-		}
-
 		u, err := url.Parse(metadataHost)
 		if err != nil {
 			return nil, diag.Errorf("parsing `metadata_host`: %v", err)
+		}
+		if u.Host != "" {
+			metadataHost = u.Host
+		}
+
+		if len(metadataHost) == 0 {
+			return nil, diag.Errorf("provider: `metadata_host` must be set")
 		}
 
 		builder := &authentication.Builder{
@@ -251,7 +254,7 @@ func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc {
 			ClientSecret:       d.Get("client_secret").(string),
 			TenantID:           d.Get("tenant_id").(string),
 			Environment:        d.Get("environment").(string),
-			MetadataHost:       u.Host,
+			MetadataHost:       metadataHost,
 			AuxiliaryTenantIDs: auxTenants,
 			MsiEndpoint:        d.Get("msi_endpoint").(string),
 			ClientCertPassword: d.Get("client_certificate_password").(string),

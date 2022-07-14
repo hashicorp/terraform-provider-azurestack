@@ -107,7 +107,7 @@ provider "azurestack" {
   # whilst the `version` attribute is optional, we'd recommend pinning to a particular version
   version = "=1.0.0"
 
-  metadata_hostname           = "https://management.region.mycloud.com"
+  metadata_host               = "https://management.region.mycloud.com"
   client_id                   = "00000000-0000-0000-0000-000000000000"
   client_certificate_password = "my-password"
   client_certificate_path     = "./service-principal.pfx"

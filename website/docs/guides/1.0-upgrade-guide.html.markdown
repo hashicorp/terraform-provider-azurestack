@@ -159,7 +159,7 @@ Below we'll cover each of the Data Sources and Resources which will be affected 
 
 -> **NOTE:** This guide is a Work In Progress and as such Fields, Resources and Data Sources may be added to this guide until version 2.0 of the azurestack Provider is released.
 
-### Resource: `azurerm_*`
+### Resource: `azurestack_*`
 
 All tags properties are no longer computed.
 
@@ -185,11 +185,11 @@ The `load_balancer_backend_address_pools_ids`, `load_balancer_inbound_nat_rules_
 
 ### Resource: `azurestack_storage_blob`
 
-The `resource_group_name` property has been removed in favour of the `azurerm_storage_account_id` property.
+The `resource_group_name` property has been removed in favour of the `azurestack_storage_account_id` property.
 
 ### Resource: `azurestack_storage_container`
 
-The `resource_group_name` property has been removed in favour of the `azurerm_storage_account_id` property.
+The `resource_group_name` property has been removed in favour of the `azurestack_storage_account_id` property.
 
 ### Resource: `azurestack_virtual_network_gateway_connection`
 

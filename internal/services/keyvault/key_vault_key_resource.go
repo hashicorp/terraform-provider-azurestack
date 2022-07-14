@@ -166,7 +166,7 @@ func keyVaultKeyCreate(d *schema.ResourceData, meta interface{}) error {
 	ctx, cancel := timeouts.ForCreate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
-	log.Print("[INFO] preparing arguments for AzureRM KeyVault Key creation.")
+	log.Print("[INFO] preparing arguments for AzureStack KeyVault Key creation.")
 	name := d.Get("name").(string)
 	keyVaultId, err := parse.VaultID(d.Get("key_vault_id").(string))
 	if err != nil {

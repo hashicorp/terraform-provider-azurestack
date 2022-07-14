@@ -91,7 +91,7 @@ func keyVaultSecretCreate(d *schema.ResourceData, meta interface{}) error {
 	ctx, cancel := timeouts.ForCreate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
-	log.Print("[INFO] preparing arguments for AzureRM KeyVault Secret creation.")
+	log.Print("[INFO] preparing arguments for AzureStack KeyVault Secret creation.")
 
 	name := d.Get("name").(string)
 	keyVaultId, err := parse.VaultID(d.Get("key_vault_id").(string))
@@ -163,7 +163,7 @@ func keyVaultSecretUpdate(d *schema.ResourceData, meta interface{}) error {
 	resourcesClient := meta.(*clients.Client).Resource
 	ctx, cancel := timeouts.ForUpdate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
-	log.Print("[INFO] preparing arguments for AzureRM KeyVault Secret update.")
+	log.Print("[INFO] preparing arguments for AzureStack KeyVault Secret update.")
 
 	id, err := parse.ParseNestedItemID(d.Id())
 	if err != nil {

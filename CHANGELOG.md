@@ -7,7 +7,7 @@ NOTES:
 * **Major Version**: Version `1.0` of the Azure Stack Provider is a major version - some behaviours have changed and some deprecated fields/resources have been removed - please refer to [the 1.0 upgrade guide for more information](https://registry.terraform.io/providers/hashicorp/azurestack/latest/docs/guides/1.0-upgrade-guide).
 * **Provider Block:** The Azure Stack Provider now requires that a `features` block is specified within the Provider block, which can be used to alter the behaviour of certain resources - [more information on the `features` block can be found in the documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#features).
 * **Terraform 0.10/0.11:** Version `1.0` of the Azure Stack Provider no longer supports Terraform `0.10` or `0.11` - you must upgrade to Terraform `0.12` to use version `1.0` of the Azure Stack Provider.
-* When upgrading to `v1.0` of the AzureRM Provider, we recommend upgrading to the latest version of Terraform Core ([which can be found here](https://www.terraform.io/downloads)) - the next major release of the AzureRM Provider (`v2.0`) will require Terraform `1.0` or later.
+* When upgrading to `v1.0` of the AzureStack Provider, we recommend upgrading to the latest version of Terraform Core ([which can be found here](https://www.terraform.io/downloads)) - the next major release of the AzureRM Provider (`v2.0`) will require Terraform `1.0` or later.
 
 FEATURES:
 
@@ -65,7 +65,7 @@ ENHANCEMENTS:
 * Data Source: `azurestack_storage_account` - support for the `enable_https_traffic_only` attributes [GH-169]
 * `azurestack_loadbalancer` - support for the `sku` property [GH-152]
 * `azurestack_managed_disk` - support for the `encryption` block and `hyper_v_generation` property [GH-175]
-* `azurerm_resource_group` - Terraform now checks during the deletion of a Resource Group if there's any items remaining and will raise an error if so by default (to avoid deleting items unintentionally). This behaviour can be controlled using the `prevent_deletion_if_contains_resources` feature-flag within the `resource_group` block within the `features` block
+* `azurestack_resource_group` - Terraform now checks during the deletion of a Resource Group if there's any items remaining and will raise an error if so by default (to avoid deleting items unintentionally). This behaviour can be controlled using the `prevent_deletion_if_contains_resources` feature-flag within the `resource_group` block within the `features` block
 * `azurestack_storage_account` - support for the `enable_https_traffic_only` property [GH-169]
 * `azurestack_storage_blob` - support for the `has_immutability_policy`, `content_type`, `source_content`, `content_md5`, and `metadata` properties [GH-163]
 * `azurestack_storage_container` - now exports the `cache_control` and `has_legal_hold` attributes [GH-157]

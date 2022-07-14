@@ -83,7 +83,7 @@ At this point the newly created Azure Active Directory Application should be ass
 It should then be possible to configure these credentials in Terraform, either by using setting the relevant Environment Variables:
 
 ```bash
-export ARM_ENDPOINT="https://management.region.mycloud.com"
+export ARM_METADATA_HOSTNAME="management.region.mycloud.ca"
 export ARM_CLIENT_CERTIFICATE_PASSWORD="hello-world"
 export ARM_CLIENT_CERTIFICATE_PATH="/Users/myuser/keys/service-principal.pfx"
 export ARM_CLIENT_ID="00000000-0000-0000-0000-000000000000"
@@ -96,7 +96,7 @@ and then using the following Provider Block:
 ```hcl
 provider "azurestack" {
   # whilst the `version` attribute is optional, we'd recommend pinning to a particular version
-  version = "=0.5.0"
+  version = "=1.0.0"
 }
 ```
 
@@ -105,9 +105,9 @@ Alternatively you can define these fields within the Provider Block:
 ```hcl
 provider "azurestack" {
   # whilst the `version` attribute is optional, we'd recommend pinning to a particular version
-  version = "=0.5.0"
+  version = "=1.0.0"
 
-  arm_endpoint                = "https://management.region.mycloud.com"
+  metadata_hostname           = "https://management.region.mycloud.com"
   client_id                   = "00000000-0000-0000-0000-000000000000"
   client_certificate_password = "my-password"
   client_certificate_path     = "./service-principal.pfx"

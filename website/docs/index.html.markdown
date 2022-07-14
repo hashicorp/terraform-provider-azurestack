@@ -59,7 +59,7 @@ resource "azurestack_virtual_network" "test" {
 
 The following arguments are supported:
 
-* `arm_endpoint` - (Optional) The Azure Resource Manager Endpoint for your Azure Stack instance, for example `https://management.westus.mydomain.com`. This can also be sourceed from the `ARM_ENDPOINT` Environment Variable.
+* `metadata_hostname` - (Optional) The Azure Resource Manager FQDN for your Azure Stack instance, for example `management.westus.mydomain.com`. This can also be sourceed from the `ARM_METADATA_HOSTNAME` Environment Variable.
 
 * `client_id` - (Optional) The Client ID which should be used. This can also be sourceed from the `ARM_CLIENT_ID` Environment Variable.
 

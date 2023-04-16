@@ -50,16 +50,11 @@ The following arguments are supported:
 
 * `address_prefix` - (Required) The address prefix to use for the subnet.
 
-* `network_security_group_id` - (Optional) The ID of the Network Security Group to associate with the subnet.
-
-* `route_table_id` - (Optional) The ID of the Route Table to associate with the subnet.
-
 ## Attributes Reference
 
 The following attributes are exported:
 
 * `id` - The subnet ID.
-* `ip_configurations` - The collection of IP Configurations with IPs within this subnet.
 * `name` - The name of the subnet.
 * `resource_group_name` - The name of the resource group in which the subnet is created in.
 * `virtual_network_name` - The name of the virtual network in which the subnet is created in

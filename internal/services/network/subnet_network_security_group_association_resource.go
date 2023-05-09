@@ -18,9 +18,9 @@ import (
 
 func subnetNetworkSecurityGroupAssociation() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
-		Create: resourceSubnetNetworkSecurityGroupAssociationCreate,
-		Read:   resourceSubnetNetworkSecurityGroupAssociationRead,
-		Delete: resourceSubnetNetworkSecurityGroupAssociationDelete,
+		Create: subnetNetworkSecurityGroupAssociationCreate,
+		Read:   subnetNetworkSecurityGroupAssociationRead,
+		Delete: subnetNetworkSecurityGroupAssociationDelete,
 
 		Timeouts: &pluginsdk.ResourceTimeout{
 			Create: pluginsdk.DefaultTimeout(30 * time.Minute),
@@ -52,7 +52,7 @@ func subnetNetworkSecurityGroupAssociation() *pluginsdk.Resource {
 	}
 }
 
-func resourceSubnetNetworkSecurityGroupAssociationCreate(d *pluginsdk.ResourceData, meta interface{}) error {
+func subnetNetworkSecurityGroupAssociationCreate(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.SubnetsClient
 	vnetClient := meta.(*clients.Client).Network.VnetClient
 	ctx, cancel := timeouts.ForCreate(meta.(*clients.Client).StopContext, d)
@@ -140,10 +140,10 @@ func resourceSubnetNetworkSecurityGroupAssociationCreate(d *pluginsdk.ResourceDa
 
 	d.SetId(parsedSubnetId.ID())
 
-	return resourceSubnetNetworkSecurityGroupAssociationRead(d, meta)
+	return subnetNetworkSecurityGroupAssociationRead(d, meta)
 }
 
-func resourceSubnetNetworkSecurityGroupAssociationRead(d *pluginsdk.ResourceData, meta interface{}) error {
+func subnetNetworkSecurityGroupAssociationRead(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.SubnetsClient
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -181,7 +181,7 @@ func resourceSubnetNetworkSecurityGroupAssociationRead(d *pluginsdk.ResourceData
 	return nil
 }
 
-func resourceSubnetNetworkSecurityGroupAssociationDelete(d *pluginsdk.ResourceData, meta interface{}) error {
+func subnetNetworkSecurityGroupAssociationDelete(d *pluginsdk.ResourceData, meta interface{}) error {
 	client := meta.(*clients.Client).Network.SubnetsClient
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()

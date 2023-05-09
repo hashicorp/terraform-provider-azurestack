@@ -145,7 +145,7 @@ resource "azurestack_subnet" "test" {
   name                 = "internal"
   resource_group_name  = azurestack_resource_group.test.name
   virtual_network_name = azurestack_virtual_network.test.name
-  address_prefixes     = ["10.0.2.0/24"]
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_subnet_network_security_group_association" "test" {
@@ -174,9 +174,7 @@ resource "azurestack_subnet" "test" {
   name                 = "internal"
   resource_group_name  = azurestack_resource_group.test.name
   virtual_network_name = azurestack_virtual_network.test.name
-  address_prefixes     = ["10.0.2.0/24"]
-
-  enforce_private_link_endpoint_network_policies = true
+  address_prefix       = "10.0.2.0/24"
 }
 
 resource "azurestack_subnet_network_security_group_association" "test" {

@@ -54,5 +54,6 @@ func (r Registration) SupportedResources() map[string]*pluginsdk.Resource {
 		"azurestack_virtual_network_peering":                            virtualNetworkPeering(),
 		"azurestack_network_interface_backend_address_pool_association": loadBalancerBackendAddressPoolAssociation(),
 		"azurestack_subnet_network_security_group_association":          subnetNetworkSecurityGroupAssociation(),
+		"azurestack_network_interface_security_group_association":       networkInterfaceSecurityGroupAssociation(),
 	}
 }

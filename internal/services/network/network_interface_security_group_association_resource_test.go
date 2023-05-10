@@ -195,7 +195,7 @@ resource "azurestack_network_interface" "test" {
 
   ip_configuration {
     name                          = "testconfiguration2"
-    private_ip_address_version    = "IPv6"
+    subnet_id                     = azurestack_subnet.test.id
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -229,7 +229,7 @@ resource "azurestack_subnet" "test" {
   name                 = "internal"
   resource_group_name  = azurestack_resource_group.test.name
   virtual_network_name = azurestack_virtual_network.test.name
-  address_prefixes     = ["10.0.1.0/24"]
+  address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurestack_network_security_group" "test" {

@@ -16,7 +16,7 @@ Manages the association between a Network Interface and a Network Security Group
 ```hcl
 resource "azurestack_resource_group" "example" {
   name     = "example-resources"
-  location = "West Europe"
+  location = "ash"
 }
 
 resource "azurestack_virtual_network" "example" {

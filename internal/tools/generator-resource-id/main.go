@@ -332,6 +332,9 @@ type ResourceIdGenerator struct {
 
 func (id ResourceIdGenerator) Code() string {
 	return fmt.Sprintf(`
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package parse
 
 // NOTE: this file is generated via 'go:generate' - manual changes will be overwritten
@@ -571,6 +574,9 @@ func (id ResourceIdGenerator) TestCode() string {
 	}
 
 	return fmt.Sprintf(`
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package parse%s
 
 // NOTE: this file is generated via 'go:generate' - manual changes will be overwritten
@@ -903,7 +909,10 @@ func Test%[1]sIDInsensitively(t *testing.T) {
 }
 
 func (id ResourceIdGenerator) ValidatorCode() string {
-	return fmt.Sprintf(`package validate
+	return fmt.Sprintf(`// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
+package validate
 
 // NOTE: this file is generated via 'go:generate' - manual changes will be overwritten
 
@@ -976,7 +985,10 @@ func (id ResourceIdGenerator) ValidatorTestCode() string {
 	testCasesStr := strings.Join(testCases, "\n")
 
 	if id.TestPackageSuffix == "" {
-		return fmt.Sprintf(`package validate
+		return fmt.Sprintf(`// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
+package validate
 
 // NOTE: this file is generated via 'go:generate' - manual changes will be overwritten
 
@@ -1002,7 +1014,10 @@ func Test%[1]sID(t *testing.T) {
 `, id.TypeName, testCasesStr)
 	}
 
-	return fmt.Sprintf(`package validate%[1]s
+	return fmt.Sprintf(`// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
+package validate%[1]s
 
 // NOTE: this file is generated via 'go:generate' - manual changes will be overwritten
 

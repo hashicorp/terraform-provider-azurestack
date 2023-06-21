@@ -185,18 +185,20 @@ resource "azurestack_storage_account" "test" {
 }
 
 /*
-func (r StorageAccountResource) requiresImport(data acceptance.TestData) string {
-	template := r.basic(data)
-	return fmt.Sprintf(`
+	func (r StorageAccountResource) requiresImport(data acceptance.TestData) string {
+		template := r.basic(data)
+		return fmt.Sprintf(`
+
 %s
 
-resource "azurestack_storage_account" "import" {
-  name                     = azurestack_storage_account.test.name
-  resource_group_name      = azurestack_storage_account.test.resource_group_name
-  location                 = azurestack_storage_account.test.location
-  account_tier             = azurestack_storage_account.test.account_tier
-  account_replication_type = azurestack_storage_account.test.account_replication_type
-}
+	resource "azurestack_storage_account" "import" {
+	  name                     = azurestack_storage_account.test.name
+	  resource_group_name      = azurestack_storage_account.test.resource_group_name
+	  location                 = azurestack_storage_account.test.location
+	  account_tier             = azurestack_storage_account.test.account_tier
+	  account_replication_type = azurestack_storage_account.test.account_replication_type
+	}
+
 `, template)
 }
 */

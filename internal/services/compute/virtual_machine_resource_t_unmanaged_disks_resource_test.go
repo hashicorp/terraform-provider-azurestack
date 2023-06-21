@@ -318,7 +318,8 @@ func TestAccVirtualMachine_changeOSDiskVhdUri(t *testing.T) {
 }
 
 // to accept terms for config:
-//   get-azurestackMarketplaceTerms -publisher kemptech -product vlm-azure -name freeloadmaster | Set-azurestackMarketplaceTerms -accept
+//
+//	get-azurestackMarketplaceTerms -publisher kemptech -product vlm-azure -name freeloadmaster | Set-azurestackMarketplaceTerms -accept
 func TestAccVirtualMachine_plan(t *testing.T) {
 	data := acceptance.BuildTestData(t, "azurestack_virtual_machine", "test")
 	r := VirtualMachineResource{}

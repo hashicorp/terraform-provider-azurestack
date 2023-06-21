@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package acceptance
 
 // Regions is a list of Azure Regions which can be used for test purposes

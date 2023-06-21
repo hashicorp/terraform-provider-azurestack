@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 import AzureStack
 import ClientConfiguration
 import jetbrains.buildServer.configs.kotlin.v2019_2.*

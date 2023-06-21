@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package resourceproviders
 
 // RequiredResourceProviders returns all of the Resource Providers used by the AzureStack Provider

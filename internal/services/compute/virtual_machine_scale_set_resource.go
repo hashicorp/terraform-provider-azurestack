@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package compute
 
 import (
@@ -27,8 +30,9 @@ import (
 )
 
 // NOTE: the `azurestack_virtual_machine_scale_set` resource has been superseded by the
-//       `azurestack_linux_virtual_machine_scale_set` and `azurestack_windows_virtual_machine_scale_set` resources
-//       and as such this resource is feature-frozen and new functionality will be added to these new resources instead.
+//
+//	`azurestack_linux_virtual_machine_scale_set` and `azurestack_windows_virtual_machine_scale_set` resources
+//	and as such this resource is feature-frozen and new functionality will be added to these new resources instead.
 func virtualMachineScaleSet() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
 		Create: virtualMachineScaleSetCreateUpdate,

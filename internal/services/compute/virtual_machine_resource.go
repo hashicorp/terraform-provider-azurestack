@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package compute
 
 import (
@@ -49,8 +52,9 @@ func userDataStateFunc(v interface{}) string {
 }
 
 // NOTE: the `azurestack_virtual_machine` resource has been superseded by the `azurestack_linux_virtual_machine` and
-// 		 `azurestack_windows_virtual_machine` resources - as such this resource is feature-frozen and new
-//		 functionality will be added to these new resources instead.
+//
+//	`azurestack_windows_virtual_machine` resources - as such this resource is feature-frozen and new
+//	functionality will be added to these new resources instead.
 func virtualMachine() *pluginsdk.Resource {
 	return &pluginsdk.Resource{
 		Create: virtualMachineCreateUpdate,

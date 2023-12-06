@@ -13,6 +13,7 @@ github.com/Azure/azure-sdk-for-go/services/keyvault/2016-10-01/keyvault
 github.com/Azure/azure-sdk-for-go/services/keyvault/mgmt/2019-09-01/keyvault
 github.com/Azure/azure-sdk-for-go/services/network/mgmt/2018-11-01/network
 github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2018-05-01/resources
+github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-11-01/subscriptions
 github.com/Azure/azure-sdk-for-go/services/storage/mgmt/2017-10-01/storage
 github.com/Azure/azure-sdk-for-go/storage
 github.com/Azure/azure-sdk-for-go/version

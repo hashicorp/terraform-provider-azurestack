@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 // Package cidr is a collection of assorted utilities for computing
 // network and host addresses within network ranges.
 //

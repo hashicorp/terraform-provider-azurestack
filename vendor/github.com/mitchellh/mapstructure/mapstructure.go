@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 // Package mapstructure exposes functionality to convert an arbitrary
 // map[string]interface{} into a native Go structure.
 //

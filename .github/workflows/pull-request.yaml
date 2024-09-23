@@ -11,7 +11,7 @@ jobs:
         configuration-path: .github/labeler-pull-request-triage.yml
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
     # See also: https://github.com/CodelyTV/pr-size-labeler/pull/26
-    - uses: CodelyTV/pr-size-labeler@54ef36785e9f4cb5ecf1949cfc9b00dbb621d761 # v1.8.1
+    - uses: CodelyTV/pr-size-labeler@c7a55a022747628b50f3eb5bf863b9e796b8f274 # v1.10.1
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         xs_label: 'size/XS'

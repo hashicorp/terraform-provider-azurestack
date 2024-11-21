@@ -6,6 +6,8 @@ package clients
 import (
 	"context"
 	"fmt"
+	"github.com/mitchellh/go-homedir"
+	"gopkg.in/ini.v1"
 
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/hashicorp/go-azure-helpers/authentication"
@@ -23,10 +25,36 @@ type ClientBuilder struct {
 	Features                    features.UserFeatures
 }
 
+// GetResourceIDFromCloudsConfig attempts to read the endpoint_active_directory_resource_id from clouds.config
+func GetResourceIDFromCloudsConfig() (string, error) {
+	cloudsConfigPath, err := homedir.Expand("~/.azure/clouds.config")
+	if err != nil {
+		return "", fmt.Errorf("expanding clouds.config path: %v", err)
+	}
+
+	cloudsConfig, err := ini.Load(cloudsConfigPath)
+	if err != nil {
+		return "", nil // ignore errors if file doesn't exist
+	}
+
+	for _, section := range cloudsConfig.Sections() {
+		if section.HasKey("endpoint_active_directory_resource_id") {
+			return section.Key("endpoint_active_directory_resource_id").String(), nil
+		}
+	}
+
+	return "", nil
+}
+
 func Build(ctx context.Context, builder ClientBuilder) (*Client, error) {
 	env, err := authentication.AzureEnvironmentByNameFromEndpoint(ctx, builder.AuthConfig.MetadataHost, builder.AuthConfig.Environment)
 	if err != nil {
 		return nil, fmt.Errorf("determining environment: %v", err)
+	}
+
+	// Try to get TokenAudience from clouds.config
+	if resourceID, err := GetResourceIDFromCloudsConfig(); err == nil && resourceID != "" {
+		env.TokenAudience = resourceID
 	}
 
 	// client declarations:
@@ -66,7 +94,7 @@ func Build(ctx context.Context, builder ClientBuilder) (*Client, error) {
 	}
 
 	// Storage Endpoints
-	storageAuth, err := builder.AuthConfig.GetADALToken(ctx, sender, oauthConfig, endpoint)
+	storageAuth, err := builder.AuthConfig.GetADALToken(ctx, sender, oauthConfig, env.TokenAudience)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get authorization token for storage endpoints: %+v", err)
 	}
@@ -89,7 +117,7 @@ func Build(ctx context.Context, builder ClientBuilder) (*Client, error) {
 		CustomCorrelationRequestID:  builder.CustomCorrelationRequestID,
 		Environment:                 *env,
 		TokenFunc: func(endpoint string) (autorest.Authorizer, error) {
-			authorizer, err := builder.AuthConfig.GetADALToken(ctx, sender, oauthConfig, endpoint)
+			authorizer, err := builder.AuthConfig.GetADALToken(ctx, sender, oauthConfig, env.TokenAudience)
 			if err != nil {
 				return nil, fmt.Errorf("getting authorization token for endpoint %s: %+v", endpoint, err)
 			}

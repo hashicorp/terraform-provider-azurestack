@@ -717,5 +717,8 @@ func validateVirtualNetworkGatewayPolicyBasedVpnSku() pluginsdk.SchemaValidateFu
 		string(network.VirtualNetworkGatewaySkuTierBasic),
 		string(network.VirtualNetworkGatewaySkuTierStandard),
 		string(network.VirtualNetworkGatewaySkuTierHighPerformance),
+		string(network.VirtualNetworkGatewaySkuTierVpnGw1),
+		string(network.VirtualNetworkGatewaySkuTierVpnGw2),
+		string(network.VirtualNetworkGatewaySkuTierVpnGw3),
 	}, true)
 }

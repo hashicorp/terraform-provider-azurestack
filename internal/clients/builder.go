@@ -66,7 +66,8 @@ func Build(ctx context.Context, builder ClientBuilder) (*Client, error) {
 	}
 
 	// Storage Endpoints
-	storageAuth, err := builder.AuthConfig.GetADALToken(ctx, sender, oauthConfig, endpoint)
+	// storageAuth, err := builder.AuthConfig.GetADALToken(ctx, sender, oauthConfig, endpoint)
+	storageAuth, err := builder.AuthConfig.GetADALToken(ctx, sender, oauthConfig, env.TokenAudience)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get authorization token for storage endpoints: %+v", err)
 	}

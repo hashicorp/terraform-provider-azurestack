@@ -42,7 +42,6 @@ const hundredMs = 100 * time.Millisecond
 //
 // Note that although fractional weeks can be parsed, they will never be returned via String().
 // This is because the number of weeks is always inferred from the number of days.
-//
 type Period struct {
 	years, months, days, hours, minutes, seconds int16
 }
@@ -153,19 +152,19 @@ func Between(t1, t2 time.Time) (p Period) {
 		t2 = t2.In(t1.Location())
 	}
 
-	year, month, day, hour, min, sec, hundredth := daysDiff(t1, t2)
+	year, month, day, hour, min, sec, tenth := daysDiff(t1, t2)
 
 	if sign < 0 {
 		p = New(-year, -month, -day, -hour, -min, -sec)
-		p.seconds -= int16(hundredth)
+		p.seconds -= int16(tenth)
 	} else {
 		p = New(year, month, day, hour, min, sec)
-		p.seconds += int16(hundredth)
+		p.seconds += int16(tenth)
 	}
 	return
 }
 
-func daysDiff(t1, t2 time.Time) (year, month, day, hour, min, sec, hundredth int) {
+func daysDiff(t1, t2 time.Time) (year, month, day, hour, min, sec, tenth int) {
 	duration := t2.Sub(t1)
 
 	hh1, mm1, ss1 := t1.Clock()
@@ -176,7 +175,7 @@ func daysDiff(t1, t2 time.Time) (year, month, day, hour, min, sec, hundredth int
 	hour = hh2 - hh1
 	min = mm2 - mm1
 	sec = ss2 - ss1
-	hundredth = (t2.Nanosecond() - t1.Nanosecond()) / 100000000
+	tenth = (t2.Nanosecond() - t1.Nanosecond()) / 100000000
 
 	// Normalize negative values
 	if sec < 0 {
@@ -519,7 +518,6 @@ func (period Period) Normalise(precise bool) Period {
 // * Two thresholds a, b are equivalent to a, a, b, b.
 // * Three thresholds a, b, c are equivalent to a, b, c, c.
 // * Four thresholds a, b, c, d are used as provided.
-//
 func (period Period) Simplify(precise bool, th ...int) Period {
 	switch len(th) {
 	case 0:

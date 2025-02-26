@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package validation
 
 import (
@@ -67,8 +70,8 @@ func StringIsWhiteSpace(i interface{}, k string) ([]string, []error) {
 }
 
 // StringLenBetween returns a SchemaValidateFunc which tests if the provided value
-// is of type string and has length between min and max (inclusive)
-func StringLenBetween(min, max int) schema.SchemaValidateFunc {
+// is of type string and has length between minVal and maxVal (inclusive)
+func StringLenBetween(minVal, maxVal int) schema.SchemaValidateFunc {
 	return func(i interface{}, k string) (warnings []string, errors []error) {
 		v, ok := i.(string)
 		if !ok {
@@ -76,8 +79,8 @@ func StringLenBetween(min, max int) schema.SchemaValidateFunc {
 			return warnings, errors
 		}
 
-		if len(v) < min || len(v) > max {
-			errors = append(errors, fmt.Errorf("expected length of %s to be in the range (%d - %d), got %s", k, min, max, v))
+		if len(v) < minVal || len(v) > maxVal {
+			errors = append(errors, fmt.Errorf("expected length of %s to be in the range (%d - %d), got %s", k, minVal, maxVal, v))
 		}
 
 		return warnings, errors
@@ -138,12 +141,12 @@ func StringInSlice(valid []string, ignoreCase bool) schema.SchemaValidateFunc {
 		}
 
 		for _, str := range valid {
-			if v == str || (ignoreCase && strings.ToLower(v) == strings.ToLower(str)) {
+			if v == str || (ignoreCase && strings.EqualFold(v, str)) {
 				return warnings, errors
 			}
 		}
 
-		errors = append(errors, fmt.Errorf("expected %s to be one of %v, got %s", k, valid, v))
+		errors = append(errors, fmt.Errorf("expected %s to be one of %q, got %s", k, valid, v))
 		return warnings, errors
 	}
 }
@@ -160,7 +163,7 @@ func StringNotInSlice(invalid []string, ignoreCase bool) schema.SchemaValidateFu
 		}
 
 		for _, str := range invalid {
-			if v == str || (ignoreCase && strings.ToLower(v) == strings.ToLower(str)) {
+			if v == str || (ignoreCase && strings.EqualFold(v, str)) {
 				errors = append(errors, fmt.Errorf("expected %s to not be any of %v, got %s", k, invalid, v))
 				return warnings, errors
 			}

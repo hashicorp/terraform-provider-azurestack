@@ -1,14 +1,17 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package schema
 
 import (
 	"bytes"
 	"fmt"
-	"github.com/google/go-cmp/cmp"
 	"reflect"
 	"sort"
 	"strconv"
 	"sync"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/internal/helper/hashcode"
 )
 
@@ -216,7 +219,7 @@ func (s *Set) add(item interface{}, computed bool) string {
 
 func (s *Set) hash(item interface{}) string {
 	code := s.F(item)
-	// Always return a nonnegative hashcode.
+	// Always return a non-negative hashcode.
 	if code < 0 {
 		code = -code
 	}
@@ -238,6 +241,6 @@ func (s *Set) listCode() []string {
 	for k := range s.m {
 		keys = append(keys, k)
 	}
-	sort.Sort(sort.StringSlice(keys))
+	sort.Strings(keys)
 	return keys
 }

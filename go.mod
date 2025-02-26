@@ -2,8 +2,6 @@ module github.com/hashicorp/terraform-provider-azurestack
 
 go 1.23
 
-toolchain go1.23.3
-
 require (
 	github.com/Azure/azure-sdk-for-go v68.0.0+incompatible
 	github.com/Azure/go-autorest/autorest v0.11.30

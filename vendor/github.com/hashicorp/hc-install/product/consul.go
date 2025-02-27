@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package product
 
 import (
@@ -13,12 +16,6 @@ import (
 )
 
 var consulVersionOutputRe = regexp.MustCompile(`Consul ` + simpleVersionRe)
-
-var (
-	v1_16 = version.Must(version.NewVersion("1.16"))
-	// TODO: version.MustConstraint() ?
-	v1_16c, _ = version.NewConstraint("1.16")
-)
 
 var Consul = Product{
 	Name: "consul",
@@ -52,6 +49,6 @@ var Consul = Product{
 	BuildInstructions: &BuildInstructions{
 		GitRepoURL:    "https://github.com/hashicorp/consul.git",
 		PreCloneCheck: &build.GoIsInstalled{},
-		Build:         &build.GoBuild{Version: v1_16},
+		Build:         &build.GoBuild{},
 	},
 }

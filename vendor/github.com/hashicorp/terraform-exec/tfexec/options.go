@@ -1,8 +1,23 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package tfexec
 
 import (
 	"encoding/json"
 )
+
+// AllowDeferralOption represents the -allow-deferral flag. This flag is only enabled in
+// experimental builds of Terraform. (alpha or built via source with experiments enabled)
+type AllowDeferralOption struct {
+	allowDeferral bool
+}
+
+// AllowDeferral represents the -allow-deferral flag. This flag is only enabled in
+// experimental builds of Terraform. (alpha or built via source with experiments enabled)
+func AllowDeferral(allowDeferral bool) *AllowDeferralOption {
+	return &AllowDeferralOption{allowDeferral}
+}
 
 // AllowMissingConfigOption represents the -allow-missing-config flag.
 type AllowMissingConfigOption struct {
@@ -12,6 +27,16 @@ type AllowMissingConfigOption struct {
 // AllowMissingConfig represents the -allow-missing-config flag.
 func AllowMissingConfig(allowMissingConfig bool) *AllowMissingConfigOption {
 	return &AllowMissingConfigOption{allowMissingConfig}
+}
+
+// AllowMissingOption represents the -allow-missing flag.
+type AllowMissingOption struct {
+	allowMissing bool
+}
+
+// AllowMissing represents the -allow-missing flag.
+func AllowMissing(allowMissing bool) *AllowMissingOption {
+	return &AllowMissingOption{allowMissing}
 }
 
 // BackendOption represents the -backend flag.
@@ -106,6 +131,15 @@ type DestroyFlagOption struct {
 // Destroy represents the -destroy flag.
 func Destroy(destroy bool) *DestroyFlagOption {
 	return &DestroyFlagOption{destroy}
+}
+
+type DrawCyclesOption struct {
+	drawCycles bool
+}
+
+// DrawCycles represents the -draw-cycles flag.
+func DrawCycles(drawCycles bool) *DrawCyclesOption {
+	return &DrawCyclesOption{drawCycles}
 }
 
 type DryRunOption struct {
@@ -212,6 +246,24 @@ func Parallelism(n int) *ParallelismOption {
 	return &ParallelismOption{n}
 }
 
+type GraphPlanOption struct {
+	file string
+}
+
+// GraphPlan represents the -plan flag which is a specified plan file string
+func GraphPlan(file string) *GraphPlanOption {
+	return &GraphPlanOption{file}
+}
+
+type UseJSONNumberOption struct {
+	useJSONNumber bool
+}
+
+// JSONNumber determines how numerical values are handled during JSON decoding.
+func JSONNumber(useJSONNumber bool) *UseJSONNumberOption {
+	return &UseJSONNumberOption{useJSONNumber}
+}
+
 type PlatformOption struct {
 	platform string
 }
@@ -296,6 +348,14 @@ func Refresh(refresh bool) *RefreshOption {
 	return &RefreshOption{refresh}
 }
 
+type RefreshOnlyOption struct {
+	refreshOnly bool
+}
+
+func RefreshOnly(refreshOnly bool) *RefreshOnlyOption {
+	return &RefreshOnlyOption{refreshOnly}
+}
+
 type ReplaceOption struct {
 	address string
 }
@@ -332,6 +392,23 @@ type TargetOption struct {
 
 func Target(resource string) *TargetOption {
 	return &TargetOption{resource}
+}
+
+type TestsDirectoryOption struct {
+	testsDirectory string
+}
+
+// TestsDirectory represents the -tests-directory option (path to tests files)
+func TestsDirectory(testsDirectory string) *TestsDirectoryOption {
+	return &TestsDirectoryOption{testsDirectory}
+}
+
+type GraphTypeOption struct {
+	graphType string
+}
+
+func GraphType(graphType string) *GraphTypeOption {
+	return &GraphTypeOption{graphType}
 }
 
 type UpdateOption struct {
@@ -372,22 +449,4 @@ type VerifyPluginsOption struct {
 
 func VerifyPlugins(verifyPlugins bool) *VerifyPluginsOption {
 	return &VerifyPluginsOption{verifyPlugins}
-}
-
-// FromStateOption represents the -from-state option of the "terraform add" command.
-type FromStateOption struct {
-	fromState bool
-}
-
-func FromState(fromState bool) *FromStateOption {
-	return &FromStateOption{fromState}
-}
-
-// IncludeOptionalOption represents the -optional option of the "terraform add" command.
-type IncludeOptionalOption struct {
-	includeOptional bool
-}
-
-func IncludeOptional(includeOptional bool) *IncludeOptionalOption {
-	return &IncludeOptionalOption{includeOptional}
 }

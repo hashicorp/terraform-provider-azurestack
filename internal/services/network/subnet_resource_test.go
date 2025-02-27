@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/acceptance/check"
 	"github.com/hashicorp/terraform-provider-azurestack/internal/tf/pluginsdk"
+	"github.com/hashicorp/terraform-provider-azurestack/internal/utils"
 )
 
 type SubnetResource struct{}
@@ -115,6 +116,60 @@ func (SubnetResource) Destroy(ctx context.Context, client *clients.Client, state
 	}
 
 	return pointer.FromBool(true), nil
+}
+
+func (SubnetResource) hasNoNetworkSecurityGroup(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) error {
+	id, err := parse.SubnetID(state.ID)
+	if err != nil {
+		return err
+	}
+
+	resp, err := client.Network.SubnetsClient.Get(ctx, id.ResourceGroup, id.VirtualNetworkName, id.Name, "")
+	if err != nil {
+		if utils.ResponseWasNotFound(resp.Response) {
+			return fmt.Errorf("Bad: Subnet %q (Virtual Network %q / Resource Group: %q) does not exist", id.Name, id.VirtualNetworkName, id.ResourceGroup)
+		}
+
+		return fmt.Errorf("Bad: Get on subnetClient: %+v", err)
+	}
+
+	props := resp.SubnetPropertiesFormat
+	if props == nil {
+		return fmt.Errorf("Properties was nil for Subnet %q (Virtual Network %q / Resource Group: %q)", id.Name, id.VirtualNetworkName, id.ResourceGroup)
+	}
+
+	if props.NetworkSecurityGroup != nil && ((props.NetworkSecurityGroup.ID == nil) || (props.NetworkSecurityGroup.ID != nil && *props.NetworkSecurityGroup.ID == "")) {
+		return fmt.Errorf("No Network Security Group should exist for Subnet %q (Virtual Network %q / Resource Group: %q) but got %q", id.Name, id.VirtualNetworkName, id.ResourceGroup, *props.NetworkSecurityGroup.ID)
+	}
+
+	return nil
+}
+
+func (SubnetResource) hasNoRouteTable(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) error {
+	id, err := parse.SubnetID(state.ID)
+	if err != nil {
+		return err
+	}
+
+	resp, err := client.Network.SubnetsClient.Get(ctx, id.ResourceGroup, id.VirtualNetworkName, id.Name, "")
+	if err != nil {
+		if utils.ResponseWasNotFound(resp.Response) {
+			return fmt.Errorf("Bad: Subnet %q (Virtual Network %q / Resource Group: %q) does not exist", id.Name, id.VirtualNetworkName, id.ResourceGroup)
+		}
+
+		return fmt.Errorf("Bad: Get on subnetClient: %+v", err)
+	}
+
+	props := resp.SubnetPropertiesFormat
+	if props == nil {
+		return fmt.Errorf("Properties was nil for Subnet %q (Virtual Network %q / Resource Group: %q)", id.Name, id.VirtualNetworkName, id.ResourceGroup)
+	}
+
+	if props.RouteTable != nil && ((props.RouteTable.ID == nil) || (props.RouteTable.ID != nil && *props.RouteTable.ID == "")) {
+		return fmt.Errorf("No Route Table should exist for Subnet %q (Virtual Network %q / Resource Group: %q) but got %q", id.Name, id.VirtualNetworkName, id.ResourceGroup, *props.RouteTable.ID)
+	}
+
+	return nil
 }
 
 func (r SubnetResource) basic(data acceptance.TestData) string {

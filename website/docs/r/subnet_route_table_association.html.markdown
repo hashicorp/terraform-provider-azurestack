@@ -1,0 +1,84 @@
+---
+subcategory: "Network"
+layout: "azurestack"
+page_title: "Azure Resource Manager: azurestack_subnet_route_table_association"
+description: |-
+  Associates a [Route Table](route_table.html) with a [Subnet](subnet.html) within a [Virtual Network](virtual_network.html).
+
+---
+
+# azurestack_subnet_route_table_association
+
+Associates a [Route Table](route_table.html) with a [Subnet](subnet.html) within a [Virtual Network](virtual_network.html).
+
+## Example Usage
+
+```hcl
+resource "azurestack_resource_group" "example" {
+  name     = "example-resources"
+  location = "ash"
+}
+
+resource "azurestack_virtual_network" "example" {
+  name                = "example-network"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurestack_resource_group.example.location
+  resource_group_name = azurestack_resource_group.example.name
+}
+
+resource "azurestack_subnet" "example" {
+  name                 = "frontend"
+  resource_group_name  = azurestack_resource_group.example.name
+  virtual_network_name = azurestack_virtual_network.example.name
+  address_prefix       = "10.0.2.0/24"
+}
+
+resource "azurestack_route_table" "example" {
+  name                = "example-routetable"
+  location            = azurestack_resource_group.example.location
+  resource_group_name = azurestack_resource_group.example.name
+
+  route {
+    name                   = "example"
+    address_prefix         = "10.100.0.0/14"
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = "10.10.1.1"
+  }
+}
+
+resource "azurestack_subnet_route_table_association" "example" {
+  subnet_id      = azurestack_subnet.example.id
+  route_table_id = azurestack_route_table.example.id
+}
+```
+
+## Argument Reference
+
+The following arguments are supported:
+
+* `route_table_id` - (Required) The ID of the Route Table which should be associated with the Subnet. Changing this forces a new resource to be created.
+
+* `subnet_id` - (Required) The ID of the Subnet. Changing this forces a new resource to be created.
+
+## Attributes Reference
+
+In addition to the Arguments listed above - the following Attributes are exported:
+
+* `id` - The ID of the Subnet.
+
+## Timeouts
+
+The `timeouts` block allows you to specify [timeouts](https://www.terraform.io/language/resources/syntax#operation-timeouts) for certain actions:
+
+* `create` - (Defaults to 30 minutes) Used when creating the Subnet Route Table Association.
+* `update` - (Defaults to 30 minutes) Used when updating the Subnet Route Table Association.
+* `read` - (Defaults to 5 minutes) Used when retrieving the Subnet Route Table Association.
+* `delete` - (Defaults to 30 minutes) Used when deleting the Subnet Route Table Association.
+
+## Import
+
+Subnet Route Table Associations can be imported using the `resource id` of the Subnet, e.g.
+
+```shell
+terraform import azurestack_subnet_route_table_association.association1 /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.Network/virtualNetworks/myvnet1/subnets/mysubnet1
+```

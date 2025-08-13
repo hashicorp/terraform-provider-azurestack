@@ -4,6 +4,15 @@
 
 # Terraform Provider for Azure Stack
 
+> *Please note:* This Terraform provider is archived, per our [provider archiving process](https://terraform.io/docs/internals/archiving.html). What does this mean?
+
+>1. The code repository and all commit history will still be available.
+>2. Existing released binaries will remain available on the releases site.
+>3. Issues and pull requests are not being monitored.
+>4. New releases will not be published.
+>
+>If anyone from the community or an interested third party is willing to maintain it, they can fork the repository and [publish it](https://www.terraform.io/docs/registry/providers/publishing.html) to the Terraform Registry. If you are interested in maintaining this provider, please reach out to the [Terraform Provider Development Program](https://www.terraform.io/guides/terraform-provider-development-program.html) at *terraform-provider-dev@hashicorp.com*.
+
 * [Terraform Website](https://www.terraform.io)
 * [AzureStack Provider Documentation](https://registry.terraform.io/providers/hashicorp/azurestack/latest/docs)
 * [Slack Workspace for Contributors](https://terraform-azure.slack.com) ([Request Invite](https://join.slack.com/t/terraform-azure/shared_invite/enQtNDMzNjQ5NzcxMDc3LWNiY2ZhNThhNDgzNmY0MTM0N2MwZjE4ZGU0MjcxYjUyMzRmN2E5NjZhZmQ0ZTA1OTExMGNjYzA4ZDkwZDYxNDE))

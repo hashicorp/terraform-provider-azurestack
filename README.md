@@ -8,7 +8,7 @@
 
 >1. The code repository and all commit history will still be available.
 >2. Existing released binaries will remain available on the releases site.
->3. Issues and pull requests are not being monitored.
+>3. Issues and pull requests can no longer be created.
 >4. New releases will not be published.
 >
 >If anyone from the community or an interested third party is willing to maintain it, they can fork the repository and [publish it](https://www.terraform.io/docs/registry/providers/publishing.html) to the Terraform Registry. If you are interested in maintaining this provider, please reach out to the [Terraform Provider Development Program](https://www.terraform.io/guides/terraform-provider-development-program.html) at *terraform-provider-dev@hashicorp.com*.

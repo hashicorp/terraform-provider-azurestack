@@ -11,5 +11,6 @@ var services = mapOf(
         "loadbalancer" to "Load Balancer",
         "network" to "Network",
         "resource" to "Resources",
-        "storage" to "Storage"
+        "storage" to "Storage",
+        "subscription" to "Subscription"
 )

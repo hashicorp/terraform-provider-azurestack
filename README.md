@@ -4,7 +4,7 @@
 
 # Terraform Provider for Azure Stack
 
-> *Please note:* This Terraform provider is archived, per our [provider archiving process](https://terraform.io/docs/internals/archiving.html). What does this mean?
+> *Please note:* This Terraform provider is archived, per our [provider archiving process](https://developer.hashicorp.com/terraform/internals/archiving). What does this mean?
 
 >1. The code repository and all commit history will still be available.
 >2. Existing released binaries will remain available on the releases site.
